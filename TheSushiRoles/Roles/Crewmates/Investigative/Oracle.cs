@@ -10,7 +10,7 @@ namespace TheSushiRoles.Roles
         public static PlayerControl Player;
         public static PlayerControl Confessor;
         public static PlayerControl CurrentTarget;
-        public static Factions RevealedFaction;
+        public static Faction RevealedFaction;
         public static float Accuracy;
         public static bool NeutralBenignShowsEvil;
         public static bool Investigated; 
@@ -83,7 +83,7 @@ namespace TheSushiRoles.Roles
         {
             Player = null;
             Confessor = null;
-            RevealedFaction = Factions.Other;
+            RevealedFaction = Faction.Other;
             CurrentTarget = null;
             Investigated = false;
             Accuracy = CustomOptionHolder.RevealAccuracy.GetFloat();

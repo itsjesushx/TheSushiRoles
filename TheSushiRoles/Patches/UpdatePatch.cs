@@ -125,8 +125,8 @@ namespace TheSushiRoles.Patches
                     if (player.PlayerId != state.TargetPlayerId) continue;
                     if (player == Oracle.Confessor)
                     {
-                        if (Oracle.RevealedFaction == Factions.Crewmate) state.NameText.text = state.NameText.text + $" <size=60%>(<color=#00FFFFFF>{Oracle.Accuracy}% Crew</color>) </size>";
-                        else if (Oracle.RevealedFaction == Factions.Impostor) state.NameText.text = state.NameText.text + $" <size=60%>(<color=#FF0000FF>{Oracle.Accuracy}% Imp</color>) </size>";
+                        if (Oracle.RevealedFaction == Faction.Crewmates) state.NameText.text = state.NameText.text + $" <size=60%>(<color=#00FFFFFF>{Oracle.Accuracy}% Crew</color>) </size>";
+                        else if (Oracle.RevealedFaction == Faction.Impostors) state.NameText.text = state.NameText.text + $" <size=60%>(<color=#FF0000FF>{Oracle.Accuracy}% Imp</color>) </size>";
                         else state.NameText.text = state.NameText.text + $" <size=60%>(<color=#808080FF>{Oracle.Accuracy}% Neut</color>) </size>";
                     }
                 }

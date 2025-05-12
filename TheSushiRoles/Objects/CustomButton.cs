@@ -27,7 +27,7 @@ namespace TheSushiRoles.Objects
         private Action OnMeetingEnds;
         public Func<bool> HasButton;
         public Func<bool> CouldUse;
-        private Action OnEffectEnds;
+        public Action OnEffectEnds;
         public bool HasEffect;
         public bool isEffectActive = false;
         public bool showButtonText = false;
@@ -102,7 +102,7 @@ namespace TheSushiRoles.Objects
                     this.GlitchTimer = this.EffectDuration;
                     this.Timer = this.EffectDuration;
                     actionButton.cooldownTimerText.color = new Color(0F, 0.8F, 0F);
-                    this.isEffectActive = true;
+                    isEffectActive = true;
                 }
             }
         }

@@ -642,16 +642,6 @@ namespace TheSushiRoles.Patches
                 collider.radius = correctedColliderRadius;
             }
         }
-        public static void UpdateColorBlindTextColor()
-        {
-            foreach (var player in PlayerControl.AllPlayerControls)
-            {
-                if (player == null || player.cosmetics.colorBlindText == null) continue;
-
-                Color playerColor = Palette.PlayerColors[player.Data.DefaultOutfit.ColorId];
-                player.cosmetics.colorBlindText.color = playerColor;
-            }
-        }
         public static void UpdatePlayerInfo() 
         {
             Vector3 colorBlindTextMeetingInitialLocalPos = new Vector3(0.3384f, -0.16666f, -0.01f);
@@ -1231,10 +1221,10 @@ namespace TheSushiRoles.Patches
                 if (entry.Value <= 0) 
                 {
                     Bait.active.Remove(entry.Key);
-                    if (entry.Key.killerIfExisting != null && entry.Key.killerIfExisting.PlayerId == PlayerControl.LocalPlayer.PlayerId) {
+                    if (entry.Key.GetKiller != null && entry.Key.GetKiller.PlayerId == PlayerControl.LocalPlayer.PlayerId) {
                         Utils.HandlePoisonerBiteOnBodyReport(); // Manually call Poisoner handling, since the CmdReportDeadBody Prefix won't be called
-                        RPCProcedure.UncheckedCmdReportDeadBody(entry.Key.killerIfExisting.PlayerId, entry.Key.player.PlayerId);
-                        Utils.StartRPC(CustomRPC.UncheckedCmdReportDeadBody, entry.Key.killerIfExisting.PlayerId,
+                        RPCProcedure.UncheckedCmdReportDeadBody(entry.Key.GetKiller.PlayerId, entry.Key.player.PlayerId);
+                        Utils.StartRPC(CustomRPC.UncheckedCmdReportDeadBody, entry.Key.GetKiller.PlayerId,
                         entry.Key.player.PlayerId);
                     }
                 }
@@ -1287,9 +1277,6 @@ namespace TheSushiRoles.Patches
             
             if (PlayerControl.LocalPlayer == __instance) 
             {
-
-                UpdateColorBlindTextColor();
-
                 // Update player outlines
                 SetBasePlayerOutlines();
 
@@ -1459,8 +1446,8 @@ namespace TheSushiRoles.Patches
             DeadPlayer deadPlayer = deadPlayers?.Where(x => x.player?.PlayerId == target?.PlayerId)?.FirstOrDefault();
             if (isMedicReport || isDetectiveReport)
             {
-                if (deadPlayer != null && deadPlayer.killerIfExisting != null) {
-                    float timeSinceDeath = ((float)(DateTime.UtcNow - deadPlayer.timeOfDeath).TotalMilliseconds);
+                if (deadPlayer != null && deadPlayer.GetKiller != null) {
+                    float timeSinceDeath = ((float)(DateTime.UtcNow - deadPlayer.DeathTime).TotalMilliseconds);
                     string msg = "";
 
                     if (isMedicReport) 
@@ -1470,11 +1457,11 @@ namespace TheSushiRoles.Patches
                     {
                         if (timeSinceDeath < Detective.reportNameDuration * 1000) 
                         {
-                            msg =  $"Body Report: The killer appears to be {deadPlayer.killerIfExisting.Data.PlayerName}!";
+                            msg =  $"Body Report: The killer appears to be {deadPlayer.GetKiller.Data.PlayerName}!";
                         } 
                         else if (timeSinceDeath < Detective.reportColorDuration * 1000) 
                         {
-                            var typeOfColor = Utils.IsLighterColor(deadPlayer.killerIfExisting) ? "lighter" : "darker";
+                            var typeOfColor = Utils.IsLighterColor(deadPlayer.GetKiller) ? "lighter" : "darker";
                             msg =  $"Body Report: The killer appears to be a {typeOfColor} Color!";
                         } else {
                             msg = $"Body Report: The corpse is too old to gain information from!";
@@ -1541,7 +1528,7 @@ namespace TheSushiRoles.Patches
                 PlayerControl otherLover = target == Lovers.Lover1 ? Lovers.Lover2 : Lovers.Lover1;
                 if (otherLover != null && !otherLover.Data.IsDead && Lovers.bothDie) {
                     otherLover.MurderPlayer(otherLover);
-                    GameHistory.OverrideDeathReasonAndKiller(otherLover, DeadPlayer.CustomDeathReason.LoverSuicide);
+                    GameHistory.CreateDeathReason(otherLover, DeadPlayer.CustomDeathReason.LoverSuicide);
                 }
             }
 
@@ -1725,7 +1712,7 @@ namespace TheSushiRoles.Patches
                 PlayerControl otherLover = __instance == Lovers.Lover1 ? Lovers.Lover2 : Lovers.Lover1;
                 if (otherLover != null && !otherLover.Data.IsDead && Lovers.bothDie) {
                     otherLover.Exiled();
-                    GameHistory.OverrideDeathReasonAndKiller(otherLover, DeadPlayer.CustomDeathReason.LoverSuicide);
+                    GameHistory.CreateDeathReason(otherLover, DeadPlayer.CustomDeathReason.LoverSuicide);
                 }
 
             }            
@@ -1763,7 +1750,7 @@ namespace TheSushiRoles.Patches
                     Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId,
                     (byte)GhostInfoTypes.DeathReasonAndKiller, lawyer.PlayerId, 
                     (byte)DeadPlayer.CustomDeathReason.LawyerSuicide, lawyer.PlayerId);
-                    GameHistory.OverrideDeathReasonAndKiller(lawyer, DeadPlayer.CustomDeathReason.LawyerSuicide, lawyer);  // TODO: only executed on host?!
+                    GameHistory.CreateDeathReason(lawyer, DeadPlayer.CustomDeathReason.LawyerSuicide, lawyer);  // TODO: only executed on host?!
                 }
             }
         }

@@ -45,10 +45,10 @@ namespace TheSushiRoles.Roles
             SampleSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.SampleButton.png", 115f);
             return SampleSprite;
         }
-        public static Sprite GetMorphSprite() 
+        public static Sprite GetMimicSprite() 
         {
             if (MimicSprite) return MimicSprite;
-            MimicSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.MorphButton.png", 115f);
+            MimicSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.MimicButton.png", 115f);
             return MimicSprite;
         }
         // Can be used to enable / disable the Hack effect on the target's buttons

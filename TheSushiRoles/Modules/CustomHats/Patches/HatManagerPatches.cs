@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Cpp2IL.Core.Extensions;
-
 
 namespace TheSushiRoles.Modules.CustomHats.Patches;
 
 [HarmonyPatch(typeof(HatManager))]
 internal static class HatManagerPatches
 {
-    private static bool IsRunning;
+    private static bool isRunning;
     private static bool isLoaded;
     private static List<HatData> allHats;
         
@@ -17,8 +15,8 @@ internal static class HatManagerPatches
     [HarmonyPrefix]
     private static void GetHatByIdPrefix(HatManager __instance)
     {
-        if (IsRunning || isLoaded) return;
-        IsRunning = true;
+        if (isRunning || isLoaded) return;
+        isRunning = true;
         // Maybe we can use lock keyword to ensure simultaneous list manipulations ?
         allHats = __instance.allHats.ToList();
         var cache = CustomHatManager.UnregisteredHats.Clone();
@@ -45,6 +43,6 @@ internal static class HatManagerPatches
     [HarmonyPostfix]
     private static void GetHatByIdPostfix()
     {
-        IsRunning = false;
+        isRunning = false;
     }
 }

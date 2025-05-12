@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AmongUs.Data;
 using TheSushiRoles.Modules.CustomHats.Extensions;
-
 using TMPro;
 using UnityEngine;
 using Object = UnityEngine.Object;

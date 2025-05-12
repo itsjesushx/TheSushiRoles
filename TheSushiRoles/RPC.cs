@@ -1,6 +1,5 @@
 using Hazel;
 using static TheSushiRoles.HudManagerStartPatch;
-using static TheSushiRoles.GameHistory;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -9,7 +8,6 @@ using AmongUs.Data;
 using Assets.CoreScripts;
 using Reactor.Networking.Extensions;
 using Reactor.Utilities.Extensions;
-using System.Reflection;
 
 namespace TheSushiRoles
 {
@@ -20,7 +18,7 @@ namespace TheSushiRoles
         {
             ClearAndReloadMapOptions();
             GlobalClearAndReload();
-            ClearGameHistory();
+            GameHistory.ClearGameHistory();
             SetCustomButtonCooldowns();
             ReloadPluginOptions();
         }
@@ -467,7 +465,7 @@ namespace TheSushiRoles
             if (Medium.futureDeadBodies != null) 
             {
                 var deadBody = Medium.futureDeadBodies.Find(x => x.Item1.player.PlayerId == playerId).Item1;
-                if (deadBody != null) deadBody.wasCleaned = true;
+                if (deadBody != null) deadBody.WasCleanedOrEaten = true;
             }
 
             DeadBody[] array = UnityEngine.Object.FindObjectsOfType<DeadBody>();
@@ -490,12 +488,13 @@ namespace TheSushiRoles
         public static void TimeMasterRewindTime()
         {
             TimeMaster.isRewinding = true;
+            TimeMaster.Charges--;
             PlayerControl.LocalPlayer.moveable = false;
             Utils.ShowFlash(TimeMaster.Color, TimeMaster.RewindTimeDuration);
             foreach (var deadPlayer in GameHistory.deadPlayers)
             {
                 if (deadPlayer.player == null) continue;
-                if ((DateTime.UtcNow - deadPlayer.timeOfDeath).TotalSeconds < TimeMaster.RewindTimeDuration && TimeMaster.ReviveDuringRewind)
+                if ((DateTime.UtcNow - deadPlayer.DeathTime).TotalSeconds < TimeMaster.RewindTimeDuration && TimeMaster.ReviveDuringRewind)
                 {
                     var player = deadPlayer.player;
                     if (player.Data.IsDead)
@@ -580,7 +579,7 @@ namespace TheSushiRoles
                 player.PlayerId, 
                 (byte)DeadPlayer.CustomDeathReason.Maul,
                 Werewolf.Player.PlayerId);
-                OverrideDeathReasonAndKiller(player, DeadPlayer.CustomDeathReason.Maul, killer: Werewolf.Player);
+                GameHistory.CreateDeathReason(player, DeadPlayer.CustomDeathReason.Maul, killer: Werewolf.Player);
             }
         }
 
@@ -685,7 +684,7 @@ namespace TheSushiRoles
             if (roleInfo == null) return;
 
             bool showsCorrectFaction = UnityEngine.Random.RandomRangeInt(1, 101) <= Oracle.Accuracy;
-            Factions revealedFaction;
+            Faction revealedFaction;
 
             if (showsCorrectFaction)
             {
@@ -695,13 +694,13 @@ namespace TheSushiRoles
             else
             {
                 // Get all possible factions
-                List<Factions> possibleFactions = new List<Factions> { Factions.Crewmate, Factions.Impostor, Factions.Neutral };
+                List<Faction> possibleFaction = new List<Faction> { Faction.Crewmates, Faction.Impostors, Faction.Neutrals };
 
                 // Remove the actual faction from the list so we never guess correctly
-                possibleFactions.Remove(roleInfo.FactionId);
+                possibleFaction.Remove(roleInfo.FactionId);
 
                 // Choose a random incorrect faction
-                revealedFaction = possibleFactions[UnityEngine.Random.RandomRangeInt(0, possibleFactions.Count)];
+                revealedFaction = possibleFaction[UnityEngine.Random.RandomRangeInt(0, possibleFaction.Count)];
             }
 
             // Save the revealed faction
@@ -1218,7 +1217,7 @@ namespace TheSushiRoles
                 if (p != Arsonist.Player && !p.Data.IsDead) 
                 {
                     p.Exiled();
-                    OverrideDeathReasonAndKiller(p, DeadPlayer.CustomDeathReason.Arson, Arsonist.Player);
+                    GameHistory.CreateDeathReason(p, DeadPlayer.CustomDeathReason.Arson, Arsonist.Player);
                 }
             }
         }
@@ -1386,7 +1385,7 @@ namespace TheSushiRoles
 
             PlayerControl guesser = Utils.PlayerById(killerId);
             dyingTarget.Exiled();
-            GameHistory.OverrideDeathReasonAndKiller(dyingTarget, DeadPlayer.CustomDeathReason.Guess, guesser);
+            GameHistory.CreateDeathReason(dyingTarget, DeadPlayer.CustomDeathReason.Guess, guesser);
             byte partnerId = dyingLoverPartner != null ? dyingLoverPartner.PlayerId : dyingTargetId;
 
             Guesser.RemainingShots(killerId, true);
@@ -1487,11 +1486,13 @@ namespace TheSushiRoles
         }
         public static void AmnesiacRemember(byte targetId)
         {
+            Amnesiac.Remembered = true;
+
             PlayerControl target = Utils.PlayerById(targetId);
             PlayerControl AmnesiacPlayer = Amnesiac.Player;
             if (target == null || AmnesiacPlayer == null) return;
             List<RoleInfo> targetInfo = RoleInfo.GetRoleInfoForPlayer(target);
-            RoleInfo roleInfo = targetInfo.Where(info => info.FactionId != Factions.Other).FirstOrDefault();
+            RoleInfo roleInfo = targetInfo.Where(info => info.FactionId != Faction.Other).FirstOrDefault();
 
             switch (roleInfo.RoleId)
             {
@@ -2031,7 +2032,7 @@ namespace TheSushiRoles
                     poisonerKillButton.Timer = (float)reader.ReadByte();
                     break;
                 case GhostInfoTypes.DeathReasonAndKiller:
-                    OverrideDeathReasonAndKiller(Utils.PlayerById(reader.ReadByte()), (DeadPlayer.CustomDeathReason)reader.ReadByte(), Utils.PlayerById(reader.ReadByte()));
+                    GameHistory.CreateDeathReason(Utils.PlayerById(reader.ReadByte()), (DeadPlayer.CustomDeathReason)reader.ReadByte(), Utils.PlayerById(reader.ReadByte()));
                     break;
             }
         }
@@ -2232,15 +2233,15 @@ namespace TheSushiRoles
                     if (Oracle.Confessor == null) break; // Ensure the confessor exists
                     // Read the revealed faction from the RPC
                     int factionId = reader.ReadInt32();
-                    // Map the received integer to the correct Factions enum
-                    if (Enum.IsDefined(typeof(Factions), factionId))
+                    // Map the received integer to the correct Faction enum
+                    if (Enum.IsDefined(typeof(Faction), factionId))
                     {
-                        Oracle.RevealedFaction = (Factions)factionId;
+                        Oracle.RevealedFaction = (Faction)factionId;
                     }
                     else
                     {
                         TheSushiRolesPlugin.Logger.LogError($"Invalid faction ID received: {factionId}");
-                        Oracle.RevealedFaction = Factions.Other; // Default to Other in case of error
+                        Oracle.RevealedFaction = Faction.Other; // Default to Other in case of error
                     }
                     break;
                 case CustomRPC.SwapperSwap:
@@ -2381,14 +2382,8 @@ namespace TheSushiRoles
                 case CustomRPC.SetTiebreak:
                     RPCProcedure.SetTiebreak();
                     break;
-                case CustomRPC.StartRemember:
-                    var amnesiacTarget2 = Utils.PlayerById(reader.ReadByte());
-                    Amnesiac.ToRemember = amnesiacTarget2;
-                    RPCProcedure.AmnesiacRemember(reader.ReadByte());
-                    break;
                 case CustomRPC.AmnesiacRemember:
-                    var amnesiacTarget = Utils.PlayerById(reader.ReadByte());
-                    Amnesiac.ToRemember = amnesiacTarget;
+                    RPCProcedure.AmnesiacRemember(reader.ReadByte());
                     break;
                 case CustomRPC.SetInvisible:
                     byte invisiblePlayer = reader.ReadByte();

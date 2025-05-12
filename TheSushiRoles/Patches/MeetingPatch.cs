@@ -458,14 +458,15 @@ namespace TheSushiRoles.Patches
                 if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && !Guesser.evilGuesserCanGuessSpy && roleInfo.RoleId == RoleId.Spy) continue;
                 // remove all roles that cannot spawn due to the settings from the ui.
                 RoleManagerSelectRolesPatch.RoleAssignmentData roleData = RoleManagerSelectRolesPatch.getRoleAssignmentData();
-                if (roleData.neutralSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.neutralSettings[(byte)roleInfo.RoleId] == 0) continue;
-                else if (roleData.impSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.impSettings[(byte)roleInfo.RoleId] == 0) continue;
-                else if (roleData.neutralKSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.neutralKSettings[(byte)roleInfo.RoleId] == 0) continue;
-                else if (roleData.crewSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.crewSettings[(byte)roleInfo.RoleId] == 0) continue;
+                if (roleData.NeutralEvilSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.NeutralEvilSettings[(byte)roleInfo.RoleId] == 0) continue;
+                else if (roleData.ImpSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.ImpSettings[(byte)roleInfo.RoleId] == 0) continue;
+                else if (roleData.NeutralBenignSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.NeutralBenignSettings[(byte)roleInfo.RoleId] == 0) continue;
+                else if (roleData.NeutralKSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.NeutralKSettings[(byte)roleInfo.RoleId] == 0) continue;
+                else if (roleData.CrewSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.CrewSettings[(byte)roleInfo.RoleId] == 0) continue;
                 else if (roleInfo.RoleId == RoleId.Sidekick && (!CustomOptionHolder.jackalCanCreateSidekick.GetBool() || CustomOptionHolder.jackalSpawnRate.GetSelection() == 0)) continue;
                 else if (roleInfo.RoleId == RoleId.Pestilence) continue;
                 if (roleInfo.RoleId == RoleId.Pursuer && CustomOptionHolder.lawyerSpawnRate.GetSelection() == 0) continue;
-                if (roleInfo.RoleId == RoleId.Spy && roleData.impostors.Count <= 1) continue;
+                if (roleInfo.RoleId == RoleId.Spy && roleData.Impostors.Count <= 1) continue;
 
                 Transform buttonParent = (new GameObject()).transform;
                 buttonParent.SetParent(container);
@@ -882,186 +883,7 @@ namespace TheSushiRoles.Patches
             }
         }
     }
-     [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start))]
-    public class AddButtonAmnesiac
-    {
-        private static int _mostRecentId;
-        private static List<GameObject> buttonPool = new List<GameObject>();
-        public static void GenButton(PlayerControl amnesiac, int index, bool isDead)
-        {
-            Amnesiac.Player = amnesiac;
-            if (PlayerControl.AllPlayerControls.ToArray().Where(x => !x.Data.IsDead && !x.Data.Disconnected).ToList().Count <= 4) return;
-            if (Amnesiac.Remembered) return;
-            if (!isDead)
-            {
-                Amnesiac.Buttons.Add(null);
-                Amnesiac.ListOfActives.Add(false);
-                return;
-            }
 
-            var confirmButton = MeetingHud.Instance.playerStates[index].Buttons.transform.GetChild(0).gameObject;
-
-            GameObject newButton;
-            if (buttonPool.Count > 0)
-            {
-                newButton = buttonPool[0];
-                buttonPool.RemoveAt(0);
-                newButton.SetActive(true);
-            }
-            else
-            {
-                newButton = UnityEngine.Object.Instantiate(confirmButton, MeetingHud.Instance.playerStates[index].transform);
-            }
-
-            var renderer = newButton.GetComponent<SpriteRenderer>();
-            var passive = newButton.GetComponent<PassiveButton>();
-
-            renderer.sprite = Amnesiac.GetSelectInActiveSprite();
-            newButton.transform.position = confirmButton.transform.position - new Vector3(0.75f, 0f, 0f);
-            newButton.transform.localScale *= 0.8f;
-            newButton.layer = 5;
-            newButton.transform.parent = confirmButton.transform.parent.parent;
-            passive.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
-            passive.OnClick.AddListener(SetActive(amnesiac, index));
-            Amnesiac.Buttons.Add(newButton);
-            Amnesiac.ListOfActives.Add(false);
-        }
-
-        public static void ReturnButtonToPool(GameObject button)
-        {
-            button.SetActive(false);
-            buttonPool.Add(button);
-        }
-
-        private static Action SetActive(PlayerControl amnesiac, int index)
-        {
-            Amnesiac.Player = amnesiac;
-            void Listener()
-            {
-                if (Amnesiac.ListOfActives.Count(x => x) == 1 &&
-                    Amnesiac.Buttons[index].GetComponent<SpriteRenderer>().sprite == Amnesiac.GetSelectInActiveSprite())
-                {
-                    int active = 0;
-                    for (var i = 0; i < Amnesiac.ListOfActives.Count; i++) if (Amnesiac.ListOfActives[i]) active = i;
-
-                    Amnesiac.Buttons[active].GetComponent<SpriteRenderer>().sprite =
-                        Amnesiac.ListOfActives[active] ? Amnesiac.GetSelectInActiveSprite() : Amnesiac.GetSelectActiveSprite();
-
-                    Amnesiac.ListOfActives[active] = !Amnesiac.ListOfActives[active];
-                }
-
-                Amnesiac.Buttons[index].GetComponent<SpriteRenderer>().sprite =
-                    Amnesiac.ListOfActives[index] ? Amnesiac.GetSelectInActiveSprite() : Amnesiac.GetSelectActiveSprite();
-
-                Amnesiac.ListOfActives[index] = !Amnesiac.ListOfActives[index];
-
-                _mostRecentId = index;
-
-                SetRemember.Remember = null;
-                for (var i = 0; i < Amnesiac.ListOfActives.Count; i++)
-                {
-                    if (!Amnesiac.ListOfActives[i]) continue;
-                    SetRemember.Remember = MeetingHud.Instance.playerStates[i];
-                }
-            }
-
-            return Listener;
-        }
-
-        public static void Postfix(MeetingHud __instance)
-        {
-            Amnesiac.ListOfActives.Clear();
-            Amnesiac.Buttons.Clear();
-
-            if (PlayerControl.LocalPlayer.Data.IsDead) return;
-            if (PlayerControl.LocalPlayer != Amnesiac.Player) return;
-            for (var i = 0; i < __instance.playerStates.Length; i++)
-            {
-                foreach (var player in PlayerControl.AllPlayerControls)
-                {
-                    if (player.PlayerId == __instance.playerStates[i].TargetPlayerId)
-                    {
-                        var stealable = false;
-                        var StolenRole = RoleInfo.GetRoleInfoForPlayer(player);
-                        if (player.Data.IsDead && !player.Data.Disconnected && StolenRole.Any(role => Amnesiac.RolesToRemember.Contains(role.RoleId))) stealable = true;
-                        GenButton(Amnesiac.Player, i, stealable);
-                    }
-                }
-            }
-        }
-    }
-    [HarmonyPatch(typeof(MeetingHud))]
-    public class SetRemember
-    {
-        public static PlayerVoteArea Remember;
-
-        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.VotingComplete))]
-        public static class VotingComplete
-        {
-            public static void Postfix(MeetingHud __instance)
-            {
-                if (Remember == null) return;
-
-                if (PlayerControl.LocalPlayer == Amnesiac.Player)
-                {
-                    foreach (var button in Amnesiac.Buttons.Where(button => button != null)) button.SetActive(false);
-
-                    foreach (var player in PlayerControl.AllPlayerControls)
-                    {
-                        if (player.PlayerId == Remember.TargetPlayerId) 
-                        { 
-                            Amnesiac.ToRemember = player;
-                        }
-                        if (Remember == null)
-                        {
-                            Utils.StartRPC(CustomRPC.AmnesiacRemember, Amnesiac.Player.PlayerId, sbyte.MaxValue);
-                            return;
-                        }
-                        Utils.StartRPC(CustomRPC.AmnesiacRemember, Amnesiac.Player.PlayerId, player.PlayerId);
-                    }
-                }
-            }
-        }
-
-        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start))]
-        public static class MeetingHud_Start
-        {
-            public static void Postfix(MeetingHud __instance)
-            {
-                Remember = null;
-            }
-        }
-    }
-
-    public class ShowHideButtonsAmnesiac
-    {
-        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Confirm))]
-        public static class Confirm
-        {
-            public static bool Prefix(MeetingHud __instance)
-            {
-                if (PlayerControl.LocalPlayer != Amnesiac.Player) return true;
-                foreach (var button in Amnesiac.Buttons.Where(button => button != null))
-                {
-                    if (button.GetComponent<SpriteRenderer>().sprite == Amnesiac.GetSelectInActiveSprite())
-                        button.SetActive(false);
-
-                    button.GetComponent<PassiveButton>().OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
-                }
-
-                if (Amnesiac.ListOfActives.Count(x => x) == 1)
-                {
-                    for (var i = 0; i < Amnesiac.ListOfActives.Count; i++)
-                    {
-                        if (!Amnesiac.ListOfActives[i]) continue;
-                        SetRemember.Remember = __instance.playerStates[i];
-                    }
-                }
-
-                return true;
-            }
-        }
-    }
     public class BlackmailMeetingUpdate
     {
         public const float LetterXOffset = 0.22f;

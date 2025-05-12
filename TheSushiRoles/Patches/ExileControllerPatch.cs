@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine;
+using Reactor.Utilities;
 
 namespace TheSushiRoles.Patches 
 {
@@ -45,6 +46,28 @@ namespace TheSushiRoles.Patches
             if (Trickster.Player != null && JackInTheBox.HasJackInTheBoxLimitReached()) 
             {
                 JackInTheBox.ConvertToVents();
+            }
+
+            if (PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer == Amnesiac.Player && !PlayerControl.LocalPlayer.Data.IsDead && !Amnesiac.Remembered)
+            {
+                foreach (var player in PlayerControl.AllPlayerControls)
+                {
+                    if (player != Amnesiac.Player && !player.Data.Disconnected)
+                    {
+                        if (player.Data.IsDead) Amnesiac.PlayersToRemember.Add(player.PlayerId);
+                        //else return;
+                    }
+                }
+                byte[] rememberTargets = Amnesiac.PlayersToRemember.ToArray();
+                var pk = new ShapeShifterMenu((x) =>
+                {
+                    Utils.StartRPC(CustomRPC.AmnesiacRemember, x.PlayerId);
+                    RPCProcedure.AmnesiacRemember(x.PlayerId);
+                }, (y) =>
+                {
+                    return rememberTargets.Contains(y.PlayerId);
+                });
+                Coroutines.Start(pk.Open(3f, true));
             }
 
             // Activate portals.
@@ -91,7 +114,7 @@ namespace TheSushiRoles.Patches
                         target.PlayerId, 
                         (byte)DeadPlayer.CustomDeathReason.WitchExile,
                         Witch.Player.PlayerId);
-                        GameHistory.OverrideDeathReasonAndKiller(target, DeadPlayer.CustomDeathReason.WitchExile, killer: Witch.Player);
+                        GameHistory.CreateDeathReason(target, DeadPlayer.CustomDeathReason.WitchExile, killer: Witch.Player);
                     }
                 }
             }
@@ -144,20 +167,6 @@ namespace TheSushiRoles.Patches
                 WrapUpPostfix((networkedPlayer != null) ? networkedPlayer.Object : null);
 
                 if (__instance == null) return;
-                
-                AmnesiacExileControllerPostfix(__instance);
-            }
-            public static void AmnesiacExileControllerPostfix(ExileController __instance)
-            {
-                var exiled = __instance.initData.networkedPlayer?.Object;
-                if (PlayerControl.LocalPlayer != Amnesiac.Player) return;
-                if (PlayerControl.LocalPlayer.Data.IsDead || PlayerControl.LocalPlayer.Data.Disconnected) return;
-                if (exiled == PlayerControl.LocalPlayer) return;
-                if (Amnesiac.ToRemember == null) return;
-
-                Utils.StartRPC(CustomRPC.StartRemember, Amnesiac.ToRemember.PlayerId);
-                RPCProcedure.AmnesiacRemember(Amnesiac.ToRemember.PlayerId);
-                Amnesiac.Remembered = true;
             }
         }
 
@@ -203,7 +212,7 @@ namespace TheSushiRoles.Patches
             }
 
             // Mini exile lose condition
-            else if (exiled != null && Mini.Player != null && Mini.Player.PlayerId == exiled.PlayerId && !Mini.IsGrownUp && !Mini.Player.Data.Role.IsImpostor && !RoleInfo.GetRoleInfoForPlayer(Mini.Player).Any(x => x.FactionId == Factions.Neutral)) 
+            else if (exiled != null && Mini.Player != null && Mini.Player.PlayerId == exiled.PlayerId && !Mini.IsGrownUp && !Mini.Player.Data.Role.IsImpostor && !RoleInfo.GetRoleInfoForPlayer(Mini.Player).Any(x => x.FactionId == Faction.Neutrals)) 
             {
                 Mini.IsMiniLose = true;
             }

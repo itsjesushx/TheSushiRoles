@@ -760,12 +760,13 @@ The Amnesiac is a Neutral role with no win condition.
 They have zero tasks and are essentially roleless.
 However, they can remember a role by finding a dead player.
 Once they remember their role, they go on to try win with their new win condition.
+They can remember a role by picking a player after the meeting ends. By clicking the player name.
+If they don't get a new role, they can win by just surviving.
 
 ### Game Options
 | Name | Description |
 |----------|:-------------:|
 | Amnesiac Spawn Chance | -
-| Amnesiac Gets Arrows Pointing Towards Dead Bodies | Yes / No
 
 -----------------------
 

@@ -8,6 +8,7 @@ namespace TheSushiRoles.Roles
         public static Color Color = new Color32(112, 142, 239, byte.MaxValue);
         public static bool ReviveDuringRewind = false;
         public static float RewindTimeDuration = 3f;
+        public static float Charges;
         public static float Cooldown = 30f;
         public static bool isRewinding = false;
         private static Sprite ButtonSprite;
@@ -25,6 +26,7 @@ namespace TheSushiRoles.Roles
             RewindTimeDuration = CustomOptionHolder.timeMasterRewindTime.GetFloat();
             ReviveDuringRewind = CustomOptionHolder.TimeMasterReviveDuringRewind.GetBool();
             Cooldown = CustomOptionHolder.timeMasterCooldown.GetFloat();
+            Charges = Mathf.RoundToInt(CustomOptionHolder.TimeMasterCharges.GetFloat());
         }
     }
 }

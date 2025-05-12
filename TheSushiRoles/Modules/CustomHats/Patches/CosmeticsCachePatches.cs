@@ -1,7 +1,4 @@
-﻿
-using TheSushiRoles;
-
-namespace TheSushiRoles.Modules.CustomHats.Patches;
+﻿namespace TheSushiRoles.Modules.CustomHats.Patches;
 
 [HarmonyPatch(typeof(CosmeticsCache))]
 internal static class CosmeticsCachePatches

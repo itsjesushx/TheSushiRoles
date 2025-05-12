@@ -159,7 +159,6 @@ namespace TheSushiRoles
         Disperse,
         VeteranAlert,
         AmnesiacRemember,
-        StartRemember,
         Fortify,
         Confess,
         VeteranAlertKill,
@@ -218,12 +217,11 @@ namespace TheSushiRoles
         ShareTimer,
         ShareGhostInfo,
     }
-    public enum Factions
+    public enum Faction
     {
-        Crewmate,
-        Neutral,
-        NeutralKiller,
-        Impostor,
+        Crewmates,
+        Neutrals,
+        Impostors,
         Other
     }
     public enum GhostInfoTypes 

@@ -927,7 +927,7 @@ namespace TheSushiRoles
         {
             RoleInfo roleInfo = RoleInfo.GetRoleInfoForPlayer(player).FirstOrDefault();
             if (roleInfo != null)
-                return roleInfo.FactionId == Factions.Neutral;
+                return roleInfo.FactionId == Faction.Neutrals;
             return false;
         }
         public static bool IsPassiveNeutral(this PlayerControl player) 
@@ -948,14 +948,14 @@ namespace TheSushiRoles
         {
             RoleInfo roleInfo = RoleInfo.GetRoleInfoForPlayer(player).FirstOrDefault();
             if (roleInfo != null)
-                return roleInfo.FactionId == Factions.Crewmate;
+                return roleInfo.FactionId == Faction.Crewmates;
             return false;
         }
         public static bool IsImpostor(this PlayerControl player) 
         {
             RoleInfo roleInfo = RoleInfo.GetRoleInfoForPlayer(player).FirstOrDefault();
             if (roleInfo != null)
-                return roleInfo.FactionId == Factions.Impostor;
+                return roleInfo.FactionId == Faction.Impostors;
             return false;
         }
         public static bool CheckVeteranPestilenceKill(this PlayerControl target)

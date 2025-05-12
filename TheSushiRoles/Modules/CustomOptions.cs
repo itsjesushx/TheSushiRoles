@@ -4,14 +4,10 @@ using BepInEx.Configuration;
 using System;
 using System.IO;
 using System.Linq;
-
 using Hazel;
 using System.Text;
-
-using static TheSushiRoles.TheSushiRoles;
 using static TheSushiRoles.CustomOption;
 using Reactor.Utilities.Extensions;
-using AmongUs.GameOptions;
 using BepInEx.Unity.IL2CPP;
 using BepInEx;
 using TMPro;
@@ -24,7 +20,6 @@ namespace TheSushiRoles
         public static List<CustomOption> options = new List<CustomOption>();
         public static int preset = 0;
         public static ConfigEntry<string> vanillaSettings;
-
         public int id;
         public string name;
         public System.Object[] selections;
@@ -556,7 +551,7 @@ namespace TheSushiRoles
                     i = 0;
                 } 
                 else if (option.parent != null && (option.parent.selection == 0 || option.parent.parent != null && option.parent.parent.selection == 0)) continue;  // Hides options, for which the parent is disabled!
-                if (option == CustomOptionHolder.crewmateRolesCountMax || option == CustomOptionHolder.neutralRolesCountMax || option == CustomOptionHolder.impostorRolesCountMax || option == CustomOptionHolder.modifiersCountMax)
+                if (option == CustomOptionHolder.crewmateRolesCountMax || option == CustomOptionHolder.MaxNeutralEvilRoles || option == CustomOptionHolder.impostorRolesCountMax || option == CustomOptionHolder.modifiersCountMax)
                     continue;
 
                 ViewSettingsInfoPanel viewSettingsInfoPanel = UnityEngine.Object.Instantiate<ViewSettingsInfoPanel>(__instance.infoPanelOrigin);
@@ -613,11 +608,19 @@ namespace TheSushiRoles
                 if (min > max) min = max;
                 val = (min == max) ? $"{max}" : $"{min} - {max}";
             }
-            if (option == CustomOptionHolder.neutralRolesCountMin) 
+            if (option == CustomOptionHolder.MinNeutralEvilRoles) 
             { 
-                name = "Neutral Roles";
-                var min = CustomOptionHolder.neutralRolesCountMin.GetSelection();
-                var max = CustomOptionHolder.neutralRolesCountMax.GetSelection();
+                name = "Neutral Evil Roles";
+                var min = CustomOptionHolder.MinNeutralEvilRoles.GetSelection();
+                var max = CustomOptionHolder.MaxNeutralEvilRoles.GetSelection();
+                if (min > max) min = max;
+                val = (min == max) ? $"{max}" : $"{min} - {max}";
+            }
+            if (option == CustomOptionHolder.MinNeutralBenignRoles) 
+            { 
+                name = "Neutral Benign Roles";
+                var min = CustomOptionHolder.MinNeutralBenignRoles.GetSelection();
+                var max = CustomOptionHolder.MaxNeutralBenignRoles.GetSelection();
                 if (min > max) min = max;
                 val = (min == max) ? $"{max}" : $"{min} - {max}";
             }
@@ -1081,11 +1084,20 @@ namespace TheSushiRoles
                         var optionValue = (min == max) ? $"{max}" : $"{min} - {max}";
                         sb.AppendLine($"{optionName}: {optionValue}");
                     }
-                    else if (option == CustomOptionHolder.neutralRolesCountMin) 
+                    else if (option == CustomOptionHolder.MinNeutralEvilRoles) 
                     {
-                        var optionName = CustomOptionHolder.ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Neutral Roles");
-                        var min = CustomOptionHolder.neutralRolesCountMin.GetSelection();
-                        var max = CustomOptionHolder.neutralRolesCountMax.GetSelection();
+                        var optionName = CustomOptionHolder.ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Neutral Evil Roles");
+                        var min = CustomOptionHolder.MinNeutralEvilRoles.GetSelection();
+                        var max = CustomOptionHolder.MaxNeutralEvilRoles.GetSelection();
+                        if (min > max) min = max;
+                        var optionValue = (min == max) ? $"{max}" : $"{min} - {max}";
+                        sb.AppendLine($"{optionName}: {optionValue}");
+                    }
+                    else if (option == CustomOptionHolder.MinNeutralBenignRoles) 
+                    {
+                        var optionName = CustomOptionHolder.ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Neutral Benign Roles");
+                        var min = CustomOptionHolder.MinNeutralBenignRoles.GetSelection();
+                        var max = CustomOptionHolder.MaxNeutralBenignRoles.GetSelection();
                         if (min > max) min = max;
                         var optionValue = (min == max) ? $"{max}" : $"{min} - {max}";
                         sb.AppendLine($"{optionName}: {optionValue}");
@@ -1108,7 +1120,7 @@ namespace TheSushiRoles
                         if (min > max) min = max;
                         var optionValue = (min == max) ? $"{max}" : $"{min} - {max}";
                         sb.AppendLine($"{optionName}: {optionValue}");
-                    } 
+                    }
                     else if (option == CustomOptionHolder.modifiersCountMin) 
                     {
                         var optionName = CustomOptionHolder.ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Modifiers");
@@ -1118,7 +1130,7 @@ namespace TheSushiRoles
                         var optionValue = (min == max) ? $"{max}" : $"{min} - {max}";
                         sb.AppendLine($"{optionName}: {optionValue}");
                     } 
-                    else if ((option == CustomOptionHolder.crewmateRolesCountMax) || (option == CustomOptionHolder.neutralRolesCountMax) || (option == CustomOptionHolder.impostorRolesCountMax) || option == CustomOptionHolder.modifiersCountMax) {
+                    else if ((option == CustomOptionHolder.crewmateRolesCountMax) || (option == CustomOptionHolder.MaxNeutralEvilRoles) || (option == CustomOptionHolder.impostorRolesCountMax) || option == CustomOptionHolder.modifiersCountMax) {
                         continue;
                     } 
                     else 

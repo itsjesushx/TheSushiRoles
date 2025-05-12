@@ -65,7 +65,7 @@ namespace TheSushiRoles.Patches
                 var abilities = AbilityInfo.GetAbilityInfoForPlayer(playerControl);
                 var (tasksCompleted, tasksTotal) = TasksHandler.TaskInfo(playerControl.Data);
                 bool isGuesser = Guesser.IsGuesser(playerControl.PlayerId);
-                int? killCount = GameHistory.deadPlayers.FindAll(x => x.killerIfExisting != null && x.killerIfExisting.PlayerId == playerControl.PlayerId).Count;
+                int? killCount = GameHistory.deadPlayers.FindAll(x => x.GetKiller != null && x.GetKiller.PlayerId == playerControl.PlayerId).Count;
                 if (killCount == 0 && !(new List<RoleInfo>() { RoleInfo.sheriff, RoleInfo.veteran}.Contains(RoleInfo.GetRoleInfoForPlayer(playerControl).FirstOrDefault()) || playerControl.IsNeutralKiller() || playerControl.Data.Role.IsImpostor)) 
                 {
                     killCount = null;

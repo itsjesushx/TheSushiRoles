@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using Reactor.Utilities.Extensions;
 
 namespace TheSushiRoles
 {
@@ -82,6 +83,7 @@ namespace TheSushiRoles
         public static TMPro.TMP_Text OracleChargesText;
         public static TMPro.TMP_Text CrusaderChargesText;
         public static TMPro.TMP_Text GlitchButtonHacksText;
+        public static TMPro.TMP_Text TimeMasterChargesText;
         public static TMPro.TMP_Text pursuerButtonBlanksText;
         public static TMPro.TMP_Text hackerAdminTableChargesText;
         public static TMPro.TMP_Text hackerVitalsChargesText;
@@ -629,8 +631,12 @@ namespace TheSushiRoles
                     RPCProcedure.TimeMasterRewindTime();
                     SoundEffectsManager.Play("timemasterShield");
                 },
-                HasButton: () => { return TimeMaster.Player != null && TimeMaster.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
-                CouldUse: () => { return PlayerControl.LocalPlayer.CanMove; },
+                HasButton: () => { return TimeMaster.Player != null && TimeMaster.Player == PlayerControl.LocalPlayer && TimeMaster.Charges > 0 && !PlayerControl.LocalPlayer.Data.IsDead; },
+                CouldUse: () => 
+                { 
+                    if (TimeMasterChargesText != null) TimeMasterChargesText.text = $"{TimeMaster.Charges}";
+                    return PlayerControl.LocalPlayer.CanMove && TimeMaster.Charges > 0; 
+                },
                 OnMeetingEnds: () => 
                 {
                     TimeMasterRewindButton.Timer = TimeMasterRewindButton.MaxTimer;
@@ -652,6 +658,12 @@ namespace TheSushiRoles
                 },
                 buttonText: "REWIND TIME"
             );
+                // Time Master Charges counter
+                TimeMasterChargesText = GameObject.Instantiate(TimeMasterRewindButton.actionButton.cooldownTimerText, TimeMasterRewindButton.actionButton.cooldownTimerText.transform.parent);
+                TimeMasterChargesText.text = "";
+                TimeMasterChargesText.enableWordWrapping = false;
+                TimeMasterChargesText.transform.localScale = Vector3.one * 0.5f;
+                TimeMasterChargesText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
 
                 // Predator Terminate
                 PredatorTerminateButton = new CustomButton(
@@ -950,7 +962,7 @@ namespace TheSushiRoles
                     else if (Glitch.CurrentTarget != null) 
                     {
                         Glitch.sampledTarget = Glitch.CurrentTarget;
-                        MimicButton.Sprite = Glitch.GetMorphSprite();
+                        MimicButton.Sprite = Glitch.GetMimicSprite();
                         MimicButton.EffectDuration = 1f;
                         SoundEffectsManager.Play("morphlingSample");
                         MimicButton.buttonText = "MORPH";
@@ -1808,7 +1820,6 @@ namespace TheSushiRoles
             portalmakerButtonText2.transform.localPosition += new Vector3(-0.05f, 0.55f, -1f);
 
 
-
             // Jackal Sidekick Button
             jackalSidekickButton = new CustomButton(
                 () => 
@@ -1816,10 +1827,21 @@ namespace TheSushiRoles
                     if (Jackal.CurrentTarget.CheckFortifiedPlayer()) return;
                     if (!Jackal.canCreateSidekickFromImpostor && Jackal.CurrentTarget.Data.Role.IsImpostor || !Jackal.canCreateSidekickFromImpostor && Jackal.CurrentTarget.IsNeutralKiller()) 
                     {
+                        // Murder the current target of they can't be sidekicked. this gets rid of fake SKs (yw M)
                         Utils.CheckMurderAttemptAndKill(Jackal.Player, Jackal.CurrentTarget);
                         jackalKillButton.Timer = Jackal.Cooldown;
                         jackalSidekickButton.Timer = Jackal.createSidekickCooldown;
                         Utils.ShowFlash(Color.red, 0.5f);
+                        
+                        // death reason
+                        Utils.StartRPC(CustomRPC.ShareGhostInfo, 
+                        PlayerControl.LocalPlayer.PlayerId, 
+                        (byte)GhostInfoTypes.DeathReasonAndKiller, 
+                        Jackal.CurrentTarget.PlayerId, 
+                        (byte)DeadPlayer.CustomDeathReason.WrongSidekick,
+                        Jackal.Player.PlayerId);
+                        GameHistory.CreateDeathReason(Jackal.CurrentTarget, DeadPlayer.CustomDeathReason.WrongSidekick, killer: Jackal.Player);
+
                         SoundEffectsManager.Play("DeadSound");
                     }
                     else
@@ -2306,7 +2328,7 @@ namespace TheSushiRoles
                 {
                     mediumButton.Timer = mediumButton.MaxTimer;
                     if (Medium.target == null || Medium.target.player == null) return;
-                    string msg = Medium.GetInfo(Medium.target.player, Medium.target.killerIfExisting, Medium.target.deathReason);
+                    string msg = Medium.GetInfo(Medium.target.player, Medium.target.GetKiller, Medium.target.DeathReason);
                     FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, msg);
                     // Ghost Info
                     Utils.StartRPC(CustomRPC.ShareGhostInfo, Medium.target.player.PlayerId, (byte)GhostInfoTypes.MediumInfo, msg);

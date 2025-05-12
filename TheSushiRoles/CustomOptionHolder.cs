@@ -14,8 +14,10 @@ namespace TheSushiRoles
         public static CustomOption activateRoles;
         public static CustomOption crewmateRolesCountMin;
         public static CustomOption crewmateRolesCountMax;
-        public static CustomOption neutralRolesCountMin;
-        public static CustomOption neutralRolesCountMax;
+        public static CustomOption MinNeutralEvilRoles;
+        public static CustomOption MaxNeutralEvilRoles;
+        public static CustomOption MinNeutralBenignRoles;
+        public static CustomOption MaxNeutralBenignRoles;
         public static CustomOption neutralKillingRolesCountMin;
         public static CustomOption neutralKillingRolesCountMax;
         public static CustomOption impostorRolesCountMin;
@@ -178,6 +180,7 @@ namespace TheSushiRoles
         public static CustomOption timeMasterSpawnRate;
         public static CustomOption timeMasterCooldown;
         public static CustomOption timeMasterRewindTime;
+        public static CustomOption TimeMasterCharges;
         public static CustomOption TimeMasterReviveDuringRewind;
 
         public static CustomOption medicSpawnRate;
@@ -350,7 +353,6 @@ namespace TheSushiRoles
         public static CustomOption modifierSunglassesVision;
 
         public static CustomOption AmnesiacSpawnRate;
-        public static CustomOption AmnesiacHasArrows;
         
         public static CustomOption modifierMini;
         public static CustomOption modifierMiniGrowingUpDuration;
@@ -453,21 +455,23 @@ namespace TheSushiRoles
             CustomOption.vanillaSettings = TheSushiRolesPlugin.Instance.Config.Bind("Preset0", "VanillaOptions", "");
 
             // Role Options
-            presetSelection = CustomOption.Create(0, Types.General, ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Preset"), presets, null, true);
+            presetSelection = CustomOption.Create(0, Types.General, ColorString(Color.cyan, "Preset"), presets, null, true);
 
             // Using new id's for the options to not break compatibilty with older versions
-            crewmateRolesCountMin = CustomOption.Create(300, Types.General, ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Minimum Crewmate Roles"), 15f, 0f, 15f, 1f, null, true, Heading: "Min/Max Roles");
-            crewmateRolesCountMax = CustomOption.Create(301, Types.General, ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Maximum Crewmate Roles"), 15f, 0f, 15f, 1f);            
-            neutralRolesCountMin = CustomOption.Create(302, Types.General, ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Minimum Neutral Roles"), 15f, 0f, 15f, 1f);
-            neutralRolesCountMax = CustomOption.Create(303, Types.General, ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Maximum Neutral Roles"), 15f, 0f, 15f, 1f);
-            neutralKillingRolesCountMin = CustomOption.Create(30211, Types.General, ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Minimum Neutral Killing Roles"), 15f, 0f, 15f, 1f);
-            neutralKillingRolesCountMax = CustomOption.Create(30311, Types.General, ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Maximum Neutral Killing Roles"), 15f, 0f, 15f, 1f);
-            impostorRolesCountMin = CustomOption.Create(304, Types.General, ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Minimum Impostor Roles"), 15f, 0f, 15f, 1f);
-            impostorRolesCountMax = CustomOption.Create(305, Types.General, ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Maximum Impostor Roles"), 15f, 0f, 15f, 1f);
-            modifiersCountMin = CustomOption.Create(306, Types.General, ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Minimum Modifiers"), 15f, 0f, 15f, 1f);
-            modifiersCountMax = CustomOption.Create(307, Types.General, ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Maximum Modifiers"), 15f, 0f, 15f, 1f);
-            abilitiesCountMin = CustomOption.Create(520, Types.General, ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Minimum Abilities"), 15f, 0f, 15f, 1f);
-            abilitiesCountMax = CustomOption.Create(521, Types.General, ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Maximum Abilities"), 15f, 0f, 15f, 1f);
+            crewmateRolesCountMin = CustomOption.Create(300, Types.General, ColorString(Color.cyan, "Minimum Crewmate Roles"), 0f, 0f, 14f, 1f, null, true, Heading: "Minimum/Maximum Count");
+            crewmateRolesCountMax = CustomOption.Create(301, Types.General, ColorString(Color.cyan, "Maximum Crewmate Roles"), 0f, 0f, 14f, 1f);
+            MinNeutralEvilRoles = CustomOption.Create(302, Types.General, ColorString(Color.cyan, "Minimum Neutral Evil Roles"), 0f, 0f, 5f, 1f);
+            MaxNeutralEvilRoles = CustomOption.Create(303, Types.General, ColorString(Color.cyan, "Maximum Neutral Evil Roles"), 0f, 0f, 5f, 1f);
+            MinNeutralBenignRoles = CustomOption.Create(525, Types.General, ColorString(Color.cyan, "Minimum Neutral Benign Roles"), 0f, 0f, 5f, 1f);
+            MaxNeutralBenignRoles = CustomOption.Create(526, Types.General, ColorString(Color.cyan, "Maximum Neutral Benign Roles"), 0f, 0f, 5f, 1f);
+            neutralKillingRolesCountMin = CustomOption.Create(527, Types.General, ColorString(Color.cyan, "Minimum Neutral Killing Roles"), 0f, 0f, 5f, 1f);
+            neutralKillingRolesCountMax = CustomOption.Create(528, Types.General, ColorString(Color.cyan, "Maximum Neutral Killing Roles"), 0f, 0f, 5f, 1f);
+            impostorRolesCountMin = CustomOption.Create(304, Types.General, ColorString(Color.cyan, "Minimum Impostor Roles"), 0f, 0f, 3f, 1f);
+            impostorRolesCountMax = CustomOption.Create(305, Types.General, ColorString(Color.cyan, "Maximum Impostor Roles"), 0f, 0f, 3f, 1f);
+            modifiersCountMin = CustomOption.Create(306, Types.General, ColorString(Color.cyan, "Minimum Modifiers"), 0f, 0f, 15f, 1f);
+            modifiersCountMax = CustomOption.Create(307, Types.General, ColorString(Color.cyan, "Maximum Modifiers"), 0f, 0f, 15f, 1f);
+            abilitiesCountMin = CustomOption.Create(308, Types.General, ColorString(Color.cyan, "Minimum Abilities"), 0f, 0f, 15f, 1f);
+            abilitiesCountMax = CustomOption.Create(309, Types.General, ColorString(Color.cyan, "Maximum Abilities"), 0f, 0f, 15f, 1f);
 
             /*isDraftMode = CustomOption.Create(600, Types.General, ColorString(Color.yellow, "Enable Role Draft"), false, null, true, null, "Role Draft");
             draftModeAmountOfChoices = CustomOption.Create(601, Types.General, ColorString(Color.yellow, "Max Amount Of Roles\nTo Choose From"), 5f, 2f, 15f, 1f, isDraftMode, false);
@@ -623,8 +627,7 @@ namespace TheSushiRoles
             vultureCanUseVents = CustomOption.Create(343, Types.Neutral, "Vulture Can Use Vents", true, vultureSpawnRate);
             vultureShowArrows = CustomOption.Create(344, Types.Neutral, "Show Arrows Pointing Towards The Corpses", true, vultureSpawnRate);
 
-            AmnesiacSpawnRate = CustomOption.Create(3521, Types.Neutral, ColorString(Amnesiac.Color, "Amnesiac"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            AmnesiacHasArrows = CustomOption.Create(3522, Types.Neutral, "Amnesiac Has Arrows Pointing To Corpses", false, AmnesiacSpawnRate);
+            AmnesiacSpawnRate = CustomOption.Create(521, Types.Neutral, ColorString(Amnesiac.Color, "Amnesiac"), 0f, 0f, 100f, 10f, null, true, Format: "%");
 
             RomanticSpawnChance = CustomOption.Create(3501, Types.Neutral, ColorString(Romantic.Color, "Romantic"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             RomanticKnowsRole = CustomOption.Create(3551, Types.Neutral, "Romantic And Beloved Know Each Other's Role", false, RomanticSpawnChance);
@@ -641,7 +644,7 @@ namespace TheSushiRoles
             ProsecutorBecomeEnum = CustomOption.Create(3545, Types.Neutral, "Prosecutor Role On Target Death", new string [] {"Jester", "Amnesiac", "Pursuer" }, ProsecutorSpawnRate);
             ProsecutorVision = CustomOption.Create(3541, Types.Neutral, "Vision", 1f, 0.25f, 3f, 0.25f, ProsecutorSpawnRate);
             ProsecutorKnowsRole = CustomOption.Create(3551, Types.Neutral, "Prosecutor Knows Target Role", true, ProsecutorSpawnRate);
-            ProsecutorCanCallEmergency = CustomOption.Create(3521, Types.Neutral, "Prosecutor Can Call Emergency Meeting", true, ProsecutorSpawnRate);
+            ProsecutorCanCallEmergency = CustomOption.Create(524, Types.Neutral, "Prosecutor Can Call Emergency Meeting", true, ProsecutorSpawnRate);
 
             ShowHidePursuerSettings = CustomOption.Create(3561, Types.Neutral, "Show/Hide Pursuer Options", true, null, true);
             pursuerCooldown = CustomOption.Create(356, Types.Neutral, "Pursuer Blank Cooldown", 30f, 5f, 60f, 2.5f, ShowHidePursuerSettings, Format: "s");
@@ -712,8 +715,8 @@ namespace TheSushiRoles
             MysticLimitSoulDuration = CustomOption.Create(163, Types.Crewmate, "Mystic Limit Soul Duration", false, MysticSpawnRate);
             MysticSoulDuration = CustomOption.Create(162, Types.Crewmate, "Mystic Soul Duration", 15f, 0f, 120f, 5f, MysticLimitSoulDuration, Format: "s");
             MysticCooldown = CustomOption.Create(163, Types.Crewmate, "Mystic Reveal Cooldown", 30f, 10f, 120f, 2.5f, MysticSpawnRate, Format: "s");
-            MysticCharges = CustomOption.Create(16311, Types.Crewmate, "Initial Mystic Charges", 1f, 0f, 5f, 1f, MysticSpawnRate);
-            MysticRechargeTasksNumber = CustomOption.Create(16312, Types.Crewmate, "Number Of Tasks The Mystic Needs For Recharging", 2f, 1f, 10f, 1f, MysticSpawnRate);
+            MysticCharges = CustomOption.Create(519, Types.Crewmate, "Initial Mystic Charges", 1f, 0f, 5f, 1f, MysticSpawnRate);
+            MysticRechargeTasksNumber = CustomOption.Create(520, Types.Crewmate, "Number Of Tasks The Mystic Needs For Recharging", 2f, 1f, 10f, 1f, MysticSpawnRate);
         
             hackerSpawnRate = CustomOption.Create(170, Types.Crewmate, ColorString(Hacker.Color, "Hacker"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             hackerCooldown = CustomOption.Create(171, Types.Crewmate, "Hacker Cooldown", 30f, 5f, 60f, 5f, hackerSpawnRate, Format: "s");
@@ -758,6 +761,7 @@ namespace TheSushiRoles
             timeMasterCooldown = CustomOption.Create(131, Types.Crewmate, "Time Master Cooldown", 30f, 20f, 120f, 5f, timeMasterSpawnRate, Format: "s");
             timeMasterRewindTime = CustomOption.Create(132, Types.Crewmate, "Rewind Time Duration", 3f, 1f, 5f, 1f, timeMasterSpawnRate, Format: "s");
             TimeMasterReviveDuringRewind = CustomOption.Create(133, Types.Crewmate, "Time Master Revives During Rewind", false, timeMasterSpawnRate);
+            TimeMasterCharges = CustomOption.Create(134, Types.Crewmate, "Rewind Max Charges", 1f, 1f, 5f, 1f, timeMasterSpawnRate);
 
             mediumSpawnRate = CustomOption.Create(360, Types.Crewmate, ColorString(Medium.Color, "Medium"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             mediumCooldown = CustomOption.Create(361, Types.Crewmate, "Medium Questioning Cooldown", 30f, 5f, 120f, 5f, mediumSpawnRate, Format: "s");
@@ -846,7 +850,7 @@ namespace TheSushiRoles
             DisableMedbayAnimation = CustomOption.Create(3131, Types.General, "Disable Medbay Walk Animation", true);
             GameStartCooldowns = CustomOption.Create(518, Types.General, "Game Start Cooldowns", 10f, 10f, 30f, 2.5f, Format: "s");
             LimitAbilities = CustomOption.Create(1321, Types.General, "Limit Player Abilities When 2 Players Are Left Alive", true);
-            anyPlayerCanStopStart = CustomOption.Create(2, Types.General, ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Any Player Can Stop The Start"), false, null, false);
+            anyPlayerCanStopStart = CustomOption.Create(2, Types.General, "Any Player Can Stop The Start", false, null, false);
             blockSkippingInEmergencyMeetings = CustomOption.Create(4, Types.General, "Block Skipping In Emergency Meetings", false);
             noVoteIsSelfVote = CustomOption.Create(5, Types.General, "No Vote Is Self Vote", false, blockSkippingInEmergencyMeetings);
             hidePlayerNames = CustomOption.Create(6, Types.General, "Hide Player Names", false);

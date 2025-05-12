@@ -38,6 +38,8 @@ using AmongUs.Data;
 using TheSushiRoles.Modules.CustomHats;
 using Reactor.Utilities;
 using TheSushiRoles.Modules.Debugger;
+using System.Reflection;
+using System.IO;
 
 namespace TheSushiRoles
 {
@@ -57,6 +59,7 @@ namespace TheSushiRoles
         public Harmony Harmony { get; } = new Harmony(Id);
         public static string RobotName { get; set; } = "Bot";
         public static bool IKnowWhatImDoing { get; set; } = false;
+        public static string RuntimeLocation;
         public static bool Persistence { get; set; } = true;
         public static TheSushiRolesPlugin Instance;
 
@@ -118,6 +121,7 @@ namespace TheSushiRoles
             Logger = Log;
             Instance = this;
             CustomColors.Load();
+            RuntimeLocation = Path.GetDirectoryName(Assembly.GetAssembly(typeof(TheSushiRolesPlugin)).Location);
 
             Singleton = this;
 
@@ -151,7 +155,6 @@ namespace TheSushiRoles
             Harmony.PatchAll();
             
             CustomOptionHolder.Load();
-            CustomHatManager.LoadHats();
             AddComponent<ModUpdater>();
             SubmergedCompatibility.Initialize();
             AddToKillDistanceSetting.AddKillDistance();

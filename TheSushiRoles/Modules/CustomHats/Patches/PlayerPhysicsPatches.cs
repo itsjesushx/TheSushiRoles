@@ -1,6 +1,5 @@
 ﻿using TheSushiRoles.Modules.CustomHats.Extensions;
 
-
 namespace TheSushiRoles.Modules.CustomHats.Patches;
 
 [HarmonyPatch(typeof(PlayerPhysics))]

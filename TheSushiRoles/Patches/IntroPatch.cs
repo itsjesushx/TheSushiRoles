@@ -136,18 +136,18 @@ namespace TheSushiRoles.Patches
         public static void SetupIntroTeam(IntroCutscene __instance, ref  Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) 
         {
             List<RoleInfo> infos = RoleInfo.GetRoleInfoForPlayer(PlayerControl.LocalPlayer);
-            RoleInfo roleInfo = infos.Where(info => info.FactionId != Factions.Other).FirstOrDefault();
+            RoleInfo roleInfo = infos.Where(info => info.FactionId != Faction.Other).FirstOrDefault();
             var neutralColor = new Color32(76, 84, 78, 255);
             if (roleInfo == null) return;
             /*if (roleInfo == null || roleInfo == RoleInfo.crewmate) 
             {
-                if (Modules.RoleDraft.isEnabled && CustomOptionHolder.neutralRolesCountMax.GetSelection() > 0) 
+                if (Modules.RoleDraft.isEnabled && CustomOptionHolder.MaxNeutralEvilRoles.GetSelection() > 0) 
                 {
                     __instance.TeamTitle.text = "<size=60%>Crewmate" + Utils.ColorString(Color.white, " / ") + Utils.ColorString(neutralColor, "Neutral") + "</size>";
                 }
                 return;
             }*/
-            if (roleInfo.FactionId == Factions.Neutral) 
+            if (roleInfo.FactionId == Faction.Neutrals) 
             {
                 __instance.BackgroundBar.material.color = neutralColor;
                 __instance.TeamTitle.text = "Neutral";
@@ -183,7 +183,7 @@ namespace TheSushiRoles.Patches
             {
                 // Don't override the intro of the vanilla roles
                 List<RoleInfo> infos = RoleInfo.GetRoleInfoForPlayer(PlayerControl.LocalPlayer);
-                RoleInfo roleInfo = infos.Where(info => info.FactionId != Factions.Other).FirstOrDefault();
+                RoleInfo roleInfo = infos.Where(info => info.FactionId != Faction.Other).FirstOrDefault();
 
                 List<ModifierInfo> infos2 = ModifierInfo.GetModifierInfoForPlayer(PlayerControl.LocalPlayer);
 

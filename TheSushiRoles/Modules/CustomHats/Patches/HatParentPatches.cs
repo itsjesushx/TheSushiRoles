@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-
 using PowerTools;
-using TheSushiRoles;
 using TheSushiRoles.Modules.CustomHats.Extensions;
 using UnityEngine;
 

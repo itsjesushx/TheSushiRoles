@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text.Json;
 using BepInEx.Unity.IL2CPP.Utils;
-
 using UnityEngine;
 using UnityEngine.Networking;
 using static TheSushiRoles.Modules.CustomHats.CustomHatManager;
@@ -11,18 +10,18 @@ namespace TheSushiRoles.Modules.CustomHats;
 
 public class HatsLoader : MonoBehaviour
 {
-    private bool IsRunning;
+    private bool isRunning;
 
     public void FetchHats()
     {
-        if (IsRunning) return;
+        if (isRunning) return;
         this.StartCoroutine(CoFetchHats());
     }
 
     [HideFromIl2Cpp]
     private IEnumerator CoFetchHats()
     {
-        IsRunning = true;
+        isRunning = true;
         var www = new UnityWebRequest();
         www.SetMethod(UnityWebRequest.UnityWebRequestMethod.Get);
         TheSushiRolesPlugin.Logger.LogMessage($"Download manifest at: {RepositoryUrl}/{ManifestFileName}");
@@ -60,7 +59,7 @@ public class HatsLoader : MonoBehaviour
             yield return CoDownloadHatAsset(fileName);
         }
 
-        IsRunning = false;
+        isRunning = false;
     }
 
     private static IEnumerator CoDownloadHatAsset(string fileName)
