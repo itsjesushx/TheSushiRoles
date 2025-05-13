@@ -8,7 +8,8 @@ namespace TheSushiRoles.Patches
     {
         [HarmonyPrefix]
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.CalculateLightRadius))]
-        public static bool Prefix(ref float __result, ShipStatus __instance, [HarmonyArgument(0)] NetworkedPlayerInfo player) {
+        public static bool Prefix(ref float __result, ShipStatus __instance, [HarmonyArgument(0)] NetworkedPlayerInfo player) 
+        {
             if ((!__instance.Systems.ContainsKey(SystemTypes.Electrical) && !Utils.IsFungle()) || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return true;
 
                 // If player is a role which has Impostor vision
@@ -19,17 +20,22 @@ namespace TheSushiRoles.Patches
             }
 
             // If player is Lighter with ability active
-            if (Lighter.Player != null && Lighter.Player.PlayerId == player.PlayerId) {
+            if (Lighter.Player != null && Lighter.Player.PlayerId == player.PlayerId) 
+            {
                 float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
                 __result = Mathf.Lerp(__instance.MaxLightRadius * Lighter.lighterModeLightsOffVision, __instance.MaxLightRadius * Lighter.lighterModeLightsOnVision, unlerped);
             }
 
             // If there is a Trickster with their ability active
-            else if (Trickster.Player != null && Trickster.lightsOutTimer > 0f) {
+            else if (Trickster.Player != null && Trickster.lightsOutTimer > 0f) 
+            {
                 float lerpValue = 1f;
-                if (Trickster.lightsOutDuration - Trickster.lightsOutTimer < 0.5f) {
+                if (Trickster.lightsOutDuration - Trickster.lightsOutTimer < 0.5f) 
+                {
                     lerpValue = Mathf.Clamp01((Trickster.lightsOutDuration - Trickster.lightsOutTimer) * 2);
-                } else if (Trickster.lightsOutTimer < 0.5) {
+                } 
+                else if (Trickster.lightsOutTimer < 0.5) 
+                {
                     lerpValue = Mathf.Clamp01(Trickster.lightsOutTimer * 2);
                 }
 
@@ -53,7 +59,8 @@ namespace TheSushiRoles.Patches
             }
 
             // Default light radius
-            else {
+            else 
+            {
                 __result = GetNeutralLightRadius(__instance, false);
             }
             if (Sunglasses.Players.FindAll(x => x.PlayerId == player.PlayerId).Count > 0) // Sunglasses

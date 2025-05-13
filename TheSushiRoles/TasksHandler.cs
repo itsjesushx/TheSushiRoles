@@ -25,10 +25,10 @@ namespace TheSushiRoles
         }
 
         [HarmonyPatch(typeof(GameData), nameof(GameData.RecomputeTaskCounts))]
-        private static class GameDataRecomputeTaskCountsPatch {
-            private static bool Prefix(GameData __instance) {
-               
-
+        private static class GameDataRecomputeTaskCountsPatch 
+        {
+            private static bool Prefix(GameData __instance) 
+            {
                 var totalTasks = 0;
                 var completedTasks = 0;
                 

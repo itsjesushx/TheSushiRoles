@@ -24,7 +24,6 @@ namespace TheSushiRoles
         public static bool ShieldFirstKill = false;
         public static bool ShowVentsOnMap = true;
         public static bool ShowChatNotifications = true;
-        public static bool SkeldVentImprovements = false;
         public static bool LimitAbilities = true;
         public static bool DisableMedbayAnimation = true;
 
@@ -57,7 +56,6 @@ namespace TheSushiRoles
             hidePlayerNames = CustomOptionHolder.hidePlayerNames.GetBool();
             allowParallelMedBayScans = CustomOptionHolder.allowParallelMedBayScans.GetBool();
             ShieldFirstKill = CustomOptionHolder.ShieldFirstKill.GetBool();
-            SkeldVentImprovements = CustomOptionHolder.SkeldVentImprovements.GetBool();
             LimitAbilities = CustomOptionHolder.LimitAbilities.GetBool();
             DisableMedbayAnimation = CustomOptionHolder.DisableMedbayAnimation.GetBool();
             GameStartCooldowns = CustomOptionHolder.GameStartCooldowns.GetFloat();

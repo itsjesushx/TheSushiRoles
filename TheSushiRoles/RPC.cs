@@ -1,5 +1,4 @@
 using Hazel;
-using static TheSushiRoles.HudManagerStartPatch;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -19,7 +18,7 @@ namespace TheSushiRoles
             ClearAndReloadMapOptions();
             GlobalClearAndReload();
             GameHistory.ClearGameHistory();
-            SetCustomButtonCooldowns();
+            HudManagerStartPatch.SetCustomButtonCooldowns();
             ReloadPluginOptions();
         }
 
@@ -361,6 +360,9 @@ namespace TheSushiRoles
                     break;
                 case ModifierId.Mini:
                     Mini.Player = player;
+                    break;
+                case ModifierId.Giant:
+                    Giant.Player = player;
                     break;
                 case ModifierId.Vip:
                     Vip.Players.Add(player);
@@ -2000,7 +2002,7 @@ namespace TheSushiRoles
                     Pursuer.blankedList.Remove(sender);
                     break;
                 case GhostInfoTypes.PoisonerTimer:
-                    poisonerKillButton.Timer = (float)reader.ReadByte();
+                    HudManagerStartPatch.poisonerKillButton.Timer = (float)reader.ReadByte();
                     break;
                 case GhostInfoTypes.DeathReasonAndKiller:
                     GameHistory.CreateDeathReason(Utils.PlayerById(reader.ReadByte()), (DeadPlayer.CustomDeathReason)reader.ReadByte(), Utils.PlayerById(reader.ReadByte()));

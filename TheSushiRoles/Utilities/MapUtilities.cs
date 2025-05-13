@@ -1,9 +1,7 @@
 using System.Collections.Generic;
-
 using Il2CppSystem;
 
 namespace TheSushiRoles.Utilities;
-
 public static class MapUtilities
 {
     public static ShipStatus CachedShipStatus = ShipStatus.Instance;

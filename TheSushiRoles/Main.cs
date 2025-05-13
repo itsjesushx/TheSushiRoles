@@ -22,24 +22,17 @@ global using AmongUs.GameOptions;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
-
-using Hazel;
 using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine;
 using TheSushiRoles.Modules;
 using Il2CppSystem.Security.Cryptography;
-using TheSushiRoles.Modules.Debugger.Embedded.ReactorCoroutines;
 using TheSushiRoles.Modules.Debugger.Components;
 using Il2CppSystem.Text;
 using Reactor.Networking.Attributes;
 using AmongUs.Data;
-using TheSushiRoles.Modules.CustomHats;
 using Reactor.Utilities;
-using TheSushiRoles.Modules.Debugger;
-using System.Reflection;
-using System.IO;
 
 namespace TheSushiRoles
 {

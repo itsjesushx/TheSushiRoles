@@ -1,10 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
-using System.Linq;
 
 namespace TheSushiRoles
 {

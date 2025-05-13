@@ -30,6 +30,7 @@ namespace TheSushiRoles
         Lazy,
         Sleuth,
         Tiebreaker,
+        Giant,
         Sunglasses,
         Mini,
         Vip,

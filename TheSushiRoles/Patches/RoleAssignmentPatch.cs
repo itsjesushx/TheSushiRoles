@@ -443,6 +443,7 @@ namespace TheSushiRoles.Patches
                 ModifierId.Lazy,
                 ModifierId.Sleuth,
                 ModifierId.Sunglasses,
+                ModifierId.Giant,
                 ModifierId.Vip,
                 ModifierId.Invert,
                 ModifierId.Chameleon,
@@ -659,6 +660,8 @@ namespace TheSushiRoles.Patches
                     selection = CustomOptionHolder.modifierTieBreaker.GetSelection(); break;
                 case ModifierId.Mini:
                     selection = CustomOptionHolder.modifierMini.GetSelection(); break;
+                case ModifierId.Giant:
+                    selection = CustomOptionHolder.ModifierGiant.GetSelection(); break;
                 case ModifierId.Bait:
                     selection = CustomOptionHolder.modifierBait.GetSelection();
                     if (multiplyQuantity) selection *= CustomOptionHolder.modifierBaitQuantity.GetQuantity();

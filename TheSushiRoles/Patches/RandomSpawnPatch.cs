@@ -216,7 +216,7 @@ namespace TheSushiRoles.Patches
                     new Vector3(6.5f, -4.5f, 0f) //medbay bottom
                 };
 
-                List<Vector3> airshipSpawn = new List<Vector3>() {}; //no spawns since it already has random spawns
+                List<Vector3> airshipSpawn = new List<Vector3>() {}; // no spawns since it already has random spawns
 
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
@@ -484,7 +484,7 @@ namespace TheSushiRoles.Patches
                     new Vector3(6.5f, -4.5f, 0f) //medbay bottom
                 };
 
-                List<Vector3> airshipSpawn = new List<Vector3>() {}; //no spawns since it already has random spawns
+                List<Vector3> airshipSpawn = new List<Vector3>() {}; // no spawns since it already has random spawns
 
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {

@@ -7,9 +7,7 @@ namespace TheSushiRoles.Patches
     {
         /* 
          * Moving Plattform / Zipline / Ladders move the player out of bounds, thus we want to disable functions of the mod if the player is currently using one of these.
-         * Save the players anti tp position before using it.
-         * 
-         * Zipline can also break camo, fix that one too.
+         * Save the players Lazy position before using it.
          */
        
         public static bool IsUsingTransportation(PlayerControl pc) => pc.inMovingPlat || pc.onLadder;

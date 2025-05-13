@@ -5,7 +5,7 @@ namespace TheSushiRoles
     [HarmonyPatch]
     public static class TheSushiRoles
     {
-        public static System.Random rnd = new System.Random((int)DateTime.Now.Ticks);
+        public static Random rnd = new Random((int)DateTime.Now.Ticks);
         public static DateTime startTime = DateTime.UtcNow;
         public static void GlobalClearAndReload() 
         {
@@ -79,6 +79,7 @@ namespace TheSushiRoles
             Mini.ClearAndReload();
             Disperser.ClearAndReload();
             Vip.ClearAndReload();
+            Giant.ClearAndReload();
             Invert.ClearAndReload();
             Chameleon.ClearAndReload();
             Armored.ClearAndReload();

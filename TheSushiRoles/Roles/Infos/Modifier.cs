@@ -34,6 +34,7 @@ namespace TheSushiRoles.Roles.ModifierInfo
         public readonly static ModifierInfo invert = new("Invert", Color.yellow, "Your movement is inverted", "Your movement is inverted", ModifierId.Invert);
         public readonly static ModifierInfo chameleon = new("Chameleon", Color.yellow, "You're hard to see when not moving", "You're hard to see when not moving", ModifierId.Chameleon);
         public readonly static ModifierInfo armored = new("Armored", Color.yellow, "You are protected from one murder attempt", "You are protected from one murder attempt", ModifierId.Armored);
+        public readonly static ModifierInfo giant = new("Giant", Color.yellow, "You are bigger than anyone", "You are bigger than others", ModifierId.Giant);
     
         #endregion
         
@@ -44,6 +45,7 @@ namespace TheSushiRoles.Roles.ModifierInfo
             armored,
             bait,
             chameleon,
+            giant,
             invert,
             lover,
             mini,
@@ -71,6 +73,7 @@ namespace TheSushiRoles.Roles.ModifierInfo
                 if (Sleuth.Players.Any(x => x.PlayerId == player.PlayerId)) infos.Add(sleuth);
                 if (Sunglasses.Players.Any(x => x.PlayerId == player.PlayerId)) infos.Add(sunglasses);
                 if (player == Mini.Player) infos.Add(mini);
+                if (player == Giant.Player) infos.Add(giant);
                 if (Invert.Players.Any(x => x.PlayerId == player.PlayerId)) infos.Add(invert);
                 if (Chameleon.Players.Any(x => x.PlayerId == player.PlayerId)) infos.Add(chameleon);
                 if (player == Armored.Player) infos.Add(armored);

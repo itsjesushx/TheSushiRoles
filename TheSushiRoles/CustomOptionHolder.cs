@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Sentry.Unity.NativeUtils;
 using UnityEngine;
 using Types = TheSushiRoles.CustomOptionType;
 
@@ -358,6 +357,8 @@ namespace TheSushiRoles
         public static CustomOption modifierMiniGrowingUpDuration;
         public static CustomOption modifierMiniGrowingUpInMeeting;
 
+        public static CustomOption ModifierGiant;
+
         public static CustomOption ModifierSleuth;
         public static CustomOption ModifierSleuthQuantity;
 
@@ -394,7 +395,6 @@ namespace TheSushiRoles
 
         public static CustomOption RandomSpawns;
         public static CustomOption LimitAbilities;
-        public static CustomOption SkeldVentImprovements;
 
         public static CustomOption BPVitalsLab;
         public static CustomOption EnableBetterPolus;
@@ -808,6 +808,8 @@ namespace TheSushiRoles
             modifierMiniGrowingUpDuration = CustomOption.Create(1062, Types.Modifier, "Mini Growing Up Duration", 400f, 100f, 1500f, 100f, modifierMini);
             modifierMiniGrowingUpInMeeting = CustomOption.Create(1063, Types.Modifier, "Mini Grows Up In Meeting", true, modifierMini);
 
+            ModifierGiant = CustomOption.Create(529, Types.Modifier, ColorString(Color.yellow, "Giant"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+
             modifierVip = CustomOption.Create(1070, Types.Modifier, ColorString(Color.yellow, "VIP"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             modifierVipQuantity = CustomOption.Create(1071, Types.Modifier, ColorString(Color.yellow, "VIP Quantity"), rates, modifierVip);
             modifierVipShowColor = CustomOption.Create(1072, Types.Modifier, "Show Team Color", true, modifierVip);
@@ -862,8 +864,6 @@ namespace TheSushiRoles
 
             camsNightVision = CustomOption.Create(11, Types.General, "Cams Switch To Night Vision If Lights Are Off", false, null, true, Heading: "Night Vision Cams");
             camsNoNightVisionIfImpVision = CustomOption.Create(12, Types.General, "Impostor Vision Ignores Night Vision Cams", false, camsNightVision, false);
-
-            SkeldVentImprovements = CustomOption.Create(3313, Types.General, "Enable Vent Improvements", false, null, true, Heading: "Better Skeld Settings");
 
             EnableBetterPolus = CustomOption.Create(3314, Types.General, "Enable Better Polus", false, null, true, Heading: "Better Polus Settings");
             BPVentImprovements = CustomOption.Create(3315, Types.General, "Enable Vent Layout", false, EnableBetterPolus);

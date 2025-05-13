@@ -110,7 +110,7 @@ namespace TheSushiRoles.Patches
 
         public static void BendTimeUpdate() 
         {
-            if (TimeMaster.isRewinding) 
+            if (TimeMaster.isRewinding)
             {
                 if (GameHistory.LocalPlayerPositions.Count > 0)
                 {
@@ -625,39 +625,74 @@ namespace TheSushiRoles.Patches
         {
             // Set default player size
             CircleCollider2D collider = p.Collider.CastFast<CircleCollider2D>();
-
             p.transform.localScale = new Vector3(0.7f, 0.7f, 1f);
             collider.radius = Mini.defaultColliderRadius;
             collider.offset = Mini.defaultColliderOffset * Vector2.down;
 
-            // Set adapted player size to Mini, Glitch and Morphling
-            if (Mini.Player == null || Camouflager.CamouflageTimer > 0f || Utils.MushroomSabotageActive()  || Mini.Player == Morphling.Player && Morphling.morphTimer > 0 || Mini.Player == Glitch.Player && Glitch.MimicTimer > 0 || Mini.Player == Hitman.Player && Hitman.MorphTimer > 0) return;
-
-            float growingProgress = Mini.GrowingProgress();
-            float scale = growingProgress * 0.35f + 0.35f;
-            float correctedColliderRadius = Mini.defaultColliderRadius * 0.7f / scale; // scale / 0.7f is the factor by which we decrease the player size, hence we need to increase the collider size by 0.7f / scale
-
-            if (p == Mini.Player) 
+            // Handle Mini (scaling down)
+            if (Mini.Player != null && 
+                !(Camouflager.CamouflageTimer > 0f || Utils.MushroomSabotageActive() || 
+                  (Mini.Player == Morphling.Player && Morphling.morphTimer > 0) ||
+                  (Mini.Player == Glitch.Player && Glitch.MimicTimer > 0) ||
+                  (Mini.Player == Hitman.Player && Hitman.MorphTimer > 0)))
             {
-                p.transform.localScale = new Vector3(scale, scale, 1f);
-                collider.radius = correctedColliderRadius;
+                float growingProgress = Mini.GrowingProgress();
+                float scale = growingProgress * 0.35f + 0.35f;
+                float correctedColliderRadius = Mini.defaultColliderRadius * 0.7f / scale;
+        
+                if (p == Mini.Player) 
+                {
+                    p.transform.localScale = new Vector3(scale, scale, 1f);
+                    collider.radius = correctedColliderRadius;
+                }
+                if (Morphling.Player != null && p == Morphling.Player && Morphling.morphTarget == Mini.Player && Morphling.morphTimer > 0f) 
+                {
+                    p.transform.localScale = new Vector3(scale, scale, 1f);
+                    collider.radius = correctedColliderRadius;
+                }
+                if (Glitch.Player != null && p == Glitch.Player && Glitch.MimicTarget == Mini.Player && Glitch.MimicTimer > 0f) 
+                {
+                    p.transform.localScale = new Vector3(scale, scale, 1f);
+                    collider.radius = correctedColliderRadius;
+                }
+                if (Hitman.Player != null && p == Hitman.Player && Hitman.MorphTarget == Mini.Player && Hitman.MorphTimer > 0f) 
+                {
+                    p.transform.localScale = new Vector3(scale, scale, 1f);
+                    collider.radius = correctedColliderRadius;
+                }
             }
-            if (Morphling.Player != null && p == Morphling.Player && Morphling.morphTarget == Mini.Player && Morphling.morphTimer > 0f) 
+        
+            // Handle Giant (scaling up)
+            if (Giant.Player != null)
             {
-                p.transform.localScale = new Vector3(scale, scale, 1f);
-                collider.radius = correctedColliderRadius;
-            }
-            if (Glitch.Player != null && p == Glitch.Player && Glitch.MimicTarget == Mini.Player && Glitch.MimicTimer > 0f) 
-            {
-                p.transform.localScale = new Vector3(scale, scale, 1f);
-                collider.radius = correctedColliderRadius;
-            }
-            if (Hitman.Player != null && p == Hitman.Player && Hitman.MorphTarget == Mini.Player && Hitman.MorphTimer > 0f) 
-            {
-                p.transform.localScale = new Vector3(scale, scale, 1f);
-                collider.radius = correctedColliderRadius;
+                Vector3 giantScale = Giant.SizeFactor;
+                float baseRadius = Mini.defaultColliderRadius; // same reference point as Mini
+                float scaleFactor = giantScale.x / 0.7f;
+                float correctedColliderRadius = baseRadius * 0.7f / scaleFactor;
+        
+                if (p == Giant.Player)
+                {
+                    p.transform.localScale = giantScale;
+                    collider.radius = correctedColliderRadius;
+                }
+                if (Morphling.Player != null && p == Morphling.Player && Morphling.morphTarget == Giant.Player && Morphling.morphTimer > 0f) 
+                {
+                    p.transform.localScale = giantScale;
+                    collider.radius = correctedColliderRadius;
+                }
+                if (Glitch.Player != null && p == Glitch.Player && Glitch.MimicTarget == Giant.Player && Glitch.MimicTimer > 0f) 
+                {
+                    p.transform.localScale = giantScale;
+                    collider.radius = correctedColliderRadius;
+                }
+                if (Hitman.Player != null && p == Hitman.Player && Hitman.MorphTarget == Giant.Player && Hitman.MorphTimer > 0f) 
+                {
+                    p.transform.localScale = giantScale;
+                    collider.radius = correctedColliderRadius;
+                }
             }
         }
+
         public static void UpdatePlayerInfo() 
         {
             Vector3 colorBlindTextMeetingInitialLocalPos = new Vector3(0.3384f, -0.16666f, -0.01f);
@@ -1264,6 +1299,10 @@ namespace TheSushiRoles.Patches
                 HudManagerStartPatch.sidekickKillButton.MaxTimer = Sidekick.Cooldown * multiplier;
                 HudManagerStartPatch.warlockCurseButton.MaxTimer = Warlock.Cooldown * multiplier;
                 HudManagerStartPatch.cleanerCleanButton.MaxTimer = Cleaner.Cooldown * multiplier;
+                HudManagerStartPatch.PredatorKillButton.MaxTimer = Predator.TerminateKillCooldown * multiplier;
+                HudManagerStartPatch.HitmanKillButton.MaxTimer = Hitman.Cooldown * multiplier;
+                HudManagerStartPatch.JuggernautKillButton.MaxTimer = Juggernaut.Cooldown * multiplier;
+                HudManagerStartPatch.WerewolfMaulButton.MaxTimer = Werewolf.Cooldown * multiplier;
                 HudManagerStartPatch.witchSpellButton.MaxTimer = (Witch.Cooldown + Witch.currentCooldownAddition) * multiplier;
                 HudManagerStartPatch.ninjaButton.MaxTimer = Ninja.Cooldown * multiplier;
             }
@@ -1279,7 +1318,8 @@ namespace TheSushiRoles.Patches
             }
         }
 
-        public static void Postfix(PlayerControl __instance) {
+        public static void Postfix(PlayerControl __instance) 
+        {
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
 
             // Mini and Morphling shrink
