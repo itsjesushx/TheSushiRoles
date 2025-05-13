@@ -15,27 +15,27 @@ Even more roles are coming soon.
 
 **Roles & Modifiers List:**
 
-| Impostor Roles | Crewmate Roles | Neutral Roles | Modifiers |
+| Impostor Roles | Crewmate Roles | Neutral Roles | Modifiers | Abilities |
 |----------|-------------|-----------------|----------------|
-| [Grenadier](#grenadier) | [Mayor](#mayor) | [Jester](#jester) | [Sleuth](#sleuth) |
-| [Undertaker](#undertaker) | [Engineer](#engineer) | [Arsonist](#arsonist) | [Lazy](#lazy) |
-| [Yo-Yo](#yoyo) | [Sheriff](#sheriff) | [Jackal](#jackal) | [Tie Breaker](#tie-breaker) | 
-| [Morphling](#morphling) | [Trapper](#trapper)| [Sidekick](#sidekick) | [Bait](#bait) |
-| [Camouflager](#camouflager) | [Lighter](#lighter) | [Vulture](#vulture) | [Lovers](#lovers) ||
-| [Poisoner](#poisoner) | [Detective](#detective) | [Lawyer](#lawyer) | [Sunglasses](#sunglasses) |
-| [Eraser](#eraser) | [Time Master](#time-master) | [Prosecutor](#prosecutor) | [Mini](#mini) |
-| [Trickster](#trickster) | [Medic](#medic) | [Pursuer](#pursuer) | [VIP](#vip) |
-| [Cleaner](#cleaner) | [Swapper](#swapper) | [Agent](#agent) | [Invert](#invert) |
-| [Warlock](#warlock) | [Mystic](#mystic) | [Glitch](#glitch)    | [Chameleon](#chameleon) |
-| [Bounty Hunter](#bounty-hunter) | [Hacker](#hacker) | [Juggernaut](#Juggernaut)   | [Armored](#armored)
+| [Grenadier](#grenadier) | [Mayor](#mayor) | [Jester](#jester) | [Sleuth](#sleuth) | [Paranoid](#paranoid) |
+| [Undertaker](#undertaker) | [Engineer](#engineer) | [Arsonist](#arsonist) | [Lazy](#lazy) | [Coward](#coward) |
+| [Yo-Yo](#yoyo) | [Sheriff](#sheriff) | [Jackal](#jackal) | [Tie Breaker](#tie-breaker) |  |
+| [Morphling](#morphling) | [Trapper](#trapper)| [Sidekick](#sidekick) | [Bait](#bait) | |
+| [Camouflager](#camouflager) | [Lighter](#lighter) | [Vulture](#vulture) | [Lovers](#lovers) | |
+| [Poisoner](#poisoner) | [Detective](#detective) | [Lawyer](#lawyer) | [Sunglasses](#sunglasses) | |
+| [Eraser](#eraser) | [Time Master](#time-master) | [Prosecutor](#prosecutor) | [Mini](#mini) | |
+| [Trickster](#trickster) | [Medic](#medic) | [Pursuer](#pursuer) | [VIP](#vip) |  |
+| [Cleaner](#cleaner) | [Swapper](#swapper) | [Agent](#agent) | [Invert](#invert) | |
+| [Warlock](#warlock) | [Mystic](#mystic) | [Glitch](#glitch)    | [Chameleon](#chameleon) | |
+| [Bounty Hunter](#bounty-hunter) | [Hacker](#hacker) | [Juggernaut](#Juggernaut)   | [Armored](#armored) |
 | [Witch](#witch) | [Tracker](#tracker) | [Predator](#serial-killer)  |  |
-| [Ninja](#ninja) | [Crusader](#crusader) | [Romantic](#romantic)   |    |
-| | [Spy](#spy) | [Werewolf](#werewolf)   |  |
-| | [Portalmaker](#portalmaker) | [Amnesiac](#amnesiac) |  |
-| | [Vigilante](#vigilante) |  [Plaguebearer](#plaguebearer) |  |
-|  | [Medium](#medium) | [Pestilence](#plaguebearer)  |  |
-|  |[Veteran](#veteran)    | |  |
-|  |[Oracle](#oracle) |  |  |
+| [Ninja](#ninja) | [Crusader](#crusader) | [Romantic](#romantic)   |  |
+| | [Spy](#spy) | [Werewolf](#werewolf) |  | |
+| | [Portalmaker](#portalmaker) | [Amnesiac](#amnesiac) |  |  |
+| | [Vigilante](#vigilante) |  [Plaguebearer](#plaguebearer) |  |  |
+|  | [Medium](#medium) | [Pestilence](#plaguebearer)  |  |  |
+|  |[Veteran](#veteran)    |  |  |  |
+|  |[Oracle](#oracle) |  |  |  |
 |  | |  |  |
 
 The [Role Assignment](#role-assignment) section explains how the roles are being distributed among the players.
@@ -1243,6 +1243,37 @@ The traps have a maximum of charges (uses) and a configurable amount of tasks ar
 | Show Anonymous Map | -
 | Trap Information Type | "Name", "Role", "Good/Evil Role"
 | Trap Duration | -
+-----------------------
+
+# Abilities
+An Ability is an addition to your Impostor/Neutral/Crewmate role.
+Some Abilities can be ingame more than once (Quantity option).
+Others are made for a specific faction Only.
+
+## Coward
+
+The Coward ability gives the player a remote button like the Mayor. They can use it from anywhere as long as there's no sabotages actives. Can be used once per game.\
+\
+**NOTE**
+- Impostor, Neutral or Crewmate roles can have this Ability
+
+### Game Options
+| Name | Description |
+|----------|:-------------:|
+| Coward Spawn Chance | -
+-----------------------
+
+## Paranoid
+
+The Paranoid always sees the closest player to them with a yellow arrow.\
+\
+**NOTE**
+- Impostor, Neutral or Crewmate roles can have this Ability
+
+### Game Options
+| Name | Description |
+|----------|:-------------:|
+| Paranoid Spawn Chance | -
 -----------------------
 
 # Modifier
