@@ -41,13 +41,13 @@ namespace TheSushiRoles
     {
         public static List<Tuple<Vector3, bool>> LocalPlayerPositions = new List<Tuple<Vector3, bool>>();
         public static List<DeadPlayer> deadPlayers = new List<DeadPlayer>();
-        public static Dictionary<byte, List<RoleInfo>> RoleHistory = new();
+        public static readonly Dictionary<byte, List<RoleInfo>> RoleHistory = new();
         public static DateTime KillTime { get; set; }
         public static void ClearGameHistory() 
         {
             LocalPlayerPositions = new List<Tuple<Vector3, bool>>();
             deadPlayers = new List<DeadPlayer>();
-            RoleHistory = new Dictionary<byte, List<RoleInfo>>();
+            RoleHistory.Clear();
         }
         public static void AddToRoleHistory(byte playerId, RoleInfo role)
         {

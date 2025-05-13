@@ -25,7 +25,8 @@ public static class InstanceControlPatches
 
     public static void SwitchTo(byte playerId)
     {
-        var savedPlayer = PlayerControl.LocalPlayer;
+        var savedPlayerId = PlayerControl.LocalPlayer.PlayerId;
+        PlayerControl savedPlayer = Utils.PlayerById(savedPlayerId);
         var savedPosition = savedPlayer.transform.position;
 
         PlayerControl.LocalPlayer.NetTransform.RpcSnapTo(PlayerControl.LocalPlayer.transform.position);
@@ -85,6 +86,10 @@ public static class InstanceControlPatches
         catch { }
 
         CustomButton.HudUpdate();
+
+        // Clear text before updating it
+        Utils.ClearAllRoleTexts();
+        PlayerControlFixedUpdatePatch.UpdatePlayerInfoText(PlayerControl.LocalPlayer);
 
         light.transform.SetParent(newPlayer.transform);
         light.transform.localPosition = newPlayer.Collider.offset;
@@ -156,10 +161,7 @@ public static class InstanceControlPatches
     {
         foreach (var playerId in PlayerClientIDs.Keys)
         {
-            if (TheSushiRolesPlugin.IKnowWhatImDoing)
-                PlayerById(playerId).SetName(name + $" {{{playerId}:{PlayerClientIDs[playerId]}}}");
-            else
-                PlayerById(playerId).SetName(name + $" {playerId}");
+            PlayerById(playerId).SetName(name + $" {playerId}");
         }
     }
 

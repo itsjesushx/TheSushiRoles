@@ -305,7 +305,7 @@ namespace TheSushiRoles.Patches
             if (__instance.state == 1) 
             {
                 int localRemaining = PlayerControl.LocalPlayer.RemainingEmergencies;
-                int teamRemaining = Mathf.Max(0, maxNumberOfMeetings - meetingsCount);
+                int teamRemaining = Mathf.Max(0, MapOptions.maxNumberOfMeetings - MapOptions.meetingsCount);
                 int remaining = Mathf.Min(localRemaining, (Mayor.Player != null && Mayor.Player == PlayerControl.LocalPlayer) ? 1 : teamRemaining);
                 __instance.NumberText.text = $"{localRemaining.ToString()} and the crew has {teamRemaining.ToString()}";
                 __instance.ButtonActive = remaining > 0;

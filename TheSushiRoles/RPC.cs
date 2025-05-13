@@ -15,11 +15,11 @@ namespace TheSushiRoles
         // Main Controls
         public static void ResetVariables() 
         {
-            ClearAndReloadMapOptions();
-            GlobalClearAndReload();
+            MapOptions.ClearAndReloadMapOptions();
+            TheSushiRoles.GlobalClearAndReload();
             GameHistory.ClearGameHistory();
             HudManagerStartPatch.SetCustomButtonCooldowns();
-            ReloadPluginOptions();
+            MapOptions.ReloadPluginOptions();
         }
 
         public static void HandleShareOptions(byte numberOfOptions, MessageReader reader) 
@@ -541,7 +541,7 @@ namespace TheSushiRoles
 
             foreach (var player in nearbyPlayers)
             {
-                if (Werewolf.Player == player || player.Data.IsDead || player == Armored.Player && !Armored.isBrokenArmor || player == Medic.Shielded || player == FirstPlayerKilled)
+                if (Werewolf.Player == player || player.Data.IsDead || player == Armored.Player && !Armored.isBrokenArmor || player == Medic.Shielded || player == MapOptions.FirstPlayerKilled)
                     continue;
                     
                 Utils.CheckMurderAttemptAndKill(Werewolf.Player, player, showAnimation: false);
@@ -1803,21 +1803,21 @@ namespace TheSushiRoles
                         Vector3 bottomLeft = new(-FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.x, FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.y, FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.z);
                         foreach (PlayerControl p in PlayerControl.AllPlayerControls)
                         {
-                            if (BeanIcons.ContainsKey(p.PlayerId) && p != Arsonist.Player)
+                            if (MapOptions.BeanIcons.ContainsKey(p.PlayerId) && p != Arsonist.Player)
                             {
                                 //Arsonist.poolIcons.Add(p);
                                 if (Arsonist.dousedPlayers.Contains(p))
                                 {
-                                    BeanIcons[p.PlayerId].SetSemiTransparent(false);
+                                    MapOptions.BeanIcons[p.PlayerId].SetSemiTransparent(false);
                                 }
                                 else
                                 {
-                                    BeanIcons[p.PlayerId].SetSemiTransparent(true);
+                                    MapOptions.BeanIcons[p.PlayerId].SetSemiTransparent(true);
                                 }
 
-                                BeanIcons[p.PlayerId].transform.localPosition = bottomLeft + new Vector3(-0.25f, -0.25f, 0) + (Vector3.right * playerCounter++ * 0.35f);
-                                BeanIcons[p.PlayerId].transform.localScale = Vector3.one * 0.2f;
-                                BeanIcons[p.PlayerId].gameObject.SetActive(true);
+                                MapOptions.BeanIcons[p.PlayerId].transform.localPosition = bottomLeft + new Vector3(-0.25f, -0.25f, 0) + (Vector3.right * playerCounter++ * 0.35f);
+                                MapOptions.BeanIcons[p.PlayerId].transform.localScale = Vector3.one * 0.2f;
+                                MapOptions.BeanIcons[p.PlayerId].gameObject.SetActive(true);
                             }
                         }
                     }
@@ -1841,12 +1841,12 @@ namespace TheSushiRoles
 
                         foreach (PlayerControl p in PlayerControl.AllPlayerControls)
                         {
-                            if (BeanIcons.ContainsKey(p.PlayerId))
+                            if (MapOptions.BeanIcons.ContainsKey(p.PlayerId))
                             {
-                                BeanIcons[p.PlayerId].SetSemiTransparent(false);
-                                BeanIcons[p.PlayerId].transform.localPosition = bottomLeft + new Vector3(0f, -1f, 0);
-                                BeanIcons[p.PlayerId].transform.localScale = Vector3.one * 0.4f;
-                                BeanIcons[p.PlayerId].gameObject.SetActive(false);
+                                MapOptions.BeanIcons[p.PlayerId].SetSemiTransparent(false);
+                                MapOptions.BeanIcons[p.PlayerId].transform.localPosition = bottomLeft + new Vector3(0f, -1f, 0);
+                                MapOptions.BeanIcons[p.PlayerId].transform.localScale = Vector3.one * 0.4f;
+                                MapOptions.BeanIcons[p.PlayerId].gameObject.SetActive(false);
                             }
                         }
                     }

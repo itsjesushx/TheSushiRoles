@@ -703,7 +703,7 @@ namespace TheSushiRoles.Patches
                 UpdateMeetingColorBlindText(player, colorBlindTextMeetingInitialLocalPos, colorBlindTextMeetingInitialLocalScale);
                 UpdateRoundColorBlindText(player);
                 UpdatePlayerNameZIndex(player);
-                if (ShouldShowPlayerInfo(player)) 
+                if (ShouldSeePlayerInfo(player)) 
                 {
                     UpdatePlayerInfoText(player);
                 }
@@ -738,42 +738,54 @@ namespace TheSushiRoles.Patches
             player.cosmetics.nameText.transform.parent.SetLocalZ(-0.0001f);
         }
 
-        private static bool ShouldShowPlayerInfo(PlayerControl player) 
+        public static bool ShouldSeePlayerInfo(PlayerControl player)
         {
-            return (Lawyer.lawyerKnowsRole && PlayerControl.LocalPlayer == Lawyer.Player && player == Lawyer.target) ||
-               (Romantic.RomanticKnowsRole && PlayerControl.LocalPlayer == Romantic.Player && player == Romantic.beloved) ||
-               (Romantic.RomanticKnowsRole && PlayerControl.LocalPlayer == Romantic.beloved && player == Romantic.Player) ||
-               player == PlayerControl.LocalPlayer ||
-               (Sleuth.Players.Any(x => x.PlayerId == PlayerControl.LocalPlayer.PlayerId) && Sleuth.Reported.Contains(player.PlayerId)) ||
-               PlayerControl.LocalPlayer.Data.IsDead;
+            return
+                (Lawyer.lawyerKnowsRole && PlayerControl.LocalPlayer == Lawyer.Player && player == Lawyer.target) ||
+                (Romantic.RomanticKnowsRole && PlayerControl.LocalPlayer == Romantic.Player && player == Romantic.beloved) ||
+                (Romantic.RomanticKnowsRole && PlayerControl.LocalPlayer == Romantic.beloved && player == Romantic.Player) ||
+                player == PlayerControl.LocalPlayer ||
+                (Sleuth.Players.Any(x => x.PlayerId == PlayerControl.LocalPlayer.PlayerId) && Sleuth.Reported.Contains(player.PlayerId)) ||
+                PlayerControl.LocalPlayer.Data.IsDead && !MapOptions.RevivedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId);
         }
 
-        private static void UpdatePlayerInfoText(PlayerControl player) 
+        public static void UpdatePlayerInfoText(PlayerControl player)
         {
-            Transform playerInfoTransform = player.cosmetics.nameText.transform.parent.FindChild("Info");
-            TMPro.TextMeshPro playerInfo = playerInfoTransform != null ? playerInfoTransform.GetComponent<TMPro.TextMeshPro>() : null;
+            Transform nameTransform = player.cosmetics.nameText.transform.parent;
+            Transform infoTransform = nameTransform.Find("Info");
 
-            if (playerInfo == null) 
+            // Clean up if not allowed to see roles
+            if (!ShouldSeePlayerInfo(player))
             {
-                playerInfo = CreatePlayerInfoText(player);
+                if (infoTransform != null)
+                    UnityEngine.Object.Destroy(infoTransform.gameObject);
+        
+                if (RoleInfo.RoleTexts.ContainsKey(player.PlayerId))
+                    RoleInfo.RoleTexts.Remove(player.PlayerId);
+        
+                return;
             }
-
-            PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == player.PlayerId);
-            TMPro.TextMeshPro meetingInfo = GetOrCreateMeetingInfoText(playerVoteArea);
-
-            UpdateMeetingPlayerNamePosition(playerVoteArea);
-
-            string playerInfoText = GetPlayerInfoText(player);
-            string meetingInfoText = GetMeetingInfoText(player);
-
-            playerInfo.text = playerInfoText;
-            playerInfo.gameObject.SetActive(player.Visible);
-
-            if (meetingInfo != null) 
+        
+            // Create if missing
+            TMPro.TextMeshPro infoText;
+            if (infoTransform == null)
             {
-                meetingInfo.text = MeetingHud.Instance.state == MeetingHud.VoteStates.Results ? "" : meetingInfoText;
+                infoText = UnityEngine.Object.Instantiate(player.cosmetics.nameText, nameTransform);
+                infoText.transform.localPosition += Vector3.up * 0.225f;
+                infoText.fontSize *= 0.75f;
+                infoText.name = "Info";
+                infoText.color = infoText.color.SetAlpha(1f);
             }
+            else
+            {
+                infoText = infoTransform.GetComponent<TMPro.TextMeshPro>();
+            }
+        
+            RoleInfo.RoleTexts[player.PlayerId] = infoText;
+            infoText.text = GetPlayerInfoText(player);
+            infoText.gameObject.SetActive(player.Visible);
         }
+
 
         private static TMPro.TextMeshPro CreatePlayerInfoText(PlayerControl player) 
         {

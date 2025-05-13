@@ -480,7 +480,11 @@ namespace TheSushiRoles
 
             player.Revive();
             MapOptions.RevivedPlayers.Add(player.PlayerId);
-            
+
+            // Clear text before updating it
+            ClearAllRoleTexts();
+            PlayerControlFixedUpdatePatch.UpdatePlayerInfoText(player);
+
             var body = UnityEngine.Object.FindObjectsOfType<DeadBody>()
                 .FirstOrDefault(b => b.ParentId == player.PlayerId);
             var position = body.TruePosition;
@@ -568,14 +572,22 @@ namespace TheSushiRoles
             }
             return result;
         }
-
+        public static void ClearAllRoleTexts()
+        {
+            foreach (var text in RoleInfo.RoleTexts.Values)
+            {
+                if (text != null)
+                    UnityEngine.Object.Destroy(text.gameObject);
+            }
+            RoleInfo.RoleTexts.Clear();
+        }
         public static bool HidePlayerName(PlayerControl source, PlayerControl target) 
         {
             if (Camouflager.CamouflageTimer > 0f || Utils.MushroomSabotageActive()) return true; // No names are visible
             if (Patches.SurveillanceMinigamePatch.nightVisionIsActive) return true;
             else if (Ninja.isInvisble && Ninja.Player == target) return true;
             else if (Wraith.IsVanished && Wraith.Player == target) return true;
-            else if (!hidePlayerNames) return false; // All names are visible
+            else if (!MapOptions.hidePlayerNames) return false; // All names are visible
             else if (source == null || target == null) return true;
             else if (source == target) return false; // Player sees his own name
             else if (source.Data.Role.IsImpostor && (target.Data.Role.IsImpostor || target == Spy.Player || target == Sidekick.Player && Sidekick.wasTeamRed || target == Jackal.Player && Jackal.wasTeamRed)) return false; // Members of team Impostors see the names of Impostors/Spies

@@ -76,7 +76,7 @@ namespace TheSushiRoles.Patches
                 if (__instance.playerStates.All((PlayerVoteArea ps) => ps.AmDead || ps.DidVote)) 
                 {
                     // If skipping is disabled, replace skipps/no-votes with self vote
-                    if (target == null && blockSkippingInEmergencyMeetings && noVoteIsSelfVote) 
+                    if (target == null && MapOptions.blockSkippingInEmergencyMeetings && MapOptions.noVoteIsSelfVote) 
                     {
                         foreach (PlayerVoteArea playerVoteArea in __instance.playerStates) 
                         {
@@ -738,7 +738,7 @@ namespace TheSushiRoles.Patches
                 // Reset poisoner poisoned
                 Poisoner.poisoned = null;
                 // Count meetings
-                if (meetingTarget == null) meetingsCount++;
+                if (meetingTarget == null) MapOptions.meetingsCount++;
                 // Save the meeting target
                 target = meetingTarget;
                 //Save meeting time
@@ -805,7 +805,7 @@ namespace TheSushiRoles.Patches
             static void Postfix(MeetingHud __instance) 
             {
                 // Deactivate skip Button if skipping on emergency meetings is disabled
-                if (target == null && blockSkippingInEmergencyMeetings)
+                if (target == null && MapOptions.blockSkippingInEmergencyMeetings)
                     __instance.SkipVoteButton.gameObject.SetActive(false);
 
                 if (__instance.state >= MeetingHud.VoteStates.Discussion)

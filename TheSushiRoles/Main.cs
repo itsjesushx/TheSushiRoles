@@ -16,7 +16,6 @@ global using static TheSushiRoles.Roles.Abilities.Guesser;
 global using TheSushiRoles.Roles.ModifierInfo;
 global using TheSushiRoles;
 global using HarmonyLib;
-global using static TheSushiRoles.MapOptions;
 global using AmongUs.GameOptions;
 
 using BepInEx;
@@ -51,7 +50,6 @@ namespace TheSushiRoles
         public static TheSushiRolesPlugin Singleton { get; private set; } = null;         
         public Harmony Harmony { get; } = new Harmony(Id);
         public static string RobotName { get; set; } = "Bot";
-        public static bool IKnowWhatImDoing { get; set; } = false;
         public static bool Persistence { get; set; } = true;
         public static TheSushiRolesPlugin Instance;
 
