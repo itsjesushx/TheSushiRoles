@@ -31,11 +31,11 @@ namespace TheSushiRoles.Patches
                     RPCProcedure.ErasePlayerRoles(target.PlayerId);
                     if (!target.Data.Role.IsImpostor)
                     {
-                        RoleInfo.AddToRoleHistory(target.PlayerId, RoleInfo.crewmate);
+                        GameHistory.AddToRoleHistory(target.PlayerId, RoleInfo.crewmate);
                     }
                     else
                     {
-                        RoleInfo.AddToRoleHistory(target.PlayerId, RoleInfo.impostor);
+                        GameHistory.AddToRoleHistory(target.PlayerId, RoleInfo.impostor);
                     }
                     Eraser.alreadyErased.Add(target.PlayerId);
                 }

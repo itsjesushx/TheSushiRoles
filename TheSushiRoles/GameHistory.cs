@@ -39,13 +39,23 @@ namespace TheSushiRoles
 
     static class GameHistory 
     {
-        public static List<Tuple<Vector3, bool>> localPlayerPositions = new List<Tuple<Vector3, bool>>();
+        public static List<Tuple<Vector3, bool>> LocalPlayerPositions = new List<Tuple<Vector3, bool>>();
         public static List<DeadPlayer> deadPlayers = new List<DeadPlayer>();
+        public static Dictionary<byte, List<RoleInfo>> RoleHistory = new();
         public static DateTime KillTime { get; set; }
         public static void ClearGameHistory() 
         {
-            localPlayerPositions = new List<Tuple<Vector3, bool>>();
+            LocalPlayerPositions = new List<Tuple<Vector3, bool>>();
             deadPlayers = new List<DeadPlayer>();
+            RoleHistory = new Dictionary<byte, List<RoleInfo>>();
+        }
+        public static void AddToRoleHistory(byte playerId, RoleInfo role)
+        {
+            if (!RoleHistory.ContainsKey(playerId))
+                RoleHistory[playerId] = new List<RoleInfo>();
+
+            if (!RoleHistory[playerId].Contains(role))
+                RoleHistory[playerId].Add(role);
         }
 
         public static void CreateDeathReason(PlayerControl player, DeadPlayer.CustomDeathReason DeathReason, PlayerControl killer = null) 

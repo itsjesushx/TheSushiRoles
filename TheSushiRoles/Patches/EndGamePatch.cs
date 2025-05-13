@@ -70,7 +70,7 @@ namespace TheSushiRoles.Patches
                 {
                     killCount = null;
                 }
-                string roleString = RoleInfo.RoleHistory.TryGetValue(playerControl.PlayerId, out var history) && history.Count > 0
+                string roleString = GameHistory.RoleHistory.TryGetValue(playerControl.PlayerId, out var history) && history.Count > 0
                 ? string.Join(" -> ", history.Select(r => Utils.ColorString(r.Color, r.Name)))
                 : RoleInfo.GetRolesString(playerControl, true);
 

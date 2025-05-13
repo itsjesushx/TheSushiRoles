@@ -163,7 +163,6 @@ namespace TheSushiRoles
         Confess,
         VeteranAlertKill,
         TimeMasterRewindTime,
-        TimeMasterStopRewindTime,
         FortifiedMurderAttempt,
         DraftModePickOrder,
         DraftModePick,

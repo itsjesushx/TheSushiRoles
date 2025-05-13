@@ -7,7 +7,6 @@ namespace TheSushiRoles.Roles
 {
     public class RoleInfo
     {
-        public static Dictionary<byte, List<RoleInfo>> RoleHistory = new();
         public Color Color;
         public string Name;
         public string IntroDescription;
@@ -29,14 +28,6 @@ namespace TheSushiRoles.Roles
             this.Alignment = Alignment;
             this.RoleDescription = RoleDescription;
             //RoleInfoById.TryAdd(RoleId, this);
-        }
-        public static void AddToRoleHistory(byte playerId, RoleInfo role)
-        {
-            if (!RoleHistory.ContainsKey(playerId))
-                RoleHistory[playerId] = new List<RoleInfo>();
-
-            if (!RoleHistory[playerId].Contains(role))
-                RoleHistory[playerId].Add(role);
         }
 
         #region Neutral passives

@@ -59,7 +59,6 @@ namespace TheSushiRoles
         public Harmony Harmony { get; } = new Harmony(Id);
         public static string RobotName { get; set; } = "Bot";
         public static bool IKnowWhatImDoing { get; set; } = false;
-        public static string RuntimeLocation;
         public static bool Persistence { get; set; } = true;
         public static TheSushiRolesPlugin Instance;
 
@@ -79,7 +78,6 @@ namespace TheSushiRoles
         public static ConfigEntry<string> Ip { get; set; }
         public static ConfigEntry<ushort> Port { get; set; }
         public static bool DebuggerLoaded => AmongUsClient.Instance.NetworkMode == NetworkModes.LocalGame;
-        public static Sprite ModStamp;
         public static IRegionInfo[] defaultRegions;
 
 
@@ -121,7 +119,6 @@ namespace TheSushiRoles
             Logger = Log;
             Instance = this;
             CustomColors.Load();
-            RuntimeLocation = Path.GetDirectoryName(Assembly.GetAssembly(typeof(TheSushiRolesPlugin)).Location);
 
             Singleton = this;
 

@@ -1,8 +1,6 @@
-using Hazel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static TheSushiRoles.GameHistory;
 using UnityEngine;
 using Assets.CoreScripts;
 using Sentry.Internal.Extensions;
@@ -114,10 +112,10 @@ namespace TheSushiRoles.Patches
         {
             if (TimeMaster.isRewinding) 
             {
-                if (localPlayerPositions.Count > 0)
+                if (GameHistory.LocalPlayerPositions.Count > 0)
                 {
                     // Set position
-                    var next = localPlayerPositions[0];
+                    var next = GameHistory.LocalPlayerPositions[0];
                     if (next.Item2 == true) 
                     {
                         // Exit current vent if necessary
@@ -128,7 +126,7 @@ namespace TheSushiRoles.Patches
                                 bool canUse;
                                 bool couldUse;
                                 vent.CanUse(PlayerControl.LocalPlayer.Data, out canUse, out couldUse);
-                                if (canUse) 
+                                if (canUse)
                                 {
                                     PlayerControl.LocalPlayer.MyPhysics.RpcExitVent(vent.Id);
                                     vent.SetButtons(false);
@@ -138,7 +136,7 @@ namespace TheSushiRoles.Patches
                         // Set position
                         PlayerControl.LocalPlayer.transform.position = next.Item1;
                     }
-                    else if (localPlayerPositions.Any(x => x.Item2 == true)) 
+                    else if (GameHistory.LocalPlayerPositions.Any(x => x.Item2 == true)) 
                     {
                         PlayerControl.LocalPlayer.transform.position = next.Item1;
                     }
@@ -146,14 +144,32 @@ namespace TheSushiRoles.Patches
                     {
                         SubmergedCompatibility.ChangeFloor(next.Item1.y > -7);
                     }
-
-                    localPlayerPositions.RemoveAt(0);
+                    foreach (var deadPlayer in GameHistory.deadPlayers)
+                    {
+                        if (deadPlayer.player == null) continue;
+                        if ((DateTime.UtcNow - deadPlayer.DeathTime).TotalSeconds < 
+                        TimeMaster.RewindTimeDuration && TimeMaster.ReviveDuringRewind)
+                        {
+                            var player = deadPlayer.player;
+                            if (player.Data.IsDead)
+                            {
+                                Utils.Revive(player);
+                                GameHistory.deadPlayers.Remove(deadPlayer); // Clean up as they got revived.
+                            }
+                        }
+                    }
+                    GameHistory.LocalPlayerPositions.RemoveAt(0);
+                }
+                else
+                {
+                    TimeMaster.isRewinding = false;
+                    PlayerControl.LocalPlayer.moveable = true;
                 }
             }
             else
             {
-                while (localPlayerPositions.Count >= Mathf.Round(TimeMaster.RewindTimeDuration / Time.fixedDeltaTime)) localPlayerPositions.RemoveAt(localPlayerPositions.Count - 1);
-                localPlayerPositions.Insert(0, new Tuple<Vector3, bool>(PlayerControl.LocalPlayer.transform.position, PlayerControl.LocalPlayer.CanMove)); // CanMove = CanMove
+                while (GameHistory.LocalPlayerPositions.Count >= Mathf.Round(TimeMaster.RewindTimeDuration / Time.fixedDeltaTime)) GameHistory.LocalPlayerPositions.RemoveAt(GameHistory.LocalPlayerPositions.Count - 1);
+                GameHistory.LocalPlayerPositions.Insert(0, new Tuple<Vector3, bool>(PlayerControl.LocalPlayer.transform.position, PlayerControl.LocalPlayer.CanMove)); // CanMove = CanMove
             }
         }
 
@@ -1443,7 +1459,7 @@ namespace TheSushiRoles.Patches
             bool isDetectiveReport = Detective.Player != null && Detective.Player == PlayerControl.LocalPlayer && __instance.PlayerId == Detective.Player.PlayerId;
             bool IsSleuthReport = Sleuth.Players.FindAll(x => x.PlayerId == PlayerControl.LocalPlayer.PlayerId && __instance.PlayerId == PlayerControl.LocalPlayer.PlayerId).Count > 0;
 
-            DeadPlayer deadPlayer = deadPlayers?.Where(x => x.player?.PlayerId == target?.PlayerId)?.FirstOrDefault();
+            DeadPlayer deadPlayer = GameHistory.deadPlayers?.Where(x => x.player?.PlayerId == target?.PlayerId)?.FirstOrDefault();
             if (isMedicReport || isDetectiveReport)
             {
                 if (deadPlayer != null && deadPlayer.GetKiller != null) {

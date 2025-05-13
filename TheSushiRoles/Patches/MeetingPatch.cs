@@ -461,7 +461,7 @@ namespace TheSushiRoles.Patches
                 if (roleData.NeutralEvilSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.NeutralEvilSettings[(byte)roleInfo.RoleId] == 0) continue;
                 else if (roleData.ImpSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.ImpSettings[(byte)roleInfo.RoleId] == 0) continue;
                 else if (roleData.NeutralBenignSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.NeutralBenignSettings[(byte)roleInfo.RoleId] == 0) continue;
-                else if (roleData.NeutralKSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.NeutralKSettings[(byte)roleInfo.RoleId] == 0) continue;
+                else if (roleData.NeutralKillingSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.NeutralKillingSettings[(byte)roleInfo.RoleId] == 0) continue;
                 else if (roleData.CrewSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.CrewSettings[(byte)roleInfo.RoleId] == 0) continue;
                 else if (roleInfo.RoleId == RoleId.Sidekick && (!CustomOptionHolder.jackalCanCreateSidekick.GetBool() || CustomOptionHolder.jackalSpawnRate.GetSelection() == 0)) continue;
                 else if (roleInfo.RoleId == RoleId.Pestilence) continue;

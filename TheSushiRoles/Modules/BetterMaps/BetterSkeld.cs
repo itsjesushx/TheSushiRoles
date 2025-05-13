@@ -2,7 +2,7 @@ using System.Linq;
 
 using UnityEngine;
 
-namespace TheSushiRoles.Modules.BetterMaps.BetterSkeld
+namespace TheSushiRoles.Modules.BetterMaps
 {
 	[HarmonyPatch(typeof(ShipStatus))]
 	public static class BetterSkeld

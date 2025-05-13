@@ -652,8 +652,6 @@ namespace TheSushiRoles
                 OnEffectEnds: () => 
                 {
                     TimeMasterRewindButton.Timer = TimeMasterRewindButton.MaxTimer;
-                    Utils.StartRPC(CustomRPC.TimeMasterStopRewindTime);
-                    RPCProcedure.TimeMasterStopRewindTime();
                     SoundEffectsManager.Stop("timemasterShield");
                 },
                 buttonText: "REWIND TIME"
@@ -1937,7 +1935,8 @@ namespace TheSushiRoles
                 Eraser.GetButtonSprite(),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
-                KeyCode.F
+                KeyCode.F,
+                buttonText: "ERASE"
             );
 
             placeJackInTheBoxButton = new CustomButton(
@@ -2037,6 +2036,7 @@ namespace TheSushiRoles
                         // Apply Curse
                         Warlock.curseVictim = Warlock.CurrentTarget;
                         warlockCurseButton.Sprite = Warlock.GetCurseKillButtonSprite();
+                        warlockCurseButton.buttonText = "KILL";
                         warlockCurseButton.Timer = 1f;
                         SoundEffectsManager.Play("warlockCurse");
 
@@ -2050,7 +2050,8 @@ namespace TheSushiRoles
                         if (murder == MurderAttemptResult.SuppressKill) return; 
 
                         // If blanked or killed
-                        if(Warlock.rootTime > 0) {
+                        if(Warlock.rootTime > 0) 
+                        {
                             Lazy.position = PlayerControl.LocalPlayer.transform.position;
                             PlayerControl.LocalPlayer.moveable = false;
                             PlayerControl.LocalPlayer.NetTransform.Halt(); // Stop current movement so the warlock is not just running straight into the next object
@@ -2063,6 +2064,7 @@ namespace TheSushiRoles
                         
                         Warlock.curseVictim = null;
                         Warlock.curseVictimTarget = null;
+                        warlockCurseButton.buttonText = "CURSE";
                         warlockCurseButton.Sprite = Warlock.GetCurseButtonSprite();
                         Warlock.Player.killTimer = warlockCurseButton.Timer = warlockCurseButton.MaxTimer;
                         Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.WarlockTarget, Byte.MaxValue);
@@ -2074,13 +2076,15 @@ namespace TheSushiRoles
                 () => { 
                     warlockCurseButton.Timer = warlockCurseButton.MaxTimer;
                     warlockCurseButton.Sprite = Warlock.GetCurseButtonSprite();
+                    warlockCurseButton.buttonText = "CURSE";
                     Warlock.curseVictim = null;
                     Warlock.curseVictimTarget = null;
                 },
                 Warlock.GetCurseButtonSprite(),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
-                KeyCode.F
+                KeyCode.F,
+                buttonText: "CURSE"
             );
 
             // Vigilante button

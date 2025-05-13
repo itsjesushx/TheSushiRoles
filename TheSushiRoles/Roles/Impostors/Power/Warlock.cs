@@ -4,7 +4,6 @@ namespace TheSushiRoles.Roles
 {
     public static class Warlock 
     {
-
         public static PlayerControl Player;
         public static Color Color = Palette.ImpostorRed;
 
@@ -28,7 +27,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetCurseKillButtonSprite() 
         {
             if (curseKillButtonSprite) return curseKillButtonSprite;
-            curseKillButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.CurseKillButton.png", 115f);
+            curseKillButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.CurseKillButton.png", 85f);
             return curseKillButtonSprite;
         }
 

@@ -127,19 +127,19 @@ public class Debugger : MonoBehaviour
                 PlayerControl.LocalPlayer.RpcMurderPlayer(PlayerControl.LocalPlayer, true);
 
             if (GUILayout.Button("Kill All"))
-                foreach (var player in PlayerControl.AllPlayerControls)
-                {
-                    player.RpcMurderPlayer(player, true);
-                }
+            foreach (var player in PlayerControl.AllPlayerControls)
+            {
+                player.RpcMurderPlayer(player, true);
+            }
 
             if (GUILayout.Button("Revive Self"))
-                PlayerControl.LocalPlayer.Revive();
+                Utils.Revive(PlayerControl.LocalPlayer);
 
             if (GUILayout.Button("Revive All"))
-                foreach (var player in PlayerControl.AllPlayerControls)
-                {
-                    player.Revive();
-                }
+            foreach (var player in PlayerControl.AllPlayerControls)
+            {
+                Utils.Revive(player);
+            }
         });
     }
 

@@ -474,9 +474,9 @@ namespace TheSushiRoles
             }
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
-        public static void Revive(this PlayerControl player)
+        public static void Revive(PlayerControl player)
         {
-            if (Poisoner.poisoned == player) Poisoner.poisoned = Poisoner.Player;
+            if (Poisoner.poisoned == player) Poisoner.poisoned = null;
 
             player.Revive();
             MapOptions.RevivedPlayers.Add(player.PlayerId);
@@ -493,8 +493,6 @@ namespace TheSushiRoles
             }
 
             if (body != null) UnityEngine.Object.Destroy(body.gameObject);
-
-            PlayerControl.LocalPlayer.moveable = false;
         }
         public static IEnumerator CoTextToast(string text, float delay)
         {

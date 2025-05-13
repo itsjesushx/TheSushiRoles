@@ -355,13 +355,13 @@ namespace TheSushiRoles.Patches
         static void UpdateVentButton(HudManager __instance)
         {
             if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
+            if (Utils.TwoPlayersAlive() && MapOptions.LimitAbilities) return;
             if (PlayerControl.LocalPlayer == Poisoner.Player) __instance.ImpostorVentButton.Show();
             if (PlayerControl.LocalPlayer == Wraith.Player) __instance.ImpostorVentButton.Hide();
-            if (Glitch.HackedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Glitch.HackedKnows[PlayerControl.LocalPlayer.PlayerId] > 0 || MeetingHud.Instance || Utils.TwoPlayersAlive() && MapOptions.LimitAbilities) __instance.ImpostorVentButton.Hide();
+            if (Glitch.HackedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Glitch.HackedKnows[PlayerControl.LocalPlayer.PlayerId] > 0 || MeetingHud.Instance) __instance.ImpostorVentButton.Hide();
             else if (PlayerControl.LocalPlayer.IsVenter() && !__instance.ImpostorVentButton.isActiveAndEnabled) 
             {
                 __instance.ImpostorVentButton.Show();
-                 
             }
             if (Rewired.ReInput.players.GetPlayer(0).GetButtonDown(RewiredConsts.Action.UseVent) && !PlayerControl.LocalPlayer.Data.Role.IsImpostor && PlayerControl.LocalPlayer.IsVenter()) 
             {

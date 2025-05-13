@@ -76,8 +76,8 @@ namespace TheSushiRoles.Patches
             var neutralEvilMin = CustomOptionHolder.MinNeutralEvilRoles.GetSelection();
             var neutralEvilMax = CustomOptionHolder.MaxNeutralEvilRoles.GetSelection();
 
-            var neutralBenignMin = CustomOptionHolder.MinNeutralEvilRoles.GetSelection();
-            var neutralBenignMax = CustomOptionHolder.MaxNeutralEvilRoles.GetSelection();
+            var neutralBenignMin = CustomOptionHolder.MinNeutralBenignRoles.GetSelection();
+            var neutralBenignMax = CustomOptionHolder.MaxNeutralBenignRoles.GetSelection();
 
             var neutralKMin = CustomOptionHolder.neutralKillingRolesCountMin.GetSelection();
             var neutralKMax = CustomOptionHolder.neutralKillingRolesCountMax.GetSelection();
@@ -110,7 +110,7 @@ namespace TheSushiRoles.Patches
             Dictionary<byte, int> ImpSettings = new Dictionary<byte, int>();
             Dictionary<byte, int> NeutralEvilSettings = new Dictionary<byte, int>();
             Dictionary<byte, int> NeutralBenignSettings = new Dictionary<byte, int>();
-            Dictionary<byte, int> NeutralKSettings = new Dictionary<byte, int>();
+            Dictionary<byte, int> NeutralKillingSettings = new Dictionary<byte, int>();
             Dictionary<byte, int> CrewSettings = new Dictionary<byte, int>();
             
             ImpSettings.Add((byte)RoleId.Morphling, CustomOptionHolder.morphlingSpawnRate.GetSelection());
@@ -129,16 +129,16 @@ namespace TheSushiRoles.Patches
             ImpSettings.Add((byte)RoleId.Undertaker, CustomOptionHolder.UndertakerSpawnRate .GetSelection());
             ImpSettings.Add((byte)RoleId.Yoyo, CustomOptionHolder.yoyoSpawnRate.GetSelection());
 
-            NeutralKSettings.Add((byte)RoleId.Jackal, CustomOptionHolder.jackalSpawnRate.GetSelection());
-            NeutralKSettings.Add((byte)RoleId.Plaguebearer, CustomOptionHolder.PlaguebearerSpawnRate.GetSelection());
-            NeutralKSettings.Add((byte)RoleId.Glitch, CustomOptionHolder.GlitchSpawnRate.GetSelection());
-            NeutralKSettings.Add((byte)RoleId.Werewolf, CustomOptionHolder.WerewolfSpawnRate.GetSelection());
-            NeutralKSettings.Add((byte)RoleId.Juggernaut, CustomOptionHolder.JuggernautSpawnRate.GetSelection());
-            NeutralKSettings.Add((byte)RoleId.Predator, CustomOptionHolder.PredatorSpawnRate.GetSelection());
+            NeutralKillingSettings.Add((byte)RoleId.Jackal, CustomOptionHolder.jackalSpawnRate.GetSelection());
+            NeutralKillingSettings.Add((byte)RoleId.Plaguebearer, CustomOptionHolder.PlaguebearerSpawnRate.GetSelection());
+            NeutralKillingSettings.Add((byte)RoleId.Glitch, CustomOptionHolder.GlitchSpawnRate.GetSelection());
+            NeutralKillingSettings.Add((byte)RoleId.Werewolf, CustomOptionHolder.WerewolfSpawnRate.GetSelection());
+            NeutralKillingSettings.Add((byte)RoleId.Juggernaut, CustomOptionHolder.JuggernautSpawnRate.GetSelection());
+            NeutralKillingSettings.Add((byte)RoleId.Predator, CustomOptionHolder.PredatorSpawnRate.GetSelection());
             if (CustomOptionHolder.HitmanSpawnsWithNoAgent.GetBool()) // Hitman spawns with no Agent
-                NeutralKSettings.Add((byte)RoleId.Hitman, CustomOptionHolder.AgentSpawnRate.GetSelection());
+                NeutralKillingSettings.Add((byte)RoleId.Hitman, CustomOptionHolder.AgentSpawnRate.GetSelection());
             else
-                NeutralKSettings.Add((byte)RoleId.Agent, CustomOptionHolder.AgentSpawnRate.GetSelection());
+                NeutralKillingSettings.Add((byte)RoleId.Agent, CustomOptionHolder.AgentSpawnRate.GetSelection());
 
             NeutralEvilSettings.Add((byte)RoleId.Jester, CustomOptionHolder.jesterSpawnRate.GetSelection());
             NeutralEvilSettings.Add((byte)RoleId.Arsonist, CustomOptionHolder.arsonistSpawnRate.GetSelection());
@@ -156,10 +156,7 @@ namespace TheSushiRoles.Patches
             CrewSettings.Add((byte)RoleId.Engineer, CustomOptionHolder.engineerSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Lighter, CustomOptionHolder.lighterSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Detective, CustomOptionHolder.detectiveSpawnRate.GetSelection());
-            if (!SubmergedCompatibility.IsSubmerged)
-            {
-                CrewSettings.Add((byte)RoleId.TimeMaster, CustomOptionHolder.timeMasterSpawnRate.GetSelection());
-            }
+            CrewSettings.Add((byte)RoleId.TimeMaster, CustomOptionHolder.timeMasterSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Medic, CustomOptionHolder.medicSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Oracle, CustomOptionHolder.OracleSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Swapper,CustomOptionHolder.swapperSpawnRate.GetSelection());
@@ -185,7 +182,7 @@ namespace TheSushiRoles.Patches
                 CrewSettings = CrewSettings,
                 NeutralEvilSettings = NeutralEvilSettings,
                 NeutralBenignSettings = NeutralBenignSettings,
-                NeutralKSettings = NeutralKSettings,
+                NeutralKillingSettings = NeutralKillingSettings,
                 ImpSettings = ImpSettings,
                 MaxCrewmateRoles = MaxCrewmateRoles,
                 MaxNeutralEvilRoles = MaxNeutralEvilRoles,
@@ -201,7 +198,7 @@ namespace TheSushiRoles.Patches
             List<byte> ensuredCrewmateRoles = data.CrewSettings.Where(x => x.Value == 10).Select(x => x.Key).ToList();
             List<byte> ensuredNeutralEvilRoles = data.NeutralEvilSettings.Where(x => x.Value == 10).Select(x => x.Key).ToList();
              List<byte> ensuredNeutralBenignRoles = data.NeutralBenignSettings.Where(x => x.Value == 10).Select(x => x.Key).ToList();
-            List<byte> ensuredNeutralKRoles = data.NeutralKSettings.Where(x => x.Value == 10).Select(x => x.Key).ToList();
+            List<byte> ensuredNeutralKillingRoles = data.NeutralKillingSettings.Where(x => x.Value == 10).Select(x => x.Key).ToList();
             List<byte> ensuredImpostorRoles = data.ImpSettings.Where(x => x.Value == 10).Select(x => x.Key).ToList();
 
             // Assign roles until we run out of either players we can assign roles to or run out of roles we can assign to players
@@ -211,21 +208,21 @@ namespace TheSushiRoles.Patches
                     (data.MaxCrewmateRoles > 0 && ensuredCrewmateRoles.Count > 0) || 
                     (data.MaxNeutralEvilRoles > 0 && ensuredNeutralEvilRoles.Count > 0) || 
                     (data.MaxNeutralBenignRoles > 0 && ensuredNeutralBenignRoles.Count > 0) || 
-                    (data.MaxNeutralKillingRoles > 0 && ensuredNeutralKRoles.Count > 0)
+                    (data.MaxNeutralKillingRoles > 0 && ensuredNeutralKillingRoles.Count > 0)
                 ))) {
                     
                 Dictionary<RoleFaction, List<byte>> rolesToAssign = new Dictionary<RoleFaction, List<byte>>();
                 if (data.Crewmates.Count > 0 && data.MaxCrewmateRoles > 0 && ensuredCrewmateRoles.Count > 0) rolesToAssign.Add(RoleFaction.Crewmate, ensuredCrewmateRoles);
                 if (data.Crewmates.Count > 0 && data.MaxNeutralEvilRoles > 0 && ensuredNeutralEvilRoles.Count > 0) rolesToAssign.Add(RoleFaction.NeutralEvil, ensuredNeutralEvilRoles);
                 if (data.Crewmates.Count > 0 && data.MaxNeutralBenignRoles > 0 && ensuredNeutralBenignRoles.Count > 0) rolesToAssign.Add(RoleFaction.NeutralBenign, ensuredNeutralBenignRoles);
-                if (data.Crewmates.Count > 0 && data.MaxNeutralKillingRoles > 0 && ensuredNeutralKRoles.Count > 0) rolesToAssign.Add(RoleFaction.NeutralKilling, ensuredNeutralKRoles);
+                if (data.Crewmates.Count > 0 && data.MaxNeutralKillingRoles > 0 && ensuredNeutralKillingRoles.Count > 0) rolesToAssign.Add(RoleFaction.NeutralKilling, ensuredNeutralKillingRoles);
                 if (data.Impostors.Count > 0 && data.maxImpostorRoles > 0 && ensuredImpostorRoles.Count > 0) rolesToAssign.Add(RoleFaction.Impostor, ensuredImpostorRoles);
                 
                 // Randomly select a pool of roles to assign a role from next (Crewmate role, Neutral role or Impostor role) 
                 // then select one of the roles from the selected pool to a player 
                 // and remove the role (and any potentially blocked role pairings) from the pool(s)
                 var roleType = rolesToAssign.Keys.ElementAt(rnd.Next(0, rolesToAssign.Keys.Count())); 
-                var players = roleType == RoleFaction.Crewmate || roleType == RoleFaction.NeutralEvil  || roleType == RoleFaction.NeutralBenign || roleType == RoleFaction.NeutralKilling ? data.Crewmates : data.Impostors;
+                var players = roleType == RoleFaction.Impostor ? data.Impostors : data.Crewmates;
                 var index = rnd.Next(0, rolesToAssign[roleType].Count);
                 var roleId = rolesToAssign[roleType][index];
                 SetRoleToRandomPlayer(rolesToAssign[roleType][index], players);
@@ -239,7 +236,7 @@ namespace TheSushiRoles.Patches
                         if (data.ImpSettings.ContainsKey(blockedRoleId)) data.ImpSettings[blockedRoleId] = 0;
                         if (data.NeutralEvilSettings.ContainsKey(blockedRoleId)) data.NeutralEvilSettings[blockedRoleId] = 0;
                         if (data.NeutralBenignSettings.ContainsKey(blockedRoleId)) data.NeutralBenignSettings[blockedRoleId] = 0;
-                        if (data.NeutralKSettings.ContainsKey(blockedRoleId)) data.NeutralKSettings[blockedRoleId] = 0;
+                        if (data.NeutralKillingSettings.ContainsKey(blockedRoleId)) data.NeutralKillingSettings[blockedRoleId] = 0;
                         if (data.CrewSettings.ContainsKey(blockedRoleId)) data.CrewSettings[blockedRoleId] = 0;
                         // Remove blocked roles even if the chance was 100%
                         foreach(var ensuredRolesList in rolesToAssign.Values) 
@@ -266,7 +263,7 @@ namespace TheSushiRoles.Patches
             List<byte> crewmateTickets = data.CrewSettings.Where(x => x.Value > 0 && x.Value < 10).Select(x => Enumerable.Repeat(x.Key, x.Value)).SelectMany(x => x).ToList();
             List<byte> neutralEvilTickets = data.NeutralEvilSettings.Where(x => x.Value > 0 && x.Value < 10).Select(x => Enumerable.Repeat(x.Key, x.Value)).SelectMany(x => x).ToList();
             List<byte> neutralBenignTickets = data.NeutralBenignSettings.Where(x => x.Value > 0 && x.Value < 10).Select(x => Enumerable.Repeat(x.Key, x.Value)).SelectMany(x => x).ToList();
-            List<byte> neutralKTickets = data.NeutralKSettings.Where(x => x.Value > 0 && x.Value < 10).Select(x => Enumerable.Repeat(x.Key, x.Value)).SelectMany(x => x).ToList();
+            List<byte> neutralKTickets = data.NeutralKillingSettings.Where(x => x.Value > 0 && x.Value < 10).Select(x => Enumerable.Repeat(x.Key, x.Value)).SelectMany(x => x).ToList();
             List<byte> impostorTickets = data.ImpSettings.Where(x => x.Value > 0 && x.Value < 10).Select(x => Enumerable.Repeat(x.Key, x.Value)).SelectMany(x => x).ToList();
 
             // Assign roles until we run out of either players we can assign roles to or run out of roles we can assign to players
@@ -292,7 +289,7 @@ namespace TheSushiRoles.Patches
                 // then select one of the roles from the selected pool to a player 
                 // and remove all tickets of this role (and any potentially blocked role pairings) from the pool(s)
                 var roleType = rolesToAssign.Keys.ElementAt(rnd.Next(0, rolesToAssign.Keys.Count()));
-                var players = roleType == RoleFaction.Crewmate || roleType == RoleFaction.NeutralEvil || roleType == RoleFaction.NeutralBenign || roleType == RoleFaction.NeutralKilling ? data.Crewmates : data.Impostors;
+                var players = roleType == RoleFaction.Impostor ? data.Impostors : data.Crewmates;
                 var index = rnd.Next(0, rolesToAssign[roleType].Count);
                 var roleId = rolesToAssign[roleType][index];
                 SetRoleToRandomPlayer(roleId, players);
@@ -742,7 +739,7 @@ namespace TheSushiRoles.Patches
             public Dictionary<byte, int> ImpSettings = new Dictionary<byte, int>();
             public Dictionary<byte, int> NeutralEvilSettings = new Dictionary<byte, int>();
             public Dictionary<byte, int> NeutralBenignSettings = new Dictionary<byte, int>();
-            public Dictionary<byte, int> NeutralKSettings = new Dictionary<byte, int>();
+            public Dictionary<byte, int> NeutralKillingSettings = new Dictionary<byte, int>();
             public Dictionary<byte, int> CrewSettings = new Dictionary<byte, int>();
             public int MaxCrewmateRoles { get; set; }
             public int MaxNeutralEvilRoles { get; set; }
@@ -750,7 +747,7 @@ namespace TheSushiRoles.Patches
             public int MaxNeutralKillingRoles { get; set; }
             public int maxImpostorRoles { get; set; }
         }
-        
+    
         private enum RoleFaction 
         {
             Crewmate = 0,
@@ -759,6 +756,5 @@ namespace TheSushiRoles.Patches
             NeutralKilling = 3,
             Impostor = 4,
         }
-
     }
 }
