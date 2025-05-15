@@ -13,7 +13,6 @@ namespace TheSushiRoles.Roles.Abilities
         public static int tasksToUnlock = Mathf.RoundToInt(CustomOptionHolder.CrewGuesserNumberOfTasks.GetFloat());
         private static List<Guessers> guessers = new List<Guessers>();
         private static Color color = new Color32(255, 255, 0, byte.MaxValue);
-
         public static Sprite GetTargetSprite() 
         {
             if (targetSprite) return targetSprite;

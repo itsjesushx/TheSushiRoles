@@ -49,7 +49,6 @@ namespace TheSushiRoles.Patches
             if (target == null || target.cosmetics?.currentBodySprite?.BodySprite == null) return;
 
             Color = Color.SetAlpha(Chameleon.Visibility(target.PlayerId));
-
             target.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 1f);
             target.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", Color);
         }
@@ -144,11 +143,12 @@ namespace TheSushiRoles.Patches
                     {
                         SubmergedCompatibility.ChangeFloor(next.Item1.y > -7);
                     }
-                    foreach (var deadPlayer in GameHistory.deadPlayers)
+                    foreach (var deadPlayer in GameHistory.deadPlayers.ToList())
                     {
                         if (deadPlayer.player == null) continue;
+
                         if ((DateTime.UtcNow - deadPlayer.DeathTime).TotalSeconds < 
-                        TimeMaster.RewindTimeDuration && TimeMaster.ReviveDuringRewind)
+                            TimeMaster.RewindTimeDuration && TimeMaster.ReviveDuringRewind)
                         {
                             var player = deadPlayer.player;
                             if (player.Data.IsDead)
@@ -164,6 +164,7 @@ namespace TheSushiRoles.Patches
                 {
                     TimeMaster.isRewinding = false;
                     PlayerControl.LocalPlayer.moveable = true;
+                    TimeMaster.RecentlyDied.Remove(PlayerControl.LocalPlayer.PlayerId);
                 }
             }
             else
@@ -740,13 +741,29 @@ namespace TheSushiRoles.Patches
 
         public static bool ShouldSeePlayerInfo(PlayerControl player)
         {
+            // Prevent showing if player just died and Time Master could use rewind
+            if (TimeMaster.RecentlyDied.TryGetValue(player.PlayerId, out float deathTime) && TimeMaster.Player != null)
+            {
+                float rewindBuffer = TimeMaster.RewindTimeDuration + 2f;
+                if (Time.time - deathTime <= rewindBuffer)
+                    return false;
+            }
+
+            // impostors can see the roles of each other as long as there's no Spy, otherwise Spy is useless.
+            // also: if one impostor is lover they cant see their partners role, but the partner can see their role.
+            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && player.Data.Role.IsImpostor 
+            && Spy.Player == null && !Lovers.IsLover(PlayerControl.LocalPlayer))
+            {
+                return true;
+            }
+
             return
                 (Lawyer.lawyerKnowsRole && PlayerControl.LocalPlayer == Lawyer.Player && player == Lawyer.target) ||
                 (Romantic.RomanticKnowsRole && PlayerControl.LocalPlayer == Romantic.Player && player == Romantic.beloved) ||
                 (Romantic.RomanticKnowsRole && PlayerControl.LocalPlayer == Romantic.beloved && player == Romantic.Player) ||
                 player == PlayerControl.LocalPlayer ||
                 (Sleuth.Players.Any(x => x.PlayerId == PlayerControl.LocalPlayer.PlayerId) && Sleuth.Reported.Contains(player.PlayerId)) ||
-                PlayerControl.LocalPlayer.Data.IsDead && !MapOptions.RevivedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId);
+                (PlayerControl.LocalPlayer.Data.IsDead && !MapOptions.RevivedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId));
         }
 
         public static void UpdatePlayerInfoText(PlayerControl player)
@@ -784,19 +801,17 @@ namespace TheSushiRoles.Patches
             RoleInfo.RoleTexts[player.PlayerId] = infoText;
             infoText.text = GetPlayerInfoText(player);
             infoText.gameObject.SetActive(player.Visible);
+
+            PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == player.PlayerId);
+            TMPro.TextMeshPro meetingInfo = GetOrCreateMeetingInfoText(playerVoteArea);
+            UpdateMeetingPlayerNamePosition(playerVoteArea);
+            string meetingInfoText = GetMeetingInfoText(player);
+
+            if (meetingInfo != null)
+            {
+                meetingInfo.text = MeetingHud.Instance.state == MeetingHud.VoteStates.Results ? "" : meetingInfoText;
+            }
         }
-
-
-        private static TMPro.TextMeshPro CreatePlayerInfoText(PlayerControl player) 
-        {
-            TMPro.TextMeshPro playerInfo = UnityEngine.Object.Instantiate(player.cosmetics.nameText, player.cosmetics.nameText.transform.parent);
-            playerInfo.transform.localPosition += Vector3.up * 0.225f;
-            playerInfo.fontSize *= 0.75f;
-            playerInfo.gameObject.name = "Info";
-            playerInfo.color = playerInfo.color.SetAlpha(1f);
-            return playerInfo;
-        }
-
         private static TMPro.TextMeshPro GetOrCreateMeetingInfoText(PlayerVoteArea playerVoteArea) 
         {
             if (playerVoteArea == null) return null;
@@ -815,6 +830,16 @@ namespace TheSushiRoles.Patches
             return meetingInfo;
         }
 
+        private static TMPro.TextMeshPro CreatePlayerInfoText(PlayerControl player) 
+        {
+            TMPro.TextMeshPro playerInfo = UnityEngine.Object.Instantiate(player.cosmetics.nameText, player.cosmetics.nameText.transform.parent);
+            playerInfo.transform.localPosition += Vector3.up * 0.225f;
+            playerInfo.fontSize *= 0.75f;
+            playerInfo.gameObject.name = "Info";
+            playerInfo.color = playerInfo.color.SetAlpha(1f);
+            return playerInfo;
+        }
+
         private static void UpdateMeetingPlayerNamePosition(PlayerVoteArea playerVoteArea) 
         {
             if (playerVoteArea != null) 
@@ -827,32 +852,45 @@ namespace TheSushiRoles.Patches
         private static string GetPlayerInfoText(PlayerControl player) 
         {
             var (tasksCompleted, tasksTotal) = TasksHandler.TaskInfo(player.Data);
-            string roleNames = RoleInfo.GetRolesString(player, true);
-            string modifierNames = ModifierInfo.GetModifiersString(player, true);
-            string abilityNames = AbilityInfo.GetAbilitiesString(player, true);
             string ghostInfo = RoleInfo.GetGhostInfoString(player);
             string dReason = RoleInfo.GetDeathReasonString(player);
+            string taskInfo = tasksTotal > 0 ? $" <color=#FAD934FF>({tasksCompleted}/{tasksTotal})</color>" : "";
 
+            string roleNames = "";
+            string modifierNames = "";
+            string abilityNames = "";
+
+            bool shouldSee = ShouldSeePlayerInfo(player);
+        
+            if (shouldSee)
+            {
+                roleNames = RoleInfo.GetRolesString(player, true);
+                abilityNames = AbilityInfo.GetAbilitiesString(player, true);
+        
+                if (player.Data.IsDead || PlayerControl.LocalPlayer.Data.IsDead)
+                    modifierNames = ModifierInfo.GetModifiersString(player, true);
+            }
+        
             string mods = !string.IsNullOrEmpty(modifierNames) ? $"({modifierNames}) " : "";
             string abs = !string.IsNullOrEmpty(abilityNames) ? $"[{abilityNames}] " : "";
             string gInfo = !string.IsNullOrEmpty(ghostInfo) ? $"{ghostInfo}" : "";
             string dReasons = !string.IsNullOrEmpty(dReason) ? $" {dReason}" : "";
-            string taskInfo = tasksTotal > 0 ? $" <color=#FAD934FF>({tasksCompleted}/{tasksTotal})</color>" : "";
-
+        
             if (player == PlayerControl.LocalPlayer) 
             {
                 if (player.Data.IsDead) roleNames = $"{gInfo}{abs}{mods}{roleNames}{dReasons}";
-                if (player == Swapper.Player) roleNames = $"{roleNames}" + Utils.ColorString(Swapper.Color, $" ({Swapper.Charges})");
-                
+                if (player == Swapper.Player) roleNames += Utils.ColorString(Swapper.Color, $" ({Swapper.Charges})");
+        
                 if (HudManager.Instance.TaskPanel != null) 
                 {
                     TMPro.TextMeshPro tabText = HudManager.Instance.TaskPanel.tab.transform.FindChild("TabText_TMP").GetComponent<TMPro.TextMeshPro>();
                     tabText.SetText($"Tasks {taskInfo}");
                 }
+        
                 return $"{roleNames}";
             }
 
-            if (MapOptions.GhostsSeeEverything && MapOptions.ghostsSeeInformation) 
+            if (MapOptions.GhostsSeeEverything && MapOptions.ghostsSeeInformation)
             {
                 return $"{gInfo}{abs}{mods}{roleNames}{taskInfo}{dReasons}".Trim();
             }
@@ -862,15 +900,14 @@ namespace TheSushiRoles.Patches
                 return $"{gInfo}{taskInfo}{dReasons}".Trim();
             }
 
-            if (MapOptions.GhostsSeeEverything || (Lawyer.lawyerKnowsRole && PlayerControl.LocalPlayer == Lawyer.Player && player == Lawyer.target) || 
-                (Romantic.RomanticKnowsRole && PlayerControl.LocalPlayer == Romantic.Player && player == Romantic.beloved) || 
-                (Romantic.RomanticKnowsRole && PlayerControl.LocalPlayer == Romantic.beloved && player == Romantic.Player)) 
+            if (MapOptions.GhostsSeeEverything || shouldSee) 
             {
                 return $"{abs}{mods}{roleNames}";
             }
 
             return "";
         }
+
 
         private static string GetMeetingInfoText(PlayerControl player) 
         {
@@ -1285,7 +1322,7 @@ namespace TheSushiRoles.Patches
                 {
                     Bait.active.Remove(entry.Key);
                     if (entry.Key.GetKiller != null && entry.Key.GetKiller.PlayerId == PlayerControl.LocalPlayer.PlayerId) {
-                        Utils.HandlePoisonerBiteOnBodyReport(); // Manually call Poisoner handling, since the CmdReportDeadBody Prefix won't be called
+                        Utils.HandlePoisonedOnBodyReport(); // Manually call Poisoner handling, since the CmdReportDeadBody Prefix won't be called
                         RPCProcedure.UncheckedCmdReportDeadBody(entry.Key.GetKiller.PlayerId, entry.Key.player.PlayerId);
                         Utils.StartRPC(CustomRPC.UncheckedCmdReportDeadBody, entry.Key.GetKiller.PlayerId,
                         entry.Key.player.PlayerId);
@@ -1387,6 +1424,7 @@ namespace TheSushiRoles.Patches
                 TrackerSetTarget();
                 // Poisoner
                 PoisonerSetTarget();
+                BlindTrap.Update();
                 Trap.Update();
                 // Eraser
                 EraserSetTarget();
@@ -1496,7 +1534,7 @@ namespace TheSushiRoles.Patches
     {
         public static bool Prefix(PlayerControl __instance) 
         {
-            Utils.HandlePoisonerBiteOnBodyReport();
+            Utils.HandlePoisonedOnBodyReport();
             return true;
         }
     }

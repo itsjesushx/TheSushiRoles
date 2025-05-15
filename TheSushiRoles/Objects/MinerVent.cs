@@ -58,13 +58,13 @@ namespace TheSushiRoles.Objects
             GameObject.SetActive(PlayerControl.LocalPlayer == Miner.Player);
 
             AllMinerVents.Add(this);
-            // Miner Vents
 
+            // Miner Vent
             if (Miner.MineVisibility == 0)
                 ConvertToVents();
             else if (Miner.MineVisibility == 2)
                 FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Miner.Delay, new Action<float>((p) =>
-                { 
+                {
                     if (p == 1)
                     {
                         ConvertToVents();

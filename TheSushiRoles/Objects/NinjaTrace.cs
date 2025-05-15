@@ -36,14 +36,8 @@ namespace TheSushiRoles.Objects
                 Color c = Palette.PlayerColors[(int)Ninja.Player.Data.DefaultOutfit.ColorId];
                 if (Utils.IsLighterColor(Ninja.Player)) c = Color.white;
                 else c = Palette.PlayerColors[6];
-                //if (Camouflager.CamouflageTimer > 0) {
-                //    c = Palette.PlayerColors[6];
-                //}
-
                 Color g = Color.green; // Usual display color.
-
                 Color combinedColor = Mathf.Clamp01(p) * g + Mathf.Clamp01(1 - p) * c;
-
                 if (traceRenderer) traceRenderer.color = combinedColor;
             })));
 

@@ -1,12 +1,46 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace TheSushiRoles.Patches 
 {
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     class HudManagerUpdatePatch
     {
+        public static class BlindTrapEffectUI
+        {
+            public static GameObject screen;
+
+            public static void Init()
+            {
+                if (screen != null) return;
+
+                screen = new GameObject("BlindTrap");
+                screen.transform.SetParent(HudManager.Instance.transform, false);
+
+                var rectTransform = screen.AddComponent<RectTransform>();
+                rectTransform.anchorMin = Vector2.zero;
+                rectTransform.anchorMax = Vector2.one;
+                rectTransform.offsetMin = Vector2.zero;
+                rectTransform.offsetMax = Vector2.zero;
+
+                var image = screen.AddComponent<UnityEngine.UI.Image>();
+                image.color = new Color(0f, 0f, 0f, 1f);
+                screen.SetActive(false);
+            }
+
+            public static void Show(float duration)
+            {
+                Init();
+                screen.SetActive(true);
+                FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(duration, new Action<float>((p) =>
+                {
+                    if (p == 1f)
+                        screen.SetActive(false);
+                })));
+            }
+        }
         private static Dictionary<byte, (string name, Color color)> TagColorDict = new();
         static void ResetNameTagsAndColors() 
         {
@@ -330,7 +364,8 @@ namespace TheSushiRoles.Patches
         static void UpdateImpostorKillButton(HudManager __instance) 
         {
             if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor) return;
-            if (MeetingHud.Instance) {
+            if (MeetingHud.Instance) 
+            {
                 __instance.KillButton.Hide();
                 return;
             }
@@ -346,6 +381,7 @@ namespace TheSushiRoles.Patches
         static void UpdateReportButton(HudManager __instance) 
         {
             if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
+            if (Poisoner.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId)) __instance.ReportButton.Hide();
             if (Glitch.HackedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Glitch.HackedKnows[PlayerControl.LocalPlayer.PlayerId] > 0 || MeetingHud.Instance || Utils.TwoPlayersAlive() && MapOptions.LimitAbilities) __instance.ReportButton.Hide();
             else if (!__instance.ReportButton.isActiveAndEnabled) __instance.ReportButton.Show();
         }
@@ -357,8 +393,9 @@ namespace TheSushiRoles.Patches
             if (PlayerControl.LocalPlayer == Poisoner.Player) 
             {
                 __instance.ImpostorVentButton.Show();
-                __instance.ImpostorVentButton.transform.localPosition = new Vector3(-1f, 1f, 0f);
+                __instance.ImpostorVentButton.transform.localPosition = CustomButton.ButtonPositions.upperRowLeft;
             }
+            if (Poisoner.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId)) __instance.ImpostorVentButton.Hide();
             if (PlayerControl.LocalPlayer == Wraith.Player) __instance.ImpostorVentButton.Hide();
             if (Glitch.HackedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Glitch.HackedKnows[PlayerControl.LocalPlayer.PlayerId] > 0 || MeetingHud.Instance) __instance.ImpostorVentButton.Hide();
             else if (PlayerControl.LocalPlayer.IsVenter() && !__instance.ImpostorVentButton.isActiveAndEnabled) 
@@ -436,7 +473,7 @@ namespace TheSushiRoles.Patches
         public static bool Prefix(DeadBody __instance) 
         {
             if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.HideNSeek) return false;
-            if (Utils.TwoPlayersAlive() && MapOptions.LimitAbilities  || Glitch.HackedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Glitch.HackedKnows[PlayerControl.LocalPlayer.PlayerId] > 0f)  return false;
+            if (Poisoner.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId) || Utils.TwoPlayersAlive() && MapOptions.LimitAbilities  || Glitch.HackedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Glitch.HackedKnows[PlayerControl.LocalPlayer.PlayerId] > 0f)  return false;
             return true;
         }
     }

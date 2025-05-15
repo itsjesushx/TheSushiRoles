@@ -72,6 +72,7 @@ namespace TheSushiRoles
         public static CustomButton yoyoButton;
         public static CustomButton yoyoAdminTableButton;
         public static CustomButton zoomOutButton;
+        public static CustomButton PoisonerBlindButton;
 
         public static Dictionary<byte, List<CustomButton>> PlayerHackedButtons = null;
         public static PoolablePlayer targetDisplay;
@@ -116,6 +117,7 @@ namespace TheSushiRoles
             medicShieldButton.MaxTimer = 0f;
             OracleButton.MaxTimer = Oracle.Cooldown;
             RomanticSetTargetButton.MaxTimer = 0f;
+            PoisonerBlindButton.MaxTimer = Poisoner.BlindCooldown;
             VeteranAlertButton.MaxTimer = Veteran.Cooldown;
             BlackmailButton.MaxTimer = Blackmailer.Cooldown;
             PredatorTerminateButton.MaxTimer = Predator.TerminateCooldown;
@@ -1647,7 +1649,7 @@ namespace TheSushiRoles
                     poisonerKillButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 Poisoner.GetButtonSprite(),
-                CustomButton.ButtonPositions.upperRowLeft,
+                CustomButton.ButtonPositions.upperRowRight,
                 __instance,
                 KeyCode.Q,
                 false,
@@ -1656,6 +1658,37 @@ namespace TheSushiRoles
                     poisonerKillButton.Timer = poisonerKillButton.MaxTimer;
                 },
                 buttonText: "POISON"
+            );
+
+            // Poisoner blind button
+            PoisonerBlindButton = new CustomButton(
+                () => 
+                {
+                    var pos = PlayerControl.LocalPlayer.transform.position;
+                    byte[] buff = new byte[sizeof(float) * 2];
+                    Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
+                    Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
+
+                    Utils.StartRPC(CustomRPC.SetBlindTrap, buff);
+                    RPCProcedure.SetBlindTrap(buff);
+
+                    SoundEffectsManager.Play("trapperTrap");
+                    PoisonerBlindButton.Timer = PoisonerBlindButton.MaxTimer;
+                },
+                () => 
+                { 
+                    return Poisoner.Player != null && Poisoner.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; 
+                },
+                () => 
+                {
+                    return PlayerControl.LocalPlayer.CanMove;
+                },
+                () => { PoisonerBlindButton.Timer = PoisonerBlindButton.MaxTimer; },
+                Poisoner.GetBlindSprite(),
+                CustomButton.ButtonPositions.upperRowCenter,
+                __instance,
+                KeyCode.G,
+                buttonText: "BLIND TRAP"
             );
 
             portalmakerPlacePortalButton = new CustomButton(
@@ -2550,9 +2583,8 @@ namespace TheSushiRoles
                {
                    PlayerControl.LocalPlayer.NetTransform.Halt(); // Stop current movement 
                    Mayor.remoteMeetingsLeft--;
-	               Utils.HandlePoisonerBiteOnBodyReport(); // Manually call Poisoner handling, since the CmdReportDeadBody Prefix won't be called
+                   Utils.HandlePoisonedOnBodyReport(); // Manually call Poisoner handling, since the CmdReportDeadBody Prefix won't be called
                    RPCProcedure.UncheckedCmdReportDeadBody(PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
-
                    Utils.StartRPC(CustomRPC.UncheckedCmdReportDeadBody, PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
                    mayorMeetingButton.Timer = 1f;
                },
@@ -2582,12 +2614,11 @@ namespace TheSushiRoles
                () => 
                {
                    PlayerControl.LocalPlayer.NetTransform.Halt(); // Stop current movement 
-	               Utils.HandlePoisonerBiteOnBodyReport(); // Manually call Poisoner handling, since the CmdReportDeadBody Prefix won't be called
+                   Utils.HandlePoisonedOnBodyReport(); // Manually call Poisoner handling, since the CmdReportDeadBody Prefix won't be called
                    RPCProcedure.UncheckedCmdReportDeadBody(PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
-
                    Utils.StartRPC(CustomRPC.UncheckedCmdReportDeadBody, PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
                },
-               () => { return Coward.Player != null && Coward.CanUse && Coward.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Mayor.meetingButton; },
+               () => { return Coward.Player != null && Coward.CanUse && Coward.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                () => 
                {
                    return PlayerControl.LocalPlayer.CanMove && Coward.CanUse;
@@ -2606,9 +2637,8 @@ namespace TheSushiRoles
 
             // Trapper button
             trapperButton = new CustomButton(
-                () => {
-
-
+                () => 
+                {
                     var pos = PlayerControl.LocalPlayer.transform.position;
                     byte[] buff = new byte[sizeof(float) * 2];
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
@@ -2620,8 +2650,12 @@ namespace TheSushiRoles
                     SoundEffectsManager.Play("trapperTrap");
                     trapperButton.Timer = trapperButton.MaxTimer;
                 },
-                () => { return Trapper.Player != null && Trapper.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
-                () => {
+                () => 
+                { 
+                    return Trapper.Player != null && Trapper.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; 
+                },
+                () => 
+                {
                     if (trapperChargesText != null) trapperChargesText.text = $"{Trapper.Charges} / {Trapper.maxCharges}";
                     return PlayerControl.LocalPlayer.CanMove && Trapper.Charges > 0;
                 },

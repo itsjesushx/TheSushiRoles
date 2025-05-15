@@ -24,8 +24,9 @@ namespace TheSushiRoles.Objects
                 gameObject.transform.localPosition = new Vector3(0, -1.8f, gameObject.transform.localPosition.z);
                 customMessages.Add(this);
 
-                FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Duration, new Action<float>((p) => {
-                    bool even = ((int)(p * Duration / 0.50f)) % 2 == 0; // Bool flips every 0.50f seconds
+                FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Duration, new Action<float>((p) => 
+                {
+                    bool even = ((int)(p * Duration / 0.70f)) % 2 == 0; // Bool flips every 0.70f seconds
                     string prefix = (even ? "<color=#FCBA03FF>" : "<color=#FF0000FF>");
                     text.text = prefix + message + "</color>";
                     if (text != null) text.color = even ? Color.yellow : Color.red;

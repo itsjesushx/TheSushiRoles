@@ -152,8 +152,10 @@ namespace TheSushiRoles
 
         public static bool TwoPlayersAlive() => PlayerControl.AllPlayerControls.ToArray().Count(x => !x.Data.IsDead) == 2;
 
-        public static void HandlePoisonerBiteOnBodyReport() 
+        public static void HandlePoisonedOnBodyReport() 
         {
+            if (Poisoner.Player == null) return;
+            
             // Murder the poisoned player and reset poisoned (regardless whether the kill was successful or not)
             Utils.CheckMurderAttemptAndKill(Poisoner.Player, Poisoner.poisoned, true, false);
             Utils.StartRPC(CustomRPC.PoisonerSetPoisoned, byte.MaxValue, byte.MaxValue);

@@ -255,6 +255,13 @@ namespace TheSushiRoles.Patches
             }
 
             // Deactivate emergency button for Swapper
+            if (Poisoner.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId)) 
+            {
+                CanCallEmergency = false;
+                statusText = "You are Blind trapped. You can't use the button";
+            }
+
+            // Deactivate emergency button for Swapper
             if (Swapper.Player != null && Swapper.Player == PlayerControl.LocalPlayer && !Swapper.canCallEmergency) 
             {
                 CanCallEmergency = false;

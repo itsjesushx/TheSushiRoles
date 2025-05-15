@@ -1290,7 +1290,6 @@ namespace TheSushiRoles
                 Utils.ShowTextToast("You just became the Hitman!", 2.5f);
             }
         }
-
         public static void DragBody(byte BodyId)
         {
             DeadBody[] array = UnityEngine.Object.FindObjectsOfType<DeadBody>();
@@ -1302,14 +1301,12 @@ namespace TheSushiRoles
                 }
             }
         }
-
         public static void DropBody(byte bodyId)
         {
             if (Undertaker.Player == null || Undertaker.CurrentTarget == null) return;
             Undertaker.CurrentTarget = null;
             Undertaker.CurrentTarget.transform.position = new Vector3(Undertaker.Player.GetTruePosition().x, Undertaker.Player.GetTruePosition().y, Undertaker.Player.transform.position.z);
         }
-
         public static void HitmanDragBody(byte BodyId)
         {
             DeadBody[] array = UnityEngine.Object.FindObjectsOfType<DeadBody>();
@@ -1321,14 +1318,12 @@ namespace TheSushiRoles
                 }
             }
         }
-
         public static void HitmanDropBody(byte bodyId)
         {
             if (Hitman.Player == null || Hitman.BodyTarget == null) return;
             Hitman.BodyTarget = null;
             Hitman.BodyTarget.transform.position = new Vector3(Hitman.Player.GetTruePosition().x, Hitman.Player.GetTruePosition().y, Hitman.Player.transform.position.z);
         }
-
 
         public static void RomanticChangeRole() 
         {
@@ -1936,12 +1931,27 @@ namespace TheSushiRoles
             Vector3 position = Vector3.zero;
             position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
             position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
-            new Trap(position);
+            _ = new Trap(position);
+        }
+
+        public static void SetBlindTrap(byte[] buff) 
+        {
+            if (Poisoner.Player == null) return;
+
+            Vector3 position = Vector3.zero;
+            position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
+            position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
+            _ = new BlindTrap(position);
         }
 
         public static void TriggerTrap(byte playerId, byte trapId) 
         {
             Trap.TriggerTrap(playerId, trapId);
+        }
+
+        public static void TriggerBlindTrap(byte playerId, byte trapId) 
+        {
+            BlindTrap.TriggerTrap(playerId, trapId);
         }
 
         public static void SetGuesser(byte playerId)
@@ -2366,10 +2376,18 @@ namespace TheSushiRoles
                 case CustomRPC.SetTrap:
                     RPCProcedure.SetTrap(reader.ReadBytesAndSize());
                     break;
+                case CustomRPC.SetBlindTrap:
+                    RPCProcedure.SetBlindTrap(reader.ReadBytesAndSize());
+                    break;
                 case CustomRPC.TriggerTrap:
                     byte trappedPlayer = reader.ReadByte();
                     byte trapId = reader.ReadByte();
                     RPCProcedure.TriggerTrap(trappedPlayer, trapId);
+                    break;
+                case CustomRPC.TriggerBlindTrap:
+                    byte trappedPlayer2 = reader.ReadByte();
+                    byte trapId2 = reader.ReadByte();
+                    RPCProcedure.TriggerBlindTrap(trappedPlayer2, trapId2);
                     break;
                 case CustomRPC.StopStart:
                     RPCProcedure.StopStart(reader.ReadByte());

@@ -66,7 +66,8 @@ namespace TheSushiRoles.Objects
         {
             var trapsToClear = traps.FindAll(x => x.revealed);
 
-            foreach (Trap t in trapsToClear) {
+            foreach (Trap t in trapsToClear) 
+            {
                 traps.Remove(t);
                 UnityEngine.Object.Destroy(t.trap);
             }

@@ -1,4 +1,5 @@
-﻿using AmongUs.Data;
+﻿using System;
+using AmongUs.Data;
 using InnerNet;
 using TheSushiRoles.Modules.Debugger.Embedded.ReactorImGui;
 using UnityEngine;
@@ -117,7 +118,8 @@ public class Debugger : MonoBehaviour
             if (!MeetingHud.Instance && GUILayout.Button("Start Meeting"))
             {
                 PlayerControl.LocalPlayer.RemainingEmergencies++;
-                PlayerControl.LocalPlayer.CmdReportDeadBody(null);
+                RPCProcedure.UncheckedCmdReportDeadBody(PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
+                Utils.StartRPC(CustomRPC.UncheckedCmdReportDeadBody, PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
             }
 
             if (GUILayout.Button("End Meeting") && MeetingHud.Instance)

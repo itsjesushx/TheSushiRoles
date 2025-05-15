@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TheSushiRoles.Roles
@@ -12,6 +13,7 @@ namespace TheSushiRoles.Roles
         public static float Charges;
         public static float Cooldown = 30f;
         public static bool isRewinding = false;
+        public static Dictionary<byte, float> RecentlyDied;
         private static Sprite ButtonSprite;
         public static Sprite GetButtonSprite() 
         {
@@ -29,6 +31,7 @@ namespace TheSushiRoles.Roles
             Cooldown = CustomOptionHolder.timeMasterCooldown.GetFloat();
             Charges = Mathf.RoundToInt(CustomOptionHolder.TimeMasterCharges.GetFloat());
             TimeRemaining = 0f;
+            RecentlyDied = new Dictionary<byte, float>();
         }
     }
 }

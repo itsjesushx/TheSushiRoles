@@ -12,12 +12,21 @@ namespace TheSushiRoles.Patches
         {
             if ((!__instance.Systems.ContainsKey(SystemTypes.Electrical) && !Utils.IsFungle()) || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return true;
 
-                // If player is a role which has Impostor vision
-            if (Utils.HasImpVision(player)) {
+            // Blinded players by poisoner
+            if (Poisoner.BlindedPlayers.Contains(player.PlayerId))
+            {
+                __result = 0f;
+                return false;
+            }
+
+            // If player is a role which has Impostor vision
+            if (Utils.HasImpVision(player)) 
+            {
                 //__result = __instance.MaxLightRadius * GameOptionsManager.Instance.currentNormalGameOptions.ImpostorLightMod;
                 __result = GetNeutralLightRadius(__instance, true);
                 return false;
             }
+            float lerpValue = 1f;
 
             // If player is Lighter with ability active
             if (Lighter.Player != null && Lighter.Player.PlayerId == player.PlayerId) 
@@ -29,7 +38,6 @@ namespace TheSushiRoles.Patches
             // If there is a Trickster with their ability active
             else if (Trickster.Player != null && Trickster.lightsOutTimer > 0f) 
             {
-                float lerpValue = 1f;
                 if (Trickster.lightsOutDuration - Trickster.lightsOutTimer < 0.5f) 
                 {
                     lerpValue = Mathf.Clamp01((Trickster.lightsOutDuration - Trickster.lightsOutTimer) * 2);

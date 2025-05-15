@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace TheSushiRoles.Objects 
 {
-
     public class Portal 
     {
         public static Portal firstPortal = null;

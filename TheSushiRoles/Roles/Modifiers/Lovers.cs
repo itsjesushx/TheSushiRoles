@@ -1,3 +1,4 @@
+using TheSushiRoles.Modules;
 using UnityEngine;
 
 namespace TheSushiRoles.Roles.Modifiers
@@ -14,6 +15,10 @@ namespace TheSushiRoles.Roles.Modifiers
         public static bool Existing() 
         {
             return Lover1 != null && Lover2 != null && !Lover1.Data.Disconnected && !Lover2.Data.Disconnected;
+        }
+        public static bool IsLover(PlayerControl player)
+        {
+            return player != null && (player == Lovers.Lover1 || player == Lovers.Lover2);
         }
 
         public static bool ExistingAndAlive() 
@@ -46,7 +51,7 @@ namespace TheSushiRoles.Roles.Modifiers
             Lover1 = null;
             Lover2 = null;
             notAckedExiledIsLover = false;
-            bothDie = CustomOptionHolder.modifierLoverBothDie.GetBool() && !(Lover1 == Pestilence.Player || Lover2 == Pestilence.Player);
+            bothDie = Pestilence.Player.IsLover() ? false : CustomOptionHolder.modifierLoverBothDie.GetBool();
             enableChat = CustomOptionHolder.modifierLoverEnableChat.GetBool();
         }
 

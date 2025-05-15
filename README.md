@@ -7,10 +7,7 @@ This mod is not affiliated with Among Us or Innersloth LLC, and the content cont
   To other mod devs: for usage of the code, please read and respect the <a href="#license">license</a></p>
 
 # The Sushi Roles
-
-**Special thanks to [TheOtherRoles](https://github.com/TheOtherRolesAU/TheOtherRoles) for providing the mod's codebase!**
-
-**The Sushi Roles** is an [Among Us](https://store.steampowered.com/app/945360/Among_Us) that uses [TheOtherRoles](https://github.com/TheOtherRolesAU/TheOtherRoles) as the codebase, which adds many new roles, new [Settings](#settings) and new [Custom Hats](#custom-hats) to the game.
+**The Sushi Roles** is an [Among Us](https://store.steampowered.com/app/945360/Among_Us) mod, which adds many new roles, modifiers, abilities, new [Settings](#settings) and new [Custom Hats](#custom-hats) to the game.
 Even more roles are coming soon.
 
 **Roles & Modifiers List:**
@@ -82,7 +79,7 @@ Not working? You might want to install the dependency [vc_redist](https://aka.ms
 4. Launch the game via Steam
 
 # Credits & Resources
-Thanks to TheOtherRoles for the codebase!
+**Thanks to [TheOtherRoles](https://github.com/TheOtherRolesAU/TheOtherRoles) for providing the mod's codebase!**
 Thanks to miniduikboot & GD for hosting modded servers!
 
 [MyDragonBreath](https://github.com/myDragonBreath/AmongUs.MultiClientInstancing) - for TheSushiRoles Debugger.
@@ -256,7 +253,8 @@ are hidden and all players have the same color.\
 
 ## Poisoner
 ### **Faction: Impostors**
-The Poisoner is an Impostor, that can bite other player. Poisoned players die after a configurable amount of time.\
+The Poisoner is an Impostor, that can bite other player. Poisoned players die after a configurable amount of time\
+The Poisoner can also place blind traps in the map, if a player steps on them, they can't use Vent or report buttons (Clicking a body even if you are blind won't work either) and won't see anything.\
 \
 **NOTE:**
 - If a poisoned player is still alive when a meeting is being called, they die at the start of the meeting.
@@ -270,6 +268,8 @@ The Poisoner is an Impostor, that can bite other player. Poisoned players die af
 | Poisoner Spawn Chance | -
 | Poisoner Kill Delay | -
 | Poisoner Cooldown | Sets the kill/bite Cooldown
+| Blind Cooldown | -
+| Blind Duration | -
 -----------------------
 
 ## Eraser

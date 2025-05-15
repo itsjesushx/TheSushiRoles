@@ -39,7 +39,6 @@ namespace TheSushiRoles.Objects
                 GameObject.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
             }
         }
-
         private readonly ConcurrentBag<Footprint> _pool = new();
         private readonly List<Footprint> _activeFootprints = new();
         private readonly List<Footprint> _toRemove = new();

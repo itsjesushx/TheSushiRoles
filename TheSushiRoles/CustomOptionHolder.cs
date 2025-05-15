@@ -59,6 +59,8 @@ namespace TheSushiRoles
         public static CustomOption poisonerSpawnRate;
         public static CustomOption poisonerKillDelay;
         public static CustomOption poisonerCooldown;
+        public static CustomOption BlindCooldown;
+        public static CustomOption BlindDuration;
 
         public static CustomOption eraserSpawnRate;
         public static CustomOption eraserCooldown;
@@ -498,8 +500,10 @@ namespace TheSushiRoles
             camouflagerDuration = CustomOption.Create(32, Types.Impostor, "Camo Duration", 10f, 1f, 20f, 0.5f, camouflagerSpawnRate, Format: "s");
 
             poisonerSpawnRate = CustomOption.Create(40, Types.Impostor, ColorString(Poisoner.Color, "Poisoner"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            poisonerKillDelay = CustomOption.Create(41, Types.Impostor, "Poisoner Kill Delay", 10f, 1f, 20f, 1f, poisonerSpawnRate, Format: "s");
+            poisonerKillDelay = CustomOption.Create(41, Types.Impostor, "Poisoner Kill Delay", 3f, 1f, 20f, 1f, poisonerSpawnRate, Format: "s");
             poisonerCooldown = CustomOption.Create(42, Types.Impostor, "Poisoner Cooldown", 30f, 10f, 60f, 2.5f, poisonerSpawnRate, Format: "s");
+            BlindCooldown = CustomOption.Create(530, Types.Impostor, "Blind Cooldown", 30f, 10f, 60f, 2.5f, poisonerSpawnRate, Format: "s");
+            BlindDuration = CustomOption.Create(530, Types.Impostor, "Blind Duration", 10f, 1f, 20f, 0.5f, poisonerSpawnRate, Format: "s");
 
             eraserSpawnRate = CustomOption.Create(230, Types.Impostor, ColorString(Eraser.Color, "Eraser"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             eraserCooldown = CustomOption.Create(231, Types.Impostor, "Eraser Cooldown", 30f, 10f, 120f, 5f, eraserSpawnRate, Format: "s");

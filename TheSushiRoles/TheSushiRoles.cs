@@ -97,11 +97,13 @@ namespace TheSushiRoles
             Silhouette.ClearSilhouettes();
             Portal.ClearPortals();
             Trap.ClearTraps();
+            BlindTrap.ClearTraps();
             MinerVent.ClearMinerVents();
             Utils.ToggleZoom(reset : true);
             GameStartManagerPatch.GameStartManagerUpdatePatch.startingTimer = 0;
             SurveillanceMinigamePatch.nightVisionOverlays = null;
             MapBehaviourPatch.ClearAndReload();
+            //RoleInfo.RoleTexts.Clear();
             Modules.BetterMaps.BetterPolus.ClearAndReload();
             startTime = DateTime.UtcNow;
         }
