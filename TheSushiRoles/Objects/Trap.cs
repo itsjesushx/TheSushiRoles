@@ -1,4 +1,3 @@
-using Hazel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,6 @@ namespace TheSushiRoles.Objects
     {
         public static List<Trap> traps = new List<Trap>();
         public static Dictionary<byte, Trap> trapPlayerIdMap = new Dictionary<byte, Trap>();
-
         private static int instanceCounter = 0;
         public int instanceId = 0;
         public GameObject trap;
@@ -20,7 +18,6 @@ namespace TheSushiRoles.Objects
         private int neededCount = Trapper.trapCountToReveal;
         public List<byte> trappedPlayer = new List<byte>();
         private Arrow arrow = new Arrow(Color.blue);
-
         private static Sprite trapSprite;
         public static Sprite GetTrapSprite() 
         {
@@ -28,7 +25,6 @@ namespace TheSushiRoles.Objects
             trapSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Trapper_Trap_Ingame.png", 300f);
             return trapSprite;
         }
-
         public Trap(Vector2 p) 
         {
             trap = new GameObject("Trap") { layer = 11 };
@@ -47,7 +43,8 @@ namespace TheSushiRoles.Objects
             arrow.Update(position);
             arrow.arrow.SetActive(false);
             FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((x) => {
-                if (x == 1f) {
+                if (x == 1f) 
+                {
                     this.triggerable = true;
                     trapRenderer.color = Color.white;
                 }
@@ -104,7 +101,7 @@ namespace TheSushiRoles.Objects
                 }
             })));
 
-            if (t.usedCount == t.neededCount) 
+            if (t.usedCount == t.neededCount)
             {
                 t.revealed = true;
             }

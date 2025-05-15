@@ -58,6 +58,7 @@ namespace TheSushiRoles.Patches
         public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)]ref EndGameResult endGameResult) 
         {
             AdditionalTempData.Clear();
+            
             foreach(var playerControl in PlayerControl.AllPlayerControls) 
             {
                 var roles = RoleInfo.GetRoleInfoForPlayer(playerControl);
@@ -402,6 +403,21 @@ namespace TheSushiRoles.Patches
                 if (!EndGameResult.CachedWinners.ToArray().Any(x => x.PlayerName == Amnesiac.Player.Data.PlayerName))
                     EndGameResult.CachedWinners.Add(new CachedPlayerData(Amnesiac.Player.Data));
             }
+
+            // If one lover wins: the other also does
+            if (Lovers.Existing() && Lovers.Lover1 != null && Lovers.Lover2 != null)
+            {
+                if (EndGameResult.CachedWinners.ToArray().Any(x => x.PlayerName == Lovers.Lover1.Data.PlayerName) && !EndGameResult.CachedWinners.ToArray().Any(x => x.PlayerName == Lovers.Lover2.Data.PlayerName))
+                {
+                    EndGameResult.CachedWinners.Add(new CachedPlayerData(Lovers.Lover2.Data));
+                    AdditionalTempData.additionalWinConditions.Add(WinCondition.AdditionalLoversPartnerWin);
+                }
+                else if (!EndGameResult.CachedWinners.ToArray().Any(x => x.PlayerName == Lovers.Lover1.Data.PlayerName) && EndGameResult.CachedWinners.ToArray().Any(x => x.PlayerName == Lovers.Lover2.Data.PlayerName))
+                {
+                    EndGameResult.CachedWinners.Add(new CachedPlayerData(Lovers.Lover1.Data));
+                    AdditionalTempData.additionalWinConditions.Add(WinCondition.AdditionalLoversPartnerWin);
+                }
+            }
             AdditionalTempData.timer = ((float)(DateTime.UtcNow - TheSushiRoles.startTime).TotalMilliseconds) / 1000;
             RPCProcedure.ResetVariables();
         }
@@ -639,6 +655,10 @@ namespace TheSushiRoles.Patches
                 else if (cond == WinCondition.AdditionalAlivePursuerWin) 
                 {
                     textRenderer.text += $"\n{Utils.ColorString(Pursuer.Color, "The Pursuer is alive. They also win!")}";
+                }
+                else if (cond == WinCondition.AdditionalLoversPartnerWin)
+                {
+                    textRenderer.text += $"\n{Utils.ColorString(Lovers.Color, "The Lover wins with their partner.")}";
                 }
             }
 
