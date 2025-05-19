@@ -156,7 +156,8 @@ namespace TheSushiRoles.Patches
             CrewSettings.Add((byte)RoleId.Engineer, CustomOptionHolder.engineerSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Lighter, CustomOptionHolder.lighterSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Detective, CustomOptionHolder.detectiveSpawnRate.GetSelection());
-            CrewSettings.Add((byte)RoleId.TimeMaster, CustomOptionHolder.timeMasterSpawnRate.GetSelection());
+            CrewSettings.Add((byte)RoleId.Chronos, CustomOptionHolder.ChronosSpawnRate.GetSelection());
+            CrewSettings.Add((byte)RoleId.Monarch, CustomOptionHolder.MonarchSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Medic, CustomOptionHolder.medicSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Oracle, CustomOptionHolder.OracleSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Swapper,CustomOptionHolder.swapperSpawnRate.GetSelection());

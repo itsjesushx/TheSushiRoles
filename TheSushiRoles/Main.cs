@@ -12,7 +12,6 @@ global using TheSushiRoles.Roles;
 global using TheSushiRoles.Roles.Modifiers;
 global using TheSushiRoles.Roles.Abilities;
 global using TheSushiRoles.Roles.AbilityInfo;
-global using static TheSushiRoles.Roles.Abilities.Guesser;
 global using TheSushiRoles.Roles.ModifierInfo;
 global using TheSushiRoles;
 global using HarmonyLib;
@@ -74,30 +73,29 @@ namespace TheSushiRoles
 
         // This is part of the Mini.RegionInstaller, Licensed under GPLv3
         // file="RegionInstallPlugin.cs" company="miniduikboot">
-        public static void UpdateRegions() 
+        public static void UpdateRegions()
         {
-            ServerManager serverManager = FastDestroyableSingleton<ServerManager>.Instance;
-            var regions = new IRegionInfo[] 
+            ServerManager serverManager = ServerManager.Instance;
+            IRegionInfo[] regions = new IRegionInfo[]
             {
-                new StaticHttpRegionInfo("Custom", StringNames.NoTranslation, Ip.Value, new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Custom", Ip.Value, Port.Value, false) })).CastFast<IRegionInfo>()
+                new StaticHttpRegionInfo("Modded NA (MNA)", StringNames.NoTranslation,"www.aumods.org", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Http-1", "https://www.aumods.org",  443, false) })).CastFast<IRegionInfo>(),
+                new StaticHttpRegionInfo("Modded EU (MEU)", StringNames.NoTranslation,"au-eu.duikbo.at", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Http-1", "https://au-eu.duikbo.at",  443, false) })).CastFast<IRegionInfo>(),
+                new StaticHttpRegionInfo("Modded Asia (MAS)", StringNames.NoTranslation,"au-as.duikbo.at", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Http-1", "https://au-as.duikbo.at",  443, false) })).CastFast<IRegionInfo>(),
+                //new StaticHttpRegionInfo("Custom", StringNames.NoTranslation, Ip.Value, new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Custom", Ip.Value, Port.Value, false) })).CastFast<IRegionInfo>()
             };
-            
+
             IRegionInfo currentRegion = serverManager.CurrentRegion;
-            Logger.LogInfo($"Adding {regions.Length} regions");
-            foreach (IRegionInfo region in regions) 
+
+            Logger.LogDebug($"Adding {regions.Length} regions");
+            foreach (IRegionInfo region in regions)
             {
-                if (region == null) 
-                    Logger.LogError("Could not add region");
-                else 
-                {
-                    if (currentRegion != null && region.Name.Equals(currentRegion.Name, StringComparison.OrdinalIgnoreCase)) 
-                        currentRegion = region;               
-                    serverManager.AddOrUpdateRegion(region);
-                }
+                if (currentRegion != null && region.Name.Equals(currentRegion.Name, StringComparison.OrdinalIgnoreCase))
+                    currentRegion = region;
+                serverManager.AddOrUpdateRegion(region);
             }
 
             // AU remembers the previous region that was set, so we need to restore it
-            if (currentRegion != null) 
+            if (currentRegion != null)
             {
                 Logger.LogDebug("Resetting previous region");
                 serverManager.SetRegion(currentRegion);
@@ -137,7 +135,7 @@ namespace TheSushiRoles
             ServerManager.DefaultRegions = new Il2CppReferenceArray<IRegionInfo>(new IRegionInfo[0]);
             UpdateRegions();
 
-           ReactorCredits.Register<TheSushiRolesPlugin>(ReactorCredits.AlwaysShow);
+           //ReactorCredits.Register<TheSushiRolesPlugin>(ReactorCredits.AlwaysShow);
 
             DebugMode = Config.Bind("Custom", "Enable Debug Mode", "false");
             Harmony.PatchAll();

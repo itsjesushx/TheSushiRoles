@@ -6,7 +6,7 @@
 |janitorClean + cleanerClean | combined, shortened + fade out | [Vacuum cleaner.wav](https://freesound.org/people/Accorman/sounds/573797/ ) + [Windowcleaner Spray](https://freesound.org/people/Rudmer_Rotteveel/sounds/536409/ )| CC0 1.0 both|
 |sheriffKill | (already has a sound)  |-|-|
 |deputyHack | | [Ratchet close long.wav](https://freesound.org/people/jameswrowles/sounds/437230/ ) | CC0 1.0|
-|timeMasterShield  | | [Mechanical alarm clock is ticking (SLAVA).wav](https://freesound.org/people/ST303/sounds/171043/ ) | CC0 1.0|
+|chronosShield  | | [Mechanical alarm clock is ticking (SLAVA).wav](https://freesound.org/people/ST303/sounds/171043/ ) | CC0 1.0|
 |medicShield | | [energy](https://freesound.org/people/Leszek_Szary/sounds/146727/ )| CC0 1.0 |
 |morphlingSample |Combined and cut |[Scanner 03.wav](https://freesound.org/people/Glitchedtones/sounds/375942/ ) + [ scanner epson V600](https://freesound.org/people/gecop/sounds/521298/ )| CC0 1.0 both|
 |morphlingMorph | | [Whoosh](https://freesound.org/people/qubodup/sounds/60013/) | CC0 1.0 |

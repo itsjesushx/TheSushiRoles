@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace TheSushiRoles.Roles
 {
-    public static class TimeMaster 
+    public static class Chronos 
     {
         public static PlayerControl Player;
         public static Color Color = new Color32(112, 142, 239, byte.MaxValue);
@@ -18,7 +18,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetButtonSprite() 
         {
             if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.TimeMasterButton.png", 115f);
+            ButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.ChronosButton.png", 115f);
             return ButtonSprite;
         }
 
@@ -26,10 +26,10 @@ namespace TheSushiRoles.Roles
         {
             Player = null;
             isRewinding = false;
-            RewindTimeDuration = CustomOptionHolder.timeMasterRewindTime.GetFloat();
-            ReviveDuringRewind = CustomOptionHolder.TimeMasterReviveDuringRewind.GetBool();
-            Cooldown = CustomOptionHolder.timeMasterCooldown.GetFloat();
-            Charges = Mathf.RoundToInt(CustomOptionHolder.TimeMasterCharges.GetFloat());
+            RewindTimeDuration = CustomOptionHolder.ChronosRewindTime.GetFloat();
+            ReviveDuringRewind = CustomOptionHolder.ChronosReviveDuringRewind.GetBool();
+            Cooldown = CustomOptionHolder.ChronosCooldown.GetFloat();
+            Charges = Mathf.RoundToInt(CustomOptionHolder.ChronosCharges.GetFloat()) / 2;
             TimeRemaining = 0f;
             RecentlyDied = new Dictionary<byte, float>();
         }

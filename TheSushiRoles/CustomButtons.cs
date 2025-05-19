@@ -19,7 +19,8 @@ namespace TheSushiRoles
         private static CustomButton MimicButton;
         private static CustomButton HitmanMorphButton;
         private static CustomButton CrusaderButton;
-        private static CustomButton TimeMasterRewindButton;
+        private static CustomButton MonarchKnightButton;
+        private static CustomButton ChronosRewindButton;
         private static CustomButton medicShieldButton;
         private static CustomButton OracleButton;
         private static CustomButton VeteranAlertButton;
@@ -83,8 +84,9 @@ namespace TheSushiRoles
         public static TMPro.TMP_Text MysticChargesText;
         public static TMPro.TMP_Text OracleChargesText;
         public static TMPro.TMP_Text CrusaderChargesText;
+        public static TMPro.TMP_Text MonarchChargesText;
         public static TMPro.TMP_Text GlitchButtonHacksText;
-        public static TMPro.TMP_Text TimeMasterChargesText;
+        public static TMPro.TMP_Text ChronosChargesText;
         public static TMPro.TMP_Text pursuerButtonBlanksText;
         public static TMPro.TMP_Text hackerAdminTableChargesText;
         public static TMPro.TMP_Text hackerVitalsChargesText;
@@ -111,7 +113,7 @@ namespace TheSushiRoles
             sheriffKillButton.MaxTimer = Sheriff.Cooldown;
             HitmanKillButton.MaxTimer = Hitman.Cooldown;
             GlitchHackButton.MaxTimer = Glitch.HackCooldown;
-            TimeMasterRewindButton.MaxTimer = TimeMaster.Cooldown;
+            ChronosRewindButton.MaxTimer = Chronos.Cooldown;
             WraithButton.MaxTimer = Wraith.Cooldown;
             PlaguebearerButton.MaxTimer = Plaguebearer.Cooldown;
             medicShieldButton.MaxTimer = 0f;
@@ -134,6 +136,7 @@ namespace TheSushiRoles
             MinerMineButton.MaxTimer = Miner.Cooldown;
             usePortalButton.MaxTimer = Portalmaker.usePortalCooldown;
             CrusaderButton.MaxTimer = Crusader.Cooldown;
+            MonarchKnightButton.MaxTimer = Monarch.Cooldown;
             MysticButton.MaxTimer = Mystic.Cooldown;
             portalmakerMoveToPortalButton.MaxTimer = Portalmaker.usePortalCooldown;
             hackerButton.MaxTimer = Hacker.Cooldown;
@@ -170,7 +173,7 @@ namespace TheSushiRoles
             yoyoAdminTableButton.MaxTimer = Yoyo.adminCooldown;
             yoyoAdminTableButton.EffectDuration = 10f;
 
-            TimeMasterRewindButton.EffectDuration = TimeMaster.RewindTimeDuration;
+            ChronosRewindButton.EffectDuration = Chronos.RewindTimeDuration;
             hackerButton.EffectDuration = Hacker.Duration;
             hackerVitalsButton.EffectDuration = Hacker.Duration;
             hackerAdminTableButton.EffectDuration = Hacker.Duration;
@@ -359,7 +362,7 @@ namespace TheSushiRoles
                 },
                 () => {},
                 Engineer.GetButtonSprite(),
-                CustomButton.ButtonPositions.upperRowRight,
+                CustomButton.ButtonPositions.lowerRowCenter,
                 __instance,
                 KeyCode.F,
                 buttonText: "REPAIR"
@@ -377,14 +380,20 @@ namespace TheSushiRoles
                     if (murderAttemptResult == MurderAttemptResult.PerformKill) 
                     {
                         byte targetId = 0;
-                        if ((Sheriff.CurrentTarget.Data.Role.IsImpostor && (Sheriff.CurrentTarget != Mini.Player || Mini.IsGrownUp)) 
-                        || Sheriff.CurrentTarget.IsNeutralKiller() ||
-                            (Sheriff.spyCanDieToSheriff && Spy.Player == Sheriff.CurrentTarget) ||
-                            (Sheriff.canKillNeutrals && Sheriff.CurrentTarget.IsNeutral())) 
+                        if (Sheriff.Player == Sidekick.Player)
+                        {
+                            // Sidekick Sheriff can kill anyone
+                            targetId = Sheriff.CurrentTarget.PlayerId;
+                        }
+                        // then the normal sheriff
+                        else if ((Sheriff.CurrentTarget.Data.Role.IsImpostor && (Sheriff.CurrentTarget != Mini.Player || Mini.IsGrownUp))
+                            || Sheriff.CurrentTarget.IsNeutralKiller()
+                            || (Sheriff.spyCanDieToSheriff && Spy.Player == Sheriff.CurrentTarget)
+                            || (Sheriff.canKillNeutrals && Sheriff.CurrentTarget.IsNeutral()))
                         {
                             targetId = Sheriff.CurrentTarget.PlayerId;
                         }
-                        else 
+                        else
                         {
                             targetId = PlayerControl.LocalPlayer.PlayerId;
                         }
@@ -625,45 +634,45 @@ namespace TheSushiRoles
             GlitchButtonHacksText.transform.localScale = Vector3.one * 0.5f;
             GlitchButtonHacksText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
 
-            // Time Master Rewind Time
-            TimeMasterRewindButton = new CustomButton(
+            // Chronos Rewind Time
+            ChronosRewindButton = new CustomButton(
                 OnClick: () => 
                 {
-                    Utils.StartRPC(CustomRPC.TimeMasterRewindTime);
-                    RPCProcedure.TimeMasterRewindTime();
+                    Utils.StartRPC(CustomRPC.ChronosRewindTime);
+                    RPCProcedure.ChronosRewindTime();
                     SoundEffectsManager.Play("timemasterShield");
                 },
-                HasButton: () => { return TimeMaster.Player != null && TimeMaster.Player == PlayerControl.LocalPlayer && TimeMaster.Charges > 0 && !PlayerControl.LocalPlayer.Data.IsDead; },
+                HasButton: () => { return Chronos.Player != null && Chronos.Player == PlayerControl.LocalPlayer && Chronos.Charges > 0 && !PlayerControl.LocalPlayer.Data.IsDead; },
                 CouldUse: () => 
                 { 
-                    if (TimeMasterChargesText != null) TimeMasterChargesText.text = $"{TimeMaster.Charges}";
-                    return PlayerControl.LocalPlayer.CanMove && TimeMaster.Charges > 0; 
+                    if (ChronosChargesText != null) ChronosChargesText.text = $"{Chronos.Charges}";
+                    return PlayerControl.LocalPlayer.CanMove && Chronos.Charges > 0; 
                 },
                 OnMeetingEnds: () => 
                 {
-                    TimeMasterRewindButton.Timer = TimeMasterRewindButton.MaxTimer;
-                    TimeMasterRewindButton.isEffectActive = false;
-                    TimeMasterRewindButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
+                    ChronosRewindButton.Timer = ChronosRewindButton.MaxTimer;
+                    ChronosRewindButton.isEffectActive = false;
+                    ChronosRewindButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
-                Sprite: TimeMaster.GetButtonSprite(),
+                Sprite: Chronos.GetButtonSprite(),
                 PositionOffset: CustomButton.ButtonPositions.lowerRowRight,
                 hudManager: __instance,
                 hotkey: KeyCode.F, 
                 HasEffect: true,
-                EffectDuration: TimeMaster.RewindTimeDuration,
+                EffectDuration: Chronos.RewindTimeDuration,
                 OnEffectEnds: () => 
                 {
-                    TimeMasterRewindButton.Timer = TimeMasterRewindButton.MaxTimer;
+                    ChronosRewindButton.Timer = ChronosRewindButton.MaxTimer;
                     SoundEffectsManager.Stop("timemasterShield");
                 },
                 buttonText: "REWIND TIME"
             );
-                // Time Master Charges counter
-                TimeMasterChargesText = GameObject.Instantiate(TimeMasterRewindButton.actionButton.cooldownTimerText, TimeMasterRewindButton.actionButton.cooldownTimerText.transform.parent);
-                TimeMasterChargesText.text = "";
-                TimeMasterChargesText.enableWordWrapping = false;
-                TimeMasterChargesText.transform.localScale = Vector3.one * 0.5f;
-                TimeMasterChargesText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+                // Chronos Charges counter
+                ChronosChargesText = GameObject.Instantiate(ChronosRewindButton.actionButton.cooldownTimerText, ChronosRewindButton.actionButton.cooldownTimerText.transform.parent);
+                ChronosChargesText.text = "";
+                ChronosChargesText.enableWordWrapping = false;
+                ChronosChargesText.transform.localScale = Vector3.one * 0.5f;
+                ChronosChargesText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
 
                 // Predator Terminate
                 PredatorTerminateButton = new CustomButton(
@@ -1139,9 +1148,9 @@ namespace TheSushiRoles
                     Plaguebearer.InfectTarget = Plaguebearer.CurrentTarget;
 
                     // Move this before checking CanTransform because otherwise the Plaguebearer has to infect twice the last player
-                    if (!Plaguebearer.InfectedPlayers.Contains(Plaguebearer.InfectTarget.PlayerId))
+                    if (!Plaguebearer.InfectedPlayers.Contains(Plaguebearer.InfectTarget))
                     {
-                        Plaguebearer.InfectedPlayers.Add(Plaguebearer.InfectTarget.PlayerId);
+                        Plaguebearer.InfectedPlayers.Add(Plaguebearer.InfectTarget);
                     }
         
                     SoundEffectsManager.Play("knockKnock");
@@ -1175,20 +1184,54 @@ namespace TheSushiRoles
             {
                 PlaguebearerButton.Timer = PlaguebearerButton.MaxTimer;
 
-                foreach (PlayerControl p in Plaguebearer.InfectedPlayers) 
-                {
-                    if (MapOptions.BeanIcons.ContainsKey(p.PlayerId)) 
-                    {
-                        MapOptions.BeanIcons[p.PlayerId].SetSemiTransparent(false);
-                    }
-                }
-
                 // Ghost Info
                 Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.PlaguebearerInfect, Plaguebearer.InfectTarget.PlayerId);
 
                 Plaguebearer.InfectTarget = null;
             }
         );
+
+            MonarchKnightButton = new CustomButton(
+                OnClick: () =>
+                {
+                    if (Monarch.CurrentTarget.CheckVeteranPestilenceKill()) return;
+
+                    Utils.StartRPC(CustomRPC.MonarchKnight, Monarch.CurrentTarget.PlayerId);
+                    RPCProcedure.MonarchKnight(Monarch.CurrentTarget.PlayerId);
+                    SoundEffectsManager.Play("jackalSidekick");
+
+                    Monarch.CurrentTarget = null;
+
+                    MonarchKnightButton.Timer = MonarchKnightButton.MaxTimer;
+                },
+                HasButton: () =>
+                {
+                    return Monarch.Player != null && Monarch.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead;
+                },
+                CouldUse: () => 
+                    {
+                        if (MonarchChargesText != null) MonarchChargesText.text = $"{Monarch.Charges}";
+                        return Monarch.Player != null && Monarch.Player == PlayerControl.LocalPlayer && Monarch.Charges > 0 && Monarch.CurrentTarget != null && PlayerControl.LocalPlayer.CanMove;
+                    },
+                OnMeetingEnds: () => { MonarchKnightButton.Timer = MonarchKnightButton.MaxTimer; },
+                Sprite: Monarch.GetButtonSprite(),
+                PositionOffset: CustomButton.ButtonPositions.lowerRowRight,
+                hudManager: __instance,
+                hotkey: KeyCode.F,
+                HasEffect: true,
+                EffectDuration: 0f,
+                OnEffectEnds: () =>
+                {
+                    MonarchKnightButton.Timer = MonarchKnightButton.MaxTimer;
+                },
+                mirror: false,
+                buttonText: "Knight"
+            );
+                MonarchChargesText = GameObject.Instantiate(MonarchKnightButton.actionButton.cooldownTimerText, MonarchKnightButton.actionButton.cooldownTimerText.transform.parent);
+                MonarchChargesText.text = "";
+                MonarchChargesText.enableWordWrapping = false;
+                MonarchChargesText.transform.localScale = Vector3.one * 0.5f;
+                MonarchChargesText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
 
             CrusaderButton = new CustomButton(
             OnClick: () =>
@@ -1386,7 +1429,8 @@ namespace TheSushiRoles
 
             // Hacker button
             hackerButton = new CustomButton(
-                () => {
+                () =>
+                {
                     Hacker.hackerTimer = Hacker.Duration;
                     SoundEffectsManager.Play("hackerHack");
                 },
@@ -1855,32 +1899,11 @@ namespace TheSushiRoles
             jackalSidekickButton = new CustomButton(
                 () => 
                 {
-                    if (Jackal.CurrentTarget.CheckFortifiedPlayer()) return;
-                    if (!Jackal.canCreateSidekickFromImpostor && Jackal.CurrentTarget.Data.Role.IsImpostor || !Jackal.canCreateSidekickFromImpostor && Jackal.CurrentTarget.IsNeutralKiller()) 
-                    {
-                        // Murder the current target of they can't be sidekicked. this gets rid of fake SKs (yw M)
-                        Utils.CheckMurderAttemptAndKill(Jackal.Player, Jackal.CurrentTarget);
-                        jackalKillButton.Timer = Jackal.Cooldown;
-                        jackalSidekickButton.Timer = Jackal.createSidekickCooldown;
-                        Utils.ShowFlash(Color.red, 0.5f);
-                        
-                        // death reason
-                        Utils.StartRPC(CustomRPC.ShareGhostInfo, 
-                        PlayerControl.LocalPlayer.PlayerId, 
-                        (byte)GhostInfoTypes.DeathReasonAndKiller, 
-                        Jackal.CurrentTarget.PlayerId, 
-                        (byte)DeadPlayer.CustomDeathReason.WrongSidekick,
-                        Jackal.Player.PlayerId);
-                        GameHistory.CreateDeathReason(Jackal.CurrentTarget, DeadPlayer.CustomDeathReason.WrongSidekick, killer: Jackal.Player);
+                    if (Jackal.CurrentTarget.CheckVeteranPestilenceKill() || Jackal.CurrentTarget.CheckFortifiedPlayer()) return;
 
-                        SoundEffectsManager.Play("DeadSound");
-                    }
-                    else
-                    {
-                        Utils.StartRPC(CustomRPC.JackalCreatesSidekick, Jackal.CurrentTarget.PlayerId);
-                        RPCProcedure.JackalCreatesSidekick(Jackal.CurrentTarget.PlayerId);
-                        SoundEffectsManager.Play("jackalSidekick");
-                    }
+                    Utils.StartRPC(CustomRPC.JackalCreatesSidekick, Jackal.CurrentTarget.PlayerId);
+                    RPCProcedure.JackalCreatesSidekick(Jackal.CurrentTarget.PlayerId);
+                    SoundEffectsManager.Play("jackalSidekick");
                 },
                 () => { return Jackal.canCreateSidekick && Jackal.Player != null && Jackal.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return Jackal.canCreateSidekick && Jackal.CurrentTarget != null && PlayerControl.LocalPlayer.CanMove; },
@@ -1940,11 +1963,11 @@ namespace TheSushiRoles
                     sidekickKillButton.Timer = sidekickKillButton.MaxTimer; 
                     Sidekick.CurrentTarget = null;
                 },
-                () => { return Sidekick.canKill && Sidekick.Player != null && Sidekick.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => { return Sidekick.Player != null && Sidekick.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return Sidekick.CurrentTarget && PlayerControl.LocalPlayer.CanMove; },
                 () => { sidekickKillButton.Timer = sidekickKillButton.MaxTimer;},
                 __instance.KillButton.graphic.sprite,
-                CustomButton.ButtonPositions.upperRowRight,
+                Utils.HasPrimaryButton() ? CustomButton.ButtonPositions.upperRowCenter : CustomButton.ButtonPositions.upperRowRight,
                 __instance,
                 KeyCode.Q
             );
@@ -1973,7 +1996,8 @@ namespace TheSushiRoles
             );
 
             placeJackInTheBoxButton = new CustomButton(
-                () => {
+                () =>
+                {
                     placeJackInTheBoxButton.Timer = placeJackInTheBoxButton.MaxTimer;
 
                     var pos = PlayerControl.LocalPlayer.transform.position;
@@ -2004,7 +2028,8 @@ namespace TheSushiRoles
                 () => { return Trickster.Player != null && Trickster.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead
                                                            && JackInTheBox.HasJackInTheBoxLimitReached() && JackInTheBox.boxesConvertedToVents; },
                 () => { return PlayerControl.LocalPlayer.CanMove && JackInTheBox.HasJackInTheBoxLimitReached() && JackInTheBox.boxesConvertedToVents; },
-                () => { 
+                () =>
+                { 
                     lightsOutButton.Timer = lightsOutButton.MaxTimer;
                     lightsOutButton.isEffectActive = false;
                     lightsOutButton.actionButton.graphic.color = Palette.EnabledColor;
@@ -2780,7 +2805,8 @@ namespace TheSushiRoles
                {
                    return true;
                },
-               () => {
+               () =>
+               {
                    yoyoAdminTableButton.Timer = yoyoAdminTableButton.MaxTimer;
                    yoyoAdminTableButton.isEffectActive = false;
                    yoyoAdminTableButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;

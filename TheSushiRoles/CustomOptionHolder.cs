@@ -91,11 +91,7 @@ namespace TheSushiRoles
         public static CustomOption jackalCreateSidekickCooldown;
         public static CustomOption jackalCanUseVents;
         public static CustomOption jackalCanCreateSidekick;
-        public static CustomOption sidekickPromotesToJackal;
-        public static CustomOption sidekickCanKill;
         public static CustomOption sidekickCanUseVents;
-        public static CustomOption jackalPromotedFromSidekickCanCreateSidekick;
-        public static CustomOption jackalCanCreateSidekickFromImpostor;
 
         public static CustomOption bountyHunterSpawnRate;
         public static CustomOption bountyHunterBountyDuration;
@@ -140,7 +136,7 @@ namespace TheSushiRoles
         public static CustomOption engineerSpawnRate;
         public static CustomOption engineerNumberOfFixes;
         public static CustomOption engineerHighlightForImpostors;
-        public static CustomOption engineerHighlightForTeamJackal;
+        public static CustomOption engineerHighlightForNeutralKillers;
 
         public static CustomOption sheriffSpawnRate;
         public static CustomOption sheriffCooldown;
@@ -178,11 +174,11 @@ namespace TheSushiRoles
         public static CustomOption detectiveReportNameDuration;
         public static CustomOption detectiveReportColorDuration;
 
-        public static CustomOption timeMasterSpawnRate;
-        public static CustomOption timeMasterCooldown;
-        public static CustomOption timeMasterRewindTime;
-        public static CustomOption TimeMasterCharges;
-        public static CustomOption TimeMasterReviveDuringRewind;
+        public static CustomOption ChronosSpawnRate;
+        public static CustomOption ChronosCooldown;
+        public static CustomOption ChronosRewindTime;
+        public static CustomOption ChronosCharges;
+        public static CustomOption ChronosReviveDuringRewind;
 
         public static CustomOption medicSpawnRate;
         public static CustomOption medicShowShielded;
@@ -404,6 +400,12 @@ namespace TheSushiRoles
         public static CustomOption BPVentImprovements;
         public static CustomOption BPColdTempDeathValley;
 
+        public static CustomOption MonarchSpawnRate;
+        public static CustomOption MonarchKnightCooldown;
+        public static CustomOption KnightLoseOnDeath;
+        public static CustomOption MonarchCharges;
+        public static CustomOption MonarchRechargeTasksNumber;
+
         public static CustomOption DisableMedbayAnimation;
         public static CustomOption GameStartCooldowns;
 
@@ -503,7 +505,7 @@ namespace TheSushiRoles
             poisonerKillDelay = CustomOption.Create(41, Types.Impostor, "Poisoner Kill Delay", 3f, 1f, 20f, 1f, poisonerSpawnRate, Format: "s");
             poisonerCooldown = CustomOption.Create(42, Types.Impostor, "Poisoner Cooldown", 30f, 10f, 60f, 2.5f, poisonerSpawnRate, Format: "s");
             BlindCooldown = CustomOption.Create(530, Types.Impostor, "Blind Cooldown", 30f, 10f, 60f, 2.5f, poisonerSpawnRate, Format: "s");
-            BlindDuration = CustomOption.Create(530, Types.Impostor, "Blind Duration", 10f, 1f, 20f, 0.5f, poisonerSpawnRate, Format: "s");
+            BlindDuration = CustomOption.Create(531, Types.Impostor, "Blind Duration", 10f, 1f, 20f, 0.5f, poisonerSpawnRate, Format: "s");
 
             eraserSpawnRate = CustomOption.Create(230, Types.Impostor, ColorString(Eraser.Color, "Eraser"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             eraserCooldown = CustomOption.Create(231, Types.Impostor, "Eraser Cooldown", 30f, 10f, 120f, 5f, eraserSpawnRate, Format: "s");
@@ -598,11 +600,7 @@ namespace TheSushiRoles
             jackalCreateSidekickCooldown = CustomOption.Create(222, Types.NeutralKiller, "Jackal Create Sidekick Cooldown", 30f, 10f, 60f, 2.5f, jackalSpawnRate, Format: "s");
             jackalCanUseVents = CustomOption.Create(223, Types.NeutralKiller, "Jackal Can Use Vents", true, jackalSpawnRate);
             jackalCanCreateSidekick = CustomOption.Create(224, Types.NeutralKiller, "Jackal Can Create A Sidekick", false, jackalSpawnRate);
-            sidekickPromotesToJackal = CustomOption.Create(225, Types.NeutralKiller, "Sidekick Gets Promoted To Jackal On Jackal Death", false, jackalCanCreateSidekick);
-            sidekickCanKill = CustomOption.Create(226, Types.NeutralKiller, "Sidekick Can Kill", false, jackalCanCreateSidekick);
             sidekickCanUseVents = CustomOption.Create(227, Types.NeutralKiller, "Sidekick Can Use Vents", true, jackalCanCreateSidekick);
-            jackalPromotedFromSidekickCanCreateSidekick = CustomOption.Create(228, Types.NeutralKiller, "Promoted Sidekicks Can Create A New Sidekick", false, sidekickPromotesToJackal);
-            jackalCanCreateSidekickFromImpostor = CustomOption.Create(229, Types.NeutralKiller, "Jackals Can Sidekick Killers", true, jackalCanCreateSidekick);
 
             JuggernautSpawnRate = CustomOption.Create(872, Types.NeutralKiller, ColorString(Juggernaut.Color, "Juggernaut"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             JuggernautCooldown = CustomOption.Create(882, Types.NeutralKiller, "Initial Juggernaut Cooldown", 25f, 10f, 60f, 2.5f, JuggernautSpawnRate, Format: "s");
@@ -664,7 +662,13 @@ namespace TheSushiRoles
             engineerSpawnRate = CustomOption.Create(90, Types.Crewmate, ColorString(Engineer.Color, "Engineer"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             engineerNumberOfFixes = CustomOption.Create(91, Types.Crewmate, "Number Of Sabotage Fixes", 1f, 1f, 3f, 1f, engineerSpawnRate);
             engineerHighlightForImpostors = CustomOption.Create(92, Types.Crewmate, "Impostors See Vents Highlighted", true, engineerSpawnRate);
-            engineerHighlightForTeamJackal = CustomOption.Create(93, Types.Crewmate, "Jackal and Sidekick See Vents Highlighted ", true, engineerSpawnRate);
+            engineerHighlightForNeutralKillers = CustomOption.Create(93, Types.Crewmate, "Neutral Killers See Vents Highlighted ", true, engineerSpawnRate);
+
+            MonarchSpawnRate = CustomOption.Create(532, Types.Crewmate, ColorString(Cleaner.Color, "Monarch"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            MonarchKnightCooldown = CustomOption.Create(533, Types.Crewmate, "Monarch Knight Cooldown", 30f, 10f, 60f, 2.5f, MonarchSpawnRate, Format: "s");
+            KnightLoseOnDeath = CustomOption.Create(534, Types.Crewmate, "Knighted Lose On Monarch Death", true, MonarchSpawnRate);
+            MonarchCharges = CustomOption.Create(535, Types.Crewmate, "Initial Knight Charges", 1f, 0f, 5f, 1f, MonarchSpawnRate);
+            MonarchRechargeTasksNumber = CustomOption.Create(536, Types.Crewmate, "Number Of Tasks The Monarch Needs For Recharging", 2f, 1f, 10f, 1f, MonarchSpawnRate);
 
             sheriffSpawnRate = CustomOption.Create(100, Types.Crewmate, ColorString(Sheriff.Color, "Sheriff"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             sheriffCooldown = CustomOption.Create(101, Types.Crewmate, "Sheriff Cooldown", 30f, 10f, 60f, 2.5f, sheriffSpawnRate, Format: "s");
@@ -761,11 +765,11 @@ namespace TheSushiRoles
             VigilanteCamRechargeTasksNumber = CustomOption.Create(287, Types.Crewmate, "Number Of Tasks The Vigilante Needs For Recharging", 3f, 1f, 10f, 1f, VigilanteSpawnRate);
             VigilanteNoMove = CustomOption.Create(288, Types.Crewmate, "Cant Move During Cam Duration", true, VigilanteSpawnRate);
 
-            timeMasterSpawnRate = CustomOption.Create(130, Types.Crewmate, ColorString(TimeMaster.Color, "Time Master"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            timeMasterCooldown = CustomOption.Create(131, Types.Crewmate, "Time Master Cooldown", 30f, 20f, 120f, 5f, timeMasterSpawnRate, Format: "s");
-            timeMasterRewindTime = CustomOption.Create(132, Types.Crewmate, "Rewind Time Duration", 3f, 1f, 5f, 1f, timeMasterSpawnRate, Format: "s");
-            TimeMasterReviveDuringRewind = CustomOption.Create(133, Types.Crewmate, "Time Master Revives During Rewind", false, timeMasterSpawnRate);
-            TimeMasterCharges = CustomOption.Create(134, Types.Crewmate, "Rewind Max Charges", 1f, 1f, 5f, 1f, timeMasterSpawnRate);
+            ChronosSpawnRate = CustomOption.Create(130, Types.Crewmate, ColorString(Chronos.Color, "Chronos"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            ChronosCooldown = CustomOption.Create(131, Types.Crewmate, "Chronos Cooldown", 30f, 20f, 120f, 5f, ChronosSpawnRate, Format: "s");
+            ChronosRewindTime = CustomOption.Create(132, Types.Crewmate, "Rewind Time Duration", 3f, 1f, 5f, 1f, ChronosSpawnRate, Format: "s");
+            ChronosReviveDuringRewind = CustomOption.Create(133, Types.Crewmate, "Chronos Revives During Rewind", false, ChronosSpawnRate);
+            ChronosCharges = CustomOption.Create(134, Types.Crewmate, "Rewind Max Charges", 1f, 1f, 5f, 1f, ChronosSpawnRate);
 
             mediumSpawnRate = CustomOption.Create(360, Types.Crewmate, ColorString(Medium.Color, "Medium"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             mediumCooldown = CustomOption.Create(361, Types.Crewmate, "Medium Questioning Cooldown", 30f, 5f, 120f, 5f, mediumSpawnRate, Format: "s");

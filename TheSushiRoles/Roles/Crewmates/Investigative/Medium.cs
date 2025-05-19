@@ -81,7 +81,7 @@ namespace TheSushiRoles.Roles
                 if (target == Lovers.Lover1 || target == Lovers.Lover2) infos.Add(SpecialMediumInfo.ActiveLoverDies);
                 if (target.Data.Role.IsImpostor && killer.Data.Role.IsImpostor) infos.Add(SpecialMediumInfo.ImpostorTeamkill);
             }
-            if (target == Sidekick.Player && (killer == Jackal.Player || Jackal.formerJackals.Any(x => x.PlayerId == killer.PlayerId))) infos.Add(SpecialMediumInfo.JackalKillsSidekick);
+            if (target == Sidekick.Player && (killer == Jackal.Player)) infos.Add(SpecialMediumInfo.JackalKillsSidekick);
             if (target == Lawyer.Player && killer == Lawyer.target) infos.Add(SpecialMediumInfo.LawyerKilledByClient);
             if (Medium.target.WasCleanedOrEaten) infos.Add(SpecialMediumInfo.BodyCleaned);
             

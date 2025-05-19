@@ -63,7 +63,7 @@ namespace TheSushiRoles.Roles
             {
                 foreach (Arrow arrow in localArrows)
                     if (arrow?.arrow != null)
-                        UnityEngine.Object.Destroy(arrow.arrow);
+                        Object.Destroy(arrow.arrow);
             }
             deadBodyPositions = new List<Vector3>();
             corpsesTrackingTimer = 0f;

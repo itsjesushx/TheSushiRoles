@@ -15,7 +15,8 @@ namespace TheSushiRoles
             Sheriff.ClearAndReload();
             Lighter.ClearAndReload();
             Detective.ClearAndReload();
-            TimeMaster.ClearAndReload();
+            Monarch.ClearAndReload();
+            Chronos.ClearAndReload();
             Medic.ClearAndReload();
             Portalmaker.ClearAndReload();
             Swapper.ClearAndReload();
@@ -45,7 +46,6 @@ namespace TheSushiRoles
             VengefulRomantic.ClearAndReload();
             Jackal.ClearAndReload();
             Werewolf.ClearAndReload();
-            Sidekick.ClearAndReload();
             Hitman.ClearAndReload();
             Predator.ClearAndReload();
             Agent.ClearAndReload();
@@ -83,6 +83,7 @@ namespace TheSushiRoles
             Invert.ClearAndReload();
             Chameleon.ClearAndReload();
             Armored.ClearAndReload();
+            Sidekick.ClearAndReload();
             Lovers.ClearAndReload();
             Sleuth.ClearAndReload();
 

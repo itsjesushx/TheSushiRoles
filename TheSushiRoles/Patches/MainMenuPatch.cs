@@ -93,7 +93,7 @@ Among-Us-Love-Couple-Mod - Idea for the Lovers modifier comes from Woodi-dev
 Jester - Idea for the Jester role came from Maartii
 ExtraRolesAmongUs - Idea for the Engineer and Medic role came from NotHunter101. Also some code snippets from their implementation were used.
 Among-Us-Sheriff-Mod - Idea for the Sheriff role came from Woodi-dev
-TooManyRolesMods - Idea for the Detective and Time Master roles comes from Hardel-DW. Also some code snippets from their implementation were used.
+TooManyRolesMods - Idea for the Detective and Chronos roles comes from Hardel-DW. Also some code snippets from their implementation were used.
 TownOfUs - Idea for the Swapper, Arsonist and a similar Mayor role came from Slushiegoose
 Ottomated - Idea for the Morphling and Camouflager role came from Ottomated
 Crowded-Mod - Our implementation for 10+ player lobbies was inspired by the one from the Crowded Mod Team

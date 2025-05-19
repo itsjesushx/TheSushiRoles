@@ -79,7 +79,8 @@ namespace TheSushiRoles.Roles
         public readonly static RoleInfo sheriff = new("Sheriff", Sheriff.Color, "Shoot the <color=#FF1919FF>Impostors</color>", "Shoot the Impostors", RoleId.Sheriff, Faction.Crewmates, RoleAlignment.CrewPower, "The Sheriff is able to kill players during rounds, if the player they kill is an impostor, or Neutral Killer, the Sheriff will survive. If the player they kill is a crewmate, the Sheriff will die.");
         public readonly static RoleInfo medium = new("Medium", Medium.Color, "Question the souls of the dead to gain information", "Question the souls", RoleId.Medium, Faction.Crewmates, RoleAlignment.CrewInvest, "The medium is a crewmate who can ask the souls of dead players for information. Like the Mystic, the medium will see the souls of the players who have died (after the next meeting) and can question them. They then gets random information about the soul or the killer in the chat. The souls only stay for one round, i.e. until the next meeting. Depending on the options, the souls can only be questioned once and then disappear.");
         public readonly static RoleInfo trapper = new("Trapper", Trapper.Color, "Place traps to find the Impostors", "Place traps", RoleId.Trapper, Faction.Crewmates, RoleAlignment.CrewInvest, "The Tracker can select one player to track. Depending on the options the Tracker can track a different person after each meeting or the Tracker tracks the same person for the whole game. An arrow points to the last tracked position of the player. The arrow updates its position every few seconds (configurable). By an option, the arrow can be replaced or combined with the Proximity Tracker from Hide N Seek. Depending on the options, the Tracker has another ability: They can track all corpses on the map for a set amount of time. They will keep tracking corpses, even if they were cleaned or eaten by the Vulture.");
-        public readonly static RoleInfo timeMaster = new("Time Master", TimeMaster.Color, "Rewind Time To Screw the Killers", "Rewind Time", RoleId.TimeMaster, Faction.Crewmates, RoleAlignment.CrewSupport, "The Time Master can rewind the time, making players go back the exact steps they walked but in reverse, if a player was killed within the same amount of time the rewind lasts and if the options allows it, the dead players will get revived.");
+        public readonly static RoleInfo chronos = new("Chronos", Chronos.Color, "Rewind Time To Screw the Killers", "Rewind Time", RoleId.Chronos, Faction.Crewmates, RoleAlignment.CrewSupport, "The Chronos can rewind the time, making players go back the exact steps they walked but in reverse, if a player was killed within the same amount of time the rewind lasts and if the options allows it, the dead players will get revived.");
+        public readonly static RoleInfo monarch = new("Monarch", Monarch.Color, "Knight a player to give them an extra vote", "Knight a player", RoleId.Monarch, Faction.Crewmates, RoleAlignment.CrewSupport, "The Monarch is able to Knight players, Knighted players will gain an extra vote in meetings just like a Mayor, if the Monarch dies, Knighted players won't have the extra vote anymore.");
         public readonly static RoleInfo medic = new("Medic", Medic.Color, "Protect someone with your Shield", "Protect other players", RoleId.Medic, Faction.Crewmates, RoleAlignment.CrewProtect, "The Medic can Shield (highlighted by an outline around the player) one player per game, which makes the player unkillable. The Shield is also shown in the meeting as brackets around the Shielded player's name. The Shielded player can still be voted out and might also be an Impostor. If set in the options, the Shielded player and/or the Medic will get a red flash on their screen if someone (Impostor, Sheriff, ...) tried to murder them. If the Medic dies, the Shield disappears with them. The Sheriff will not die if they try to kill a Shielded Crewmate and won't perform a kill if they try to kill a Shielded Impostor. Depending on the options, guesses from the Guesser will be blocked by the Shield and the Shielded player/medic might be notified. The Medic's other feature shows when they report a corpse: they will see how long ago the player died.");
         public readonly static RoleInfo swapper = new("Swapper", Swapper.Color, "Swap votes to exile the <color=#FF1919FF>Impostors</color>", "Swap votes", RoleId.Swapper, Faction.Crewmates, RoleAlignment.CrewPower, "During meetings the Swapper can exchange votes that two people get (i.e. all votes that player A got will be given to player B and vice versa). Because of the Swapper's strength in meetings, they might not start emergency meetings and can't fix lights and comms. The Swapper now has initial swap Charges and can recharge those Charges after completing a configurable amount of tasks.");
         public readonly static RoleInfo oracle = new("Oracle", Oracle.Color, "Make the <color=#FF1919FF>Impostors</color> confess their sins", "Get another player to confess on your passing", RoleId.Oracle, Faction.Crewmates, RoleAlignment.CrewInvest, $"The Oracle can compel another player to confess their secrets upon death. The oracle will get information about 3 players being possibly evil each meeting. The Oracle can only make a player confess once per meeting. When the Oracle dies, the player they made confess will reveal their faction with a probability of {Oracle.Accuracy}% of being right.");
@@ -92,7 +93,6 @@ namespace TheSushiRoles.Roles
         public readonly static RoleInfo plaguebearer = new("Plaguebearer", Plaguebearer.Color, "Infect all players to become Pestilence", "Infect to become Pestilence", RoleId.Pestilence, Faction.Neutrals, RoleAlignment.NeutralKilling, "The Plaguebearer is a Neutral role with its own win condition, as well as an ability to transform into another role. The Plaguebearer has one ability, which allows them to infect other players. Once all players are infected, the Plaguebearer becomes Pestilence.");
         public readonly static RoleInfo pestilence = new("Pestilence", Pestilence.Color, "", "Kill with your unstoppable abilities", RoleId.Pestilence, Faction.Neutrals, RoleAlignment.NeutralKilling, "The Pestilence is a unkillable force which can only be killed by being voted out or them guessing wrong. The Pestilence needs to be the last killer alive to win the game.");
         public readonly static RoleInfo juggernaut = new("Juggernaut", Juggernaut.Color, "Kill all your <color=#FF1919FF>Enemies</color> to win", "Each kill makes you more dangerous", RoleId.Juggernaut, Faction.Neutrals, RoleAlignment.NeutralKilling, "The Juggernaut is a Neutral role with its own win condition. The Juggernaut's special ability is that their kill Cooldown reduces with each kill. This means in theory the Juggernaut can have a 0 second kill Cooldown!. The Juggernaut needs to be the last killer alive to win the game.");
-        public readonly static RoleInfo sidekick = new("Sidekick", Sidekick.Color, "Help your Jackal to kill everyone", "Help your Jackal to kill everyone", RoleId.Sidekick, Faction.Neutrals, RoleAlignment.NeutralKilling, "Gets assigned to a player during the game by the Create Sidekick Action of the Jackal and joins the Jackal in their quest to eliminate all other players. Upon the death of the Jackal (depending on the options), they might get promoted to Jackal themself and potentially even assign a Sidekick of their own.");
         public readonly static RoleInfo agent = new("Agent", Agent.Color, "Finish your duties to start the dirty work", "Finish your tasks", RoleId.Agent, Faction.Neutrals, RoleAlignment.NeutralKilling, "The Agent is a Neutral killer role with its own win condition. They need to finish tasks in order to gain new abilities. Depending on settings they may be able to vent so they finish tasks faster.");
         public readonly static RoleInfo hitman = new("Hitman", Hitman.Color, "Kill your enemies to win", "Kill your enemies", RoleId.Hitman, Faction.Neutrals, RoleAlignment.NeutralKilling, "The Hitman is a Neutral role with its own win condition. The Hitman's aim is to kill win alone. The Hitman is able to kill players, morph into them like a Morphling or a Glitch for a set amount of time. They can also drag dead bodies just like an Undertaker. They may be able to vent depending on settings.");
         public readonly static RoleInfo predator = new("Predator", Predator.Color, "Terminate to make everyone die", "Murder everyone when stabbing", RoleId.Predator, Faction.Neutrals, RoleAlignment.NeutralKilling, "The Predator is a Neutral role with its own win condition. The Predator has an invisible kill button, but they can't use it unless they are stabbing. Once the Predator rampages they gain Impostor vision and the ability to kill. However, unlike most killers their kill Cooldown is really short. The Predator needs to be the last killer alive to win the game.");
@@ -132,13 +132,14 @@ namespace TheSushiRoles.Roles
             mayor,
             medic,
             medium,
+            monarch,
             mystic,
             oracle,
             portalmaker,
             sheriff,
             spy,
             swapper,
-            timeMaster,
+            chronos,
             tracker,
             trapper,
             vigilante,
@@ -163,7 +164,6 @@ namespace TheSushiRoles.Roles
             pestilence,
             plaguebearer,
             predator,
-            sidekick,
             vromantic,
             werewolf,
         };
@@ -181,6 +181,7 @@ namespace TheSushiRoles.Roles
             if (player == Mayor.Player) infos.Add(mayor);
             if (player == Portalmaker.Player) infos.Add(portalmaker);
             if (player == Engineer.Player) infos.Add(engineer);
+            if (player == Monarch.Player) infos.Add(monarch);
             if (player == Sheriff.Player) infos.Add(sheriff);
             if (player == Romantic.Player) infos.Add(romantic);
             if (player == Juggernaut.Player) infos.Add(juggernaut);
@@ -209,7 +210,7 @@ namespace TheSushiRoles.Roles
             if (player == Yoyo.Player) infos.Add(yoyo);
             if (player == Amnesiac.Player) infos.Add(amnesiac);
             if (player == Detective.Player) infos.Add(detective);
-            if (player == TimeMaster.Player) infos.Add(timeMaster);
+            if (player == Chronos.Player) infos.Add(chronos);
             if (player == Medic.Player) infos.Add(medic);
             if (player == Hitman.Player) infos.Add(hitman);
             if (player == Agent.Player) infos.Add(agent);
@@ -217,8 +218,7 @@ namespace TheSushiRoles.Roles
             if (player == Mystic.Player) infos.Add(mystic);
             if (player == Hacker.Player) infos.Add(hacker);
             if (player == Tracker.Player) infos.Add(tracker);
-            if (player == Jackal.Player || (Jackal.formerJackals != null && Jackal.formerJackals.Any(x => x.PlayerId == player.PlayerId))) infos.Add(jackal);
-            if (player == Sidekick.Player) infos.Add(sidekick);
+            if (player == Jackal.Player) infos.Add(jackal);
             if (player == Spy.Player) infos.Add(spy);
             if (player == Vigilante.Player) infos.Add(vigilante);
             if (player == Arsonist.Player) infos.Add(arsonist);
@@ -263,8 +263,12 @@ namespace TheSushiRoles.Roles
                     msg += Utils.ColorString(Glitch.Color, " (Hacked)");
                 if (player == Warlock.curseVictim)
                     msg += Utils.ColorString(Warlock.Color, " (Cursed)");
+                if (Monarch.KnightedPlayers.Contains(player))
+                    msg += Utils.ColorString(Monarch.Color, " (★)");
                 if (player == Ninja.ninjaMarked)
                     msg += Utils.ColorString(Ninja.Color, " (Marked)");
+                if (player == Medic.Shielded)
+                    msg += Utils.ColorString(Medic.Color, " (<b>+</b>)");
                 if (player == Crusader.FortifiedPlayer)
                     msg += Utils.ColorString(Crusader.Color, " (Fortified)");
                 if (Pursuer.blankedList.Contains(player) && !player.Data.IsDead)
@@ -273,7 +277,7 @@ namespace TheSushiRoles.Roles
                     msg += Utils.ColorString(Witch.Color, " (☆)");
                 if (BountyHunter.bounty == player)
                     msg += Utils.ColorString(BountyHunter.Color, " (⦿)");
-                if (Plaguebearer.InfectedPlayers.Contains(player.PlayerId))
+                if (Plaguebearer.InfectedPlayers.Contains(player))
                     msg += Utils.ColorString(Plaguebearer.Color, " (⦿)");
                 if (Arsonist.dousedPlayers.Contains(player))
                     msg += Utils.ColorString(Arsonist.Color, " (♨)");

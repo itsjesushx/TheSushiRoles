@@ -25,7 +25,7 @@ namespace TheSushiRoles.Roles
             Cooldown = CustomOptionHolder.VeteranCooldown.GetFloat();
             Duration = CustomOptionHolder.VeteranDuration.GetFloat();
             AlertActive = false;
-            Charges = Mathf.RoundToInt(CustomOptionHolder.VeteranCharges.GetFloat());
+            Charges = Mathf.RoundToInt(CustomOptionHolder.VeteranCharges.GetFloat()) / 2;
             RechargeTasksNumber = Mathf.RoundToInt(CustomOptionHolder.VeteranRechargeTasksNumber.GetFloat());
             RechargedTasks = Mathf.RoundToInt(CustomOptionHolder.VeteranRechargeTasksNumber.GetFloat());
         }

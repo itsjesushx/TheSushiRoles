@@ -130,7 +130,6 @@ namespace TheSushiRoles.Modules
                             else if (roleData.impSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.impSettings[(byte)roleInfo.RoleId] == 0) continue;
                             else if (roleData.NeutralKillingSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.NeutralKillingSettings[(byte)roleInfo.RoleId] == 0) continue;
                             else if (roleData.crewSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.crewSettings[(byte)roleInfo.RoleId] == 0) continue;
-                            else if (roleInfo.RoleId == RoleId.Sidekick) continue;
                             if (roleInfo.RoleId == RoleId.Pursuer) continue;
                             if (roleInfo.RoleId == RoleId.Spy && impostorCount < 2) continue;
                             if (alreadyPicked.Contains((byte)roleInfo.RoleId) && roleInfo.RoleId != RoleId.Crewmate) continue;
@@ -403,7 +402,7 @@ namespace TheSushiRoles.Modules
 
         public static void SendPick(byte RoleId)
         {
-            SoundEffectsManager.Stop("timeMasterShield");
+            SoundEffectsManager.Stop("chronosShield");
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.DraftModePick, SendOption.Reliable, -1);
             writer.Write(PlayerControl.LocalPlayer.PlayerId);
             writer.Write(RoleId);

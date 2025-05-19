@@ -21,9 +21,9 @@ namespace TheSushiRoles.Roles.AbilityInfo
         }
 
         #region Ability
-        public static readonly AbilityInfo coward = new("Coward", AbilityColor, "Call a meeting from anywhere!", AbilityId.Coward);
-        public readonly static AbilityInfo disperser = new("Disperser", Color.yellow, "Disperse the Crew to random vents", AbilityId.Disperser);
-        public readonly static AbilityInfo paranoid = new("Paranoid", AbilityColor, "Know when someone is close to you", AbilityId.Paranoid);
+        public static readonly AbilityInfo coward = new("Coward", Guesser.AbilityColor, "Call a meeting from anywhere!", AbilityId.Coward);
+        public readonly static AbilityInfo disperser = new("Disperser", Guesser.AbilityColor, "Disperse the Crew to random vents", AbilityId.Disperser);
+        public readonly static AbilityInfo paranoid = new("Paranoid", Guesser.AbilityColor, "Know when someone is close to you", AbilityId.Paranoid);
         #endregion
         
         // not used yet but might in the future

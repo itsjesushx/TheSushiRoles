@@ -79,7 +79,7 @@ namespace TheSushiRoles.Patches
                 string abilityString = AbilityInfo.GetAbilitiesString(playerControl, true);
                 string reasonsString = RoleInfo.GetDeathReasonString(playerControl);
                 string ghostInfo = RoleInfo.GetGhostInfoString(playerControl);
-                string wasRevived = MapOptions.RevivedPlayers.Contains(playerControl.PlayerId) ? "| <color=#FF0000FF>Revived</color>" : "";
+                string wasRevived = MapOptions.RevivedPlayers.Contains(playerControl.PlayerId) ? "| <color=#82fbff>Revived</color>" : "";
                 AdditionalTempData.playerRoles.Add(new AdditionalTempData.PlayerRoleInfo() 
                 { 
                 PlayerName = playerControl.Data.PlayerName, 
@@ -98,10 +98,9 @@ namespace TheSushiRoles.Patches
                 IsAlive = !playerControl.Data.IsDead });
             }
 
-            // Remove Jester, Arsonist, Vulture, Jackal, former Jackals and Sidekick from winners (if they win, they'll be readded)
+            // Remove Jester, Arsonist, Vulture, Jackal, former Jackals from winners (if they win, they'll be readded)
             List<PlayerControl> notWinners = new List<PlayerControl>();
             if (Jester.Player != null) notWinners.Add(Jester.Player);
-            if (Sidekick.Player != null) notWinners.Add(Sidekick.Player);
             if (Jackal.Player != null) notWinners.Add(Jackal.Player);
             if (Glitch.Player != null) notWinners.Add(Glitch.Player);
             if (Werewolf.Player != null) notWinners.Add(Werewolf.Player);
@@ -118,8 +117,6 @@ namespace TheSushiRoles.Patches
             if (Pestilence.Player != null) notWinners.Add(Pestilence.Player);
             if (Agent.Player != null) notWinners.Add(Agent.Player);
             if (Hitman.Player != null) notWinners.Add(Hitman.Player);
-
-            notWinners.AddRange(Jackal.formerJackals);
 
             List<CachedPlayerData> winnersToRemove = new List<CachedPlayerData>();
             foreach (CachedPlayerData winner in EndGameResult.CachedWinners.GetFastEnumerator()) 
@@ -272,19 +269,6 @@ namespace TheSushiRoles.Patches
                 AdditionalTempData.winCondition = WinCondition.ProsecutorWin;
             }
 
-            /*foreach (var player in PlayerControl.AllPlayerControls)
-                {
-                    var role = RoleInfo.GetRoleInfoForPlayer(player);
-                    foreach (RoleInfo roleInfo in role) 
-                    {
-                        if (roleInfo.Name == "Jester")
-                        {
-                            CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                            EndGameResult.CachedWinners.Add(wpd);
-                        }
-                    }
-                }*/
-
             // Lovers win conditions
             else if (loversWin) 
             {
@@ -329,12 +313,6 @@ namespace TheSushiRoles.Patches
                     CachedPlayerData wpdSidekick = new CachedPlayerData(Sidekick.Player.Data);
                     wpdSidekick.IsImpostor = false;
                     EndGameResult.CachedWinners.Add(wpdSidekick);
-                }
-                foreach (var player in Jackal.formerJackals) 
-                {
-                    CachedPlayerData wpdFormerJackal = new CachedPlayerData(player.Data);
-                    wpdFormerJackal.IsImpostor = false;
-                    EndGameResult.CachedWinners.Add(wpdFormerJackal);
                 }
             }
 
@@ -654,7 +632,7 @@ namespace TheSushiRoles.Patches
                 }
                 else if (cond == WinCondition.AdditionalAlivePursuerWin) 
                 {
-                    textRenderer.text += $"\n{Utils.ColorString(Pursuer.Color, "The Pursuer is alive. They also win!")}";
+                    textRenderer.text += $"\n{Utils.ColorString(Pursuer.Color, "The Pursuer is alive. They also win.")}";
                 }
                 else if (cond == WinCondition.AdditionalLoversPartnerWin)
                 {
@@ -689,8 +667,8 @@ namespace TheSushiRoles.Patches
                     var summaryText = new List<string>();
 
                     // Name
-                    var color = data.IsAlive ? Color.white : new Color(.7f,.7f,.7f); // white or light gray
-                    string name = Utils.ColorString(color, data.PlayerName);
+                    // white if alive else light gray
+                    string name = Utils.ColorString(data.IsAlive ? Color.white : new Color(.7f,.7f,.7f), data.PlayerName);
                     summaryText.Add(name);
 
                     // Role names
@@ -718,9 +696,10 @@ namespace TheSushiRoles.Patches
                     if (!string.IsNullOrEmpty(data.IsRevived)) summaryText.Add(data.IsRevived);
 
                     // Role targets
-                    if (PlayerControl.LocalPlayer.IsProsTarget()) summaryText.Add($" | {Utils.ColorString(Prosecutor.Color, $"[X]")}");
+                    if (PlayerControl.LocalPlayer.IsProssecutorTarget()) summaryText.Add($" | {Utils.ColorString(Prosecutor.Color, $"[X]")}");
                     if (PlayerControl.LocalPlayer.IsLawyerClient()) summaryText.Add($" | {Utils.ColorString(Lawyer.Color, $"[⦿]")}");
                     if (PlayerControl.LocalPlayer.IsShielded()) summaryText.Add($" | {Utils.ColorString(Medic.Color, $"[<b>+</b>]")}");
+                    if (Monarch.Player != null && Monarch.KnightedPlayers.Contains(PlayerControl.LocalPlayer)) summaryText.Add($" | {Utils.ColorString(Monarch.Color, $"[★]")}");
                     if (PlayerControl.LocalPlayer.IsBeloved()) summaryText.Add($" | {Utils.ColorString(Romantic.Color, $"[♥]")}");
 
                     // Death reasons
@@ -1265,82 +1244,77 @@ namespace TheSushiRoles.Patches
                         bool lover = IsLover(playerInfo);
                         if (lover) numLoversAlive++;
 
-                        if (playerInfo.Role.IsImpostor) 
+                        if (playerInfo.Role.IsImpostor && !Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numImpostorsAlive++;
                             if (lover) impLover = true;
                         }
-                        if (Jackal.Player != null && Jackal.Player.PlayerId == playerInfo.PlayerId) 
+                        if (Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numJackalAlive++;
                             if (lover) jackalLover = true;
                         }
-                        if (Hitman.Player != null && Hitman.Player.PlayerId == playerInfo.PlayerId) 
+                        if (Hitman.Player != null && Hitman.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numHitmanAlive++;
                             if (lover) hitmanLover = true;
                         }
-                        if (Agent.Player != null && Agent.Player.PlayerId == playerInfo.PlayerId) 
+                        if (Agent.Player != null && Agent.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numAgentAlive++;
                             if (lover) agentLover = true;
                         }
-                        if (VengefulRomantic.Player != null && VengefulRomantic.Player.PlayerId == playerInfo.PlayerId) 
+                        if (VengefulRomantic.Player != null && VengefulRomantic.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numVRomanticsAlive++;
                             if (lover) RomanticLover = true;
                         }
-                        if (Juggernaut.Player != null && Juggernaut.Player.PlayerId == playerInfo.PlayerId) 
+                        if (Juggernaut.Player != null && Juggernaut.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numJuggAlive++;
                             if (lover) JuggLover = true;
                         }
-                        if (Pestilence.Player != null && Pestilence.Player.PlayerId == playerInfo.PlayerId) 
+                        if (Pestilence.Player != null && Pestilence.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numberPestiAlive++;
                             if (lover) PestilenceLover = true;
                         }
-                        if (Plaguebearer.Player != null && Plaguebearer.Player.PlayerId == playerInfo.PlayerId) 
+                        if (Plaguebearer.Player != null && Plaguebearer.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numberPlagueAlive++;
                             if (lover) PbLover = true;
                         }
-                        if (Sheriff.Player != null && Sheriff.Player.PlayerId == playerInfo.PlayerId) 
+                        if (Sheriff.Player != null && Sheriff.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numCrewPowerAlive++;
                         }
-                        if (Mayor.Player != null && Mayor.Player.PlayerId == playerInfo.PlayerId) 
+                        if (Mayor.Player != null && Mayor.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numCrewPowerAlive++;
                         }
-                        if (Veteran.Player != null && Veteran.Charges > 0 && Veteran.Player.PlayerId == playerInfo.PlayerId) 
+                        if (Veteran.Player != null && Veteran.Charges > 0 && Veteran.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numCrewPowerAlive++;
                         }
-                        if (Swapper.Player != null && Swapper.Charges > 0 && Swapper.Player.PlayerId == playerInfo.PlayerId) 
+                        if (Swapper.Player != null && Swapper.Charges > 0 && Swapper.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numCrewPowerAlive++;
                         }
-                        if (Tiebreaker.Player != null && Tiebreaker.Player.PlayerId == playerInfo.PlayerId && Tiebreaker.Player.IsCrew()) 
+                        if (Tiebreaker.Player != null && Tiebreaker.Player.PlayerId == playerInfo.PlayerId && Tiebreaker.Player.IsCrew() && !Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numCrewPowerAlive++;
                         }
-                        if (Sidekick.Player != null && Sidekick.Player.PlayerId == playerInfo.PlayerId) 
-                        {
-                            numJackalAlive++;
-                            if (lover) jackalLover = true;
-                        }
-                        if (Predator.Player != null && Predator.Player.PlayerId == playerInfo.PlayerId) 
+                        if (Predator.Player != null && Predator.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numPredatorAlive++;
                             if (lover) SKLover = true;
                         }
-                        if (Glitch.Player != null && Glitch.Player.PlayerId == playerInfo.PlayerId) 
+                        if (Glitch.Player != null && Glitch.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numGlitchAlive++;
                             if (lover) glitchLover = true;
                         }
-                        if (Werewolf.Player != null && Werewolf.Player.PlayerId == playerInfo.PlayerId) 
+                        if (Werewolf.Player != null && Werewolf.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.PlayerById(playerInfo.PlayerId)))
                         {
                             numWerewolfAlive++;
                             if (lover) WerewolfLover = true;

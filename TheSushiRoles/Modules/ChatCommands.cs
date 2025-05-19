@@ -53,12 +53,12 @@ namespace TheSushiRoles.Modules
                     var roles = new List<RoleInfo>
                     {
                         RoleInfo.crewmate, RoleInfo.lighter, RoleInfo.detective, RoleInfo.hacker, RoleInfo.tracker, RoleInfo.crusader, RoleInfo.spy, RoleInfo.vigilante, RoleInfo.mayor,
-                        RoleInfo.portalmaker, RoleInfo.veteran, RoleInfo.engineer, RoleInfo.sheriff, RoleInfo.medium, RoleInfo.trapper, RoleInfo.timeMaster, RoleInfo.medic, RoleInfo.swapper,
+                        RoleInfo.portalmaker, RoleInfo.veteran, RoleInfo.engineer, RoleInfo.sheriff, RoleInfo.medium, RoleInfo.trapper, RoleInfo.chronos, RoleInfo.medic, RoleInfo.swapper,
                         RoleInfo.oracle, RoleInfo.mystic,
                         RoleInfo.impostor, RoleInfo.morphling, RoleInfo.blackmailer, RoleInfo.camouflager, RoleInfo.poisoner, RoleInfo.eraser, RoleInfo.trickster, RoleInfo.cleaner,
                         RoleInfo.grenadier, RoleInfo.warlock, RoleInfo.bountyHunter, RoleInfo.ninja, RoleInfo.witch, RoleInfo.wraith, RoleInfo.yoyo,
                         RoleInfo.jester, RoleInfo.arsonist, RoleInfo.vulture, RoleInfo.lawyer, RoleInfo.amnesiac, RoleInfo.prosecutor, RoleInfo.pursuer, RoleInfo.romantic,
-                        RoleInfo.jackal, RoleInfo.plaguebearer, RoleInfo.pestilence, RoleInfo.juggernaut, RoleInfo.sidekick, RoleInfo.agent, RoleInfo.hitman, RoleInfo.predator,
+                        RoleInfo.jackal, RoleInfo.plaguebearer, RoleInfo.pestilence, RoleInfo.juggernaut, RoleInfo.agent, RoleInfo.hitman, RoleInfo.predator,
                         RoleInfo.glitch, RoleInfo.vromantic, RoleInfo.werewolf
                     };
 
@@ -128,7 +128,7 @@ namespace TheSushiRoles.Modules
             public static void Postfix(ChatBubble __instance, [HarmonyArgument(0)] string playerName) 
             {
                 PlayerControl sourcePlayer = PlayerControl.AllPlayerControls.ToArray().ToList().FirstOrDefault(x => x.Data != null && x.Data.PlayerName.Equals(playerName));
-                if (sourcePlayer != null && PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer.Data?.Role?.IsImpostor == true && (Spy.Player != null && sourcePlayer.PlayerId == Spy.Player.PlayerId || Sidekick.Player != null && Sidekick.wasTeamRed && sourcePlayer.PlayerId == Sidekick.Player.PlayerId || Jackal.Player != null && Jackal.wasTeamRed && sourcePlayer.PlayerId == Jackal.Player.PlayerId) && __instance != null) __instance.NameText.color = Palette.ImpostorRed;
+                if (sourcePlayer != null && PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer.Data?.Role?.IsImpostor == true && (Spy.Player != null && sourcePlayer.PlayerId == Spy.Player.PlayerId) && __instance != null) __instance.NameText.color = Palette.ImpostorRed;
             }
         }
 

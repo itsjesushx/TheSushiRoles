@@ -12,7 +12,9 @@ namespace TheSushiRoles.Roles
         public static bool BlackmailInvisible;
         public static bool IsBlackmailed(PlayerControl player)
         {
-            return BlackmailedPlayer?.PlayerId == player.PlayerId && !BlackmailedPlayer.Data.IsDead;
+            return BlackmailedPlayer != null &&
+               !BlackmailedPlayer.Data.IsDead &&
+               BlackmailedPlayer.PlayerId == player.PlayerId && Player != null;
         }
         public static bool CanSeeBlackmailed(byte playerId)
         {

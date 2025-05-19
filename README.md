@@ -20,7 +20,7 @@ Even more roles are coming soon.
 | [Morphling](#morphling) | [Trapper](#trapper)| [Sidekick](#sidekick) | [Bait](#bait) | |
 | [Camouflager](#camouflager) | [Lighter](#lighter) | [Vulture](#vulture) | [Lovers](#lovers) | |
 | [Poisoner](#poisoner) | [Detective](#detective) | [Lawyer](#lawyer) | [Sunglasses](#sunglasses) | |
-| [Eraser](#eraser) | [Time Master](#time-master) | [Prosecutor](#prosecutor) | [Mini](#mini) | |
+| [Eraser](#eraser) | [Chronos](#time-master) | [Prosecutor](#prosecutor) | [Mini](#mini) | |
 | [Trickster](#trickster) | [Medic](#medic) | [Pursuer](#pursuer) | [VIP](#vip) |  |
 | [Cleaner](#cleaner) | [Swapper](#swapper) | [Agent](#agent) | [Invert](#invert) | |
 | [Warlock](#warlock) | [Mystic](#mystic) | [Glitch](#glitch)    | [Chameleon](#chameleon) | |
@@ -33,7 +33,7 @@ Even more roles are coming soon.
 |  | [Medium](#medium) | [Pestilence](#plaguebearer)  |  |  |
 |  |[Veteran](#veteran)    |  |  |  |
 |  |[Oracle](#oracle) |  |  |  |
-|  | |  |  |
+|  | [Monarch](#monarch) |  |  |
 
 The [Role Assignment](#role-assignment) section explains how the roles are being distributed among the players.
 If you want to learn how the new killers work, go to [Neutral Killers guide](#neutral-killers) to see it.
@@ -96,7 +96,7 @@ Thanks to miniduikboot & GD for hosting modded servers!
 [Jester](https://github.com/Maartii/Jester) - Idea for the Jester role came from **Maartii**\
 [ExtraRolesAmongUs](https://github.com/NotHunter101/ExtraRolesAmongUs) - Idea for the Engineer and Medic role came from **NotHunter101**. Also some code snippets from their implementation were used.\
 [Among-Us-Sheriff-Mod](https://github.com/Woodi-dev/Among-Us-Sheriff-Mod) - Idea for the Sheriff role came from **Woodi-dev**\
-[TooManyRolesMods](https://github.com/Hardel-DW/TooManyRolesMods) - Idea for the Detective and Time Master roles came from **Hardel-DW**. Also some code snippets from their implementation were used.\
+[TooManyRolesMods](https://github.com/Hardel-DW/TooManyRolesMods) - Idea for the Detective and Chronos roles came from **Hardel-DW**. Also some code snippets from their implementation were used.\
 [TownOfUs](https://github.com/slushiegoose/Town-Of-Us) - Idea for the Swapper, Arsonist and a similar Mayor role came from **Slushiegoose**\
 [Ottomated](https://twitter.com/ottomated_) - Idea for the Morphling and Camouflager role came from **Ottomated**\
 [Crowded-Mod](https://github.com/CrowdedMods/CrowdedMod) - Our implementation for 10+ player lobbies were inspired by the one from the **Crowded Mod Team**\
@@ -557,57 +557,49 @@ If Impostors and multiple Neutral Killers are in the game, the game continues ev
 
 ## Jackal
 ### **Team: Jackal**
-### **Faction: Neutral (Killing)**
+### **Faction: Neutral**
+### **Alignment: Neutral Killing**
 The Jackal is part of an extra team, that tries to eliminate all the other players.\
 The Jackal has no tasks and can kill Impostors, Crewmates and Neutrals.\
 The Jackal (if allowed by the options) can select another player to be their Sidekick.
-Creating a Sidekick removes all tasks of the Sidekick and adds them to the team Jackal. The Sidekick loses their current role (except if they're a Lover, then they play in two teams).
-The "Create Sidekick Action" may only be used once per Jackal or once per game (depending on the options).
-The Jackal can also promote Impostors to be their Sidekick, but depending on the options the Impostor will either really turn into the Sidekick and leave the team Impostors or they will just look like the Sidekick to the Jackal and remain as they were.\
-Also if a Spy or Impostor gets sidekicked, they still will appear red to the Impostors.
-If an Amnesiac remembers a jackal's role and the option "Promoted Sidekick Can Create a New Sidekick" is on, the promoted Sidekick (now current alive jackal) will become a Sidekick back again as the Amnesiac remembered Jackal.\
-This also means the dead jackal will become amnesiac but will still be part of the team jackal.
+Creating a Sidekick adds them to the team Jackal. The Sidekick keeps their current role if they are a lover, they got 3 teams where they could possibly win.
+The "Create Sidekick Action" may only be used once per game.
+If An Amnesiac remembers a Jackal, the current Jackal's Sidekick will be removed. And Amnesiac will be a Sidekick instead.
 
 ### Game Options
 | Name | Description
 |----------|:-------------:|
 | Jackal Spawn Chance | -
-| Jackal/Sidekick Kill Cooldown | Kill Cooldown |
+| Team Jackal Kill Cooldown | Kill Cooldown |
 | Jackal Create Sidekick Cooldown | Cooldown before a Sidekick can be created |
 | Jackal Can Use Vents | Yes/No |
-| Jackal Can Sabotage Lights | Yes/No |
 | Jackal Can Create A Sidekick | Yes/No |
-| Sidekick Gets Promoted To Jackal On Jackal Death | Yes/No |
-| Sidekick Can Kill | Yes/No |
 | Sidekick Can Vent | Yes/No |
-| Sidekick Can Sabotage Lights | Yes/No |
-| Jackals Promoted From Sidekick Can Create A Sidekick | Yes/No (to prevent the Jackal team from growing) |
-| Jackals Can Make An Impostor To His Sidekick | Yes/No (to prevent a Jackal from turning an Impostor into a Sidekick, if they use the ability on an Impostor they see the Impostor as Sidekick, but the Impostor isn't converted to Sidekick. If this option is set to "No" Jackal and Sidekick can kill each other.) |
-| Jackal And Sidekick Have Impostor Vision | -
+| Team Jackal Have Impostor Vision | -
 -----------------------
 
 ## Sidekick
 ### **Team: Jackal**
-### **Faction: Neutral (Killing)**
+### **Faction: Neutral**
+### **Alignment: Neutral Killing**
 Gets assigned to a player during the game by the "Create Sidekick Action" of the Jackal and joins the Jackal in their quest to eliminate all other players.\
-Upon the death of the Jackal (depending on the options), they might get promoted to Jackal themself and potentially even assign a Sidekick of their own.\
 \
 **NOTE:**
-- A player that converts into a Sidekick loses their previous role and tasks (if they had one).
+- The original faction of the player will be changed to Neutral, so they count as a Jackal.
+- The original alignment of the player will be changed to Neutral Killing, so they count as a Jackal.
 - The Sidekick may be killed by a Sheriff.
 - The Sidekick cannot target the Mini, while it's growing up.
 
 ### Game Options
 | Name | Description
 |----------|:-------------:|
-| Jackal/Sidekick Kill Cooldown | Uses the same kill Cooldown setting as the Jackal |
-| Sidekick Gets Promoted To Jackal On Jackal Death |  Yes/No |
-| Sidekick Can Kill | Yes/No |
+| Team Jackal Kill Cooldown | Uses the same kill Cooldown setting as the Jackal |
 | Sidekick Can Use Vents | Yes/No |
 -----------------------
 
 ## Juggernaut
-### **Faction: Neutral (Killing)**
+### **Faction: Neutral**
+### **Alignment: Neutral Killing**
 
 The Juggernaut is a Neutral role with its own win condition.\
 The Juggernaut's special ability is that their kill Cooldown reduces with each kill.\
@@ -624,7 +616,8 @@ The Juggernaut needs to be the last killer alive to win the game.
 -----------------------
 
 ## Glitch
-### **Faction: Neutral (Killing)**
+### **Faction: Neutral**
+### **Alignment: Neutral Killing**
 
 Glitch is a Neutral role with its own win condition.\
 Glitch's aim is to kill everyone and be the last person standing.\
@@ -647,7 +640,8 @@ Glitch can Mimic someone, which results in them looking exactly like the other p
 -----------------------
 
 ## Werewolf
-### **Faction: Neutral (Killing)**
+### **Faction: Neutral**
+### **Alignment: Neutral Killing**
 
 The Werewolf can kill all players within a certain radius.
 
@@ -662,7 +656,8 @@ The Werewolf can kill all players within a certain radius.
 -----------------------
 
 ## Predator
-### **Faction: Neutral (Killing)**
+### **Faction: Neutral**
+### **Alignment: Neutral Killing**
 
 The Predator is a Neutral role with its own win condition.\
 Although the Predator has a kill button, they can't use it unless they are stabbing.\
@@ -703,7 +698,8 @@ They can additionally drag bodies like the [Undertaker](#undertaker).\
 -----------------------
 
 ## Plaguebearer
-### **Faction: Neutral (Killing)**
+### **Faction: Neutral**
+### **Alignment: Neutral Killing**
 
 The Plaguebearer is a Neutral role with its own win condition, as well as an ability to transform into another role.\
 The Plaguebearer has one ability, which allows them to infect other players.\
@@ -891,7 +887,20 @@ The second, is that every meeting the Oracle receives a confession about who mig
 | Reveal Accuracy | -
 | Neutral Benign show up as Evil | -
 | Neutral Evil show up as Evil | -
-| Neutral Killing show up as Evil | -
+
+-----------------------
+
+## Monarch
+### **Faction: Crewmates**
+The Monarch is a Crewmate that can Knight another players.\
+Knighted players will gain an extra vote in meetings.\
+Depending on the options, if the Monarch dies, all the Knighted players are removed.\
+### Game Options
+| Name | Description
+|----------|:-------------:|
+| Monarch Spawn Chance | -
+| Monarch Knight Cooldown | -
+| Remove Knights On Monarch Death | -
 
 -----------------------
 
@@ -965,18 +974,18 @@ The Detective's other feature shows when they report a corpse: they receive clue
 | Time Where Detective Reports Will Have Color Type| The amount of time that the Detective will have to report the body since death to get the killer's color type. |
 -----------------------
 
-## Time Master
+## Chronos
 ### **Faction: Crewmates**
-The Time Master can rewind the time, making players go back the exact steps they walked but in reverse.\
+The Chronos can rewind the time, making players go back the exact steps they walked but in reverse.\
 If a player was killed within the same amount of time the rewind lasts and if the options allows it the dead players will get revived.
 
 ### Game Options
 | Name | Description |
 |----------|:-------------:|
-| Time Master Spawn Chance | - |
-| Time Master Cooldown | - |
+| Chronos Spawn Chance | - |
+| Chronos Cooldown | - |
 | Rewind Duration | How much time to rewind |
-| Time Master Can Revive During Rewind |
+| Chronos Can Revive During Rewind |
 -----------------------
 
 ## Medic
@@ -1191,7 +1200,7 @@ The souls will always prefer to answer with the role specific information first!
 - Active Lover dies: "I wanted to get out of this toxic relationship anyways."
 - Passiv Lover suicide: "The love of my life died, thus with a kiss I die."
 - Lawyer client kills Lawyer: "My client killed me. Do I still get paid?"
-- Teamkill Jackal/Sidekick: "First they sidekicked me, then they killed me... BUT WHY?"
+- Teamkill Team Jackal: "First they sidekicked me, then they killed me... BUT WHY?"
 - Teamkill Impostor: "I guess they confused me for the Spy, is there even one?"
 - Submerged o2-Kill: "Do I really need that mask for breathing?"
 - Warlock self kill: "MAYBE I cursed the person next to me and killed myself. Oops."
@@ -1348,7 +1357,7 @@ If one Lover dies (and the option is activated), the other Lover suicides.\
 You can specify the chance of one Lover being an Impostor.\
 The Lovers never know the role of their partner, they only see who their partner is.\
 The Lovers win, if they are both alive when the game ends. They can also win with their original team (e.g. a dead Impostor Lover can win with the Impostors, an Arsonist Lover can still achieve an Arsonist win).\
-If one of the Lovers is a killer (i.e. Jackal/Sidekick/Impostor), they can achieve a "Lovers solo win" where only the Lovers win.\
+If one of the Lovers is a killer (i.e. Team Jackal/Impostor), they can achieve a "Lovers solo win" where only the Lovers win.\
 If there is no killer among the Lovers (e.g. an Arsonist Lover + Crewmate Lover) and they are both alive when the game ends, they win together with the Crewmates.\
 If there's an Impostor/Jackal + Crewmate Lover in the game, the tasks of a Crewmate Lover won't be counted (for a task win) as long as they're alive.\
 If the Lover dies, their tasks will also be counted.\
@@ -1413,7 +1422,7 @@ The Mini cannot be killed until it turns 18 years old, however it can be voted o
 - If it gets thrown out of the ship before it turns 18, everyone loses. So think twice before you vote out a Mini.
 
 **Neutral Mini:**
-- The Cooldown is not effected, except for the Team Jackal/Sidekick.
+- The Cooldown is not effected, except for the Team Team Jackal.
 - If it gets thrown out of the ship, everything is fine except for the Jester.
 - If the Jester Mini gets voted out the game will end in a Jester win.
 

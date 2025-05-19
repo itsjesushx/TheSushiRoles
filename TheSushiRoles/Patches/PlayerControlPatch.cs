@@ -109,7 +109,7 @@ namespace TheSushiRoles.Patches
 
         public static void BendTimeUpdate() 
         {
-            if (TimeMaster.isRewinding)
+            if (Chronos.isRewinding)
             {
                 if (GameHistory.LocalPlayerPositions.Count > 0)
                 {
@@ -148,7 +148,7 @@ namespace TheSushiRoles.Patches
                         if (deadPlayer.player == null) continue;
 
                         if ((DateTime.UtcNow - deadPlayer.DeathTime).TotalSeconds < 
-                            TimeMaster.RewindTimeDuration && TimeMaster.ReviveDuringRewind)
+                            Chronos.RewindTimeDuration && Chronos.ReviveDuringRewind)
                         {
                             var player = deadPlayer.player;
                             if (player.Data.IsDead)
@@ -162,14 +162,14 @@ namespace TheSushiRoles.Patches
                 }
                 else
                 {
-                    TimeMaster.isRewinding = false;
+                    Chronos.isRewinding = false;
                     PlayerControl.LocalPlayer.moveable = true;
-                    TimeMaster.RecentlyDied.Remove(PlayerControl.LocalPlayer.PlayerId);
+                    Chronos.RecentlyDied.Remove(PlayerControl.LocalPlayer.PlayerId);
                 }
             }
             else
             {
-                while (GameHistory.LocalPlayerPositions.Count >= Mathf.Round(TimeMaster.RewindTimeDuration / Time.fixedDeltaTime)) GameHistory.LocalPlayerPositions.RemoveAt(GameHistory.LocalPlayerPositions.Count - 1);
+                while (GameHistory.LocalPlayerPositions.Count >= Mathf.Round(Chronos.RewindTimeDuration / Time.fixedDeltaTime)) GameHistory.LocalPlayerPositions.RemoveAt(GameHistory.LocalPlayerPositions.Count - 1);
                 GameHistory.LocalPlayerPositions.Insert(0, new Tuple<Vector3, bool>(PlayerControl.LocalPlayer.transform.position, PlayerControl.LocalPlayer.CanMove)); // CanMove = CanMove
             }
         }
@@ -230,27 +230,11 @@ namespace TheSushiRoles.Patches
         {
             if (Plaguebearer.Player == null || Plaguebearer.Player != PlayerControl.LocalPlayer) return;
 
-            List<PlayerControl> untargetables;
-            if (Plaguebearer.CurrentTarget != null)
-            {
-                untargetables = new();
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                {
-                    if (player.PlayerId != Plaguebearer.CurrentTarget.PlayerId)
-                    {
-                        untargetables.Add(player);
-                    }
-                }
-            }
-            else
-            {
-                // Convert AllPlayerControls to a List before using LINQ
-                var allPlayers = PlayerControl.AllPlayerControls.ToArray().ToList(); 
+            List<PlayerControl> untargetables = new List<PlayerControl>();
 
-                untargetables = Plaguebearer.InfectedPlayers
-                    .Select(playerId => allPlayers.FirstOrDefault(p => p.PlayerId == playerId))
-                    .Where(player => player != null)
-                    .ToList();
+            foreach (var infected in Plaguebearer.InfectedPlayers)
+            {
+                untargetables.Add(infected);
             }
 
             Plaguebearer.CurrentTarget = SetTarget(targetPlayersInVents: true, untargetablePlayers: untargetables);
@@ -284,6 +268,13 @@ namespace TheSushiRoles.Patches
             if (Hitman.Player == null || Hitman.Player != PlayerControl.LocalPlayer) return;
             Hitman.CurrentTarget = SetTarget(targetPlayersInVents: true);
             SetPlayerOutline(Hitman.CurrentTarget, Hitman.Color);
+        }
+
+        static void MonarchSetTarget()
+        {
+            if (Monarch.Player == null || Monarch.Player != PlayerControl.LocalPlayer) return;
+            Monarch.CurrentTarget = SetTarget(targetPlayersInVents: true);
+            SetPlayerOutline(Monarch.CurrentTarget, Monarch.Color);
         }
 
         static void VengefulRomanticSetTarget()
@@ -322,19 +313,19 @@ namespace TheSushiRoles.Patches
             if (Poisoner.Player == null || Poisoner.Player != PlayerControl.LocalPlayer) return;
 
             PlayerControl target = null;
-            if (Spy.Player != null || Sidekick.wasSpy || Jackal.wasSpy) 
+            if (Spy.Player != null) 
             {
                 if (Spy.impostorsCanKillAnyone) 
                 {
                     target = SetTarget(onlyCrewmates: false, targetPlayersInVents: true);
                 }
                 else {
-                    target = SetTarget(onlyCrewmates: true, targetPlayersInVents: true, untargetablePlayers: new List<PlayerControl>() { Spy.Player, Sidekick.wasTeamRed ? Sidekick.Player : null, Jackal.wasTeamRed ? Jackal.Player : null });
+                    target = SetTarget(onlyCrewmates: true, targetPlayersInVents: true);
                 }
             }
             else 
             {
-                target = SetTarget(onlyCrewmates: true, targetPlayersInVents : true, untargetablePlayers : new List<PlayerControl>() { Sidekick.wasImpostor ? Sidekick.Player : null, Jackal.wasImpostor ? Jackal.Player : null });
+                target = SetTarget(onlyCrewmates: true, targetPlayersInVents : true);
             }
 
             Poisoner.CurrentTarget = target;
@@ -389,19 +380,7 @@ namespace TheSushiRoles.Patches
             if (Jackal.Player != null) untargetablePlayers.Add(Jackal.Player);
             if (Mini.Player != null && !Mini.IsGrownUp) untargetablePlayers.Add(Mini.Player); // Exclude Sidekick from targeting the Mini unless it has grown up
             Sidekick.CurrentTarget = SetTarget(targetPlayersInVents: true, untargetablePlayers: untargetablePlayers);
-            if (Sidekick.canKill) SetPlayerOutline(Sidekick.CurrentTarget, Sidekick.Color);
-        }
-
-        static void SidekickCheckPromotion() 
-        {
-            // If LocalPlayer is Sidekick, the Jackal is disconnected and Sidekick promotion is enabled, then trigger promotion
-            if (Sidekick.Player == null || Sidekick.Player != PlayerControl.LocalPlayer) return;
-            if (Sidekick.Player.Data.IsDead == true || !Sidekick.promotesToJackal) return;
-            if (Jackal.Player == null || Jackal.Player?.Data?.Disconnected == true) 
-            {
-                Utils.StartRPC(CustomRPC.SidekickPromotes);
-                RPCProcedure.SidekickPromotes();
-            }
+            SetPlayerOutline(Sidekick.CurrentTarget, Sidekick.Color);
         }
 
         static void EraserSetTarget() 
@@ -410,8 +389,6 @@ namespace TheSushiRoles.Patches
 
             List<PlayerControl> untargetables = new List<PlayerControl>();
             if (Spy.Player != null) untargetables.Add(Spy.Player);
-            if (Sidekick.wasTeamRed) untargetables.Add(Sidekick.Player);
-            if (Jackal.wasTeamRed) untargetables.Add(Jackal.Player);
             Eraser.CurrentTarget = SetTarget(onlyCrewmates: !Eraser.canEraseAnyone, untargetablePlayers: Eraser.canEraseAnyone ? new List<PlayerControl>() : untargetables);
             SetPlayerOutline(Eraser.CurrentTarget, Eraser.Color);
         }
@@ -434,17 +411,22 @@ namespace TheSushiRoles.Patches
 
         static void EngineerUpdate() 
         {
-            bool jackalHighlight = Engineer.highlightForTeamJackal && (PlayerControl.LocalPlayer == Jackal.Player || PlayerControl.LocalPlayer == Sidekick.Player);
+            bool NKHighlight = Engineer.HighlightForNeutralKillers && PlayerControl.LocalPlayer.IsNeutralKiller();
             bool impostorHighlight = Engineer.highlightForImpostors && PlayerControl.LocalPlayer.Data.Role.IsImpostor;
-            if ((jackalHighlight || impostorHighlight) && MapUtilities.CachedShipStatus?.AllVents != null) {
-                foreach (Vent vent in MapUtilities.CachedShipStatus.AllVents) {
+            if ((NKHighlight || impostorHighlight) && MapUtilities.CachedShipStatus?.AllVents != null)
+            {
+                foreach (Vent vent in MapUtilities.CachedShipStatus.AllVents)
+                {
                     try {
-                        if (vent?.myRend?.material != null) {
-                            if (Engineer.Player != null && Engineer.Player.inVent) {
+                        if (vent?.myRend?.material != null)
+                        {
+                            if (Engineer.Player != null && Engineer.Player.inVent)
+                            {
                                 vent.myRend.material.SetFloat("_Outline", 1f);
                                 vent.myRend.material.SetColor("_OutlineColor", Engineer.Color);
                             }
-                            else if (vent.myRend.material.GetColor("_AddColor") != Color.red) {
+                            else if (vent.myRend.material.GetColor("_AddColor") != Color.red)
+                            {
                                 vent.myRend.material.SetFloat("_Outline", 0);
                             }
                         }
@@ -462,20 +444,25 @@ namespace TheSushiRoles.Patches
             }
 
             PlayerControl target = null;
-            if (Spy.Player != null || Sidekick.wasSpy || Jackal.wasSpy) 
+            if (Spy.Player != null)
             {
-                if (Spy.impostorsCanKillAnyone) 
+                if (Spy.impostorsCanKillAnyone)
                 {
                     target = SetTarget(false, true);
                 }
-                else 
+                else
                 {
-                    target = SetTarget(true, true, new List<PlayerControl>() { Spy.Player, Sidekick.wasTeamRed ? Sidekick.Player : null, Jackal.wasTeamRed ? Jackal.Player : null});
+                    target = SetTarget(true, true);
                 }
             }
-            else 
+            // Can kill partner if they are a Sidekick
+            else if (Sidekick.Player.IsImpostor())
             {
-                target = SetTarget(true, true, new List<PlayerControl>() { Sidekick.wasImpostor ? Sidekick.Player : null, Jackal.wasImpostor ? Jackal.Player : null});
+                target = SetTarget(false, true);
+            }
+            else
+            {
+                target = SetTarget(true, true);
             }
 
             FastDestroyableSingleton<HudManager>.Instance.KillButton.SetTarget(target); // Includes setPlayerOutline(target, Palette.ImpstorRed);
@@ -741,10 +728,12 @@ namespace TheSushiRoles.Patches
 
         public static bool ShouldSeePlayerInfo(PlayerControl player)
         {
-            // Prevent showing if player just died and Time Master could use rewind
-            if (TimeMaster.RecentlyDied.TryGetValue(player.PlayerId, out float deathTime) && TimeMaster.Player != null)
+            if (player == null) return false;
+
+            // Prevent showing if player just died and Chronos could use rewind
+            if (Chronos.RecentlyDied.TryGetValue(player.PlayerId, out float deathTime) && Chronos.Player != null)
             {
-                float rewindBuffer = TimeMaster.RewindTimeDuration + 2f;
+                float rewindBuffer = Chronos.RewindTimeDuration + 2f;
                 if (Time.time - deathTime <= rewindBuffer)
                     return false;
             }
@@ -756,14 +745,19 @@ namespace TheSushiRoles.Patches
             {
                 return true;
             }
+            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && PlayerControl.LocalPlayer == Sidekick.Player
+            && player.Data.Role.IsImpostor)
+            {
+                return false;
+            }
 
             return
-                (Lawyer.lawyerKnowsRole && PlayerControl.LocalPlayer == Lawyer.Player && player == Lawyer.target) ||
-                (Romantic.RomanticKnowsRole && PlayerControl.LocalPlayer == Romantic.Player && player == Romantic.beloved) ||
-                (Romantic.RomanticKnowsRole && PlayerControl.LocalPlayer == Romantic.beloved && player == Romantic.Player) ||
-                player == PlayerControl.LocalPlayer ||
-                (Sleuth.Players.Any(x => x.PlayerId == PlayerControl.LocalPlayer.PlayerId) && Sleuth.Reported.Contains(player.PlayerId)) ||
-                (PlayerControl.LocalPlayer.Data.IsDead && !MapOptions.RevivedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId));
+                    (Lawyer.lawyerKnowsRole && PlayerControl.LocalPlayer == Lawyer.Player && player == Lawyer.target) ||
+                    (Romantic.RomanticKnowsRole && PlayerControl.LocalPlayer == Romantic.Player && player == Romantic.beloved) ||
+                    (Romantic.RomanticKnowsRole && PlayerControl.LocalPlayer == Romantic.beloved && player == Romantic.Player) ||
+                    player == PlayerControl.LocalPlayer || Monarch.KnightedPlayers.Contains(PlayerControl.LocalPlayer) && player == Monarch.Player ||
+                    (Sleuth.Players.Any(x => x.PlayerId == PlayerControl.LocalPlayer.PlayerId) && Sleuth.Reported.Contains(player.PlayerId)) ||
+                    (PlayerControl.LocalPlayer.Data.IsDead && !MapOptions.RevivedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId));
         }
 
         public static void UpdatePlayerInfoText(PlayerControl player)
@@ -938,7 +932,8 @@ namespace TheSushiRoles.Patches
         {
             if (Vigilante.Player == null || PlayerControl.LocalPlayer != Vigilante.Player || Vigilante.Player.Data.IsDead) return;
             var (playerCompleted, _) = TasksHandler.TaskInfo(Vigilante.Player.Data);
-            if (playerCompleted == Vigilante.RechargedTasks) {
+            if (playerCompleted == Vigilante.RechargedTasks)
+            {
                 Vigilante.RechargedTasks += Vigilante.RechargeTasksNumber;
                 if (Vigilante.maxCharges > Vigilante.Charges) Vigilante.Charges++;
             }
@@ -994,7 +989,7 @@ namespace TheSushiRoles.Patches
                 var possibleTargets = new List<PlayerControl>();
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) 
                 {
-                    if (!p.Data.IsDead && !p.Data.Disconnected && p != p.Data.Role.IsImpostor && p != Spy.Player && (Romantic.beloved == BountyHunter.Player && p != Romantic.Player) && (p != Sidekick.Player || !Sidekick.wasTeamRed) && (p != Jackal.Player || !Jackal.wasTeamRed) && (p != Mini.Player || Mini.IsGrownUp) && (Lovers.GetPartner(BountyHunter.Player) == null || p != Lovers.GetPartner(BountyHunter.Player))) possibleTargets.Add(p);
+                    if (!p.Data.IsDead && !p.Data.Disconnected && p != p.Data.Role.IsImpostor && p != Spy.Player && (Romantic.beloved == BountyHunter.Player && p != Romantic.Player) && (p != Sidekick.Player) && (p != Jackal.Player) && (p != Mini.Player || Mini.IsGrownUp) && (Lovers.GetPartner(BountyHunter.Player) == null || p != Lovers.GetPartner(BountyHunter.Player))) possibleTargets.Add(p);
                 }
                 BountyHunter.bounty = possibleTargets[TheSushiRoles.rnd.Next(0, possibleTargets.Count)];
                 if (BountyHunter.bounty == null) return;
@@ -1244,12 +1239,23 @@ namespace TheSushiRoles.Patches
                 Veteran.Charges++;
             }
         }
+        
+        public static void MonarchUpdate()
+        {
+            if (Monarch.Player == null || PlayerControl.LocalPlayer != Monarch.Player || PlayerControl.LocalPlayer.Data.IsDead) return;
+            var (playerCompleted, _) = TasksHandler.TaskInfo(PlayerControl.LocalPlayer.Data);
+            if (playerCompleted == Monarch.RechargedTasks) 
+            {
+                Monarch.RechargedTasks += Veteran.RechargeTasksNumber;
+                Monarch.Charges++;
+            }
+        }
 
-        public static void MysticUpdate() 
+        public static void MysticUpdate()
         {
             if (Mystic.Player == null || PlayerControl.LocalPlayer != Mystic.Player || PlayerControl.LocalPlayer.Data.IsDead) return;
             var (playerCompleted, _) = TasksHandler.TaskInfo(PlayerControl.LocalPlayer.Data);
-            if (playerCompleted == Mystic.RechargedTasks) 
+            if (playerCompleted == Mystic.RechargedTasks)
             {
                 Mystic.RechargedTasks += Mystic.RechargeTasksNumber;
                 Mystic.Charges++;
@@ -1291,8 +1297,6 @@ namespace TheSushiRoles.Patches
             {
                 untargetables = new List<PlayerControl>(); // Also target players that have already been spelled, to hide spells that were blanks/blocked by Shields
                 if (Spy.Player != null && !Witch.canSpellAnyone) untargetables.Add(Spy.Player);
-                if (Sidekick.wasTeamRed && !Witch.canSpellAnyone) untargetables.Add(Sidekick.Player);
-                if (Jackal.wasTeamRed && !Witch.canSpellAnyone) untargetables.Add(Jackal.Player);
             }
             Witch.CurrentTarget = SetTarget(onlyCrewmates: !Witch.canSpellAnyone, untargetablePlayers: untargetables);
             SetPlayerOutline(Witch.CurrentTarget, Witch.Color);
@@ -1304,8 +1308,6 @@ namespace TheSushiRoles.Patches
             List<PlayerControl> untargetables = new List<PlayerControl>();
             if (Spy.Player != null && !Spy.impostorsCanKillAnyone) untargetables.Add(Spy.Player);
             if (Mini.Player != null && !Mini.IsGrownUp) untargetables.Add(Mini.Player);
-            if (Sidekick.wasTeamRed && !Spy.impostorsCanKillAnyone) untargetables.Add(Sidekick.Player);
-            if (Jackal.wasTeamRed && !Spy.impostorsCanKillAnyone) untargetables.Add(Jackal.Player);
             Ninja.CurrentTarget = SetTarget(onlyCrewmates: Spy.Player == null || !Spy.impostorsCanKillAnyone, untargetablePlayers: untargetables);
             SetPlayerOutline(Ninja.CurrentTarget, Ninja.Color);
         }
@@ -1345,7 +1347,6 @@ namespace TheSushiRoles.Patches
                 HudManagerStartPatch.RomanticKillButton.MaxTimer = VengefulRomantic.Cooldown * multiplier;
                 HudManagerStartPatch.PredatorTerminateButton.MaxTimer = Predator.TerminateCooldown * multiplier;
                 HudManagerStartPatch.WerewolfMaulButton.MaxTimer = Werewolf.Cooldown * multiplier;
-                HudManagerStartPatch.sidekickKillButton.MaxTimer = Sidekick.Cooldown * multiplier;
                 HudManagerStartPatch.warlockCurseButton.MaxTimer = Warlock.Cooldown * multiplier;
                 HudManagerStartPatch.cleanerCleanButton.MaxTimer = Cleaner.Cooldown * multiplier;
                 HudManagerStartPatch.PredatorKillButton.MaxTimer = Predator.TerminateKillCooldown * multiplier;
@@ -1394,7 +1395,7 @@ namespace TheSushiRoles.Patches
                 //Update pet visibility
                 SetPetVisibility();
                 
-                // Time Master
+                // Chronos
                 BendTimeUpdate();
                 // Morphling
                 MorphlingSetTarget();
@@ -1444,8 +1445,6 @@ namespace TheSushiRoles.Patches
                 ImpostorSetTarget();
                 // Warlock
                 WarlockSetTarget();
-                // Check for sidekick promotion on Jackal disconnect
-                SidekickCheckPromotion();
                 // Vigilante
                 VigilanteSetTarget();
                 VigilanteUpdate();
@@ -1491,8 +1490,11 @@ namespace TheSushiRoles.Patches
 
                 HackerUpdate();
                 SwapperUpdate();
-                //Veteran
+                // Veteran
                 VeteranUpdate();
+                // Monarch
+                MonarchUpdate();
+                MonarchSetTarget();
                 // Hacker
                 HackerUpdate();
                 // Trapper
@@ -1626,6 +1628,8 @@ namespace TheSushiRoles.Patches
             if (target.HasFakeTasks() || target == Lawyer.Player || target == Pursuer.Player)
                 target.ClearAllTasks();
 
+            if (Monarch.Player != null && Monarch.Player == target && Monarch.KnightLoseOnDeath) Monarch.KnightedPlayers.Clear();
+
             // First kill (set before lover suicide)
             if (MapOptions.FirstKillName == "") MapOptions.FirstKillName = target.Data.PlayerName;
 
@@ -1647,13 +1651,6 @@ namespace TheSushiRoles.Patches
                         Disperser.Charges++;
                     }
                 }
-            }
-
-            // Sidekick promotion trigger on murder
-            if (Sidekick.promotesToJackal && Sidekick.Player != null && !Sidekick.Player.Data.IsDead && target == Jackal.Player && Jackal.Player == PlayerControl.LocalPlayer) 
-            {
-                Utils.StartRPC(CustomRPC.SidekickPromotes);
-                RPCProcedure.SidekickPromotes();
             }
 
             // Pursuer promotion trigger on murder (the host sends the call such that everyone recieves the update before a possible game End)
@@ -1821,12 +1818,6 @@ namespace TheSushiRoles.Patches
                     GameHistory.CreateDeathReason(otherLover, DeadPlayer.CustomDeathReason.LoverSuicide);
                 }
 
-            }            
-            // Sidekick promotion trigger on exile
-            if (Sidekick.promotesToJackal && Sidekick.Player != null && !Sidekick.Player.Data.IsDead && __instance == Jackal.Player && Jackal.Player == PlayerControl.LocalPlayer) 
-            {
-                Utils.StartRPC(CustomRPC.SidekickPromotes);
-                RPCProcedure.SidekickPromotes();
             }
 
             if (Romantic.Player != null && !Romantic.Player.Data.IsDead && __instance == Romantic.beloved) 
@@ -1863,7 +1854,8 @@ namespace TheSushiRoles.Patches
     }
 
     [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.FixedUpdate))]
-    public static class PlayerPhysicsFixedUpdate {
+    public static class PlayerPhysicsFixedUpdate 
+    {
         public static void Postfix(PlayerPhysics __instance)
         {
             bool shouldInvert = Invert.Players.FindAll(x => x.PlayerId == PlayerControl.LocalPlayer.PlayerId).Count > 0 && Invert.meetings > 0;

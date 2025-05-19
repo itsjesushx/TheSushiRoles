@@ -193,7 +193,6 @@ namespace TheSushiRoles.Patches
             if (Sidekick.Player != null && Sidekick.Player == localPlayer) 
             {
                 // Sidekick can see the jackal
-                SetPlayerNameColor(Sidekick.Player, Sidekick.Color);
                 if (Jackal.Player != null) 
                 {
                     SetPlayerNameColor(Jackal.Player, Jackal.Color);
@@ -205,14 +204,6 @@ namespace TheSushiRoles.Patches
             {
                 SetPlayerNameColor(Spy.Player, Spy.Color);
             }
-            if (Sidekick.Player != null && Sidekick.wasTeamRed && localPlayer.Data.Role.IsImpostor) 
-            {
-                SetPlayerNameColor(Sidekick.Player, Spy.Color);
-            }
-            if (Jackal.Player != null && Jackal.wasTeamRed && localPlayer.Data.Role.IsImpostor) 
-            {
-                SetPlayerNameColor(Jackal.Player, Spy.Color);
-            }
 
             // Crewmate roles with no changes: Mini
             // Impostor roles with no changes: Morphling, Camouflager, Poisoner, Eraser, Cleaner, Warlock, BountyHunter,  Witch
@@ -223,7 +214,7 @@ namespace TheSushiRoles.Patches
             // Lovers
             if (Lovers.Lover1 != null && Lovers.Lover2 != null && (Lovers.Lover1 == PlayerControl.LocalPlayer || Lovers.Lover2 == PlayerControl.LocalPlayer)) 
             {
-                string suffix = Utils.ColorString(Lovers.Color, " ♥");
+                string suffix = Utils.ColorString(Lovers.Color, " [♥]");
                 Lovers.Lover1.cosmetics.nameText.text += suffix;
                 Lovers.Lover2.cosmetics.nameText.text += suffix;
 
@@ -233,36 +224,51 @@ namespace TheSushiRoles.Patches
                             player.NameText.text += suffix;
             }
 
-            // Plaguebearer infected players
-            if (Plaguebearer.Player != null && Plaguebearer.Player == PlayerControl.LocalPlayer) 
+            // Monarch
+            if (Monarch.Player != null && Monarch.KnightedPlayers.Contains(PlayerControl.LocalPlayer))
             {
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                foreach (var knighted in Monarch.KnightedPlayers)
                 {
-                    if (Plaguebearer.InfectedPlayers.Contains(player.PlayerId))
-                    {
-                        string suffix = Utils.ColorString(Plaguebearer.Color, " ⦿");
-                        player.cosmetics.nameText.text += suffix;
+                    string suffix = Utils.ColorString(Monarch.Color, " [★]");
+                    if (knighted == PlayerControl.LocalPlayer) knighted.cosmetics.nameText.text += suffix;
 
-                        if (MeetingHud.Instance != null)
+                    if (MeetingHud.Instance != null)
+                        foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
+                            if (knighted.PlayerId == player.TargetPlayerId)
+                                player.NameText.text += suffix;
+                }
+            }
+
+            // Plaguebearer infected players
+                if (Plaguebearer.Player != null && Plaguebearer.Player == PlayerControl.LocalPlayer)
+                {
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    {
+                        if (Plaguebearer.InfectedPlayers.Contains(player))
                         {
-                            foreach (PlayerVoteArea voteArea in MeetingHud.Instance.playerStates)
+                            string suffix = Utils.ColorString(Plaguebearer.Color, " [⦿]");
+                            player.cosmetics.nameText.text += suffix;
+
+                            if (MeetingHud.Instance != null)
                             {
-                                if (voteArea.TargetPlayerId == player.PlayerId)
+                                foreach (PlayerVoteArea voteArea in MeetingHud.Instance.playerStates)
                                 {
-                                    voteArea.NameText.text += suffix;
+                                    if (voteArea.TargetPlayerId == player.PlayerId)
+                                    {
+                                        voteArea.NameText.text += suffix;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
             // Lawyer
             if (Lawyer.Player != null && Lawyer.target != null && Lawyer.Player == PlayerControl.LocalPlayer) 
             {
                 Color color = Lawyer.Color;
                 PlayerControl target = Lawyer.target;
-                string suffix = Utils.ColorString(color, " §");
+                string suffix = Utils.ColorString(color, " [§]");
                 target.cosmetics.nameText.text += suffix;
 
                 if (MeetingHud.Instance != null)
@@ -275,7 +281,7 @@ namespace TheSushiRoles.Patches
             if (Prosecutor.Player != null && Prosecutor.target != null && Prosecutor.Player == PlayerControl.LocalPlayer) 
             {
                 PlayerControl target = Prosecutor.target;
-                string suffix = Utils.ColorString(Prosecutor.Color, " ⦿");
+                string suffix = Utils.ColorString(Prosecutor.Color, " [⦿]");
                 target.cosmetics.nameText.text += suffix;
 
                 if (MeetingHud.Instance != null)
@@ -300,8 +306,6 @@ namespace TheSushiRoles.Patches
                     if (player.TargetPlayerId == Medic.Shielded.PlayerId) 
                     {
                         player.NameText.text = Utils.ColorString(Medic.Color, "[") + player.NameText.text + Utils.ColorString(Medic.Color, "]");
-                        // player.HighlightedFX.color = Medic.Color;
-                        // player.HighlightedFX.enabled = true;
                     }
             }
         }

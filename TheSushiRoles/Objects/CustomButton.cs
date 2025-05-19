@@ -11,7 +11,7 @@ namespace TheSushiRoles.Objects
     {
         public static List<CustomButton> buttons = new List<CustomButton>();
         public static KeyCode Action2Keycode = KeyCode.G;
-         public static KeyCode Action3Keycode = KeyCode.H;
+        public static KeyCode Action3Keycode = KeyCode.H;
         public ActionButton actionButton;
         public GameObject actionButtonGameObject;
         public SpriteRenderer actionButtonRenderer;
@@ -314,7 +314,7 @@ namespace TheSushiRoles.Objects
             {
                 buttons.Timer = MapOptions.GameStartCooldowns;
             }
-            FastDestroyableSingleton<HudManager>.Instance.KillButton.SetCoolDown(MapOptions.GameStartCooldowns, MapOptions.GameStartCooldowns);
+            PlayerControl.LocalPlayer.SetKillTimer(MapOptions.GameStartCooldowns);
         }
     }
 }

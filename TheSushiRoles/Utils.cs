@@ -592,7 +592,7 @@ namespace TheSushiRoles
             else if (!MapOptions.hidePlayerNames) return false; // All names are visible
             else if (source == null || target == null) return true;
             else if (source == target) return false; // Player sees his own name
-            else if (source.Data.Role.IsImpostor && (target.Data.Role.IsImpostor || target == Spy.Player || target == Sidekick.Player && Sidekick.wasTeamRed || target == Jackal.Player && Jackal.wasTeamRed)) return false; // Members of team Impostors see the names of Impostors/Spies
+            else if (source.Data.Role.IsImpostor && (target.Data.Role.IsImpostor || target == Spy.Player)) return false; // Members of team Impostors see the names of Impostors/Spies
             else if ((source == Lovers.Lover1 || source == Lovers.Lover2) && (target == Lovers.Lover1 || target == Lovers.Lover2)) return false; // Members of team Lovers see the names of each other
             else if ((source == Jackal.Player || source == Sidekick.Player) && (target == Jackal.Player || target == Sidekick.Player)) return false; // Members of team Jackal see the names of each other
             return true;
@@ -693,7 +693,16 @@ namespace TheSushiRoles
                 if (p == 1f) messageText.gameObject.Destroy();
             })));
         }
-        public static bool IsVenter(this PlayerControl player) 
+        public static bool HasPrimaryButton()
+        {
+            foreach (var button in CustomButton.buttons)
+            {
+                if (button != null && button.PositionOffset == CustomButton.ButtonPositions.upperRowRight)
+                    return true;
+            }
+            return false;
+        }
+        public static bool IsVenter(this PlayerControl player)
         {
             bool isVenter = false;
             if (Engineer.Player != null && Engineer.Player == player)
@@ -714,8 +723,6 @@ namespace TheSushiRoles
                 isVenter = true;
             else if (Jester.CanUseVents && Jester.Player != null && Jester.Player == player)
                 isVenter = true;
-            else if (Sidekick.canUseVents && Sidekick.Player != null && Sidekick.Player == player)
-                isVenter = true;
             else if (Juggernaut.CanUseVents && Juggernaut.Player != null && Juggernaut.Player == player)
                 isVenter = true;
             else if (Spy.canEnterVents && Spy.Player != null && Spy.Player == player)
@@ -726,7 +733,7 @@ namespace TheSushiRoles
                 isVenter = true;
             else if (Vulture.canUseVents && Vulture.Player != null && Vulture.Player == player)
                 isVenter = true;
-            else if (player.Data?.Role != null && player.Data.Role.CanVent)  
+            else if (player.Data?.Role != null && player.Data.Role.CanVent)
             {
                 isVenter = true;
             }
@@ -780,64 +787,70 @@ namespace TheSushiRoles
                 return MurderAttemptResult.SuppressKill;
             }
 
-            // Murder whoever tries to kill the fortified player.
-            if (Crusader.FortifiedPlayer != null && Crusader.FortifiedPlayer == target && Crusader.Player != null && !Crusader.Player.Data.IsDead) 
+            if (Monarch.Player != null && Monarch.Player == target && Monarch.KnightedPlayers.Contains(killer))
             {
-                Utils.StartRPC(CustomRPC.FortifiedMurderAttempt);
-                RPCProcedure.FortifiedMurderAttempt();
                 SoundEffectsManager.Play("fail");
-                return MurderAttemptResult.MirrorKill;
-            }
-
-            // Block impostor not fully grown mini kill
-            else if (Mini.Player != null && target == Mini.Player && !Mini.IsGrownUp) 
-            {
                 return MurderAttemptResult.SuppressKill;
             }
 
-            //Veteran with alert active
-            else if (Veteran.Player != null && Veteran.AlertActive && Veteran.Player == target)
-            {
-                if (killer == Pestilence.Player)
+            // Murder whoever tries to kill the fortified player.
+                if (Crusader.FortifiedPlayer != null && Crusader.FortifiedPlayer == target && Crusader.Player != null && !Crusader.Player.Data.IsDead)
                 {
-                    // Veteran dies to Pestilence
-                    return MurderAttemptResult.PerformKill;
-                }
-
-                if (Medic.Shielded != null && Medic.Shielded == target)
-                {
-                    Utils.StartRPC(CustomRPC.ShieldedMurderAttempt, target.PlayerId);
-                    RPCProcedure.ShieldedMurderAttempt();
-                }
-                else if (Crusader.FortifiedPlayer != null && Crusader.FortifiedPlayer == target)
-                {
-                    Utils.StartRPC(CustomRPC.FortifiedMurderAttempt, target.PlayerId);
+                    Utils.StartRPC(CustomRPC.FortifiedMurderAttempt);
                     RPCProcedure.FortifiedMurderAttempt();
+                    SoundEffectsManager.Play("fail");
+                    return MurderAttemptResult.MirrorKill;
                 }
-                return MurderAttemptResult.MirrorKill;
-            }
 
-            // Pestilence murder attempt
-            else if (Pestilence.Player != null && Pestilence.Player == target)
-            {
-                if (Medic.Shielded != null && Medic.Shielded == target)
+                // Block impostor not fully grown mini kill
+                else if (Mini.Player != null && target == Mini.Player && !Mini.IsGrownUp)
                 {
-                    Utils.StartRPC(CustomRPC.ShieldedMurderAttempt, target.PlayerId);
-                    RPCProcedure.ShieldedMurderAttempt();
+                    return MurderAttemptResult.SuppressKill;
                 }
-                else if (Crusader.FortifiedPlayer != null && Crusader.FortifiedPlayer == target)
-                {
-                    Utils.StartRPC(CustomRPC.FortifiedMurderAttempt, target.PlayerId);
-                    RPCProcedure.FortifiedMurderAttempt();
-                }
-                return MurderAttemptResult.MirrorKill;
-            }
 
-            // Block Armored with armor kill
-            else if (CheckArmored(target, true, killer == PlayerControl.LocalPlayer, Sheriff.Player == null || killer.PlayerId != Sheriff.Player.PlayerId || !target.IsCrew() && Sheriff.canKillNeutrals || IsKiller(target))) 
-            {
-                return MurderAttemptResult.BlankKill;
-            }
+                //Veteran with alert active
+                else if (Veteran.Player != null && Veteran.AlertActive && Veteran.Player == target)
+                {
+                    if (killer == Pestilence.Player)
+                    {
+                        // Veteran dies to Pestilence
+                        return MurderAttemptResult.PerformKill;
+                    }
+
+                    if (Medic.Shielded != null && Medic.Shielded == target)
+                    {
+                        Utils.StartRPC(CustomRPC.ShieldedMurderAttempt, target.PlayerId);
+                        RPCProcedure.ShieldedMurderAttempt();
+                    }
+                    else if (Crusader.FortifiedPlayer != null && Crusader.FortifiedPlayer == target)
+                    {
+                        Utils.StartRPC(CustomRPC.FortifiedMurderAttempt, target.PlayerId);
+                        RPCProcedure.FortifiedMurderAttempt();
+                    }
+                    return MurderAttemptResult.MirrorKill;
+                }
+
+                // Pestilence murder attempt
+                else if (Pestilence.Player != null && Pestilence.Player == target)
+                {
+                    if (Medic.Shielded != null && Medic.Shielded == target)
+                    {
+                        Utils.StartRPC(CustomRPC.ShieldedMurderAttempt, target.PlayerId);
+                        RPCProcedure.ShieldedMurderAttempt();
+                    }
+                    else if (Crusader.FortifiedPlayer != null && Crusader.FortifiedPlayer == target)
+                    {
+                        Utils.StartRPC(CustomRPC.FortifiedMurderAttempt, target.PlayerId);
+                        RPCProcedure.FortifiedMurderAttempt();
+                    }
+                    return MurderAttemptResult.MirrorKill;
+                }
+
+                // Block Armored with armor kill
+                else if (CheckArmored(target, true, killer == PlayerControl.LocalPlayer, Sheriff.Player == null || killer.PlayerId != Sheriff.Player.PlayerId || !target.IsCrew() && Sheriff.canKillNeutrals || IsKiller(target)))
+                {
+                    return MurderAttemptResult.BlankKill;
+                }
             
             if (TransportationToolPatches.IsUsingTransportation(target) && !blockRewind && killer == Poisoner.Player) 
             {
@@ -934,8 +947,13 @@ namespace TheSushiRoles
 
             return flag;
         }
+        public static bool IsJackal(PlayerControl player)
+        {
+            return player != null && Sidekick.Player != null && player.PlayerId == Sidekick.Player.PlayerId ||
+            player != null && Jackal.Player != null && player.PlayerId == Jackal.Player.PlayerId;
+        }
 
-        public static bool IsNeutral(this PlayerControl player) 
+        public static bool IsNeutral(this PlayerControl player)
         {
             RoleInfo roleInfo = RoleInfo.GetRoleInfoForPlayer(player).FirstOrDefault();
             if (roleInfo != null)
@@ -953,7 +971,7 @@ namespace TheSushiRoles
         {
             RoleInfo roleInfo = RoleInfo.GetRoleInfoForPlayer(player).FirstOrDefault();
             if (roleInfo != null)
-                return roleInfo.Alignment == RoleAlignment.NeutralKilling || Jackal.formerJackals.Any(x => x == player);
+                return roleInfo.Alignment == RoleAlignment.NeutralKilling;
             return false;
         }
         public static bool IsCrew(this PlayerControl player) 
@@ -997,7 +1015,7 @@ namespace TheSushiRoles
         {
             return player.Data.Role.IsImpostor || player.IsNeutralKiller();
         }
-        public static bool IsProsTarget(this PlayerControl player)
+        public static bool IsProssecutorTarget(this PlayerControl player)
         {
             return Prosecutor.target != null 
             && player.PlayerId == Prosecutor.target.PlayerId 
@@ -1013,7 +1031,7 @@ namespace TheSushiRoles
         }
         public static bool IsShielded(this PlayerControl player)
         {
-            return Medic.Shielded != null 
+            return Medic.Shielded != null
             && player.PlayerId == Medic.Shielded.PlayerId 
             && Medic.Player != null && !Medic.Player.Data.IsDead;
         }
@@ -1075,7 +1093,7 @@ namespace TheSushiRoles
         public static bool HasImpVision(NetworkedPlayerInfo player) 
         {
             return player.Role.IsImpostor
-                || Jackal.Player != null && Jackal.Player.PlayerId == player.PlayerId || Jackal.formerJackals.Any(x => x.PlayerId == player.PlayerId)
+                || Jackal.Player != null && Jackal.Player.PlayerId == player.PlayerId
                 || (Sidekick.Player != null && Sidekick.Player.PlayerId == player.PlayerId)
                 || (Glitch.Player != null && Glitch.Player.PlayerId == player.PlayerId)
                 || (Werewolf.Player != null && Werewolf.Player.PlayerId == player.PlayerId)

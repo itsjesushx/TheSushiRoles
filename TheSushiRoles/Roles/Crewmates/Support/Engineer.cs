@@ -8,7 +8,7 @@ namespace TheSushiRoles.Roles
         public static Color Color = new Color32(0, 40, 245, byte.MaxValue);
         public static int remainingFixes = 1;
         public static bool highlightForImpostors = true;
-        public static bool highlightForTeamJackal = true;
+        public static bool HighlightForNeutralKillers = true;
         private static Sprite ButtonSprite;
         public static Sprite GetButtonSprite() 
         {
@@ -22,7 +22,7 @@ namespace TheSushiRoles.Roles
             Player = null;
             remainingFixes = Mathf.RoundToInt(CustomOptionHolder.engineerNumberOfFixes.GetFloat());
             highlightForImpostors = CustomOptionHolder.engineerHighlightForImpostors.GetBool();
-            highlightForTeamJackal = CustomOptionHolder.engineerHighlightForTeamJackal.GetBool();
+            HighlightForNeutralKillers = CustomOptionHolder.engineerHighlightForNeutralKillers.GetBool();
         }
     }
 }

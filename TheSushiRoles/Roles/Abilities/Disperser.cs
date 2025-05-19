@@ -20,7 +20,7 @@ namespace TheSushiRoles.Roles.Abilities
             Player = null;
             Charges = Mathf.RoundToInt(CustomOptionHolder.AbilityDisperserCharges.GetFloat());
             RechargeKillsCount = Mathf.RoundToInt(CustomOptionHolder.AbilityDisperserKillCharges.GetFloat());
-            Cooldown = CustomOptionHolder.AbilityDisperserCooldown.GetFloat();
+            Cooldown = CustomOptionHolder.AbilityDisperserCooldown.GetFloat() / 2;
         }
     }
 }

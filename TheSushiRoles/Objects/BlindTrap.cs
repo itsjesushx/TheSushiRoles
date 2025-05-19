@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BepInEx.Unity.IL2CPP.Utils;
-using Reactor.Utilities;
 using UnityEngine;
 
 namespace TheSushiRoles.Objects

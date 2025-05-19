@@ -37,7 +37,16 @@ namespace TheSushiRoles.Patches
                         if (player == null || player.Data == null || player.Data.IsDead || player.Data.Disconnected) continue;
 
                         int currentVotes;
-                        int additionalVotes = (Mayor.Player != null && Mayor.Player.PlayerId == playerVoteArea.TargetPlayerId && Mayor.voteTwice) ? 2 : 1; // Mayor vote
+                        int additionalVotes = 1;
+                        if (Mayor.Player != null && Mayor.Player.PlayerId == playerVoteArea.TargetPlayerId && Mayor.voteTwice)
+                        {
+                            additionalVotes = 2;
+                        }
+                        PlayerControl votedFor = Utils.PlayerById(playerVoteArea.VotedFor);
+                        if (votedFor != null && Monarch.Player != null && Monarch.KnightedPlayers.Contains(votedFor))
+                        {
+                            additionalVotes += 1;
+                        }
                         if (dictionary.TryGetValue(playerVoteArea.VotedFor, out currentVotes))
                             dictionary[playerVoteArea.VotedFor] = currentVotes + additionalVotes;
                         else
@@ -216,30 +225,41 @@ namespace TheSushiRoles.Patches
                     playerVoteArea.ClearForResults();
                     int num2 = 0;
                     bool mayorFirstVoteDisplayed = false;
-                    for (int j = 0; j < states.Length; j++) 
+                    bool KnightedVoteDisplayed = false;
+                    for (int j = 0; j < states.Length; j++)
                     {
                         MeetingHud.VoterState voterState = states[j];
                         NetworkedPlayerInfo playerById = GameData.Instance.GetPlayerById(voterState.VoterId);
-                        if (playerById == null) 
+                        if (playerById == null)
                         {
                             Debug.LogError(string.Format("Couldn't find player info for voter: {0}", voterState.VoterId));
-                        } 
-                        else if (i == 0 && voterState.SkippedVote && !playerById.IsDead) 
+                        }
+                        else if (i == 0 && voterState.SkippedVote && !playerById.IsDead)
                         {
                             __instance.BloopAVoteIcon(playerById, num, __instance.SkippedVoting.transform);
                             num++;
                         }
-                        else if (voterState.VotedForId == targetPlayerId && !playerById.IsDead) 
+                        else if (voterState.VotedForId == targetPlayerId && !playerById.IsDead)
                         {
                             __instance.BloopAVoteIcon(playerById, num2, playerVoteArea.transform);
                             num2++;
                         }
 
                         // Major vote, redo this iteration to place a second vote
-                        if (Mayor.Player != null && voterState.VoterId == (sbyte)Mayor.Player.PlayerId && !mayorFirstVoteDisplayed && Mayor.voteTwice) 
+                        if (Mayor.Player != null && voterState.VoterId == (sbyte)Mayor.Player.PlayerId && !mayorFirstVoteDisplayed && Mayor.voteTwice)
                         {
                             mayorFirstVoteDisplayed = true;
-                            j--;    
+                            j--;
+                        }
+
+                        // Major vote, redo this iteration to place a second vote
+                        foreach (var Knighted in Monarch.KnightedPlayers)
+                        {
+                            if (Monarch.Player != null && voterState.VoterId == (sbyte)Knighted.PlayerId && !KnightedVoteDisplayed)
+                            {
+                                KnightedVoteDisplayed = true;
+                                j--;
+                            }
                         }
                     }
                 }
@@ -463,7 +483,6 @@ namespace TheSushiRoles.Patches
                 else if (roleData.NeutralBenignSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.NeutralBenignSettings[(byte)roleInfo.RoleId] == 0) continue;
                 else if (roleData.NeutralKillingSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.NeutralKillingSettings[(byte)roleInfo.RoleId] == 0) continue;
                 else if (roleData.CrewSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.CrewSettings[(byte)roleInfo.RoleId] == 0) continue;
-                else if (roleInfo.RoleId == RoleId.Sidekick && (!CustomOptionHolder.jackalCanCreateSidekick.GetBool() || CustomOptionHolder.jackalSpawnRate.GetSelection() == 0)) continue;
                 else if (roleInfo.RoleId == RoleId.Pestilence) continue;
                 if (roleInfo.RoleId == RoleId.Pursuer && CustomOptionHolder.lawyerSpawnRate.GetSelection() == 0) continue;
                 if (roleInfo.RoleId == RoleId.Spy && roleData.Impostors.Count <= 1) continue;
@@ -679,7 +698,9 @@ namespace TheSushiRoles.Patches
                     PlayerControl targetPlayer = GameData.Instance.GetPlayerById(playerVoteArea.TargetPlayerId)?.Object;
                     if (playerVoteArea.TargetPlayerId == PlayerControl.LocalPlayer.PlayerId || playerVoteArea.AmDead) continue;
                     if (playerVoteArea.TargetPlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
-                    if (targetPlayer != null && targetPlayer.IsImpostor()) continue;
+                    if (targetPlayer != null && targetPlayer.IsImpostor() && PlayerControl.LocalPlayer.IsImpostor()) continue;
+                    if (targetPlayer != null && targetPlayer.IsImpostor() && PlayerControl.LocalPlayer == Sidekick.Player) continue;
+                    if (targetPlayer != null && targetPlayer == Monarch.Player) continue;
                     if (PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer == Eraser.Player && Eraser.alreadyErased.Contains(playerVoteArea.TargetPlayerId)) continue;
                     if (PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer.IsCrew() && playerCompleted < Guesser.tasksToUnlock) continue;
 
@@ -993,15 +1014,7 @@ namespace TheSushiRoles.Patches
         {
             public static bool Prefix(TextBoxTMP __instance)
             {
-                return !IsBlackmailed(PlayerControl.LocalPlayer);
-            }
-
-            private static bool IsBlackmailed(PlayerControl player)
-            {
-                return MeetingHud.Instance != null &&
-                       Blackmailer.BlackmailedPlayer != null &&
-                       !Blackmailer.BlackmailedPlayer.Data.IsDead &&
-                       Blackmailer.BlackmailedPlayer.PlayerId == player.PlayerId;
+                return !Blackmailer.IsBlackmailed(PlayerControl.LocalPlayer);
             }
         }
     }
