@@ -497,7 +497,7 @@ namespace TheSushiRoles
                 relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Impostor && x.isHeader));
                 relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Neutral && x.isHeader));
                 relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Crewmate && x.isHeader));
-                relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.NeutralKiller && x.isHeader));
+                relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Ability && x.isHeader));
                 relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Modifier && x.isHeader));
                 foreach (var option in options) 
                 {
@@ -540,7 +540,7 @@ namespace TheSushiRoles
                     categoryHeaderMasked.Title.text = option.Heading != "" ? option.Heading : option.name;
                     if ((int)optionType == 99)
                         categoryHeaderMasked.Title.text = new Dictionary<CustomOptionType, string>() { { CustomOptionType.Impostor, "Imp Roles" }, { CustomOptionType.Neutral, "Neutral Roles" },
-                            { CustomOptionType.Crewmate, "Crew Roles" }, { CustomOptionType.Modifier, "Modifiers" }, { CustomOptionType.NeutralKiller, "NK Roles" }, }[curType];
+                            { CustomOptionType.Crewmate, "Crew Roles" }, { CustomOptionType.Modifier, "Modifiers" }, { CustomOptionType.Ability, "Abilities" }, }[curType];
                     categoryHeaderMasked.Title.outlineColor = Color.white;
                     categoryHeaderMasked.Title.outlineWidth = 0.2f;
                     categoryHeaderMasked.transform.SetParent(__instance.settingsContainer);
@@ -576,7 +576,7 @@ namespace TheSushiRoles
                 var settingTuple = HandleSpecialOptionsView(option, option.name, option.selections[value].ToString());
                 viewSettingsInfoPanel.SetInfo(StringNames.ImpostorsCategory, $"{option.selections[value].ToString()}{option.Format}", 61);
                 viewSettingsInfoPanel.titleText.text = settingTuple.Item1;
-                if (option.isHeader && (int)optionType != 99 && option.Heading == "" && (option.type == CustomOptionType.Neutral || option.type == CustomOptionType.Crewmate || option.type == CustomOptionType.Impostor  || option.type == CustomOptionType.NeutralKiller || option.type == CustomOptionType.Modifier)) 
+                if (option.isHeader && (int)optionType != 99 && option.Heading == "" && (option.type == CustomOptionType.Neutral || option.type == CustomOptionType.Crewmate || option.type == CustomOptionType.Impostor  || option.type == CustomOptionType.Ability || option.type == CustomOptionType.Modifier)) 
                 {
                     viewSettingsInfoPanel.titleText.text = "Spawn Chance";
                 }
@@ -649,28 +649,36 @@ namespace TheSushiRoles
                 if (min > max) min = max;
                 val = (min == max) ? $"{max}" : $"{min} - {max}";
             }
+            if (option == CustomOptionHolder.abilitiesCountMin) 
+            {
+                name = "Abilities";
+                var min = CustomOptionHolder.abilitiesCountMin.GetSelection();
+                var max = CustomOptionHolder.abilitiesCountMax.GetSelection();
+                if (min > max) min = max;
+                val = (min == max) ? $"{max}" : $"{min} - {max}";
+            }
             return new(name, val);
         }
 
-        public static void CreateSettingTabs(LobbyViewSettingsPane __instance) 
+        public static void CreateSettingTabs(LobbyViewSettingsPane __instance)
         {
             // Handle different gamemodes and tabs needed therein.
             int next = 3;
-                // create TSR settings
-                createCustomButton(__instance, next++, "TORSettings", "TSR Settings", CustomOptionType.General);
-                // create TSR settings
-                createCustomButton(__instance, next++, "RoleOverview", "Role Overview", (CustomOptionType)99);
-                // Imp
-                createCustomButton(__instance, next++, "ImpostorSettings", "Impostor Roles", CustomOptionType.Impostor);
+            // create TSR settings
+            createCustomButton(__instance, next++, "TSRSettings", "TSR Settings", CustomOptionType.General);
+            // create TSR settings
+            createCustomButton(__instance, next++, "RoleOverview", "Role Overview", (CustomOptionType)99);
+            // Imp
+            createCustomButton(__instance, next++, "ImpostorSettings", "Impostor Roles", CustomOptionType.Impostor);
 
-                // Neutral
-                createCustomButton(__instance, next++, "NeutralSettings", "Neutral Roles", CustomOptionType.Neutral);
-                // Neutral Killer
-                createCustomButton(__instance, next++, "NKSettings", "Neutral Killing Roles", CustomOptionType.NeutralKiller);
-                // Crew
-                createCustomButton(__instance, next++, "CrewmateSettings", "Crewmate Roles", CustomOptionType.Crewmate);
-                // Modifier
-                createCustomButton(__instance, next++, "ModifierSettings", "Modifiers", CustomOptionType.Modifier);
+            // Neutral
+            createCustomButton(__instance, next++, "NeutralSettings", "Neutral Roles", CustomOptionType.Neutral);
+            // Crew
+            createCustomButton(__instance, next++, "CrewmateSettings", "Crewmate Roles", CustomOptionType.Crewmate);
+            // Modifier
+            createCustomButton(__instance, next++, "ModifierSettings", "Modifiers", CustomOptionType.Modifier);
+            // Ability
+            createCustomButton(__instance, next++, "AbilitySettings", "Abilities", CustomOptionType.Ability);
         }
     }
 
@@ -814,7 +822,7 @@ namespace TheSushiRoles
                 var stringOption = optionBehaviour as StringOption;
                 stringOption.OnValueChanged = new Action<OptionBehaviour>((o) => { });
                 stringOption.TitleText.text = option.name;
-                if (option.isHeader && option.Heading == "" && (option.type == CustomOptionType.Neutral || option.type == CustomOptionType.Crewmate || option.type == CustomOptionType.NeutralKiller || option.type == CustomOptionType.Impostor || option.type == CustomOptionType.Modifier)) 
+                if (option.isHeader && option.Heading == "" && (option.type == CustomOptionType.Neutral || option.type == CustomOptionType.Crewmate || option.type == CustomOptionType.Ability || option.type == CustomOptionType.Impostor || option.type == CustomOptionType.Modifier)) 
                 {
                     stringOption.TitleText.text = "Spawn Chance";
                 }
@@ -911,11 +919,11 @@ namespace TheSushiRoles
             int next = 3;
             
             // create TSR settings
-            CreateCustomButton(__instance, next++, "TORSettings", "TSR Settings");
-            CreateGameOptionsMenu(__instance, CustomOptionType.General, "TORSettings");
+            CreateCustomButton(__instance, next++, "TSRSettings", "TSR Settings");
+            CreateGameOptionsMenu(__instance, CustomOptionType.General, "TSRSettings");
             // NK Settings
-            CreateCustomButton(__instance, next++, "NKSettings", "Neutral Killer Settings");
-            CreateGameOptionsMenu(__instance, CustomOptionType.NeutralKiller, "NKSettings");
+            CreateCustomButton(__instance, next++, "AbilitySettings", "Neutral Killer Settings");
+            CreateGameOptionsMenu(__instance, CustomOptionType.Ability, "AbilitySettings");
             // IMp
             CreateCustomButton(__instance, next++, "ImpostorSettings", "Impostor Roles");
             CreateGameOptionsMenu(__instance, CustomOptionType.Impostor, "ImpostorSettings");
@@ -1023,7 +1031,7 @@ namespace TheSushiRoles
         {
             var impRoles = BuildOptionsOfType(CustomOptionType.Impostor, true) + "\n";
             var neutralRoles = BuildOptionsOfType(CustomOptionType.Neutral, true) + "\n";
-            var neuts = BuildOptionsOfType(CustomOptionType.NeutralKiller, true) + "\n";
+            var neuts = BuildOptionsOfType(CustomOptionType.Ability, true) + "\n";
             var crewRoles = BuildOptionsOfType(CustomOptionType.Crewmate, true) + "\n";
             var modifiers = BuildOptionsOfType(CustomOptionType.Modifier, true);
             return impRoles + neutralRoles + neuts + crewRoles + modifiers;
@@ -1077,7 +1085,7 @@ namespace TheSushiRoles
                 {
                     if (option == CustomOptionHolder.crewmateRolesCountMin) 
                     {
-                        var optionName = CustomOptionHolder.ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Crewmate Roles");
+                        var optionName = CustomOptionHolder.ColorString(Color.cyan, "Crewmate Roles");
                         var min = CustomOptionHolder.crewmateRolesCountMin.GetSelection();
                         var max = CustomOptionHolder.crewmateRolesCountMax.GetSelection();
                         if (min > max) min = max;
@@ -1086,7 +1094,7 @@ namespace TheSushiRoles
                     }
                     else if (option == CustomOptionHolder.MinNeutralEvilRoles) 
                     {
-                        var optionName = CustomOptionHolder.ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Neutral Evil Roles");
+                        var optionName = CustomOptionHolder.ColorString(Color.cyan, "Neutral Evil Roles");
                         var min = CustomOptionHolder.MinNeutralEvilRoles.GetSelection();
                         var max = CustomOptionHolder.MaxNeutralEvilRoles.GetSelection();
                         if (min > max) min = max;
@@ -1095,7 +1103,7 @@ namespace TheSushiRoles
                     }
                     else if (option == CustomOptionHolder.MinNeutralBenignRoles) 
                     {
-                        var optionName = CustomOptionHolder.ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Neutral Benign Roles");
+                        var optionName = CustomOptionHolder.ColorString(Color.cyan, "Neutral Benign Roles");
                         var min = CustomOptionHolder.MinNeutralBenignRoles.GetSelection();
                         var max = CustomOptionHolder.MaxNeutralBenignRoles.GetSelection();
                         if (min > max) min = max;
@@ -1104,7 +1112,7 @@ namespace TheSushiRoles
                     }
                     else if (option == CustomOptionHolder.neutralKillingRolesCountMin) 
                     {
-                        var optionName = CustomOptionHolder.ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Neutral Killing Roles");
+                        var optionName = CustomOptionHolder.ColorString(Color.cyan, "Neutral Killing Roles");
                         var min = CustomOptionHolder.neutralKillingRolesCountMin.GetSelection();
                         var max = CustomOptionHolder.neutralKillingRolesCountMax.GetSelection();
                         if (min > max) min = max;
@@ -1113,7 +1121,7 @@ namespace TheSushiRoles
                     }
                     else if (option == CustomOptionHolder.impostorRolesCountMin) 
                     {
-                        var optionName = CustomOptionHolder.ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Impostor Roles");
+                        var optionName = CustomOptionHolder.ColorString(Color.cyan, "Impostor Roles");
                         var min = CustomOptionHolder.impostorRolesCountMin.GetSelection();
                         var max = CustomOptionHolder.impostorRolesCountMax.GetSelection();
                         if (max > GameOptionsManager.Instance.currentGameOptions.NumImpostors) max = GameOptionsManager.Instance.currentGameOptions.NumImpostors;
@@ -1123,18 +1131,27 @@ namespace TheSushiRoles
                     }
                     else if (option == CustomOptionHolder.modifiersCountMin) 
                     {
-                        var optionName = CustomOptionHolder.ColorString(new Color(204f / 255f, 204f / 255f, 0, 1f), "Modifiers");
+                        var optionName = CustomOptionHolder.ColorString(Color.cyan, "Modifiers");
                         var min = CustomOptionHolder.modifiersCountMin.GetSelection();
                         var max = CustomOptionHolder.modifiersCountMax.GetSelection();
                         if (min > max) min = max;
                         var optionValue = (min == max) ? $"{max}" : $"{min} - {max}";
                         sb.AppendLine($"{optionName}: {optionValue}");
+                    }
+                    else if (option == CustomOptionHolder.abilitiesCountMin) 
+                    {
+                        var optionName = CustomOptionHolder.ColorString(Color.cyan, "Abilities");
+                        var min = CustomOptionHolder.abilitiesCountMin.GetSelection();
+                        var max = CustomOptionHolder.abilitiesCountMax.GetSelection();
+                        if (min > max) min = max;
+                        var optionValue = (min == max) ? $"{max}" : $"{min} - {max}";
+                        sb.AppendLine($"{optionName}: {optionValue}");
                     } 
-                    else if ((option == CustomOptionHolder.crewmateRolesCountMax) || (option == CustomOptionHolder.MaxNeutralBenignRoles) || (option == CustomOptionHolder.MaxNeutralEvilRoles) || (option == CustomOptionHolder.neutralKillingRolesCountMax) || (option == CustomOptionHolder.impostorRolesCountMax) || option == CustomOptionHolder.modifiersCountMax) 
+                    else if ((option == CustomOptionHolder.crewmateRolesCountMax) || (option == CustomOptionHolder.MaxNeutralBenignRoles) || (option == CustomOptionHolder.MaxNeutralEvilRoles) || (option == CustomOptionHolder.neutralKillingRolesCountMax) || (option == CustomOptionHolder.impostorRolesCountMax) || option == CustomOptionHolder.modifiersCountMax|| option == CustomOptionHolder.modifiersCountMax || option == CustomOptionHolder.abilitiesCountMax)
                     {
                         continue;
                     }
-                    else 
+                    else
                     {
                         sb.AppendLine($"\n{option.name}: {option.selections[option.selection].ToString()}{option.Format}");
                     }
@@ -1169,13 +1186,13 @@ namespace TheSushiRoles
                         hudString += "Page 5: Neutral Role Settings \n" + BuildOptionsOfType(CustomOptionType.Neutral, false);
                         break;
                     case 5:
-                        hudString += "Page 6: Neutral Killing Role Settings \n" + BuildOptionsOfType(CustomOptionType.NeutralKiller, false);
+                        hudString += "Page 6: Crewmate Role Settings \n" + BuildOptionsOfType(CustomOptionType.Crewmate, false);
                         break;
                     case 6:
-                        hudString += "Page 7: Crewmate Role Settings \n" + BuildOptionsOfType(CustomOptionType.Crewmate, false);
+                        hudString += "Page 7: Modifier Settings \n" + BuildOptionsOfType(CustomOptionType.Modifier, false);
                         break;
                     case 7:
-                        hudString += "Page 8: Modifier Settings \n" + BuildOptionsOfType(CustomOptionType.Modifier, false);
+                        hudString += "Page 8: Ability Settings \n" + BuildOptionsOfType(CustomOptionType.Ability, false);
                         break;
                 }
 

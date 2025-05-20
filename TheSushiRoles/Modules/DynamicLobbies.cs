@@ -2,6 +2,7 @@ using System;
 using AmongUs.Data;
 using Hazel;
 using InnerNet;
+using Reactor.Utilities.Extensions;
 
 namespace TheSushiRoles.Modules 
 {
@@ -88,7 +89,8 @@ namespace TheSushiRoles.Modules
         {
             public static bool Prefix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client) 
             {
-                if (LobbyLimit < __instance.allClients.Count) { // TODO: Fix this canceling start
+                if (LobbyLimit < __instance.allClients.Count)
+                { // TODO: Fix this canceling start
                     DisconnectPlayer(__instance, client.Id);
                     return false;
                 }

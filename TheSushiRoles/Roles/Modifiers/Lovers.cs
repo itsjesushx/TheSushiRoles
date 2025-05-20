@@ -9,7 +9,6 @@ namespace TheSushiRoles.Roles.Modifiers
         public static PlayerControl Lover2;
         public static Color Color = new Color32(232, 57, 185, byte.MaxValue);
         public static bool bothDie = true;
-        public static bool enableChat = true;
         // Lovers save if next to be exiled is a lover, because RPC of ending game comes before RPC of exiled
         public static bool notAckedExiledIsLover = false;
         public static bool Existing() 
@@ -52,7 +51,6 @@ namespace TheSushiRoles.Roles.Modifiers
             Lover2 = null;
             notAckedExiledIsLover = false;
             bothDie = Pestilence.Player.IsLover() ? false : CustomOptionHolder.modifierLoverBothDie.GetBool();
-            enableChat = CustomOptionHolder.modifierLoverEnableChat.GetBool();
         }
 
         public static PlayerControl GetPartner(this PlayerControl player) 

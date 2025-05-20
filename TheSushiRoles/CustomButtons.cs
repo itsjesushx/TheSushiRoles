@@ -267,7 +267,8 @@ namespace TheSushiRoles
         private static void SetButtonTargetDisplay(PlayerControl target, CustomButton button = null, Vector3? offset=null) {
             if (target == null || button == null) 
             {
-                if (targetDisplay != null) {  // Reset the poolable player
+                if (targetDisplay != null)
+                {  // Reset the poolable player
                     targetDisplay.gameObject.SetActive(false);
                     GameObject.Destroy(targetDisplay.gameObject);
                     targetDisplay = null;
@@ -1538,10 +1539,12 @@ namespace TheSushiRoles
                KeyCode.H,
                true,
                0f,
-               () => {
+               () =>
+               {
                    hackerVitalsButton.Timer = hackerVitalsButton.MaxTimer;
                    if (!hackerAdminTableButton.isEffectActive) PlayerControl.LocalPlayer.moveable = true;
-                   if (Minigame.Instance) {
+                   if (Minigame.Instance)
+                   {
                        if (Utils.IsMira()) Hacker.doorLog.ForceClose();
                        else Hacker.vitals.ForceClose();
                    }
@@ -1755,7 +1758,8 @@ namespace TheSushiRoles
                 Portalmaker.GetPlacePortalButtonSprite(),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
-                KeyCode.F
+                KeyCode.F,
+                buttonText: "PLACE PORTAL"
             );
 
             MinerMineButton = new CustomButton(
@@ -1878,7 +1882,8 @@ namespace TheSushiRoles
                 new Vector3(0.9f, 1f, 0),
                 __instance,
                 KeyCode.G,
-                mirror: true
+                mirror: true,
+                buttonText: "USE"
             );
 
 
@@ -2360,22 +2365,29 @@ namespace TheSushiRoles
             mediumButton = new CustomButton(
                 () => 
                 {
-                    if (Medium.target != null) {
+                    if (Medium.target != null)
+                    {
                         Medium.soulTarget = Medium.target;
                         mediumButton.HasEffect = true;
                         SoundEffectsManager.Play("mediumAsk");
                     }
                 },
-                () => { return Medium.medium != null && Medium.medium == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
-                () => {
-                    if (mediumButton.isEffectActive && Medium.target != Medium.soulTarget) {
+                () =>
+                {
+                    return Medium.medium != null && Medium.medium == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead;
+                },
+                () =>
+                {
+                    if (mediumButton.isEffectActive && Medium.target != Medium.soulTarget)
+                    {
                         Medium.soulTarget = null;
                         mediumButton.Timer = 0f;
                         mediumButton.isEffectActive = false;
                     }
                     return Medium.target != null && PlayerControl.LocalPlayer.CanMove;
                 },
-                () => {
+                () =>
+                {
                     mediumButton.Timer = mediumButton.MaxTimer;
                     mediumButton.isEffectActive = false;
                     Medium.soulTarget = null;
@@ -2396,28 +2408,34 @@ namespace TheSushiRoles
                     Utils.StartRPC(CustomRPC.ShareGhostInfo, Medium.target.player.PlayerId, (byte)GhostInfoTypes.MediumInfo, msg);
 
                     // Remove soul
-                    if (Medium.oneTimeUse) {
+                    if (Medium.oneTimeUse)
+                    {
                         float closestDistance = float.MaxValue;
                         SpriteRenderer target = null;
 
-                        foreach ((DeadPlayer db, Vector3 ps) in Medium.deadBodies) {
-                            if (db == Medium.target) {
+                        foreach ((DeadPlayer db, Vector3 ps) in Medium.deadBodies)
+                        {
+                            if (db == Medium.target)
+                            {
                                 Tuple<DeadPlayer, Vector3> deadBody = Tuple.Create(db, ps);
                                 Medium.deadBodies.Remove(deadBody);
                                 break;
                             }
 
                         }
-                        foreach (SpriteRenderer rend in Medium.souls) {
+                        foreach (SpriteRenderer rend in Medium.souls)
+                        {
                             float distance = Vector2.Distance(rend.transform.position, PlayerControl.LocalPlayer.GetTruePosition());
-                            if (distance < closestDistance) {
+                            if (distance < closestDistance)
+                            {
                                 closestDistance = distance;
                                 target = rend;
                             }
                         }
 
                         FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(5f, new Action<float>((p) => {
-                            if (target != null) {
+                            if (target != null)
+                            {
                                 var tmp = target.color;
                                 tmp.a = Mathf.Clamp01(1 - p);
                                 target.color = tmp;
@@ -2428,7 +2446,8 @@ namespace TheSushiRoles
                         Medium.souls.Remove(target);
                     }
                     SoundEffectsManager.Stop("mediumAsk");
-                }
+                },
+                buttonText: "ASK"
             );
 
             // Pursuer button
@@ -2652,7 +2671,7 @@ namespace TheSushiRoles
                Mayor.GetMeetingSprite(),
                new Vector3(0, -0.06f, 0),
                __instance,
-               KeyCode.F,
+               KeyCode.H,
                true,
                0f,
                () => {},

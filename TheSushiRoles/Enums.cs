@@ -8,14 +8,14 @@ namespace TheSushiRoles
         DelayPoisonerKill,
         MirrorKill,
     }
-    public enum CustomOptionType 
+    public enum CustomOptionType
     {
         General,
         Impostor,
         Neutral,
         Crewmate,
         Modifier,
-        NeutralKiller
+        Ability
     }
     public enum AbilityId
     {

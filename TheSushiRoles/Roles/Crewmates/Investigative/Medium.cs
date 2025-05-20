@@ -26,6 +26,7 @@ namespace TheSushiRoles.Roles
             ActiveLoverDies,
             PassiveLoverSuicide,
             LawyerKilledByClient,
+            RomanticKilledByBeloved,
             JackalKillsSidekick,
             ImpostorTeamkill,
             SubmergedO2,
@@ -75,14 +76,15 @@ namespace TheSushiRoles.Roles
                 if ((target == Sheriff.Player) && DeathReason != DeadPlayer.CustomDeathReason.LoverSuicide) infos.Add(SpecialMediumInfo.SheriffSuicide);
                 if (target == Lovers.Lover1 || target == Lovers.Lover2) infos.Add(SpecialMediumInfo.PassiveLoverSuicide);
                 if (target == Warlock.Player && DeathReason != DeadPlayer.CustomDeathReason.LoverSuicide) infos.Add(SpecialMediumInfo.WarlockSuicide);
-            } 
-            else 
+            }
+            else
             {
                 if (target == Lovers.Lover1 || target == Lovers.Lover2) infos.Add(SpecialMediumInfo.ActiveLoverDies);
                 if (target.Data.Role.IsImpostor && killer.Data.Role.IsImpostor) infos.Add(SpecialMediumInfo.ImpostorTeamkill);
             }
             if (target == Sidekick.Player && (killer == Jackal.Player)) infos.Add(SpecialMediumInfo.JackalKillsSidekick);
             if (target == Lawyer.Player && killer == Lawyer.target) infos.Add(SpecialMediumInfo.LawyerKilledByClient);
+            if (target == Romantic.Player && killer == Romantic.beloved) infos.Add(SpecialMediumInfo.RomanticKilledByBeloved);
             if (Medium.target.WasCleanedOrEaten) infos.Add(SpecialMediumInfo.BodyCleaned);
             
             if (infos.Count > 0) 
@@ -98,6 +100,9 @@ namespace TheSushiRoles.Roles
                         break;
                     case SpecialMediumInfo.ActiveLoverDies:
                         msg = "I wanted to get out of this toxic relationship anyways.";
+                        break;
+                    case SpecialMediumInfo.RomanticKilledByBeloved:
+                        msg = "Why would my own beloved murder me? It must've been a mistake...I hope!";
                         break;
                     case SpecialMediumInfo.PassiveLoverSuicide:
                         msg = "The love of my life died, thus with a kiss I die.";
@@ -116,18 +121,20 @@ namespace TheSushiRoles.Roles
                         break;
                 }
             }
-            else 
+            else
             {
                 int randomNumber = rnd.Next(4);
                 string typeOfColor = Utils.IsLighterColor(Medium.target.GetKiller) ? "lighter" : "darker";
-                float timeSinceDeath = ((float)(Medium.meetingStartTime - Medium.target.DeathTime).TotalMilliseconds);
+                float timeSinceDeath = (float)(Medium.meetingStartTime - Medium.target.DeathTime).TotalMilliseconds;
                 var roleString = RoleInfo.GetRolesString(Medium.target.player, false);
-                if (randomNumber == 0) {
+                if (randomNumber == 0)
+                {
                     if (!roleString.Contains("Impostor") && !roleString.Contains("Crewmate"))
                         msg = "If my role hasn't been saved, there's no " + roleString + " in the game anymore.";
                     else
-                        msg = "I was a " + roleString + " without another role."; 
-                } else if (randomNumber == 1) msg = "I'm not sure, but I guess a " + typeOfColor + " color killed me.";
+                        msg = "I was " + roleString + " without another role."; 
+                }
+                else if (randomNumber == 1) msg = "I'm not sure, but I guess a " + typeOfColor + " color killed me.";
                 else if (randomNumber == 2) msg = "If I counted correctly, I died " + Math.Round(timeSinceDeath / 1000) + "s before the next meeting started.";
                 else msg = "It seems like my killer is the " + RoleInfo.GetRolesString(Medium.target.GetKiller, false) + ".";
             }

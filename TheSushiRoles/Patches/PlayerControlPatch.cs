@@ -34,7 +34,8 @@ namespace TheSushiRoles.Patches
                     {
                         Vector2 vector = @object.GetTruePosition() - truePosition;
                         float magnitude = vector.magnitude;
-                        if (magnitude <= num && !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude, Constants.ShipAndObjectsMask)) {
+                        if (magnitude <= num && !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude, Constants.ShipAndObjectsMask))
+                        {
                             result = @object;
                             num = magnitude;
                         }
@@ -273,8 +274,16 @@ namespace TheSushiRoles.Patches
         static void MonarchSetTarget()
         {
             if (Monarch.Player == null || Monarch.Player != PlayerControl.LocalPlayer) return;
-            Monarch.CurrentTarget = SetTarget(targetPlayersInVents: true);
-            SetPlayerOutline(Monarch.CurrentTarget, Monarch.Color);
+            List<PlayerControl> untargetables = new List<PlayerControl>();
+
+            foreach (var knighted in Monarch.KnightedPlayers)
+            {
+                untargetables.Add(knighted);
+            }
+
+            Monarch.CurrentTarget = SetTarget(targetPlayersInVents: true, untargetablePlayers: untargetables);
+            if (Monarch.CurrentTarget != null) 
+                SetPlayerOutline(Monarch.CurrentTarget, Monarch.Color);
         }
 
         static void VengefulRomanticSetTarget()

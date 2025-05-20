@@ -374,8 +374,6 @@ namespace TheSushiRoles.Patches
             if (modifierMin > modifierMax) modifierMin = modifierMax;
             int modifierCountSettings = rnd.Next(modifierMin, modifierMax + 1);
             List<PlayerControl> players = PlayerControl.AllPlayerControls.ToArray().ToList();
-            if (!CustomOptionHolder.GuesserHaveModifier.GetBool())
-                players.RemoveAll(x => Guesser.IsGuesser(x.PlayerId));
             int modifierCount = Mathf.Min(players.Count, modifierCountSettings);
 
             if (modifierCount == 0) return;

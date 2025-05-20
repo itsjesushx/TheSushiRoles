@@ -57,7 +57,7 @@ namespace TheSushiRoles.Modules
                         RoleInfo.oracle, RoleInfo.mystic,
                         RoleInfo.impostor, RoleInfo.morphling, RoleInfo.blackmailer, RoleInfo.camouflager, RoleInfo.poisoner, RoleInfo.eraser, RoleInfo.trickster, RoleInfo.cleaner,
                         RoleInfo.grenadier, RoleInfo.warlock, RoleInfo.bountyHunter, RoleInfo.ninja, RoleInfo.witch, RoleInfo.wraith, RoleInfo.yoyo,
-                        RoleInfo.jester, RoleInfo.arsonist, RoleInfo.vulture, RoleInfo.lawyer, RoleInfo.amnesiac, RoleInfo.prosecutor, RoleInfo.pursuer, RoleInfo.romantic,
+                        RoleInfo.jester, RoleInfo.arsonist, RoleInfo.monarch, RoleInfo.vulture, RoleInfo.lawyer, RoleInfo.amnesiac, RoleInfo.prosecutor, RoleInfo.pursuer, RoleInfo.romantic,
                         RoleInfo.jackal, RoleInfo.plaguebearer, RoleInfo.pestilence, RoleInfo.juggernaut, RoleInfo.agent, RoleInfo.hitman, RoleInfo.predator,
                         RoleInfo.glitch, RoleInfo.vromantic, RoleInfo.werewolf
                     };
@@ -89,7 +89,7 @@ namespace TheSushiRoles.Modules
                         }
                         col = Math.Clamp(col, 0, Palette.PlayerColors.Length - 1);
                         PlayerControl.LocalPlayer.SetColor(col);
-                        __instance.AddChat(PlayerControl.LocalPlayer, "Changed color succesfully");;
+                        __instance.AddChat(PlayerControl.LocalPlayer, "Changed color succesfully");
                     }
                 }
 
@@ -117,7 +117,7 @@ namespace TheSushiRoles.Modules
         {
             public static void Postfix(HudManager __instance) 
             {
-                if (!__instance.Chat.isActiveAndEnabled && (AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay || (PlayerControl.LocalPlayer.IsLover() && Lovers.enableChat)))
+                if (!__instance.Chat.isActiveAndEnabled && (AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay || PlayerControl.LocalPlayer.IsLover()))
                     __instance.Chat.SetVisible(true);
             }
         }
@@ -140,7 +140,7 @@ namespace TheSushiRoles.Modules
                 if (__instance != FastDestroyableSingleton<HudManager>.Instance.Chat)
                     return true;
                 PlayerControl localPlayer = PlayerControl.LocalPlayer;
-                return localPlayer == null || (MeetingHud.Instance != null || LobbyBehaviour.Instance != null || (localPlayer.Data.IsDead || localPlayer.IsLover() && Lovers.enableChat) || (int)sourcePlayer.PlayerId == (int)PlayerControl.LocalPlayer.PlayerId);
+                return localPlayer == null || MeetingHud.Instance != null || LobbyBehaviour.Instance != null || localPlayer.Data.IsDead || localPlayer.IsLover() || (int)sourcePlayer.PlayerId == (int)PlayerControl.LocalPlayer.PlayerId;
 
             }
         }

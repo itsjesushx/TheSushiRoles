@@ -209,10 +209,10 @@ namespace TheSushiRoles.Patches
             // Impostor roles with no changes: Morphling, Camouflager, Poisoner, Eraser, Cleaner, Warlock, BountyHunter,  Witch
         }
 
-        static void SetNameTags() 
+        static void SetNameTags()
         {
             // Lovers
-            if (Lovers.Lover1 != null && Lovers.Lover2 != null && (Lovers.Lover1 == PlayerControl.LocalPlayer || Lovers.Lover2 == PlayerControl.LocalPlayer)) 
+            if (Lovers.Lover1 != null && Lovers.Lover2 != null && (Lovers.Lover1 == PlayerControl.LocalPlayer || Lovers.Lover2 == PlayerControl.LocalPlayer))
             {
                 string suffix = Utils.ColorString(Lovers.Color, " [♥]");
                 Lovers.Lover1.cosmetics.nameText.text += suffix;
@@ -225,9 +225,9 @@ namespace TheSushiRoles.Patches
             }
 
             // Monarch
-            if (Monarch.Player != null && Monarch.KnightedPlayers.Contains(PlayerControl.LocalPlayer))
+            foreach (var knighted in Monarch.KnightedPlayers)
             {
-                foreach (var knighted in Monarch.KnightedPlayers)
+                if (Monarch.Player != null && (knighted == PlayerControl.LocalPlayer || Monarch.Player == PlayerControl.LocalPlayer))
                 {
                     string suffix = Utils.ColorString(Monarch.Color, " [★]");
                     if (knighted == PlayerControl.LocalPlayer) knighted.cosmetics.nameText.text += suffix;

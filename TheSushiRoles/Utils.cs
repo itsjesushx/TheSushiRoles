@@ -60,7 +60,7 @@ namespace TheSushiRoles
             return null;
 
             /* Usage example:
-            AudioClip exampleClip = Utils.loadAudioClipFromResources("TheSushiRoles.Resources.exampleClip.raw");
+            AudioClip exampleClip = loadAudioClipFromResources("TheSushiRoles.Resources.exampleClip.raw");
             if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(exampleClip, false, 0.8f);
             */
         }
@@ -157,8 +157,8 @@ namespace TheSushiRoles
             if (Poisoner.Player == null) return;
             
             // Murder the poisoned player and reset poisoned (regardless whether the kill was successful or not)
-            Utils.CheckMurderAttemptAndKill(Poisoner.Player, Poisoner.poisoned, true, false);
-            Utils.StartRPC(CustomRPC.PoisonerSetPoisoned, byte.MaxValue, byte.MaxValue);
+            CheckMurderAttemptAndKill(Poisoner.Player, Poisoner.poisoned, true, false);
+            StartRPC(CustomRPC.PoisonerSetPoisoned, byte.MaxValue, byte.MaxValue);
             RPCProcedure.PoisonerSetPoisoned(byte.MaxValue, byte.MaxValue);
         }
 
@@ -519,17 +519,6 @@ namespace TheSushiRoles
             taskOverlay.SetActive(true);
             taskOverlay.Destroy();
         }
-        public static bool CanUseSabotage() 
-        {
-            var sabSystem = ShipStatus.Instance.Systems[SystemTypes.Sabotage].CastFast<SabotageSystemType>();
-            ISystemType systemType;
-            IActivatable doors = null;
-            if (ShipStatus.Instance.Systems.TryGetValue(SystemTypes.Doors, out systemType)) 
-            {
-                doors = systemType.CastFast<IActivatable>();
-            }
-            return GameManager.Instance.SabotagesEnabled() && sabSystem.Timer <= 0f && !sabSystem.AnyActive && !(doors != null && doors.IsActive);
-        }
 
         public static void SetSemiTransparent(this PoolablePlayer player, bool value, float alpha=0.25f) 
         {
@@ -539,7 +528,8 @@ namespace TheSushiRoles
             player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, alpha);
         }
 
-        public static string GetString(this TranslationController t, StringNames key, params Il2CppSystem.Object[] parts) {
+        public static string GetString(this TranslationController t, StringNames key, params Il2CppSystem.Object[] parts)
+        {
             return t.GetString(key, parts);
         }
 
@@ -548,16 +538,19 @@ namespace TheSushiRoles
             return string.Format("<color=#{0:X2}{1:X2}{2:X2}{3:X2}>{4}</color>", ToByte(c.r), ToByte(c.g), ToByte(c.b), ToByte(c.a), s);
         }
 
-        public static int lineCount(string text) {
+        public static int lineCount(string text)
+        {
             return text.Count(c => c == '\n');
         }
 
-        private static byte ToByte(float f) {
+        private static byte ToByte(float f)
+        {
             f = Mathf.Clamp01(f);
             return (byte)(f * 255);
         }
 
-        public static KeyValuePair<byte, int> MaxPair(this Dictionary<byte, int> self, out bool tie) {
+        public static KeyValuePair<byte, int> MaxPair(this Dictionary<byte, int> self, out bool tie)
+        {
             tie = true;
             KeyValuePair<byte, int> result = new KeyValuePair<byte, int>(byte.MaxValue, int.MinValue);
             foreach (KeyValuePair<byte, int> keyValuePair in self)
@@ -585,7 +578,7 @@ namespace TheSushiRoles
         }
         public static bool HidePlayerName(PlayerControl source, PlayerControl target) 
         {
-            if (Camouflager.CamouflageTimer > 0f || Utils.MushroomSabotageActive()) return true; // No names are visible
+            if (Camouflager.CamouflageTimer > 0f || MushroomSabotageActive()) return true; // No names are visible
             if (Patches.SurveillanceMinigamePatch.nightVisionIsActive) return true;
             else if (Ninja.isInvisble && Ninja.Player == target) return true;
             else if (Wraith.IsVanished && Wraith.Player == target) return true;
@@ -606,7 +599,8 @@ namespace TheSushiRoles
                 MushroomMixupSabotageSystem.CondensedOutfit condensedOutfit = instance.currentMixups[target.PlayerId];
                 NetworkedPlayerInfo.PlayerOutfit playerOutfit = instance.ConvertToPlayerOutfit(condensedOutfit);
                 target.MixUpOutfit(playerOutfit);
-            } else
+            }
+            else
                 target.SetLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId, enforceNightVisionUpdate);
         }
 
@@ -745,7 +739,7 @@ namespace TheSushiRoles
             if (target != null && Armored.Player != null && Armored.Player == target && !Armored.isBrokenArmor && additionalCondition) {
                 if (breakShield) 
                 {
-                    Utils.StartRPC(CustomRPC.BreakArmor);
+                    StartRPC(CustomRPC.BreakArmor);
                     RPCProcedure.BreakArmor();
                 }
                 if (showShield) 
@@ -772,7 +766,7 @@ namespace TheSushiRoles
             // Handle blank shot
             if (!ignoreBlank && Pursuer.blankedList.Any(x => x.PlayerId == killer.PlayerId)) 
             {
-                Utils.StartRPC(CustomRPC.SetBlanked, killer.PlayerId, (byte)0);
+                StartRPC(CustomRPC.SetBlanked, killer.PlayerId, (byte)0);
                 RPCProcedure.SetBlanked(killer.PlayerId, 0);
 
                 return MurderAttemptResult.BlankKill;
@@ -781,7 +775,7 @@ namespace TheSushiRoles
             // Block impostor Shielded kill
             if (!ignoreMedic && Medic.Shielded != null && Medic.Shielded == target) 
             {
-                Utils.StartRPC(CustomRPC.ShieldedMurderAttempt);
+                StartRPC(CustomRPC.ShieldedMurderAttempt);
                 RPCProcedure.ShieldedMurderAttempt();
                 SoundEffectsManager.Play("fail");
                 return MurderAttemptResult.SuppressKill;
@@ -796,7 +790,7 @@ namespace TheSushiRoles
             // Murder whoever tries to kill the fortified player.
                 if (Crusader.FortifiedPlayer != null && Crusader.FortifiedPlayer == target && Crusader.Player != null && !Crusader.Player.Data.IsDead)
                 {
-                    Utils.StartRPC(CustomRPC.FortifiedMurderAttempt);
+                    StartRPC(CustomRPC.FortifiedMurderAttempt);
                     RPCProcedure.FortifiedMurderAttempt();
                     SoundEffectsManager.Play("fail");
                     return MurderAttemptResult.MirrorKill;
@@ -819,12 +813,12 @@ namespace TheSushiRoles
 
                     if (Medic.Shielded != null && Medic.Shielded == target)
                     {
-                        Utils.StartRPC(CustomRPC.ShieldedMurderAttempt, target.PlayerId);
+                        StartRPC(CustomRPC.ShieldedMurderAttempt, target.PlayerId);
                         RPCProcedure.ShieldedMurderAttempt();
                     }
                     else if (Crusader.FortifiedPlayer != null && Crusader.FortifiedPlayer == target)
                     {
-                        Utils.StartRPC(CustomRPC.FortifiedMurderAttempt, target.PlayerId);
+                        StartRPC(CustomRPC.FortifiedMurderAttempt, target.PlayerId);
                         RPCProcedure.FortifiedMurderAttempt();
                     }
                     return MurderAttemptResult.MirrorKill;
@@ -835,12 +829,12 @@ namespace TheSushiRoles
                 {
                     if (Medic.Shielded != null && Medic.Shielded == target)
                     {
-                        Utils.StartRPC(CustomRPC.ShieldedMurderAttempt, target.PlayerId);
+                        StartRPC(CustomRPC.ShieldedMurderAttempt, target.PlayerId);
                         RPCProcedure.ShieldedMurderAttempt();
                     }
                     else if (Crusader.FortifiedPlayer != null && Crusader.FortifiedPlayer == target)
                     {
-                        Utils.StartRPC(CustomRPC.FortifiedMurderAttempt, target.PlayerId);
+                        StartRPC(CustomRPC.FortifiedMurderAttempt, target.PlayerId);
                         RPCProcedure.FortifiedMurderAttempt();
                     }
                     return MurderAttemptResult.MirrorKill;
@@ -862,7 +856,7 @@ namespace TheSushiRoles
 
         public static void MurderPlayer(PlayerControl killer, PlayerControl target, bool showAnimation) 
         {
-            Utils.StartRPC(CustomRPC.UncheckedMurderPlayer, killer.PlayerId, target.PlayerId, showAnimation ? Byte.MaxValue : 0);
+            StartRPC(CustomRPC.UncheckedMurderPlayer, killer.PlayerId, target.PlayerId, showAnimation ? Byte.MaxValue : 0);
             RPCProcedure.UncheckedMurderPlayer(killer.PlayerId, target.PlayerId, showAnimation ? Byte.MaxValue : (byte)0);
         }
         public static MurderAttemptResult CheckMurderAttemptAndKill(PlayerControl killer, PlayerControl target, bool isMeetingStart = false, bool showAnimation = true, bool ignoreBlank = false, bool ignoreIfKillerIsDead = false)  
@@ -886,7 +880,7 @@ namespace TheSushiRoles
 
                     if (!TransportationToolPatches.IsUsingTransportation(target) && Poisoner.poisoned != null) 
                     {
-                        Utils.StartRPC(CustomRPC.PoisonerSetPoisoned, byte.MaxValue, byte.MaxValue);
+                        StartRPC(CustomRPC.PoisonerSetPoisoned, byte.MaxValue, byte.MaxValue);
                         RPCProcedure.PoisonerSetPoisoned(byte.MaxValue, byte.MaxValue);
                         MurderPlayer(killer, target, showAnimation);
                     }
@@ -993,13 +987,13 @@ namespace TheSushiRoles
             bool CanKill = Veteran.Player == target && Veteran.AlertActive;
             if (CanKill)
             {
-                Utils.StartRPC(CustomRPC.VeteranAlertKill, PlayerControl.LocalPlayer.PlayerId);
+                StartRPC(CustomRPC.VeteranAlertKill, PlayerControl.LocalPlayer.PlayerId);
                 RPCProcedure.VeteranAlertKill(PlayerControl.LocalPlayer.PlayerId);
             }
             bool CanPestiKill = Pestilence.Player == target;
             if (CanPestiKill)
             {
-                Utils.StartRPC(CustomRPC.PestilenceKill, PlayerControl.LocalPlayer.PlayerId);
+                StartRPC(CustomRPC.PestilenceKill, PlayerControl.LocalPlayer.PlayerId);
                 RPCProcedure.PestilenceKill(PlayerControl.LocalPlayer.PlayerId);
             }
             bool CouldKill = CanKill || CanPestiKill;
@@ -1070,8 +1064,8 @@ namespace TheSushiRoles
             {
                 var rend = tzGO.transform.Find("Inactive").GetComponent<SpriteRenderer>();
                 var rendActive = tzGO.transform.Find("Active").GetComponent<SpriteRenderer>();
-                rend.sprite = zoomOutStatus ? LoadSpriteFromResources("TheSushiRoles.Resources.Plus_Button.png", 100f) : Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Minus_Button.png", 100f);
-                rendActive.sprite = zoomOutStatus ? LoadSpriteFromResources("TheSushiRoles.Resources.Plus_ButtonActive.png", 100f) : Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Minus_ButtonActive.png", 100f);
+                rend.sprite = zoomOutStatus ? LoadSpriteFromResources("TheSushiRoles.Resources.Plus_Button.png", 100f) : LoadSpriteFromResources("TheSushiRoles.Resources.Minus_Button.png", 100f);
+                rendActive.sprite = zoomOutStatus ? LoadSpriteFromResources("TheSushiRoles.Resources.Plus_ButtonActive.png", 100f) : LoadSpriteFromResources("TheSushiRoles.Resources.Minus_ButtonActive.png", 100f);
                 tzGO.transform.localScale = new Vector3(1.2f, 1.2f, 1f) * (zoomOutStatus ? 4 : 1);
             }
 

@@ -338,7 +338,6 @@ namespace TheSushiRoles
         public static CustomOption modifierLover;
         public static CustomOption modifierLoverImpLoverRate;
         public static CustomOption modifierLoverBothDie;
-        public static CustomOption modifierLoverEnableChat;
 
         public static CustomOption modifierLazy;
         public static CustomOption modifierLazyQuantity;
@@ -566,53 +565,6 @@ namespace TheSushiRoles
             yoyoAdminTableCooldown = CustomOption.Create(475, Types.Impostor, "Admin Table Cooldown", 20f, 2.5f, 120f, 2.5f, yoyoHasAdminTable, Format: "s");
             yoyoSilhouetteVisibility = CustomOption.Create(476, Types.Impostor, "Silhouette Visibility", new string[] { "0%", "10%", "20%", "30%", "40%", "50%" }, yoyoSpawnRate);
 
-            GlitchSpawnRate = CustomOption.Create(103, Types.NeutralKiller, ColorString(Glitch.Color, "Glitch"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            GlitchCanUseVents = CustomOption.Create(107, Types.NeutralKiller, "Glitch Can Use Vents", false, GlitchSpawnRate);
-            GlitchKillCooldowm = CustomOption.Create(108, Types.NeutralKiller, "Kill Cooldown", 30f, 10f, 60f, 2.5f, GlitchSpawnRate, Format: "s");
-            GlitchNumberOfHacks = CustomOption.Create(104, Types.NeutralKiller, "Number Of Hacks", 3f, 1f, 10f, 1f, GlitchSpawnRate);
-            GlitchHackCooldown = CustomOption.Create(105, Types.NeutralKiller, "Hack Cooldown", 30f, 10f, 60f, 2.5f, GlitchSpawnRate, Format: "s");
-            GlitchHackDuration = CustomOption.Create(106, Types.NeutralKiller, "Hack Duration", 15f, 5f, 60f, 2.5f, GlitchSpawnRate, Format: "s");
-            GlitchMimicCooldown = CustomOption.Create(109, Types.NeutralKiller, "Mimic Cooldown", 30f, 10f, 60f, 2.5f, GlitchSpawnRate, Format: "s");
-            GlitchMimicDuration = CustomOption.Create(117, Types.NeutralKiller, "Mimic Duration", 10f, 1f, 20f, 0.5f, GlitchSpawnRate, Format: "s");
-            
-            WerewolfSpawnRate = CustomOption.Create(2923, Types.NeutralKiller, ColorString(Werewolf.Color, "Werewolf"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            WerewolfCooldown = CustomOption.Create(2924, Types.NeutralKiller, "Werewolf Maul Cooldown", 30f, 10f, 60f, 2.5f, WerewolfSpawnRate, Format: "s");
-            WerewolfCanUseVents = CustomOption.Create(2926, Types.NeutralKiller, "Werewolf Can Use Vents", true, WerewolfSpawnRate);
-            WerewolfMaulRadius = CustomOption.Create(2925, Types.NeutralKiller, "Maul Radius", 0.25f, 0.05f, 1f, 0.05f, WerewolfSpawnRate, Format: "x");
-
-            PlaguebearerSpawnRate = CustomOption.Create(2927, Types.NeutralKiller, ColorString(Plaguebearer.Color, "Plaguebearer"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            PlaguebearerCooldown = CustomOption.Create(2929, Types.NeutralKiller, "Infect Cooldown", 30f, 10f, 60f, 2.5f, PlaguebearerSpawnRate, Format: "s");
-            PestilenceCooldown = CustomOption.Create(2928, Types.NeutralKiller, "Pestilence Kill Cooldown", 30f, 10f, 60f, 2.5f, PlaguebearerSpawnRate, Format: "s");
-            PestilenceCanUseVents = CustomOption.Create(2930, Types.NeutralKiller, "Pestilence Can Use Vents", true, PlaguebearerSpawnRate);
-
-            AgentSpawnRate = CustomOption.Create(2931, Types.NeutralKiller, ColorString(Agent.Color, "Agent"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            AgentCanUseVents = CustomOption.Create(2939, Types.NeutralKiller, "Agent Can Use Vents", true, AgentSpawnRate);
-            HitmanCooldown = CustomOption.Create(2932, Types.NeutralKiller, "Hitman Kill Cooldown", 30f, 10f, 60f, 2.5f, AgentSpawnRate, Format: "s");
-            HitmanCanUseVents = CustomOption.Create(2933, Types.NeutralKiller, "Hitman Can Use Vents", true, AgentSpawnRate);
-            HitmanDragCooldown = CustomOption.Create(2934, Types.NeutralKiller, "Hitman Drag Cooldown", 30f, 10f, 60f, 2.5f, AgentSpawnRate, Format: "s");
-            HitmanMorphDuration = CustomOption.Create(2935, Types.NeutralKiller, "Hitman Morph Duration", 10f, 1f, 20f, 0.5f, AgentSpawnRate, Format: "s");
-            HitmanMorphCooldown = CustomOption.Create(2936, Types.NeutralKiller, "Hitman Morph Cooldown", 30f, 10f, 60f, 2.5f, AgentSpawnRate, Format: "s");
-            HitmanDragSpeed = CustomOption.Create(2937, Types.NeutralKiller, "Hitman Drag Speed", 1f, 0.5f, 3f, 0.1f, AgentSpawnRate, Format: "x");
-            HitmanSpawnsWithNoAgent = CustomOption.Create(2938, Types.NeutralKiller, "Hitman Can Spawn With No Agent In Game", false, AgentSpawnRate);
-
-            jackalSpawnRate = CustomOption.Create(220, Types.NeutralKiller, ColorString(Jackal.Color, "Jackal"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            jackalKillCooldown = CustomOption.Create(221, Types.NeutralKiller, "Team Jackal Kill Cooldown", 30f, 10f, 60f, 2.5f, jackalSpawnRate, Format: "s");
-            jackalCreateSidekickCooldown = CustomOption.Create(222, Types.NeutralKiller, "Jackal Create Sidekick Cooldown", 30f, 10f, 60f, 2.5f, jackalSpawnRate, Format: "s");
-            jackalCanUseVents = CustomOption.Create(223, Types.NeutralKiller, "Jackal Can Use Vents", true, jackalSpawnRate);
-            jackalCanCreateSidekick = CustomOption.Create(224, Types.NeutralKiller, "Jackal Can Create A Sidekick", false, jackalSpawnRate);
-            sidekickCanUseVents = CustomOption.Create(227, Types.NeutralKiller, "Sidekick Can Use Vents", true, jackalCanCreateSidekick);
-
-            JuggernautSpawnRate = CustomOption.Create(872, Types.NeutralKiller, ColorString(Juggernaut.Color, "Juggernaut"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            JuggernautCooldown = CustomOption.Create(882, Types.NeutralKiller, "Initial Juggernaut Cooldown", 25f, 10f, 60f, 2.5f, JuggernautSpawnRate, Format: "s");
-            JuggernautReducedCooldown = CustomOption.Create(892, Types.NeutralKiller, "Juggernaut Reduced Cooldown Per Kill", 5f, 2.5f, 10f, 2.5f, JuggernautSpawnRate, Format: "s");
-            JuggernautCanUseVents = CustomOption.Create(902, Types.NeutralKiller, "Juggernaut Can Use Vents", false, JuggernautSpawnRate);
-
-            PredatorSpawnRate = CustomOption.Create(2291, Types.NeutralKiller, ColorString(Predator.Color, "Predator"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            PredatorTerminateCooldown = CustomOption.Create(2211, Types.NeutralKiller, "Predator Terminate Cooldown", 25f, 10f, 60f, 2.5f, PredatorSpawnRate, Format: "s");
-            PredatorTerminateDuration = CustomOption.Create(2221, Types.NeutralKiller, "Predator Terminate Duration", 25f, 10f, 60f, 2.5f, PredatorSpawnRate, Format: "s");
-            PredatorTerminateKillCooldown = CustomOption.Create(2231, Types.NeutralKiller, "Predator Terminating Kill Cooldown", 10f, 0.5f, 15f, 0.5f, PredatorSpawnRate, Format: "s");
-            PredatorCanUseVents = CustomOption.Create(2241, Types.NeutralKiller, "Predator Can Use Vents", false, PredatorSpawnRate);
-
             jesterSpawnRate = CustomOption.Create(60, Types.Neutral, ColorString(Jester.Color, "Jester"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             jesterCanCallEmergency = CustomOption.Create(61, Types.Neutral, "Jester Can Call Emergency Meeting", true, jesterSpawnRate);
             jesterHasImpostorVision = CustomOption.Create(62, Types.Neutral, "Jester Has Impostor Vision", false, jesterSpawnRate);
@@ -651,6 +603,53 @@ namespace TheSushiRoles
             ShowHidePursuerSettings = CustomOption.Create(3561, Types.Neutral, "Show/Hide Pursuer Options", true, null, true);
             pursuerCooldown = CustomOption.Create(356, Types.Neutral, "Pursuer Blank Cooldown", 30f, 5f, 60f, 2.5f, ShowHidePursuerSettings, Format: "s");
             pursuerBlanksNumber = CustomOption.Create(357, Types.Neutral, "Pursuer Number Of Blanks", 5f, 1f, 20f, 1f, ShowHidePursuerSettings);
+
+            GlitchSpawnRate = CustomOption.Create(103, Types.Neutral, ColorString(Glitch.Color, "Glitch"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            GlitchCanUseVents = CustomOption.Create(107, Types.Neutral, "Glitch Can Use Vents", false, GlitchSpawnRate);
+            GlitchKillCooldowm = CustomOption.Create(108, Types.Neutral, "Kill Cooldown", 30f, 10f, 60f, 2.5f, GlitchSpawnRate, Format: "s");
+            GlitchNumberOfHacks = CustomOption.Create(104, Types.Neutral, "Number Of Hacks", 3f, 1f, 10f, 1f, GlitchSpawnRate);
+            GlitchHackCooldown = CustomOption.Create(105, Types.Neutral, "Hack Cooldown", 30f, 10f, 60f, 2.5f, GlitchSpawnRate, Format: "s");
+            GlitchHackDuration = CustomOption.Create(106, Types.Neutral, "Hack Duration", 15f, 5f, 60f, 2.5f, GlitchSpawnRate, Format: "s");
+            GlitchMimicCooldown = CustomOption.Create(109, Types.Neutral, "Mimic Cooldown", 30f, 10f, 60f, 2.5f, GlitchSpawnRate, Format: "s");
+            GlitchMimicDuration = CustomOption.Create(117, Types.Neutral, "Mimic Duration", 10f, 1f, 20f, 0.5f, GlitchSpawnRate, Format: "s");
+            
+            WerewolfSpawnRate = CustomOption.Create(2923, Types.Neutral, ColorString(Werewolf.Color, "Werewolf"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            WerewolfCooldown = CustomOption.Create(2924, Types.Neutral, "Werewolf Maul Cooldown", 30f, 10f, 60f, 2.5f, WerewolfSpawnRate, Format: "s");
+            WerewolfCanUseVents = CustomOption.Create(2926, Types.Neutral, "Werewolf Can Use Vents", true, WerewolfSpawnRate);
+            WerewolfMaulRadius = CustomOption.Create(2925, Types.Neutral, "Maul Radius", 0.25f, 0.05f, 1f, 0.05f, WerewolfSpawnRate, Format: "x");
+
+            PlaguebearerSpawnRate = CustomOption.Create(2927, Types.Neutral, ColorString(Plaguebearer.Color, "Plaguebearer"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            PlaguebearerCooldown = CustomOption.Create(2929, Types.Neutral, "Infect Cooldown", 30f, 10f, 60f, 2.5f, PlaguebearerSpawnRate, Format: "s");
+            PestilenceCooldown = CustomOption.Create(2928, Types.Neutral, "Pestilence Kill Cooldown", 30f, 10f, 60f, 2.5f, PlaguebearerSpawnRate, Format: "s");
+            PestilenceCanUseVents = CustomOption.Create(2930, Types.Neutral, "Pestilence Can Use Vents", true, PlaguebearerSpawnRate);
+
+            AgentSpawnRate = CustomOption.Create(2931, Types.Neutral, ColorString(Agent.Color, "Agent"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            AgentCanUseVents = CustomOption.Create(2939, Types.Neutral, "Agent Can Use Vents", true, AgentSpawnRate);
+            HitmanCooldown = CustomOption.Create(2932, Types.Neutral, "Hitman Kill Cooldown", 30f, 10f, 60f, 2.5f, AgentSpawnRate, Format: "s");
+            HitmanCanUseVents = CustomOption.Create(2933, Types.Neutral, "Hitman Can Use Vents", true, AgentSpawnRate);
+            HitmanDragCooldown = CustomOption.Create(2934, Types.Neutral, "Hitman Drag Cooldown", 30f, 10f, 60f, 2.5f, AgentSpawnRate, Format: "s");
+            HitmanMorphDuration = CustomOption.Create(2935, Types.Neutral, "Hitman Morph Duration", 10f, 1f, 20f, 0.5f, AgentSpawnRate, Format: "s");
+            HitmanMorphCooldown = CustomOption.Create(2936, Types.Neutral, "Hitman Morph Cooldown", 30f, 10f, 60f, 2.5f, AgentSpawnRate, Format: "s");
+            HitmanDragSpeed = CustomOption.Create(2937, Types.Neutral, "Hitman Drag Speed", 1f, 0.5f, 3f, 0.1f, AgentSpawnRate, Format: "x");
+            HitmanSpawnsWithNoAgent = CustomOption.Create(2938, Types.Neutral, "Hitman Can Spawn With No Agent In Game", false, AgentSpawnRate);
+
+            jackalSpawnRate = CustomOption.Create(220, Types.Neutral, ColorString(Jackal.Color, "Jackal"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            jackalKillCooldown = CustomOption.Create(221, Types.Neutral, "Team Jackal Kill Cooldown", 30f, 10f, 60f, 2.5f, jackalSpawnRate, Format: "s");
+            jackalCreateSidekickCooldown = CustomOption.Create(222, Types.Neutral, "Jackal Create Sidekick Cooldown", 30f, 10f, 60f, 2.5f, jackalSpawnRate, Format: "s");
+            jackalCanUseVents = CustomOption.Create(223, Types.Neutral, "Jackal Can Use Vents", true, jackalSpawnRate);
+            jackalCanCreateSidekick = CustomOption.Create(224, Types.Neutral, "Jackal Can Create A Sidekick", false, jackalSpawnRate);
+            sidekickCanUseVents = CustomOption.Create(227, Types.Neutral, "Sidekick Can Use Vents", true, jackalCanCreateSidekick);
+
+            JuggernautSpawnRate = CustomOption.Create(872, Types.Neutral, ColorString(Juggernaut.Color, "Juggernaut"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            JuggernautCooldown = CustomOption.Create(882, Types.Neutral, "Initial Juggernaut Cooldown", 25f, 10f, 60f, 2.5f, JuggernautSpawnRate, Format: "s");
+            JuggernautReducedCooldown = CustomOption.Create(892, Types.Neutral, "Juggernaut Reduced Cooldown Per Kill", 5f, 2.5f, 10f, 2.5f, JuggernautSpawnRate, Format: "s");
+            JuggernautCanUseVents = CustomOption.Create(902, Types.Neutral, "Juggernaut Can Use Vents", false, JuggernautSpawnRate);
+
+            PredatorSpawnRate = CustomOption.Create(2291, Types.Neutral, ColorString(Predator.Color, "Predator"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            PredatorTerminateCooldown = CustomOption.Create(2211, Types.Neutral, "Predator Terminate Cooldown", 25f, 10f, 60f, 2.5f, PredatorSpawnRate, Format: "s");
+            PredatorTerminateDuration = CustomOption.Create(2221, Types.Neutral, "Predator Terminate Duration", 25f, 10f, 60f, 2.5f, PredatorSpawnRate, Format: "s");
+            PredatorTerminateKillCooldown = CustomOption.Create(2231, Types.Neutral, "Predator Terminating Kill Cooldown", 10f, 0.5f, 15f, 0.5f, PredatorSpawnRate, Format: "s");
+            PredatorCanUseVents = CustomOption.Create(2241, Types.Neutral, "Predator Can Use Vents", false, PredatorSpawnRate);
 
             mayorSpawnRate = CustomOption.Create(80, Types.Crewmate, ColorString(Mayor.Color, "Mayor"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             mayorCanSeeVoteColors = CustomOption.Create(81, Types.Crewmate, "Mayor Can See Vote Colors", false, mayorSpawnRate);
@@ -806,7 +805,6 @@ namespace TheSushiRoles
             modifierLover = CustomOption.Create(1040, Types.Modifier, ColorString(Color.yellow, "Lovers"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             modifierLoverImpLoverRate = CustomOption.Create(1041, Types.Modifier, "Chance That One Lover Is A Killer", 0f, 0f, 100f, 10f, modifierLover, Format: "%");
             modifierLoverBothDie = CustomOption.Create(1042, Types.Modifier, "Lovers Die Together", true, modifierLover);
-            modifierLoverEnableChat = CustomOption.Create(1043, Types.Modifier, "Enable Lover Chat", true, modifierLover);
 
             modifierSunglasses = CustomOption.Create(1050, Types.Modifier, ColorString(Color.yellow, "Sunglasses"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             modifierSunglassesQuantity = CustomOption.Create(1051, Types.Modifier, ColorString(Color.yellow, "Sunglasses Quantity"), rates, modifierSunglasses);
@@ -835,25 +833,25 @@ namespace TheSushiRoles
             modifierArmored = CustomOption.Create(1101, Types.Modifier, ColorString(Color.yellow, "Armored"), 0f, 0f, 100f, 10f, null, true, Format: "%");
 
             // Guesser Gamemode (2000 - 2999)
-            GuesserCrewNumber = CustomOption.Create(2001, Types.Modifier, ColorString(Palette.CrewmateBlue, "Number of Crew Guesser"), 15f, 0f, 15f, 1f, null, true, Heading: "Ability Settings");
-            GuesserNeutralNumber = CustomOption.Create(2002, Types.Modifier, ColorString(Color.gray, "Number of Neutral Guesser"), 15f, 0f, 15f, 1f);
-            GuesserImpNumber = CustomOption.Create(2003, Types.Modifier, ColorString(Palette.ImpostorRed, "Number of Impostor Guesser"), 15f, 0f, 15f, 1f);
-            SidekickIsAlwaysGuesser = CustomOption.Create(2012, Types.Modifier, "Sidekick Is Always Guesser", false);
-            GuesserHaveModifier = CustomOption.Create(2004, Types.Modifier, "Guesser Can Have A Modifier", true);
-            GuesserNumberOfShots = CustomOption.Create(2005, Types.Modifier, "Guesser Number Of Shots", 3f, 1f, 15f, 1f);
-            GuesserHasMultipleShotsPerMeeting = CustomOption.Create(2006, Types.Modifier, "Guesser Can Shoot Multiple Times Per Meeting", false);
-            CrewGuesserNumberOfTasks = CustomOption.Create(2013, Types.Modifier, "Number Of Tasks A Crew Guesser Needs To Unlock Shooting", 0f, 0f, 15f, 1f);
-            GuesserKillsThroughShield = CustomOption.Create(2008, Types.Modifier, "Guesses Ignore The Medic Shield", true);
-            GuesserEvilCanKillSpy = CustomOption.Create(2009, Types.Modifier, "Evil Guesser Can Guess The Spy", true);
+            GuesserCrewNumber = CustomOption.Create(2001, Types.Ability, ColorString(Palette.CrewmateBlue, "Number of Crew Guesser"), 15f, 0f, 15f, 1f, null, true, Heading: "Guesser Settings");
+            GuesserNeutralNumber = CustomOption.Create(2002, Types.Ability, ColorString(Color.gray, "Number of Neutral Guesser"), 15f, 0f, 15f, 1f);
+            GuesserImpNumber = CustomOption.Create(2003, Types.Ability, ColorString(Palette.ImpostorRed, "Number of Impostor Guesser"), 15f, 0f, 15f, 1f);
+            SidekickIsAlwaysGuesser = CustomOption.Create(2012, Types.Ability, "Sidekick Is Always Guesser", false);
+            GuesserHaveModifier = CustomOption.Create(2004, Types.Ability, "Guesser Can Have A Modifier", true);
+            GuesserNumberOfShots = CustomOption.Create(2005, Types.Ability, "Guesser Number Of Shots", 3f, 1f, 15f, 1f);
+            GuesserHasMultipleShotsPerMeeting = CustomOption.Create(2006, Types.Ability, "Guesser Can Shoot Multiple Times Per Meeting", false);
+            CrewGuesserNumberOfTasks = CustomOption.Create(2013, Types.Ability, "Number Of Tasks A Crew Guesser Needs To Unlock Shooting", 0f, 0f, 15f, 1f);
+            GuesserKillsThroughShield = CustomOption.Create(2008, Types.Ability, "Guesses Ignore The Medic Shield", true);
+            GuesserEvilCanKillSpy = CustomOption.Create(2009, Types.Ability, "Evil Guesser Can Guess The Spy", true);
 
-            AbilityCoward = CustomOption.Create(1029, Types.Modifier, ColorString(Guesser.AbilityColor, "Coward"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            AbilityCoward = CustomOption.Create(1029, Types.Ability, ColorString(Guesser.AbilityColor, "Coward"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             
-            AbilityParanoid = CustomOption.Create(522, Types.Modifier, ColorString(Guesser.AbilityColor, "Paranoid"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            AbilityParanoid = CustomOption.Create(522, Types.Ability, ColorString(Guesser.AbilityColor, "Paranoid"), 0f, 0f, 100f, 10f, null, true, Format: "%");
 
-            AbilityDisperser = CustomOption.Create(1021, Types.Modifier, ColorString(Color.red, "Disperser"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            AbilityDisperserCooldown = CustomOption.Create(1022, Types.Modifier, "Disperser Cooldown", 30f, 10f, 120f, 5f, AbilityDisperser, Format: "s");
-            AbilityDisperserCharges = CustomOption.Create(1023, Types.Modifier, "Initial Disperser Charges", 1f, 0f, 5f, 1f, AbilityDisperser);
-            AbilityDisperserKillCharges = CustomOption.Create(1024, Types.Modifier, "Disperse Charges per Kill", 1f, 0f, 5f, 1f, AbilityDisperser);
+            AbilityDisperser = CustomOption.Create(1021, Types.Ability, ColorString(Color.red, "Disperser"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            AbilityDisperserCooldown = CustomOption.Create(1022, Types.Ability, "Disperser Cooldown", 30f, 10f, 120f, 5f, AbilityDisperser, Format: "s");
+            AbilityDisperserCharges = CustomOption.Create(1023, Types.Ability, "Initial Disperser Charges", 1f, 0f, 5f, 1f, AbilityDisperser);
+            AbilityDisperserKillCharges = CustomOption.Create(1024, Types.Ability, "Disperse Charges per Kill", 1f, 0f, 5f, 1f, AbilityDisperser);
 
             // Other options
             maxNumberOfMeetings = CustomOption.Create(3, Types.General, "Number Of Meetings (excluding Mayor meeting)", 10, 0, 15, 1, null, true, Heading: "Gameplay Settings");
