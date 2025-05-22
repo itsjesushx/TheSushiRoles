@@ -6,7 +6,6 @@ namespace TheSushiRoles.Roles
     {
         public static PlayerControl Player;
         public static Color Color = Palette.ImpostorRed;
-
         public static PlayerControl ninjaMarked;
         public static PlayerControl CurrentTarget;
         public static float Cooldown = 30f;
@@ -32,7 +31,8 @@ namespace TheSushiRoles.Roles
             return killButtonSprite;
         }
 
-        public static void ClearAndReload() {
+        public static void ClearAndReload()
+        {
             Player = null;
             CurrentTarget = ninjaMarked = null;
             Cooldown = CustomOptionHolder.ninjaCooldown.GetFloat();

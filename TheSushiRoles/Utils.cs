@@ -306,14 +306,9 @@ namespace TheSushiRoles
 
         public static bool HasFakeTasks(this PlayerControl player) 
         {
-            return player == Jester.Player || player == Amnesiac.Player || player == Romantic.Player || player.IsNeutralKiller() && player != Agent.Player|| player == Arsonist.Player || player == Vulture.Player;
+            return player.IsPassiveNeutral()|| player.IsNeutralKiller() && player != Agent.Player;
         }
         
-
-        public static bool CanBeErased(this PlayerControl player) 
-        {
-            return !player.IsKiller();
-        }
 
         public static bool ShouldShowGhostInfo() 
         {
@@ -378,29 +373,20 @@ namespace TheSushiRoles
             return sabSystem.AnyActive;
         }
 
-        public static float SabotageTimer() 
-        {
-            var sabSystem = ShipStatus.Instance.Systems[SystemTypes.Sabotage].CastFast<SabotageSystemType>();
-            return sabSystem.Timer;
-        }
-
         // Class from StellarRoles
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.StartMeeting))]
         class ShipStatusStartMeetingPatch
         {
             static void Prefix()
             {
-                var hudManager = HudManager.Instance;
-                if (hudManager.FullScreen == null)
-                    return;
-                var renderer = hudManager.FullScreen;
+                if (FastDestroyableSingleton<HudManager>.Instance.FullScreen == null) return;
+                var renderer = FastDestroyableSingleton<HudManager>.Instance.FullScreen;
                 renderer.gameObject.SetActive(true);
                 renderer.enabled = true;
                 var color = Color.black;
 
-                HudManager.Instance.StartCoroutine(Effects.Lerp(0.8f, new Action<float>((p) =>
+                FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(0.8f, new Action<float>((p) =>
                 {
-                    var alpha = Mathf.Clamp01(p < 0.25f ? 1 : (1 - p));
                     renderer.color = new Color(color.r, color.g, color.b, Mathf.Clamp01(1 - p));
                     if (p == 1)
                     {
@@ -676,10 +662,13 @@ namespace TheSushiRoles
             FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Duration, new Action<float>((p) => {
                 var renderer = FastDestroyableSingleton<HudManager>.Instance.FullScreen;
 
-                if (p < 0.5) {
+                if (p < 0.5)
+                {
                     if (renderer != null)
                         renderer.color = new Color(color.r, color.g, color.b, Mathf.Clamp01(p * 2 * 0.75f));
-                } else {
+                }
+                else 
+                {
                     if (renderer != null)
                         renderer.color = new Color(color.r, color.g, color.b, Mathf.Clamp01((1 - p) * 2 * 0.75f));
                 }

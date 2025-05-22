@@ -18,10 +18,10 @@ namespace TheSushiRoles.Roles
         /*public bool isImpostor => Color == Palette.ImpostorRed && !(RoleId == RoleId.Spy);
         public static Dictionary<RoleId, RoleInfo> RoleInfoById = new();*/
         public static Dictionary<byte, TMPro.TextMeshPro> RoleTexts = new();
-        public RoleInfo(string name, Color Color, string IntroDescription, string ShortDescription, RoleId RoleId, Faction FactionId, RoleAlignment Alignment, string RoleDescription)
+        public RoleInfo(string Name, Color Color, string IntroDescription, string ShortDescription, RoleId RoleId, Faction FactionId, RoleAlignment Alignment, string RoleDescription)
         {
             this.Color = Color;
-            this.Name = name;
+            this.Name = Name;
             this.IntroDescription = IntroDescription;
             this.ShortDescription = ShortDescription;
             this.RoleId = RoleId;

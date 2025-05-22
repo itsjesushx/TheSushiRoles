@@ -355,6 +355,7 @@ namespace TheSushiRoles
         public static CustomOption modifierMiniGrowingUpInMeeting;
 
         public static CustomOption ModifierGiant;
+        public static CustomOption ModifierGiantSpeed;
 
         public static CustomOption ModifierSleuth;
         public static CustomOption ModifierSleuthQuantity;
@@ -663,7 +664,7 @@ namespace TheSushiRoles
             engineerHighlightForImpostors = CustomOption.Create(92, Types.Crewmate, "Impostors See Vents Highlighted", true, engineerSpawnRate);
             engineerHighlightForNeutralKillers = CustomOption.Create(93, Types.Crewmate, "Neutral Killers See Vents Highlighted ", true, engineerSpawnRate);
 
-            MonarchSpawnRate = CustomOption.Create(532, Types.Crewmate, ColorString(Cleaner.Color, "Monarch"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            MonarchSpawnRate = CustomOption.Create(532, Types.Crewmate, ColorString(Monarch.Color, "Monarch"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             MonarchKnightCooldown = CustomOption.Create(533, Types.Crewmate, "Monarch Knight Cooldown", 30f, 10f, 60f, 2.5f, MonarchSpawnRate, Format: "s");
             KnightLoseOnDeath = CustomOption.Create(534, Types.Crewmate, "Knighted Lose On Monarch Death", true, MonarchSpawnRate);
             MonarchCharges = CustomOption.Create(535, Types.Crewmate, "Initial Knight Charges", 1f, 0f, 5f, 1f, MonarchSpawnRate);
@@ -815,6 +816,7 @@ namespace TheSushiRoles
             modifierMiniGrowingUpInMeeting = CustomOption.Create(1063, Types.Modifier, "Mini Grows Up In Meeting", true, modifierMini);
 
             ModifierGiant = CustomOption.Create(529, Types.Modifier, ColorString(Color.yellow, "Giant"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            ModifierGiantSpeed = CustomOption.Create(5304, Types.Modifier, "Giant Speed Multiplier", 0.75f, 0.25f, 1f, 0.05f, ModifierGiant, Format: "x");
 
             modifierVip = CustomOption.Create(1070, Types.Modifier, ColorString(Color.yellow, "VIP"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             modifierVipQuantity = CustomOption.Create(1071, Types.Modifier, ColorString(Color.yellow, "VIP Quantity"), rates, modifierVip);

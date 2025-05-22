@@ -890,7 +890,7 @@ namespace TheSushiRoles
         public static void ErasePlayerRoles(byte playerId) 
         {
             PlayerControl player = Utils.PlayerById(playerId);
-            if (player == null || !player.CanBeErased()) return;
+            if (player == null || !player.IsKiller()) return;
 
             // Crewmate roles
             if (player == Mayor.Player) Mayor.ClearAndReload();
