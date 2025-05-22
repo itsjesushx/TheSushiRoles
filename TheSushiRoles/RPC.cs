@@ -325,9 +325,6 @@ namespace TheSushiRoles
                 case AbilityId.Coward:
                     Coward.Player = player;
                     break;
-                case AbilityId.Disperser:
-                    Disperser.Player = player;
-                    break;
                 case AbilityId.Paranoid:
                     Paranoid.Player = player;
                     break;
@@ -341,6 +338,9 @@ namespace TheSushiRoles
             {
                 case ModifierId.Bait:
                     Bait.Players.Add(player);
+                    break;
+                case ModifierId.Disperser:
+                    Disperser.Player = player;
                     break;
                 case ModifierId.Lover:
                     if (flag == 0) Lovers.Lover1 = player;
@@ -577,6 +577,7 @@ namespace TheSushiRoles
         }
         public static void StartTransportation(Dictionary<byte, Vector2> coordinates)
         {
+
             if (coordinates.ContainsKey(PlayerControl.LocalPlayer.PlayerId))
             {
                 Utils.ShowFlash(Palette.ImpostorRed, 2.5f);
@@ -603,8 +604,11 @@ namespace TheSushiRoles
             foreach ((byte key, Vector2 value) in coordinates)
             {
                 PlayerControl player = Utils.PlayerById(key);
-                player.transform.position = value;
-                if (PlayerControl.LocalPlayer == player) PlayerControl.LocalPlayer.NetTransform.RpcSnapTo(value);
+                foreach (var lazy in Lazy.Players)
+                {
+                    if (player != lazy) player.transform.position = value;
+                    if (PlayerControl.LocalPlayer == player && PlayerControl.LocalPlayer != lazy) PlayerControl.LocalPlayer.NetTransform.RpcSnapTo(value);
+                }
             }
 
             if (PlayerControl.LocalPlayer.walkingToVent)

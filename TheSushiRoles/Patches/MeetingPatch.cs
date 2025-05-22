@@ -101,7 +101,7 @@ namespace TheSushiRoles.Patches
                     // TieBreaker 
                     List<NetworkedPlayerInfo> potentialExiled = new List<NetworkedPlayerInfo>();
                     bool skipIsTie = false;
-                    if (self.Count > 0) 
+                    if (self.Count > 0)
                     {
                         Tiebreaker.isTiebreak = false;
                         int maxVoteValue = self.Values.Max();

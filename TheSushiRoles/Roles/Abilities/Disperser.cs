@@ -18,9 +18,9 @@ namespace TheSushiRoles.Roles.Abilities
         public static void ClearAndReload()
         {
             Player = null;
-            Charges = Mathf.RoundToInt(CustomOptionHolder.AbilityDisperserCharges.GetFloat());
-            RechargeKillsCount = Mathf.RoundToInt(CustomOptionHolder.AbilityDisperserKillCharges.GetFloat());
-            Cooldown = CustomOptionHolder.AbilityDisperserCooldown.GetFloat() / 2;
+            Charges = Mathf.RoundToInt(CustomOptionHolder.ModifierDisperserCharges.GetFloat());
+            RechargeKillsCount = Mathf.RoundToInt(CustomOptionHolder.ModifierDisperserKillCharges.GetFloat());
+            Cooldown = CustomOptionHolder.ModifierDisperserCooldown.GetFloat() / 2;
         }
     }
 }

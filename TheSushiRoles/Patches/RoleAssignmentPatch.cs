@@ -383,7 +383,6 @@ namespace TheSushiRoles.Patches
             List<AbilityId> chanceAbilities = new List<AbilityId>();
             allAbilities.AddRange(new List<AbilityId> 
             {
-                AbilityId.Disperser,
                 AbilityId.Coward,
                 AbilityId.Paranoid
             });
@@ -441,6 +440,7 @@ namespace TheSushiRoles.Patches
                 ModifierId.Bait,
                 ModifierId.Lazy,
                 ModifierId.Sleuth,
+                ModifierId.Disperser,
                 ModifierId.Sunglasses,
                 ModifierId.Giant,
                 ModifierId.Vip,
@@ -595,14 +595,6 @@ namespace TheSushiRoles.Patches
                 abilities.RemoveAll(x => x == AbilityId.Coward);
             }
 
-            if (abilities.Contains(AbilityId.Disperser)) 
-            {
-                playerId = SetModifierToRandomPlayer((byte)AbilityId.Disperser, impPlayer);
-                impPlayer.RemoveAll(x => x.PlayerId == playerId);
-                playerList.RemoveAll(x => x.PlayerId == playerId);
-                abilities.RemoveAll(x => x == AbilityId.Disperser);
-            }
-
             foreach (AbilityId ability in abilities)
             {
                 if (playerList.Count == 0) break;
@@ -639,8 +631,15 @@ namespace TheSushiRoles.Patches
                 }
                 modifiers.RemoveAll(x => x == ModifierId.Sunglasses);
             }
+             if (modifiers.Contains(ModifierId.Disperser)) 
+            {
+                playerId = SetModifierToRandomPlayer((byte)ModifierId.Disperser, impPlayer);
+                impPlayer.RemoveAll(x => x.PlayerId == playerId);
+                playerList.RemoveAll(x => x.PlayerId == playerId);
+                modifiers.RemoveAll(x => x == ModifierId.Disperser);
+            }
 
-            foreach (ModifierId modifier in modifiers) 
+            foreach (ModifierId modifier in modifiers)
             {
                 if (playerList.Count == 0) break;
                 playerId = SetModifierToRandomPlayer((byte)modifier, playerList);
@@ -673,6 +672,9 @@ namespace TheSushiRoles.Patches
                     selection = CustomOptionHolder.modifierSunglasses.GetSelection();
                     if (multiplyQuantity) selection *= CustomOptionHolder.modifierSunglassesQuantity.GetQuantity();
                     break;
+                case ModifierId.Disperser:
+                    selection = CustomOptionHolder.ModifierDisperser.GetSelection();
+                    break;
                 case ModifierId.Vip:
                     selection = CustomOptionHolder.modifierVip.GetSelection();
                     if (multiplyQuantity) selection *= CustomOptionHolder.modifierVipQuantity.GetQuantity();
@@ -703,9 +705,6 @@ namespace TheSushiRoles.Patches
             {
                 case AbilityId.Coward:
                     selection = CustomOptionHolder.AbilityCoward.GetSelection();
-                    break;
-                case AbilityId.Disperser:
-                    selection = CustomOptionHolder.AbilityDisperser.GetSelection();
                     break;
                 case AbilityId.Paranoid:
                     selection = CustomOptionHolder.AbilityParanoid.GetSelection();

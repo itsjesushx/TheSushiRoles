@@ -109,10 +109,12 @@ Thanks to miniduikboot & GD for hosting modded servers!
 The mod adds a few new settings to Among Us (in addition to the role settings):
 - **Any Player Can Stop The Start:** If turned off, only the host can stop the game start. If on, all players can do it. Non-hosts stopping the start will send a chat message indicating who stopped it.
 - **Number of Crewmates:** The number of Crewmate roles can be set inside a lobby.
-- **Number of Neutrals:** The number of Neutral roles can be set inside a lobby.
+- **Number of Neutral Benigns:** The number of Neutral Benign roles can be set inside a lobby.
+- **Number of Neutral Evil:** The number of Neutral Evil roles can be set inside a lobby.
 - **Number of Neutral Killers:** The number of Neutral Killing roles can be set inside a lobby.
 - **Number of Impostors:** The number of Impostor roles can be set inside a lobby.
 - **Number of Modifiers:** The number of Modifiers can be set inside a lobby.
+- **Number of Abilities:** The number of Abilities can be set inside a lobby.
 - **Map:** The map can be changed inside a lobby.
 - **Maximum Number Of Meetings:** You can set the maximum number of meetings that can be called in total (Every player still has personal maximum of buttons, but if the maximum number of meetings is reached you can't use your meetings even if you have some left. Impostor and Jackal meetings also count).
 - **Allow Skips On Emergency Meetings:** If set to false, there will not be a skip button in emergency meetings. If a player does not vote, they'll vote themself.
@@ -127,7 +129,7 @@ The mod adds a few new settings to Among Us (in addition to the role settings):
 - **Cams Switch To Night Vision If Lights Are Off**  No colors and cosmetics can be seen on the cameras when the lights are off. Mini can be spottet!
 - **Impostor Vision Ignores Night Vision Cams**
 - **Play On A Random Map** If enabled it allows you to set percentages for each current map, except ehT dlekS. 
-- **Ghosts Can See Roles.**
+- **Ghosts Can See Everything.** If enabled it allows ghosts to see everyone's Roles, Modifiers & Abilities.
 - **Ghosts Can See Votes.**
 - **Ghosts Can Additionally See Modifier.**
 - **Ghosts See Tasks And Other Info** Other Info: Things like who is cursed, cuffed etc. but also the medic shield, flashes, engineer fix etc.
@@ -135,8 +137,10 @@ The mod adds a few new settings to Among Us (in addition to the role settings):
 - **When you're a ghost and done with tasks, you'll get a zoom out/overview function.**
 - **Task Counts:** You are now able to select more tasks.
 - **Enable Random Player Spawns:** You will have a random spawn after every meeting/when the game starts.
-- **Role Summary:** When a game ends there will be a list of all players, their roles, their task progression and how many player a killer killed.
+- **Show Role Summary:** When a game ends there will be a list of all players, their roles, their task progression and how many player a killer killed.
 - **Darker/Lighter:** Displays color type of each player in meetings.
+- **Enable Random Player Spawns** 
+- **Disable Medbay Scan Walk**  If enabled players won't have the walk animation when doing the scan task in medbay.
 - **Show The Settings In-Game** You can use the button located under the map button or the F1-key to open or close the display of the lobby settings
 
 ### Task Count Limits per map
@@ -188,10 +192,7 @@ Here are a few instructions, on how to create a custom hat:
 - **Testing:** You can test your hat design by putting all the files in the `\SushiAssets\Test` subfolder of your mod folder. Then whenever you start a Freeplay game, you and all the dummies will be wearing the new hat. You don't need to restart Among Us if you change the hat files, just exit and reenter the Freeplay mode.
 
 # Colors
-Note: Lighter and Darker colors are no longer based on the players color. Instead they are assigned alternatingly, s.t. they are always balanced in a lobby.
-
-A big thank you goes to Avlona & Listoric for sorting the colors in the best possible order (which is surprisingly hard to do)!
-![TSR Colors](./Images/TOR_colors.jpg)
+Note: Lighter and Darker colors are assigned alternatingly, s.t. they are always balanced in a lobby.
 
 # Roles
 
@@ -1292,10 +1293,11 @@ Some Modifiers can be ingame more than once (Quantity option).
 ## Lazy
 
 The Lazy Modifier prevents the player from getting teleported to the Meeting Table if a body gets reported or an Emergency Meeting is called.\
+A Lazy player won't be affected by transportation stuff (ex: Disperses).\
 The player will start the round where the previous one ended (Emergency Meeting Call/Body Report).\
 \
 **NOTE**
-- Impostor, Neutral or Crewmate roles can have this Modifier
+This is a Global Modifier, meaning everyone can have it
 
 ### Game Options
 | Name | Description |
@@ -1310,7 +1312,7 @@ If the Voting ends in a tie, the Tie Breaker takes place and the player with the
 Everyone will know if the Tie Breaker was involved in the Meeting or not.\
 \
 **NOTE**
-- Impostor, Neutral or Crewmate roles can have this Modifier
+This is a Global Modifier, meaning everyone can have it
 - There can only be on player with this Modifier
 
 ### Game Options
@@ -1326,7 +1328,7 @@ There can be more than one Bait.
 
 **NOTE:**
 - If the Sheriff has the Bait Modifier and dies while trying to kill a Crewmate, the Sheriff will *NOT* report themself.
-- Impostor, Neutral or Crewmate roles can have this Modifier
+This is a Global Modifier, meaning everyone can have it
 
 ### Game Options
 | Name | Description
@@ -1463,7 +1465,7 @@ Teams:
 The Invert Modifier inverts your controls (no matter if keyboard or mouse).\
 \
 **NOTE**
-- Impostor, Neutral or Crewmate roles can have this Modifier
+This is a Global Modifier, meaning everyone can have it
 
 ### Game Options
 | Name | Description
@@ -1478,7 +1480,7 @@ The Chameleon becomes (partially or fully) invisible when standing still for x-s
 \
 **NOTE**
 - You can use abilities while being invisible, only moving will make you visible again
-- Impostor, Neutral or Crewmate roles can have this Modifier
+This is a Global Modifier, meaning everyone can have it
 
 ### Game Options
 | Name | Description

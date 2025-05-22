@@ -660,7 +660,11 @@ namespace TheSushiRoles.Patches
             }
         
             // Handle Giant (scaling up)
-            if (Giant.Player != null)
+            if (Giant.Player != null && 
+                !(Camouflager.CamouflageTimer > 0f || Utils.MushroomSabotageActive() || 
+                  (Giant.Player == Morphling.Player && Morphling.morphTimer > 0) ||
+                  (Giant.Player == Glitch.Player && Glitch.MimicTimer > 0) ||
+                  (Giant.Player == Hitman.Player && Hitman.MorphTimer > 0)))
             {
                 Vector3 giantScale = Giant.SizeFactor;
                 float baseRadius = Mini.defaultColliderRadius; // same reference point as Mini
@@ -1135,7 +1139,7 @@ namespace TheSushiRoles.Patches
             if (mushRoomSaboIsActive) return;
 
             // Camouflage reset and set Morphling look if necessary
-            if (oldCamouflageTimer > 0f && Camouflager.CamouflageTimer <= 0f) 
+            if (oldCamouflageTimer > 0f && Camouflager.CamouflageTimer <= 0f)
             {
                 Camouflager.ResetCamouflage();
                 if (Morphling.morphTimer > 0f && Morphling.Player != null && Morphling.morphTarget != null) 
@@ -1175,8 +1179,18 @@ namespace TheSushiRoles.Patches
                 }
                 if (Camouflager.CamouflageTimer > 0) 
                 {
+                    List<int> availableColors = Enumerable.Range(0, Palette.PlayerColors.Count).ToList();
+                    System.Random rng = new System.Random();
+                    availableColors = availableColors.OrderBy(x => rng.Next()).ToList();
+                    int index = 0;
+
+                    int randomColorId = rng.Next(Palette.PlayerColors.Count); // full color range
+                    int randomColor = availableColors[index % availableColors.Count];
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                        player.SetLook("", 6, "", "", "", "");
+                    {
+                        player.SetLook("", randomColor, "", "", "", "");
+                        index++;
+                    }
                 }
             }
 

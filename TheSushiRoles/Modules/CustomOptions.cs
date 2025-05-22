@@ -921,9 +921,7 @@ namespace TheSushiRoles
             // create TSR settings
             CreateCustomButton(__instance, next++, "TSRSettings", "TSR Settings");
             CreateGameOptionsMenu(__instance, CustomOptionType.General, "TSRSettings");
-            // NK Settings
-            CreateCustomButton(__instance, next++, "AbilitySettings", "Neutral Killer Settings");
-            CreateGameOptionsMenu(__instance, CustomOptionType.Ability, "AbilitySettings");
+            
             // IMp
             CreateCustomButton(__instance, next++, "ImpostorSettings", "Impostor Roles");
             CreateGameOptionsMenu(__instance, CustomOptionType.Impostor, "ImpostorSettings");
@@ -931,12 +929,18 @@ namespace TheSushiRoles
             // Neutral
             CreateCustomButton(__instance, next++, "NeutralSettings", "Neutral Roles");
             CreateGameOptionsMenu(__instance, CustomOptionType.Neutral, "NeutralSettings");
+
             // Crew
             CreateCustomButton(__instance, next++, "CrewmateSettings", "Crewmate Roles");
             CreateGameOptionsMenu(__instance, CustomOptionType.Crewmate, "CrewmateSettings");
+
             // Modifier
             CreateCustomButton(__instance, next++, "ModifierSettings", "Modifiers");
             CreateGameOptionsMenu(__instance, CustomOptionType.Modifier, "ModifierSettings");
+
+            // Ability
+            CreateCustomButton(__instance, next++, "AbilitySettings", "Ability Settings");
+            CreateGameOptionsMenu(__instance, CustomOptionType.Ability, "AbilitySettings");
         }
     }
 

@@ -30,9 +30,9 @@ namespace TheSushiRoles.Roles
             string message = "";
             foreach (RoleInfo roleInfo in role) 
             {
-                if (roleInfo.RoleId == RoleId.Jester || roleInfo.RoleId == RoleId.Prosecutor || roleInfo.RoleId == RoleId.Agent || roleInfo.RoleId == RoleId.Mayor || roleInfo.RoleId == RoleId.Lawyer)
+                if (roleInfo.RoleId == RoleId.Jester || roleInfo.RoleId == RoleId.Prosecutor || roleInfo.RoleId == RoleId.Agent || roleInfo.RoleId == RoleId.Monarch || roleInfo.RoleId == RoleId.Mayor || roleInfo.RoleId == RoleId.Lawyer)
                 {
-                    message = "I dance on the edge of chaos, hold secrets, and strike with precision. \n\n(Jester, Prosecutor, Agent, Mayor, or Lawyer)";
+                    message = "I dance on the edge of chaos, hold secrets, and strike with precision. \n\n(Jester, Prosecutor, Agent, Monarch, Mayor, or Lawyer)";
                 }
                 else if (roleInfo.RoleId == RoleId.Wraith || roleInfo.RoleId == RoleId.Swapper || roleInfo.RoleId == RoleId.Witch || roleInfo.RoleId == RoleId.Blackmailer || roleInfo.RoleId == RoleId.Tracker)
                 {

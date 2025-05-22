@@ -87,7 +87,7 @@ namespace TheSushiRoles.Objects
                 if (AnonymousFootprints || Camouflager.CamouflageTimer > 0 || Utils.MushroomSabotageActive()) 
                 {
                     color = Palette.PlayerColors[6];
-                } 
+                }
                 else if (activeFootprint.Owner == Morphling.Player && Morphling.morphTimer > 0 && Morphling.morphTarget && Morphling.morphTarget.Data != null) 
                 {
                     color = Palette.PlayerColors[Morphling.morphTarget.Data.DefaultOutfit.ColorId];

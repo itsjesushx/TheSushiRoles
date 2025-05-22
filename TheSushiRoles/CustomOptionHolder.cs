@@ -409,10 +409,10 @@ namespace TheSushiRoles
         public static CustomOption DisableMedbayAnimation;
         public static CustomOption GameStartCooldowns;
 
-        public static CustomOption AbilityDisperser;
-        public static CustomOption AbilityDisperserCooldown;
-        public static CustomOption AbilityDisperserKillCharges;
-        public static CustomOption AbilityDisperserCharges;
+        public static CustomOption ModifierDisperser;
+        public static CustomOption ModifierDisperserCooldown;
+        public static CustomOption ModifierDisperserKillCharges;
+        public static CustomOption ModifierDisperserCharges;
 
         public static CustomOption AbilityParanoid;
         public static CustomOption AbilityCoward;
@@ -822,6 +822,11 @@ namespace TheSushiRoles
             modifierVipQuantity = CustomOption.Create(1071, Types.Modifier, ColorString(Color.yellow, "VIP Quantity"), rates, modifierVip);
             modifierVipShowColor = CustomOption.Create(1072, Types.Modifier, "Show Team Color", true, modifierVip);
 
+            ModifierDisperser = CustomOption.Create(1021, Types.Modifier, ColorString(Color.yellow, "Disperser"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            ModifierDisperserCooldown = CustomOption.Create(1022, Types.Modifier, "Disperser Cooldown", 30f, 10f, 120f, 5f, ModifierDisperser, Format: "s");
+            ModifierDisperserCharges = CustomOption.Create(1023, Types.Modifier, "Initial Disperser Charges", 1f, 0f, 5f, 1f, ModifierDisperser);
+            ModifierDisperserKillCharges = CustomOption.Create(1024, Types.Modifier, "Disperse Charges per Kill", 1f, 0f, 5f, 1f, ModifierDisperser);
+
             modifierInvert = CustomOption.Create(1080, Types.Modifier, ColorString(Color.yellow, "Invert"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             modifierInvertQuantity = CustomOption.Create(1081, Types.Modifier, ColorString(Color.yellow, "Modifier Quantity"), rates, modifierInvert);
             modifierInvertDuration = CustomOption.Create(1082, Types.Modifier, "Number Of Meetings Inverted", 3f, 1f, 15f, 1f, modifierInvert);
@@ -849,11 +854,6 @@ namespace TheSushiRoles
             AbilityCoward = CustomOption.Create(1029, Types.Ability, ColorString(Guesser.AbilityColor, "Coward"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             
             AbilityParanoid = CustomOption.Create(522, Types.Ability, ColorString(Guesser.AbilityColor, "Paranoid"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-
-            AbilityDisperser = CustomOption.Create(1021, Types.Ability, ColorString(Color.red, "Disperser"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            AbilityDisperserCooldown = CustomOption.Create(1022, Types.Ability, "Disperser Cooldown", 30f, 10f, 120f, 5f, AbilityDisperser, Format: "s");
-            AbilityDisperserCharges = CustomOption.Create(1023, Types.Ability, "Initial Disperser Charges", 1f, 0f, 5f, 1f, AbilityDisperser);
-            AbilityDisperserKillCharges = CustomOption.Create(1024, Types.Ability, "Disperse Charges per Kill", 1f, 0f, 5f, 1f, AbilityDisperser);
 
             // Other options
             maxNumberOfMeetings = CustomOption.Create(3, Types.General, "Number Of Meetings (excluding Mayor meeting)", 10, 0, 15, 1, null, true, Heading: "Gameplay Settings");

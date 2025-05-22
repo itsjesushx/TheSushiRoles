@@ -19,13 +19,13 @@ namespace TheSushiRoles
     }
     public enum AbilityId
     {
-        Disperser,
         Coward,
         Paranoid
     }
     public enum ModifierId
     {
         Lover,
+        Disperser,
         Bait,
         Lazy,
         Sleuth,

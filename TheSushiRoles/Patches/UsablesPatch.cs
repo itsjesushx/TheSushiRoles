@@ -784,7 +784,18 @@ namespace TheSushiRoles.Patches
                 {
                     if (Camouflager.CamouflageTimer > 0) 
                     {
-                        pc.SetLook("", 6, "", "", "", "", false);
+                        List<int> availableColors = Enumerable.Range(0, Palette.PlayerColors.Count).ToList();
+                        System.Random rng = new System.Random();
+                        availableColors = availableColors.OrderBy(x => rng.Next()).ToList();
+                        int index = 0;
+
+                        int randomColorId = rng.Next(Palette.PlayerColors.Count); // full color range
+                        int randomColor = availableColors[index % availableColors.Count];
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                        {
+                            pc.SetLook("", randomColor, "", "", "", "");
+                            index++;
+                        }
                     }
                     else if (pc == Morphling.Player && Morphling.morphTimer > 0) 
                     {

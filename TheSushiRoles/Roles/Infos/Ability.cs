@@ -22,7 +22,6 @@ namespace TheSushiRoles.Roles.AbilityInfo
 
         #region Ability
         public static readonly AbilityInfo coward = new("Coward", Guesser.AbilityColor, "Call a meeting from anywhere!", AbilityId.Coward);
-        public readonly static AbilityInfo disperser = new("Disperser", Guesser.AbilityColor, "Disperse the Crew to random vents", AbilityId.Disperser);
         public readonly static AbilityInfo paranoid = new("Paranoid", Guesser.AbilityColor, "Know when someone is close to you", AbilityId.Paranoid);
         #endregion
         
@@ -30,7 +29,6 @@ namespace TheSushiRoles.Roles.AbilityInfo
         public static List<AbilityInfo> allAbilityInfos = new List<AbilityInfo>() 
         {
             coward,
-            disperser,
             paranoid
         };
         public static List<AbilityInfo> GetAbilityInfoForPlayer(PlayerControl player)
@@ -39,7 +37,6 @@ namespace TheSushiRoles.Roles.AbilityInfo
             if (player == null) return infos;
 
             if (player == Coward.Player) infos.Add(coward);
-            if (player == Disperser.Player) infos.Add(disperser);
             if (player == Paranoid.Player) infos.Add(paranoid);
 
             return infos;

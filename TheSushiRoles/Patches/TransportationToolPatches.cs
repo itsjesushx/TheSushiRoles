@@ -87,6 +87,10 @@ namespace TheSushiRoles.Patches
                 {
                     player.RawSetHat(Glitch.MimicTarget.Data.DefaultOutfit.HatId, Glitch.MimicTarget.Data.DefaultOutfit.ColorId);
                 }
+                else if (Camouflager.CamouflageTimer <= 0 && !Utils.MushroomSabotageActive() && player == Hitman.Player && Hitman.MorphTimer > 0.1f) 
+                {
+                    player.RawSetHat(Hitman.MorphTarget.Data.DefaultOutfit.HatId, Hitman.MorphTarget.Data.DefaultOutfit.ColorId);
+                }
             })));
         }
 
