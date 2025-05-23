@@ -782,7 +782,7 @@ namespace TheSushiRoles.Patches
                 nightVisionIsActive = false;
                 foreach (PlayerControl pc in PlayerControl.AllPlayerControls) 
                 {
-                    if (Camouflager.CamouflageTimer > 0) 
+                    if (Painter.PaintTimer > 0) 
                     {
                         List<int> availableColors = Enumerable.Range(0, Palette.PlayerColors.Count).ToList();
                         System.Random rng = new System.Random();

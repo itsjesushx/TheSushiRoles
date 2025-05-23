@@ -53,11 +53,11 @@ namespace TheSushiRoles.Modules
                     var roles = new List<RoleInfo>
                     {
                         RoleInfo.crewmate, RoleInfo.lighter, RoleInfo.detective, RoleInfo.hacker, RoleInfo.tracker, RoleInfo.crusader, RoleInfo.spy, RoleInfo.vigilante, RoleInfo.mayor,
-                        RoleInfo.gatekeeper, RoleInfo.veteran, RoleInfo.engineer, RoleInfo.sheriff, RoleInfo.medium, RoleInfo.trapper, RoleInfo.chronos, RoleInfo.medic, RoleInfo.swapper,
+                        RoleInfo.gatekeeper, RoleInfo.veteran, RoleInfo.engineer, RoleInfo.sheriff, RoleInfo.psychic, RoleInfo.trapper, RoleInfo.chronos, RoleInfo.medic, RoleInfo.swapper,
                         RoleInfo.oracle, RoleInfo.mystic,
-                        RoleInfo.impostor, RoleInfo.morphling, RoleInfo.blackmailer, RoleInfo.camouflager, RoleInfo.viper, RoleInfo.eraser, RoleInfo.trickster, RoleInfo.janitor,
+                        RoleInfo.impostor, RoleInfo.morphling, RoleInfo.blackmailer, RoleInfo.painter, RoleInfo.viper, RoleInfo.eraser, RoleInfo.trickster, RoleInfo.janitor,
                         RoleInfo.grenadier, RoleInfo.warlock, RoleInfo.bountyHunter, RoleInfo.assassin, RoleInfo.witch, RoleInfo.wraith, RoleInfo.yoyo,
-                        RoleInfo.jester, RoleInfo.arsonist, RoleInfo.monarch, RoleInfo.vulture, RoleInfo.lawyer, RoleInfo.amnesiac, RoleInfo.prosecutor, RoleInfo.survivor, RoleInfo.romantic,
+                        RoleInfo.jester, RoleInfo.arsonist, RoleInfo.monarch, RoleInfo.scavenger, RoleInfo.lawyer, RoleInfo.amnesiac, RoleInfo.prosecutor, RoleInfo.survivor, RoleInfo.romantic,
                         RoleInfo.jackal, RoleInfo.plaguebearer, RoleInfo.pestilence, RoleInfo.juggernaut, RoleInfo.agent, RoleInfo.hitman, RoleInfo.predator,
                         RoleInfo.glitch, RoleInfo.vromantic, RoleInfo.werewolf
                     };

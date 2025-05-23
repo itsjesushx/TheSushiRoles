@@ -34,7 +34,7 @@ namespace TheSushiRoles.Roles
         #region Neutral passives
         public readonly static RoleInfo jester = new("Jester", Jester.Color, "Get voted out", "Get voted out", RoleId.Jester, Faction.Neutrals, RoleAlignment.NeutralEvil, "As a Jester, your job is to get voted out by any means to win, if you don't get voted out, you lose.");
         public readonly static RoleInfo arsonist = new("Arsonist", Arsonist.Color, "Let them burn", "Let them burn", RoleId.Arsonist, Faction.Neutrals, RoleAlignment.NeutralEvil, "The Arsonist needs to spread gasoline on every single player to win.");
-        public readonly static RoleInfo vulture = new("Vulture", Vulture.Color, "Eat corpses to win", "Eat dead bodies", RoleId.Vulture, Faction.Neutrals, RoleAlignment.NeutralEvil, $"The goal of the Vulture is to eat {Vulture.vultureNumberToWin - Vulture.eatenBodies} dead bodies to win.");
+        public readonly static RoleInfo scavenger = new("Scavenger", Scavenger.Color, "Eat corpses to win", "Eat dead bodies", RoleId.Scavenger, Faction.Neutrals, RoleAlignment.NeutralEvil, $"The goal of the Scavenger is to eat {Scavenger.ScavengerNumberToWin - Scavenger.eatenBodies} dead bodies to win.");
         public readonly static RoleInfo lawyer = new("Lawyer", Lawyer.Color, "Defend your client", "Defend your client", RoleId.Lawyer, Faction.Neutrals, RoleAlignment.NeutralBenign, "The Lawyer's duty is to prevent their client from getting ejected, if they get voted out, you suicide, if they are killed, you become a Survivor.");
         public readonly static RoleInfo amnesiac = new("Amnesiac", Amnesiac.Color, "Gain an identity from a dead player", "Wait after a meeting to remember a role", RoleId.Amnesiac, Faction.Neutrals, RoleAlignment.NeutralBenign, "The Amnesiac is a player who forgot who they were, hence they don't have a role. In order to gain a new role, they have to wait for a meeting to end to pick a player from the death to steal their role and get a win condition. If the Amnesiac doesn't remember a role, they win by surviving to the end.");
         public readonly static RoleInfo prosecutor = new("Prosecutor", Prosecutor.Color, "Vote out your target", "Vote out your target", RoleId.Prosecutor, Faction.Neutrals, RoleAlignment.NeutralEvil, "The Prosecutor is the opposite of a Lawyer, they are also given a target, but instead of protecting them, you have to make them look guilty. If they are voted out you win. If they die you become a Survivor.");
@@ -47,7 +47,7 @@ namespace TheSushiRoles.Roles
         public readonly static RoleInfo miner = new("Miner", Miner.Color, "Dig new vents around the map", "Create vents", RoleId.Miner, Faction.Impostors, RoleAlignment.ImpSupport, "The Miner can create new vents across all the map (if not too close to walls). The vents may be visible instantly, after meetings or after a set amount of time the Miner creates it. Any venter can use the Miner vents.");
         public readonly static RoleInfo morphling = new("Morphling", Morphling.Color, "Change your look to not get caught", "Change your look", RoleId.Morphling, Faction.Impostors, RoleAlignment.ImpConcealing, $"The Morphling can morph into the form of their fellow Crewmates, morphing changes the Morphling's look to make them not look sus. The morphling can only morph into a crewmate once every {Morphling.Cooldown} seconds and lasts for {Morphling.Duration} seconds.");
         public readonly static RoleInfo blackmailer = new("Blackmailer", Blackmailer.Color, "Silence everyone who oppose you", "Silence your enemies", RoleId.Blackmailer, Faction.Impostors, RoleAlignment.ImpSupport, $"The Blackmailer can blackmail other players into silence. The blackmailed player will be unable to speak in the next meeting.");
-        public readonly static RoleInfo camouflager = new("Camouflager", Camouflager.Color, "Camouflage and kill the Crewmates", "Hide among others", RoleId.Camouflager, Faction.Impostors, RoleAlignment.ImpConcealing, $"The Camouflager can turn everyone gray making everyone unkown and nobody knows who is who for {Camouflager.Duration}s every {Camouflager.Cooldown}s.");
+        public readonly static RoleInfo painter = new("Painter", Painter.Color, "Paint and kill the Crewmates", "Hide among others", RoleId.Painter, Faction.Impostors, RoleAlignment.ImpConcealing, $"The Painter can turn everyone gray making everyone unkown and nobody knows who is who for {Painter.Duration}s every {Painter.Cooldown}s.");
         public readonly static RoleInfo viper = new("Viper", Viper.Color, "Kill the Crewmates with your poisons", "Poison your enemies", RoleId.Viper, Faction.Impostors,  RoleAlignment.ImpPower, $"The Viper can poison a player every {Viper.Cooldown} seconds, after {Viper.delay} seconds the player die. Players with protection can't be killed by the Viper. If the Viper is alive in the last 4, they will directly kill instead of bitting.");
         public readonly static RoleInfo eraser = new("Eraser", Eraser.Color, "Kill the Crewmates and erase their roles", "Erase the roles of your enemies", RoleId.Eraser, Faction.Impostors, RoleAlignment.ImpSupport, "The Eraser can delete player's role for the rest of the game, making them become regular crewmate. They may be able to erase Neutral killers depending on settings.");
         public readonly static RoleInfo trickster = new("Trickster", Trickster.Color, "Use your jack-in-the-boxes to surprise others", "Surprise your enemies", RoleId.Trickster, Faction.Impostors, RoleAlignment.ImpSupport, "The trickster can place boxes around the map which works like a vent, only the Trickster may use them. They can also manually sabotage lights, at any time, with any sabotage on but lights.");
@@ -72,14 +72,14 @@ namespace TheSushiRoles.Roles
         public readonly static RoleInfo crusader = new("Crusader", Crusader.Color, "Fortify a Crewmate to Eliminate the <color=#FF1919FF>Impostors</color>", "Fortify a Crewmate", RoleId.Crusader, Faction.Crewmates, RoleAlignment.CrewProtect, "The Crusader can fortify a player in order to protect them from being touched. If somebody tries to kill the fortified player the killer will die. If a non killing role interacts with them, nothing will happen. The Crusader can Fortify one player per round.");
         public readonly static RoleInfo spy = new("Spy", Spy.Color, "Confuse the <color=#FF1919FF>Impostors</color>", "Confuse the Impostors", RoleId.Spy, Faction.Crewmates, RoleAlignment.CrewSupport, "The Spy appears as another Impostor when there's more than 2 Impostors, they may vent or be able to die by the Sheriff, your job is to confuse the impostors into killing themselves.");
         public readonly static RoleInfo vigilante = new("Vigilante", Vigilante.Color, "Seal vents and place cameras", "Seal vents and place cameras", RoleId.Vigilante, Faction.Crewmates, RoleAlignment.CrewSupport, "The Vigilante is a Crewmate that has a certain number of screws that they can use for either sealing vents or for placing new cameras. bPlacing a new camera and sealing vents takes a configurable amount of screws. The total number of screws that a Vigilante has can also be configured. The new camera will be visible after the next meeting and accessible by everyone. The vents will be sealed after the next meeting, players can't enter or exit sealed vents, but they can still move to them underground.");
-        public readonly static RoleInfo landlord = new("Landlord", Landlord.Color, "Swap 2 player's location", "Swap 2 player locations", RoleId.Landlord, Faction.Crewmates, RoleAlignment.CrewSupport, "The Landlord is a Crewmate that can change the locations of two random players at will. Players who have been teleported are alerted with a flash on their screen that has the Landlord's role color.");
+        public readonly static RoleInfo landlord = new("Landlord", Landlord.Color, "Swap 2 player's location", "Swap 2 player locations", RoleId.Landlord, Faction.Crewmates, RoleAlignment.CrewSupport, "The Landlord can swap the location of two random players at will. Players who have been teleported are alerted with a flash on their screen that has the Landlord's role color. Additionally, when the Landlord switches two players, they also switch bodies, meaning any interaction given to the first chosen player will be given to the second chosen player and vice versa.");
         public readonly static RoleInfo mayor = new("Mayor", Mayor.Color, "Your vote counts twice", "Your vote counts twice", RoleId.Mayor, Faction.Crewmates, RoleAlignment.CrewPower, "The Mayor leads the Crewmates by having a vote that counts twice. The Mayor can always use their meeting, even if the maximum number of meetings was reached. The Mayor has a portable Meeting Button, depending on the options. The Mayor can see the vote colors after completing a configurable amount of tasks, depending on the options. The Mayor has the option to vote with only one vote instead of two (via a button in the meeting screen), depending on the settings.");
         public readonly static RoleInfo gatekeeper = new("Gatekeeper", Gatekeeper.Color, "You can create portals", "You can create portals", RoleId.Gatekeeper, Faction.Crewmates, RoleAlignment.CrewSupport, "The Gatekeeper is a Crewmate that can place two portals on the map. These two portals are connected to each other. Those portals will be visible after the next meeting and can be used by everyone. Additionally to that, the Gatekeeper gets information about who used the portals and when in the chat during each meeting, depending on the options. The Gatekeeper can teleport themself to their placed portals from anywhere if the setting is enabled.");
         public readonly static RoleInfo veteran = new("Veteran", Veteran.Color, "Alert to murder evil players who touch you", "Alert to kill the <color=#FF1919FF>Evildoers</color>", RoleId.Veteran, Faction.Crewmates, RoleAlignment.CrewPower, $"The Veteran is able to alert, Alerting makes the Veteran Unkillable and will kill anyone who interacts with them. At the start of the game the Veteran can alert a maximum of " + Veteran.Charges + " times.");
         public readonly static RoleInfo engineer = new("Engineer",  Engineer.Color, "Maintain important systems on the ship", "Repair the ship", RoleId.Engineer, Faction.Crewmates, RoleAlignment.CrewSupport, $"The Engineer is able to vent around the map and fix sabotages. The Engineer can fix a maximum of " + Engineer.remainingFixes + " sabotages.");
         public readonly static RoleInfo sheriff = new("Sheriff", Sheriff.Color, "Shoot the <color=#FF1919FF>Impostors</color>", "Shoot the Impostors", RoleId.Sheriff, Faction.Crewmates, RoleAlignment.CrewPower, "The Sheriff is able to kill players during rounds, if the player they kill is an impostor, or Neutral Killer, the Sheriff will survive. If the player they kill is a crewmate, the Sheriff will die.");
-        public readonly static RoleInfo medium = new("Medium", Medium.Color, "Question the souls of the dead to gain information", "Question the souls", RoleId.Medium, Faction.Crewmates, RoleAlignment.CrewInvest, "The medium is a crewmate who can ask the souls of dead players for information. Like the Mystic, the medium will see the souls of the players who have died (after the next meeting) and can question them. They then gets random information about the soul or the killer in the chat. The souls only stay for one round, i.e. until the next meeting. Depending on the options, the souls can only be questioned once and then disappear.");
-        public readonly static RoleInfo trapper = new("Trapper", Trapper.Color, "Place traps to find the Impostors", "Place traps", RoleId.Trapper, Faction.Crewmates, RoleAlignment.CrewInvest, "The Tracker can select one player to track. Depending on the options the Tracker can track a different person after each meeting or the Tracker tracks the same person for the whole game. An arrow points to the last tracked position of the player. The arrow updates its position every few seconds (configurable). By an option, the arrow can be replaced or combined with the Proximity Tracker from Hide N Seek. Depending on the options, the Tracker has another ability: They can track all corpses on the map for a set amount of time. They will keep tracking corpses, even if they were cleaned or eaten by the Vulture.");
+        public readonly static RoleInfo psychic = new("Psychic", Psychic.Color, "Question the souls of the dead to gain information", "Question the souls", RoleId.Psychic, Faction.Crewmates, RoleAlignment.CrewInvest, "The psychic is a crewmate who can ask the souls of dead players for information. Like the Mystic, the psychic will see the souls of the players who have died (after the next meeting) and can question them. They then gets random information about the soul or the killer in the chat. The souls only stay for one round, i.e. until the next meeting. Depending on the options, the souls can only be questioned once and then disappear.");
+        public readonly static RoleInfo trapper = new("Trapper", Trapper.Color, "Place traps to find the Impostors", "Place traps", RoleId.Trapper, Faction.Crewmates, RoleAlignment.CrewInvest, "The Tracker can select one player to track. Depending on the options the Tracker can track a different person after each meeting or the Tracker tracks the same person for the whole game. An arrow points to the last tracked position of the player. The arrow updates its position every few seconds (configurable). By an option, the arrow can be replaced or combined with the Proximity Tracker from Hide N Seek. Depending on the options, the Tracker has another ability: They can track all corpses on the map for a set amount of time. They will keep tracking corpses, even if they were cleaned or eaten by the Scavenger.");
         public readonly static RoleInfo chronos = new("Chronos", Chronos.Color, "Rewind Time To Screw the Killers", "Rewind Time", RoleId.Chronos, Faction.Crewmates, RoleAlignment.CrewSupport, "The Chronos can rewind the time, making players go back the exact steps they walked but in reverse, if a player was killed within the same amount of time the rewind lasts and if the options allows it, the dead players will get revived.");
         public readonly static RoleInfo monarch = new("Monarch", Monarch.Color, "Knight a player to give them an extra vote", "Knight a player", RoleId.Monarch, Faction.Crewmates, RoleAlignment.CrewSupport, "The Monarch is able to Knight players, Knighted players will gain an extra vote in meetings just like a Mayor, if the Monarch dies, Knighted players won't have the extra vote anymore.");
         public readonly static RoleInfo medic = new("Medic", Medic.Color, "Protect someone with your Shield", "Protect other players", RoleId.Medic, Faction.Crewmates, RoleAlignment.CrewProtect, "The Medic can Shield (highlighted by an outline around the player) one player per game, which makes the player unkillable. The Shield is also shown in the meeting as brackets around the Shielded player's name. The Shielded player can still be voted out and might also be an Impostor. If set in the options, the Shielded player and/or the Medic will get a red flash on their screen if someone (Impostor, Sheriff, ...) tried to murder them. If the Medic dies, the Shield disappears with them. The Sheriff will not die if they try to kill a Shielded Crewmate and won't perform a kill if they try to kill a Shielded Impostor. Depending on the options, guesses from the Guesser will be blocked by the Shield and the Shielded player/medic might be notified. The Medic's other feature shows when they report a corpse: they will see how long ago the player died.");
@@ -109,7 +109,7 @@ namespace TheSushiRoles.Roles
             assassin,
             blackmailer,
             bountyHunter,
-            camouflager,
+            painter,
             eraser,
             grenadier,
             janitor,
@@ -134,7 +134,7 @@ namespace TheSushiRoles.Roles
             lighter,
             mayor,
             medic,
-            medium,
+            psychic,
             monarch,
             mystic,
             oracle,
@@ -155,7 +155,7 @@ namespace TheSushiRoles.Roles
             prosecutor,
             survivor,
             romantic,
-            vulture,
+            scavenger,
 
             // Neutral Killers
             agent,
@@ -199,7 +199,7 @@ namespace TheSushiRoles.Roles
             if (player == Veteran.Player) infos.Add(veteran);
             if (player == Lighter.Player) infos.Add(lighter);
             if (player == Morphling.Player) infos.Add(morphling);
-            if (player == Camouflager.Player) infos.Add(camouflager);
+            if (player == Painter.Player) infos.Add(painter);
             if (player == Viper.Player) infos.Add(viper);
             if (player == Eraser.Player) infos.Add(eraser);
             if (player == Trickster.Player) infos.Add(trickster);
@@ -226,8 +226,8 @@ namespace TheSushiRoles.Roles
             if (player == Vigilante.Player) infos.Add(vigilante);
             if (player == Arsonist.Player) infos.Add(arsonist);
             if (player == BountyHunter.Player) infos.Add(bountyHunter);
-            if (player == Vulture.Player) infos.Add(vulture);
-            if (player == Medium.Player) infos.Add(medium);
+            if (player == Scavenger.Player) infos.Add(scavenger);
+            if (player == Psychic.Player) infos.Add(psychic);
             if (player == Lawyer.Player) infos.Add(lawyer);
             if (player == Prosecutor.Player) infos.Add(prosecutor);
             if (player == Trapper.Player) infos.Add(trapper);
@@ -251,8 +251,8 @@ namespace TheSushiRoles.Roles
         public static String GetGhostInfoString(PlayerControl player)
         {
             string msg = "";
-            if (player == Vulture.Player && (PlayerControl.LocalPlayer == Vulture.Player || Utils.ShouldShowGhostInfo()))
-                msg += Utils.ColorString(Vulture.Color, $" ({Vulture.vultureNumberToWin - Vulture.eatenBodies} left) ");
+            if (player == Scavenger.Player && (PlayerControl.LocalPlayer == Scavenger.Player || Utils.ShouldShowGhostInfo()))
+                msg += Utils.ColorString(Scavenger.Color, $" ({Scavenger.ScavengerNumberToWin - Scavenger.eatenBodies} left) ");
             
             if (Utils.ShouldShowGhostInfo())
             {

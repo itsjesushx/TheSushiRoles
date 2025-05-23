@@ -2,14 +2,14 @@ using UnityEngine;
 
 namespace TheSushiRoles.Roles
 {
-    public static class Camouflager 
+    public static class Painter 
     {
         public static PlayerControl Player;
         public static Color Color = Palette.ImpostorRed;
     
         public static float Cooldown = 30f;
         public static float Duration = 10f;
-        public static float CamouflageTimer = 0f;
+        public static float PaintTimer = 0f;
 
         private static Sprite ButtonSprite;
         public static Sprite GetButtonSprite() 
@@ -19,9 +19,9 @@ namespace TheSushiRoles.Roles
             return ButtonSprite;
         }
 
-        public static void ResetCamouflage() 
+        public static void ResetPaint() 
         {
-            CamouflageTimer = 0f;
+            PaintTimer = 0f;
             foreach (PlayerControl p in PlayerControl.AllPlayerControls) 
             {
                 if (p == Assassin.Player && Assassin.isInvisble) continue;
@@ -32,11 +32,11 @@ namespace TheSushiRoles.Roles
 
         public static void ClearAndReload() 
         {
-            ResetCamouflage();
+            ResetPaint();
             Player = null;
-            CamouflageTimer = 0f;
-            Cooldown = CustomOptionHolder.camouflagerCooldown.GetFloat();
-            Duration = CustomOptionHolder.camouflagerDuration.GetFloat();
+            PaintTimer = 0f;
+            Cooldown = CustomOptionHolder.PainterCooldown.GetFloat();
+            Duration = CustomOptionHolder.PainterDuration.GetFloat();
         }
     }
 }

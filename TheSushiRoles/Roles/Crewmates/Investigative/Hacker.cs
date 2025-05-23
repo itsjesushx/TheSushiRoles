@@ -8,7 +8,6 @@ namespace TheSushiRoles.Roles
         public static Minigame vitals = null;
         public static Minigame doorLog = null;
         public static Color Color = new Color32(117, 250, 76, byte.MaxValue);
-
         public static float Cooldown = 30f;
         public static float Duration = 10f;
         public static float toolsNumber = 5f;
@@ -18,8 +17,6 @@ namespace TheSushiRoles.Roles
         public static int RechargedTasks = 2;
         public static int chargesVitals = 1;
         public static int chargesAdminTable = 1;
-        public static bool cantMove = true;
-
         private static Sprite ButtonSprite;
         private static Sprite vitalsSprite;
         private static Sprite logSprite;
@@ -73,7 +70,6 @@ namespace TheSushiRoles.Roles
             RechargedTasks = Mathf.RoundToInt(CustomOptionHolder.hackerRechargeTasksNumber.GetFloat());
             chargesVitals = Mathf.RoundToInt(CustomOptionHolder.hackerToolsNumber.GetFloat()) / 2;
             chargesAdminTable = Mathf.RoundToInt(CustomOptionHolder.hackerToolsNumber.GetFloat()) / 2;
-            cantMove = CustomOptionHolder.hackerNoMove.GetBool();
         }
     }
 }

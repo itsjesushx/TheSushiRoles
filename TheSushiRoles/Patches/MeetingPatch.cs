@@ -747,8 +747,8 @@ namespace TheSushiRoles.Patches
                         Lazy.position = PlayerControl.LocalPlayer.transform.position;
                 }
 
-                // Medium meeting start time
-                Medium.meetingStartTime = DateTime.UtcNow;
+                // Psychic meeting start time
+                Psychic.meetingStartTime = DateTime.UtcNow;
                 // Mini
                 Mini.timeOfMeetingStart = DateTime.UtcNow;
                 Mini.ageOnMeetingStart = Mathf.FloorToInt(Mini.GrowingProgress() * 18);

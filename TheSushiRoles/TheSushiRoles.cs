@@ -25,7 +25,7 @@ namespace TheSushiRoles
             Mystic.ClearAndReload();
             Hacker.ClearAndReload();
             Spy.ClearAndReload();
-            Medium.ClearAndReload();
+            Psychic.ClearAndReload();
             Veteran.ClearAndReload();
             Oracle.ClearAndReload();
             Trapper.ClearAndReload();
@@ -34,7 +34,7 @@ namespace TheSushiRoles
             // Neutral Roles
             Jester.ClearAndReload();
             Amnesiac.ClearAndReload();
-            Vulture.ClearAndReload();
+            Scavenger.ClearAndReload();
             Romantic.ClearAndReload();
             Arsonist.ClearAndReload();
             Lawyer.ClearAndReload();
@@ -59,7 +59,7 @@ namespace TheSushiRoles
             Janitor.ClearAndReload();
             Morphling.ClearAndReload();
             Viper.ClearAndReload();
-            Camouflager.ClearAndReload();
+            Painter.ClearAndReload();
             Eraser.ClearAndReload();
             Grenadier.ClearAndReload();
             Trickster.ClearAndReload();

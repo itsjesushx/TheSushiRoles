@@ -18,7 +18,7 @@ Even more roles are coming soon.
 | [Undertaker](#undertaker) | [Engineer](#engineer) | [Arsonist](#arsonist) | [Lazy](#lazy) | [Coward](#coward) |
 | [Yo-Yo](#yoyo) | [Sheriff](#sheriff) | [Jackal](#jackal) | [Tie Breaker](#tie-breaker) |  |
 | [Morphling](#morphling) | [Trapper](#trapper)| [Sidekick](#sidekick) | [Bait](#bait) | |
-| [Camouflager](#camouflager) | [Lighter](#lighter) | [Vulture](#vulture) | [Lovers](#lovers) | |
+| [Painter](#painter) | [Lighter](#lighter) | [Scavenger](#scavenger) | [Lovers](#lovers) | |
 | [Viper](#viper) | [Detective](#detective) | [Lawyer](#lawyer) | [Blind](#blind) | |
 | [Eraser](#eraser) | [Chronos](#time-master) | [Prosecutor](#prosecutor) | [Mini](#mini) | |
 | [Trickster](#trickster) | [Medic](#medic) | [Survivor](#survivor) | [VIP](#vip) |  |
@@ -30,10 +30,11 @@ Even more roles are coming soon.
 | | [Spy](#spy) | [Werewolf](#werewolf) |  | |
 | | [Gatekeeper](#portalmaker) | [Amnesiac](#amnesiac) |  |  |
 | | [Vigilante](#vigilante) |  [Plaguebearer](#plaguebearer) |  |  |
-|  | [Medium](#medium) | [Pestilence](#plaguebearer)  |  |  |
+|  | [Psychic](#psychic) | [Pestilence](#plaguebearer)  |  |  |
 |  |[Veteran](#veteran)    |  |  |  |
 |  |[Oracle](#oracle) |  |  |  |
 |  | [Monarch](#monarch) |  |  |
+|  | [Landlord](#landlord) |  |  |
 
 The [Role Assignment](#role-assignment) section explains how the roles are being distributed among the players.
 If you want to learn how the new killers work, go to [Neutral Killers guide](#neutral-killers) to see it.
@@ -84,9 +85,9 @@ Not working? You might want to install the dependency [vc_redist](https://aka.ms
 [Among-Us-Sheriff-Mod](https://github.com/Woodi-dev/Among-Us-Sheriff-Mod) - Idea for the Sheriff role came from **Woodi-dev**\
 [TooManyRolesMods](https://github.com/Hardel-DW/TooManyRolesMods) - Idea for the Detective and Chronos roles came from **Hardel-DW**.\
 [TownOfUs](https://github.com/slushiegoose/Town-Of-Us) - Idea for the Swapper, Arsonist and a similar Mayor role came from **Slushiegoose**\
-[Ottomated](https://twitter.com/ottomated_) - Idea for the Morphling and Camouflager role came from **Ottomated**\
+[Ottomated](https://twitter.com/ottomated_) - Idea for the Morphling and Painter role came from **Ottomated**\
 [Crowded-Mod](https://github.com/CrowdedMods/CrowdedMod) - Our implementation for 10+ player lobbies were inspired by the one from the **Crowded Mod Team**\
-[Goose-Goose-Duck](https://store.steampowered.com/app/1568590/Goose_Goose_Duck) - Idea for the Vulture role came from **Slushiegoose**\
+[Goose-Goose-Duck](https://store.steampowered.com/app/1568590/Goose_Goose_Duck) - Idea for the Scavenger role came from **Slushiegoose**\
 [TheEpicRoles](https://github.com/LaicosVK/TheEpicRoles) - Idea for the first kill shield and the tabbed option menu, by **LaicosVK** **DasMonschta** **Nova**\
 [Brybry16](https://github.com/Brybry16/BetterPolus) - For the Better Polus Implementation.\
 [Town of Us-R](https://github.com/eDonnes124/Town-Of-Us-R) - Idea for the Veteran, Undertaker, Juggernaut, Plaguebearer & Pestilence, Glitch, Oracle, Predator and a similar Amnesiac role came from **eDonnes124**\
@@ -217,14 +218,15 @@ After an arbitrary time they can take on that appearance for a set duration whic
 | Morph Duration | Time the Morphling stays morphed
 -----------------------
 
-## Camouflager
+## Painter
 ### **Faction: Impostors**
-The Camouflager is an Impostor which can additionally activate a camouflage mode.\
-The camouflage mode lasts for 10s and while it is active, all player names/pets/hats\
-are hidden and all players have the same color.\
+The Painter is an Impostor which can additionally activate a paint mode.\
+The paint mode lasts for a set amount of time and while it is active, all player names/pets/hats\
+are hidden and all players have the random colors.\
 \
 **NOTE:**
 - The Mini will look like all the other players
+- The Giant will look like all the other players
 - The color of the footprints turns gray (also the ones that were already on the ground).
 - The Hacker sees gray icons on the admin table
 - The shield is not visible anymore
@@ -233,9 +235,9 @@ are hidden and all players have the same color.\
 ### Game Options
 | Name | Description |
 |----------|:-------------:|
-| Camouflager Spawn Chance | -
-| Camouflager Cooldown | -
-| Camo Duration | Time players stay camouflaged
+| Painter Spawn Chance | -
+| Painter Cooldown | -
+| Paint Duration | Time players stay painted
 -----------------------
 
 ## Viper
@@ -304,7 +306,7 @@ The Janitor is an Impostor who has the ability to clean up dead bodies.\
 \
 **NOTE:**
 - The Kill and Clean Cooldown are shared, preventing them from immediately cleaning their own kills.
-- If there is a Janitor in the game, there can't be a Vulture.
+- If there is a Janitor in the game, there can't be a Scavenger.
 
 ### Game Options
 | Name | Description |
@@ -704,12 +706,12 @@ The Plaguebearer or Pestilence needs to be the last killer alive to win the game
 
 -----------------------
 
-## Vulture
+## Scavenger
 ### **Faction: Neutral (Evil)**
-The Vulture does not have any tasks, they have to win the game as a solo.\
-The Vulture is a neutral role that must eat a specified number of corpses (depending on the options) in order to win.\
-Depending on the options, when a player dies, the Vulture gets an arrow pointing to the corpse.\
-If there is a Vulture in the game, there can't be a Janitor.
+The Scavenger does not have any tasks, they have to win the game as a solo.\
+The Scavenger is a neutral role that must eat a specified number of corpses (depending on the options) in order to win.\
+Depending on the options, when a player dies, the Scavenger gets an arrow pointing to the corpse.\
+If there is a Scavenger in the game, there can't be a Janitor.
 
 **NOTE**
 - If the corpse is on a different floor on Submerged, the arrow will always point to the elevator
@@ -717,10 +719,10 @@ If there is a Vulture in the game, there can't be a Janitor.
 ### Game Options
 | Name | Description |
 |----------|:-------------:|
-| Vulture Spawn Chance | -
-| Vulture Eat Cooldown | -
+| Scavenger Spawn Chance | -
+| Scavenger Eat Cooldown | -
 | Number Of Corpses Needed To Be Eaten | Corpes needed to be eaten to win the game
-| Vulture Can Use Vents | -
+| Scavenger Can Use Vents | -
 | Show Arrows Pointing Towards The Corpes | -
 -----------------------
 
@@ -859,6 +861,8 @@ If the Fortified person gets a kill attempt, they will kill the attemper.
 |----------|:-------------:|
 | Crusader Spawn Chance | -
 | Fortify Cooldown | -
+| Initial Charges | -
+| Number Of Tasks Needed For Recharging | -
 -----------------------
 
 ## Oracle
@@ -889,6 +893,21 @@ Depending on the options, if the Monarch dies, all the Knighted players are remo
 | Monarch Knight Cooldown | -
 | Remove Knights On Monarch Death | -
 
+-----------------------
+
+## Landlord
+### **Faction: Crewmates**
+The Landlord is a Crewmate that can change the locations of two random players at will.\
+Players who have been transported are alerted with a blue flash on their screen.\
+Additionally, the Landlord makes the players switch bodies, meaning any interaction (excluding killing) on the first player chosen to swap will be given to the second one, and vice versa.
+
+### Game Options
+| Name | Description |
+|----------|:-------------:|
+| Landlord Spawn Chance|-
+| Landlord Cooldown |-
+| Initial Charges | -
+| Number Of Tasks Needed For Recharging | -
 -----------------------
 
 
@@ -946,7 +965,7 @@ The Detective can see footprints that other players leave behind.\
 The Detective's other feature shows when they report a corpse: they receive clues about the killer's identity. The type of information they get is based on the time it took them to find the corpse.
 
 **NOTE:**
-- When people change their colors (because of a morph or camouflage), all the footprints also change their colors (also the ones that were already on the ground). If the effects are over, all footprints switch back to the original color.
+- When people change their colors (because of a morph or paint), all the footprints also change their colors (also the ones that were already on the ground). If the effects are over, all footprints switch back to the original color.
 - The Detective does not see footprints of players that sit in vents
 - More information about the [colors](#colors)
 
@@ -1003,7 +1022,7 @@ The Medic's other feature shows when they report a corpse: they will see how lon
 During meetings the Swapper can exchange votes that two people get (i.e. all votes
 that player A got will be given to player B and vice versa).\
 Because of the Swapper's strength in meetings, they might not start emergency meetings and can't fix lights and comms.\
-The Swapper now has initial swap charges and can recharge those charges after completing a configurable amount of tasks.\
+The Swapper has initial swap charges and can recharge those charges after completing a configurable amount of tasks.\
 \
 **NOTE:**
 - The remaining charges will be displayed in brackets next to the players role while not in a meeting
@@ -1026,19 +1045,6 @@ The Mystic sees the souls of players that died a round earlier, the souls slowly
 The Mystic gets a blue flash on their screen, if a player dies somewhere on the map.\
 The Mystic can also interact with players to investigate about their role, once upon a meeting starts, the Mystic gets a list of possible roles their target can be.
 
-**MYSTIC RESULTS:**
-- `I dance on the edge of chaos, hold secrets, and strike with precision`:
-  - *(Jester, Prosecutor, Agent, Mayor, or Lawyer)*
-- `I bend reality, manipulate, and uncover hidden truths`:
-  - *(Wraith, Swapper, Witch, Blackmailer, or Tracker)*
-- `I uncover secrets, blur identities, and execute plans`:
-  - *(Detective, Hacker, Morphling, Medium, or Hitman)*
-- `I build, adapt, and ensure order prevails`:
-  - *(Engineer, Vulture, Undertaker, Miner, Janitor, or Sheriff)*
-- `I stand ready, wield dark power, and leave destruction in my wake`:
-  - *(Veteran, Bounty Hunter, Warlock, Werewolf, or Juggernaut)**
-- `If a role isn't added to the Mystic list (basically if I forget to add it) it will prompt "Error".`
-
 ### Game Options
 | Name | Description |
 |----------|:-------------:|
@@ -1060,7 +1066,7 @@ The Hacker can access his mobile gadgets (vitals & admin table), with a maximum 
 While accessing those mobile gadgets, the Hacker is not able to move.
 
 **NOTE:**
-- If the Morphling morphs or the Camouflager camouflages, the colors on the admin table change accordingly
+- If the Morphling morphs or the Painter paints, the colors on the admin table change accordingly
 - More information about the [colors](#colors)
 
 ### Game Options
@@ -1081,7 +1087,7 @@ The Tracker can select one player to track. Depending on the options the Tracker
 An arrow points to the last tracked position of the player.\
 The arrow updates its position every few seconds (configurable).\
 By an option, the arrow can be replaced or combined with the Proximity Tracker from Hide N Seek.\
-Depending on the options, the Tracker has another ability: They can track all corpses on the map for a set amount of time. They will keep tracking corpses, even if they were cleaned or eaten by the Vulture.
+Depending on the options, the Tracker has another ability: They can track all corpses on the map for a set amount of time. They will keep tracking corpses, even if they were cleaned or eaten by the Scavenger.
 
 **NOTE**
 - If the tracked player is on a different floor on Submerged, the arrow will always point to the elevator
@@ -1133,7 +1139,7 @@ The Gatekeeper can teleport themself to their placed portals from anywhere if th
 - While one player uses a portal, it is blocked for any other player until the player got teleported.
 - All ghosts can still use the portals, but won't block any living player from using it and the Gatekeeper won't get any information about it in chat.
 - If a morphed person uses a portal it will show the morphed name/color depending on the options.
-- If a camouflaged person uses a portal it will show "A comouflaged person used the portal."
+- If a paintd person uses a portal it will show "A comouflaged person used the portal."
 
 ### Game Options
 | Name | Description
@@ -1175,9 +1181,9 @@ The vents will be sealed after the next meeting, players can't enter or exit sea
 | Can't Move During Cam Duration | -
 -----------------------
 
-## Medium
+## Psychic
 ### **Faction: Crewmates**
-The medium is a crewmate who can ask the souls of dead players for information. Like the Mystic, the medium will see the souls of the players who have died (after the next meeting) and can question them. They then gets random information about the soul or the killer in the chat. The souls only stay for one round, i.e. until the next meeting. Depending on the options, the souls can only be questioned once and then disappear.
+The psychic is a crewmate who can ask the souls of dead players for information. Like the Mystic, the psychic will see the souls of the players who have died (after the next meeting) and can question them. They then gets random information about the soul or the killer in the chat. The souls only stay for one round, i.e. until the next meeting. Depending on the options, the souls can only be questioned once and then disappear.
 \
 **Questions:**
 The souls will always prefer to answer with the role specific information first!
@@ -1191,7 +1197,7 @@ The souls will always prefer to answer with the role specific information first!
 - Teamkill Impostor: "I guess they confused me for the Spy, is there even one?"
 - Submerged o2-Kill: "Do I really need that mask for breathing?"
 - Warlock self kill: "MAYBE I cursed the person next to me and killed myself. Oops."
-- Vulture/Janitor eats/cleans body: "Is my dead body some kind of art now or... aaand it's gone."
+- Scavenger/Janitor eats/cleans body: "Is my dead body some kind of art now or... aaand it's gone."
 
 **Else random:**
 - "I'm not sure, but I guess a darker/lighter color killed me."
@@ -1207,10 +1213,10 @@ The souls will always prefer to answer with the role specific information first!
 ### Game Options
 | Name | Description
 |----------|:-------------:|
-| Medium Spawn Chance | -
-| Medium Cooldown | -
-| Medium Duration | The time it takes to question a soul
-| Medium Each Soul Can Only Be Questioned Once | If set to true, souls can only be questioned once and then disappear
+| Psychic Spawn Chance | -
+| Psychic Cooldown | -
+| Psychic Duration | The time it takes to question a soul
+| Psychic Each Soul Can Only Be Questioned Once | If set to true, souls can only be questioned once and then disappear
 | Chance That The Answer Contains The Remaining Amount Of Killing Roles | Chance includes Sheriff
 -----------------------
 

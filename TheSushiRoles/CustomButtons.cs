@@ -26,7 +26,7 @@ namespace TheSushiRoles
         private static CustomButton OracleButton;
         private static CustomButton VeteranAlertButton;
         private static CustomButton morphlingButton;
-        private static CustomButton camouflagerButton;
+        private static CustomButton PainterButton;
         private static CustomButton GatekeeperPlacePortalButton;
         private static CustomButton MinerMineButton;
         private static CustomButton usePortalButton;
@@ -39,6 +39,7 @@ namespace TheSushiRoles
         public static CustomButton LandlordButton;
         private static CustomButton trackerTrackPlayerButton;
         private static CustomButton trackerTrackCorpsesButton;
+        private static CustomButton ScavengerScavengeButton;
         private static CustomButton RomanticSetTargetButton;
         public static CustomButton ViperKillButton;
         public static CustomButton HitmanKillButton;
@@ -64,8 +65,8 @@ namespace TheSushiRoles
         public static CustomButton VigilanteButton;
         public static CustomButton VigilanteCamButton;
         public static CustomButton arsonistButton;
-        public static CustomButton vultureEatButton;
-        public static CustomButton mediumButton;
+        public static CustomButton ScavengerEatButton;
+        public static CustomButton PsychicButton;
         public static CustomButton SurvivorButton;
         public static CustomButton witchSpellButton;
         public static CustomButton AssassinButton;
@@ -135,7 +136,7 @@ namespace TheSushiRoles
             morphlingButton.MaxTimer = Morphling.Cooldown;
             MimicButton.MaxTimer = Glitch.MimicCooldown;
             HitmanMorphButton.MaxTimer = Hitman.MorphCooldown;
-            camouflagerButton.MaxTimer = Camouflager.Cooldown;
+            PainterButton.MaxTimer = Painter.Cooldown;
             GatekeeperPlacePortalButton.MaxTimer = Gatekeeper.Cooldown;
             MinerMineButton.MaxTimer = Miner.Cooldown;
             usePortalButton.MaxTimer = Gatekeeper.usePortalCooldown;
@@ -164,10 +165,11 @@ namespace TheSushiRoles
             VigilanteButton.MaxTimer = Vigilante.Cooldown;
             VigilanteCamButton.MaxTimer = Vigilante.Cooldown;
             arsonistButton.MaxTimer = Arsonist.Cooldown;
-            vultureEatButton.MaxTimer = Vulture.Cooldown;
-            mediumButton.MaxTimer = Medium.Cooldown;
+            ScavengerEatButton.MaxTimer = Scavenger.Cooldown;
+            PsychicButton.MaxTimer = Psychic.Cooldown;
             SurvivorButton.MaxTimer = Survivor.Cooldown;
             trackerTrackCorpsesButton.MaxTimer = Tracker.corpsesTrackingCooldown;
+            ScavengerScavengeButton.MaxTimer = Scavenger.ScavengeCooldown;
             witchSpellButton.MaxTimer = Witch.Cooldown;
             AssassinButton.MaxTimer = Assassin.Cooldown;
             mayorMeetingButton.MaxTimer = GameManager.Instance.LogicOptions.GetEmergencyCooldown();
@@ -182,18 +184,19 @@ namespace TheSushiRoles
             hackerVitalsButton.EffectDuration = Hacker.Duration;
             hackerAdminTableButton.EffectDuration = Hacker.Duration;
             ViperKillButton.EffectDuration = Viper.delay;
-            camouflagerButton.EffectDuration = Camouflager.Duration;
+            PainterButton.EffectDuration = Painter.Duration;
             GrenadierButton.EffectDuration = Grenadier.GrenadeDuration;
             morphlingButton.EffectDuration = Morphling.Duration;
             MimicButton.EffectDuration = Glitch.MimicDuration;
             HitmanMorphButton.EffectDuration = Hitman.MorphDuration;
             lightsOutButton.EffectDuration = Trickster.lightsOutDuration;
             arsonistButton.EffectDuration = Arsonist.Duration;
-            mediumButton.EffectDuration = Medium.Duration;
+            PsychicButton.EffectDuration = Psychic.Duration;
             VeteranAlertButton.EffectDuration = Veteran.Duration;
             WraithButton.EffectDuration = Wraith.Duration;
             PredatorTerminateButton.EffectDuration = Predator.TerminateDuration;
             trackerTrackCorpsesButton.EffectDuration = Tracker.corpsesTrackingDuration;
+            ScavengerScavengeButton.EffectDuration = Scavenger.ScavengeDuration;
             witchSpellButton.EffectDuration = Witch.spellCastingDuration;
             VigilanteCamButton.EffectDuration = Vigilante.Duration;
             // Already set the timer to the max, as the button is enabled during the game and not available at the start
@@ -1427,32 +1430,32 @@ namespace TheSushiRoles
             MysticChargesText.transform.localScale = Vector3.one * 0.5f;
             MysticChargesText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
 
-            // Camouflager camouflage
-            camouflagerButton = new CustomButton(
+            // Painter paint
+            PainterButton = new CustomButton(
                 () => 
                 {
-                    Utils.StartRPC(CustomRPC.CamouflagerCamouflage);
-                    RPCProcedure.CamouflagerCamouflage();
+                    Utils.StartRPC(CustomRPC.PainterPaint);
+                    RPCProcedure.PainterPaint();
                     SoundEffectsManager.Play("morphlingMorph");
                 },
-                () => { return Camouflager.Player != null && Camouflager.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => { return Painter.Player != null && Painter.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return PlayerControl.LocalPlayer.CanMove; },
                 () => {
-                    camouflagerButton.Timer = camouflagerButton.MaxTimer;
-                    camouflagerButton.isEffectActive = false;
-                    camouflagerButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
+                    PainterButton.Timer = PainterButton.MaxTimer;
+                    PainterButton.isEffectActive = false;
+                    PainterButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
-                Camouflager.GetButtonSprite(),
+                Painter.GetButtonSprite(),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
                 true,
-                Camouflager.Duration,
+                Painter.Duration,
                 () => {
-                    camouflagerButton.Timer = camouflagerButton.MaxTimer;
+                    PainterButton.Timer = PainterButton.MaxTimer;
                     SoundEffectsManager.Play("morphlingMorph");
                 },
-                buttonText: "CAMOUFLAGE"
+                buttonText: "Paint"
             );
 
             // Grenadier Grenade
@@ -1509,14 +1512,14 @@ namespace TheSushiRoles
             );
 
             hackerAdminTableButton = new CustomButton(
-               () => {
-                   if (!MapBehaviour.Instance || !MapBehaviour.Instance.isActiveAndEnabled) {
+               () =>
+               {
+                   if (!MapBehaviour.Instance || !MapBehaviour.Instance.isActiveAndEnabled)
+                   {
                        HudManager __instance = FastDestroyableSingleton<HudManager>.Instance;
                        __instance.InitMap();
                        MapBehaviour.Instance.ShowCountOverlay(allowedToMove: true, showLivePlayerPosition: true, includeDeadBodies: true);
                    }
-                   if (Hacker.cantMove) PlayerControl.LocalPlayer.moveable = false;
-                   PlayerControl.LocalPlayer.NetTransform.Halt(); // Stop current movement 
                    Hacker.chargesAdminTable--;
                },
                () => { return Hacker.Player != null && Hacker.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead;},
@@ -1572,10 +1575,6 @@ namespace TheSushiRoles
                        Hacker.doorLog.transform.localPosition = new Vector3(0.0f, 0.0f, -50f);
                        Hacker.doorLog.Begin(null);
                    }
-
-                   if (Hacker.cantMove) PlayerControl.LocalPlayer.moveable = false;
-                   PlayerControl.LocalPlayer.NetTransform.Halt(); // Stop current movement 
-
                    Hacker.chargesVitals--;
                },
                () => { return Hacker.Player != null && Hacker.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && GameOptionsManager.Instance.currentGameOptions.MapId != 0 && GameOptionsManager.Instance.currentNormalGameOptions.MapId != 3; },
@@ -1641,11 +1640,21 @@ namespace TheSushiRoles
             );
 
             trackerTrackCorpsesButton = new CustomButton(
-                () => { Tracker.corpsesTrackingTimer = Tracker.corpsesTrackingDuration;
-                            SoundEffectsManager.Play("trackerTrackCorpses"); },
-                () => { return Tracker.Player != null && Tracker.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Tracker.canTrackCorpses; },
-                () => { return PlayerControl.LocalPlayer.CanMove; },
-                () => {
+                () =>
+                {
+                    Tracker.corpsesTrackingTimer = Tracker.corpsesTrackingDuration;
+                    SoundEffectsManager.Play("trackerTrackCorpses");
+                },
+                () =>
+                {
+                    return Tracker.Player != null && Tracker.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Tracker.canTrackCorpses;
+                },
+                () =>
+                {
+                    return PlayerControl.LocalPlayer.CanMove;
+                },
+                () =>
+                {
                     trackerTrackCorpsesButton.Timer = trackerTrackCorpsesButton.MaxTimer;
                     trackerTrackCorpsesButton.isEffectActive = false;
                     trackerTrackCorpsesButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
@@ -1656,9 +1665,38 @@ namespace TheSushiRoles
                 KeyCode.G,
                 true,
                 Tracker.corpsesTrackingDuration,
-                () => {
+                () =>
+                {
                     trackerTrackCorpsesButton.Timer = trackerTrackCorpsesButton.MaxTimer;
                 }
+            );
+
+            ScavengerScavengeButton = new CustomButton(
+                () => 
+                {
+                    ScavengerScavengeButton.Timer = ScavengerScavengeButton.MaxTimer;
+                    SoundEffectsManager.Play("trackerTrackCorpses");
+                },
+                () => { return Scavenger.Player != null && Scavenger.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => { return PlayerControl.LocalPlayer.CanMove; },
+                () => 
+                {
+                    ScavengerScavengeButton.Timer = ScavengerScavengeButton.MaxTimer;
+                    ScavengerScavengeButton.isEffectActive = false;
+                    ScavengerScavengeButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
+                },
+                Scavenger.GetScavengeSprite(),
+                CustomButton.ButtonPositions.lowerRowCenter,
+                __instance,
+                KeyCode.F,
+                true,
+                0f,
+                () => 
+                {
+                    ScavengerScavengeButton.Timer = ScavengerScavengeButton.MaxTimer;
+                    SoundEffectsManager.Play("scavengerScavenge");
+                },
+                buttonText: "SCAVENGE"
             );
 
             DisperserButton = new CustomButton(
@@ -2276,9 +2314,6 @@ namespace TheSushiRoles
                         Vigilante.minigame.Begin(null);
                     }
                     Vigilante.Charges--;
-
-                    if (Vigilante.cantMove) PlayerControl.LocalPlayer.moveable = false;
-                    PlayerControl.LocalPlayer.NetTransform.Halt(); // Stop current movement 
                 },
                 () => {
                     return Vigilante.Player != null && Vigilante.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Vigilante.remainingScrews < Mathf.Min(Vigilante.ventPrice, Vigilante.camPrice)
@@ -2383,8 +2418,8 @@ namespace TheSushiRoles
                 }
             );
 
-            // Vulture Eat
-            vultureEatButton = new CustomButton(
+            // Scavenger Eat
+            ScavengerEatButton = new CustomButton(
                 () => {
                     foreach (Collider2D collider2D in Physics2D.OverlapCircleAll(PlayerControl.LocalPlayer.GetTruePosition(), PlayerControl.LocalPlayer.MaxReportDistance, Constants.PlayersOnlyMask)) {
                         if (collider2D.tag == "DeadBody") 
@@ -2397,90 +2432,90 @@ namespace TheSushiRoles
                                 if (Vector2.Distance(truePosition2, truePosition) <= PlayerControl.LocalPlayer.MaxReportDistance && PlayerControl.LocalPlayer.CanMove && !PhysicsHelpers.AnythingBetween(truePosition, truePosition2, Constants.ShipAndObjectsMask, false)) {
                                     NetworkedPlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
 
-                                    Utils.StartRPC(CustomRPC.CleanBody, playerInfo.PlayerId, Vulture.Player.PlayerId);
-                                    RPCProcedure.CleanBody(playerInfo.PlayerId, Vulture.Player.PlayerId);
+                                    Utils.StartRPC(CustomRPC.CleanBody, playerInfo.PlayerId, Scavenger.Player.PlayerId);
+                                    RPCProcedure.CleanBody(playerInfo.PlayerId, Scavenger.Player.PlayerId);
 
-                                    Vulture.Cooldown = vultureEatButton.Timer = vultureEatButton.MaxTimer;
-                                    SoundEffectsManager.Play("vultureEat");
+                                    Scavenger.Cooldown = ScavengerEatButton.Timer = ScavengerEatButton.MaxTimer;
+                                    SoundEffectsManager.Play("ScavengerEat");
                                     break;
                                 }
                             }
                         }
                     }
                 },
-                () => { return Vulture.Player != null && Vulture.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => { return Scavenger.Player != null && Scavenger.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return __instance.ReportButton.graphic.color == Palette.EnabledColor && PlayerControl.LocalPlayer.CanMove; },
-                () => { vultureEatButton.Timer = vultureEatButton.MaxTimer; },
-                Vulture.GetButtonSprite(),
-                CustomButton.ButtonPositions.lowerRowCenter,
+                () => { ScavengerEatButton.Timer = ScavengerEatButton.MaxTimer; },
+                Scavenger.GetButtonSprite(),
+                CustomButton.ButtonPositions.upperRowRight,
                 __instance,
                 KeyCode.F,
                 buttonText: "EAT"
             );
 
-            // Medium button
-            mediumButton = new CustomButton(
+            // Psychic button
+            PsychicButton = new CustomButton(
                 () => 
                 {
-                    if (Medium.target != null)
+                    if (Psychic.target != null)
                     {
-                        Medium.soulTarget = Medium.target;
-                        mediumButton.HasEffect = true;
-                        SoundEffectsManager.Play("mediumAsk");
+                        Psychic.soulTarget = Psychic.target;
+                        PsychicButton.HasEffect = true;
+                        SoundEffectsManager.Play("PsychicAsk");
                     }
                 },
                 () =>
                 {
-                    return Medium.Player != null && Medium.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead;
+                    return Psychic.Player != null && Psychic.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
                 () =>
                 {
-                    if (mediumButton.isEffectActive && Medium.target != Medium.soulTarget)
+                    if (PsychicButton.isEffectActive && Psychic.target != Psychic.soulTarget)
                     {
-                        Medium.soulTarget = null;
-                        mediumButton.Timer = 0f;
-                        mediumButton.isEffectActive = false;
+                        Psychic.soulTarget = null;
+                        PsychicButton.Timer = 0f;
+                        PsychicButton.isEffectActive = false;
                     }
-                    return Medium.target != null && PlayerControl.LocalPlayer.CanMove;
+                    return Psychic.target != null && PlayerControl.LocalPlayer.CanMove;
                 },
                 () =>
                 {
-                    mediumButton.Timer = mediumButton.MaxTimer;
-                    mediumButton.isEffectActive = false;
-                    Medium.soulTarget = null;
+                    PsychicButton.Timer = PsychicButton.MaxTimer;
+                    PsychicButton.isEffectActive = false;
+                    Psychic.soulTarget = null;
                 },
-                Medium.GetQuestionSprite(),
+                Psychic.GetQuestionSprite(),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
                 true,
-                Medium.Duration,
+                Psychic.Duration,
                 () => 
                 {
-                    mediumButton.Timer = mediumButton.MaxTimer;
-                    if (Medium.target == null || Medium.target.player == null) return;
-                    string msg = Medium.GetInfo(Medium.target.player, Medium.target.GetKiller, Medium.target.DeathReason);
+                    PsychicButton.Timer = PsychicButton.MaxTimer;
+                    if (Psychic.target == null || Psychic.target.player == null) return;
+                    string msg = Psychic.GetInfo(Psychic.target.player, Psychic.target.GetKiller, Psychic.target.DeathReason);
                     FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, msg);
                     // Ghost Info
-                    Utils.StartRPC(CustomRPC.ShareGhostInfo, Medium.target.player.PlayerId, (byte)GhostInfoTypes.MediumInfo, msg);
+                    Utils.StartRPC(CustomRPC.ShareGhostInfo, Psychic.target.player.PlayerId, (byte)GhostInfoTypes.PsychicInfo, msg);
 
                     // Remove soul
-                    if (Medium.oneTimeUse)
+                    if (Psychic.oneTimeUse)
                     {
                         float closestDistance = float.MaxValue;
                         SpriteRenderer target = null;
 
-                        foreach ((DeadPlayer db, Vector3 ps) in Medium.deadBodies)
+                        foreach ((DeadPlayer db, Vector3 ps) in Psychic.deadBodies)
                         {
-                            if (db == Medium.target)
+                            if (db == Psychic.target)
                             {
                                 Tuple<DeadPlayer, Vector3> deadBody = Tuple.Create(db, ps);
-                                Medium.deadBodies.Remove(deadBody);
+                                Psychic.deadBodies.Remove(deadBody);
                                 break;
                             }
 
                         }
-                        foreach (SpriteRenderer rend in Medium.souls)
+                        foreach (SpriteRenderer rend in Psychic.souls)
                         {
                             float distance = Vector2.Distance(rend.transform.position, PlayerControl.LocalPlayer.GetTruePosition());
                             if (distance < closestDistance)
@@ -2500,9 +2535,9 @@ namespace TheSushiRoles
                             if (p == 1f && target != null && target.gameObject != null) UnityEngine.Object.Destroy(target.gameObject);
                         })));
 
-                        Medium.souls.Remove(target);
+                        Psychic.souls.Remove(target);
                     }
-                    SoundEffectsManager.Stop("mediumAsk");
+                    SoundEffectsManager.Stop("PsychicAsk");
                 },
                 buttonText: "ASK"
             );

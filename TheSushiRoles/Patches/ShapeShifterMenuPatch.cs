@@ -82,8 +82,7 @@ public class ShapeShifterMenu
         {
             var menu = Singleton;
 
-            if (menu == null)
-                return true;
+            if (menu == null) return true;
 
             __instance.potentialVictims = new();
             var list2 = new Il2CppSystem.Collections.Generic.List<UiElement>();

@@ -50,9 +50,9 @@ namespace TheSushiRoles
         public static CustomOption morphlingCooldown;
         public static CustomOption morphlingDuration;
 
-        public static CustomOption camouflagerSpawnRate;
-        public static CustomOption camouflagerCooldown;
-        public static CustomOption camouflagerDuration;
+        public static CustomOption PainterSpawnRate;
+        public static CustomOption PainterCooldown;
+        public static CustomOption PainterDuration;
 
         public static CustomOption ViperSpawnRate;
         public static CustomOption ViperKillDelay;
@@ -205,7 +205,6 @@ namespace TheSushiRoles
         public static CustomOption hackerOnlyColorType;
         public static CustomOption hackerToolsNumber;
         public static CustomOption hackerRechargeTasksNumber;
-        public static CustomOption hackerNoMove;
 
         public static CustomOption trackerSpawnRate;
         public static CustomOption trackerUpdateIntervall;
@@ -241,19 +240,20 @@ namespace TheSushiRoles
         public static CustomOption VigilanteCamDuration;
         public static CustomOption VigilanteCamMaxCharges;
         public static CustomOption VigilanteCamRechargeTasksNumber;
-        public static CustomOption VigilanteNoMove;
 
-        public static CustomOption vultureSpawnRate;
-        public static CustomOption vultureCooldown;
-        public static CustomOption vultureNumberToWin;
-        public static CustomOption vultureCanUseVents;
-        public static CustomOption vultureShowArrows;
+        public static CustomOption ScavengerSpawnRate;
+        public static CustomOption ScavengerCooldown;
+        public static CustomOption ScavengerNumberToWin;
+        public static CustomOption ScavengerCanUseVents;
+        public static CustomOption ScavengerShowArrows;
+        public static CustomOption ScavengerScavengeCooldown;
+        public static CustomOption ScavengerScavengeDuration;
 
-        public static CustomOption mediumSpawnRate;
-        public static CustomOption mediumCooldown;
-        public static CustomOption mediumDuration;
-        public static CustomOption mediumOneTimeUse;
-        public static CustomOption mediumChanceAdditionalInfo;
+        public static CustomOption PsychicSpawnRate;
+        public static CustomOption PsychicCooldown;
+        public static CustomOption PsychicDuration;
+        public static CustomOption PsychicOneTimeUse;
+        public static CustomOption PsychicChanceAdditionalInfo;
 
         public static CustomOption CrusaderSpawnRate;
         public static CustomOption CrusaderCooldown;
@@ -488,9 +488,9 @@ namespace TheSushiRoles
             MineVisible = CustomOption.Create(25, Types.Impostor, "When Are The Vents Visible", new string [] {"Instantly", "After Next Meeting", "Delayed"}, MinerSpawnRate);
             MineDelay = CustomOption.Create(26, Types.Impostor, "Time Until Vents Are Visible (If Set To Delayed)", 5f, 1f, 20f, 1f, MinerSpawnRate, Format: "s");
 
-            camouflagerSpawnRate = CustomOption.Create(30, Types.Impostor, ColorString(Camouflager.Color, "Camouflager"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            camouflagerCooldown = CustomOption.Create(31, Types.Impostor, "Camouflager Cooldown", 30f, 10f, 60f, 2.5f, camouflagerSpawnRate, Format: "s");
-            camouflagerDuration = CustomOption.Create(32, Types.Impostor, "Camo Duration", 10f, 1f, 20f, 0.5f, camouflagerSpawnRate, Format: "s");
+            PainterSpawnRate = CustomOption.Create(30, Types.Impostor, ColorString(Painter.Color, "Painter"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            PainterCooldown = CustomOption.Create(31, Types.Impostor, "Painter Cooldown", 30f, 10f, 60f, 2.5f, PainterSpawnRate, Format: "s");
+            PainterDuration = CustomOption.Create(32, Types.Impostor, "Camo Duration", 10f, 1f, 20f, 0.5f, PainterSpawnRate, Format: "s");
 
             ViperSpawnRate = CustomOption.Create(40, Types.Impostor, ColorString(Viper.Color, "Viper"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             ViperKillDelay = CustomOption.Create(41, Types.Impostor, "Viper Kill Delay", 3f, 1f, 20f, 1f, ViperSpawnRate, Format: "s");
@@ -567,11 +567,12 @@ namespace TheSushiRoles
             arsonistCooldown = CustomOption.Create(291, Types.Neutral, "Arsonist Cooldown", 12.5f, 2.5f, 60f, 2.5f, arsonistSpawnRate, Format: "s");
             arsonistDuration = CustomOption.Create(292, Types.Neutral, "Arsonist Douse Duration", 3f, 1f, 10f, 1f, arsonistSpawnRate, Format: "s");
 
-            vultureSpawnRate = CustomOption.Create(340, Types.Neutral, ColorString(Vulture.Color, "Vulture"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            vultureCooldown = CustomOption.Create(341, Types.Neutral, "Vulture Cooldown", 15f, 10f, 60f, 2.5f, vultureSpawnRate, Format: "s");
-            vultureNumberToWin = CustomOption.Create(342, Types.Neutral, "Number Of Corpses Needed To Be Eaten", 4f, 1f, 10f, 1f, vultureSpawnRate);
-            vultureCanUseVents = CustomOption.Create(343, Types.Neutral, "Vulture Can Use Vents", true, vultureSpawnRate);
-            vultureShowArrows = CustomOption.Create(344, Types.Neutral, "Show Arrows Pointing Towards The Corpses", true, vultureSpawnRate);
+            ScavengerSpawnRate = CustomOption.Create(340, Types.Neutral, ColorString(Scavenger.Color, "Scavenger"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            ScavengerCooldown = CustomOption.Create(341, Types.Neutral, "Scavenger Eat Cooldown", 15f, 10f, 60f, 2.5f, ScavengerSpawnRate, Format: "s");
+            ScavengerNumberToWin = CustomOption.Create(342, Types.Neutral, "Number Of Corpses Needed To Be Eaten", 4f, 1f, 10f, 1f, ScavengerSpawnRate);
+            ScavengerCanUseVents = CustomOption.Create(343, Types.Neutral, "Scavenger Can Use Vents", true, ScavengerSpawnRate);
+            ScavengerScavengeCooldown = CustomOption.Create(542, Types.Neutral, "Scavenge Cooldown", 30f, 5f, 120f, 5f, ScavengerSpawnRate, Format: "s");
+            ScavengerScavengeDuration = CustomOption.Create(543, Types.Neutral, "Scavenge Duration", 5f, 2.5f, 30f, 2.5f, ScavengerSpawnRate, Format: "s");
 
             AmnesiacSpawnRate = CustomOption.Create(521, Types.Neutral, ColorString(Amnesiac.Color, "Amnesiac"), 0f, 0f, 100f, 10f, null, true, Format: "%");
 
@@ -728,7 +729,6 @@ namespace TheSushiRoles
             hackerOnlyColorType = CustomOption.Create(173, Types.Crewmate, "Hacker Only Sees Color Type", false, hackerSpawnRate);
             hackerToolsNumber = CustomOption.Create(174, Types.Crewmate, "Max Mobile Gadget Charges", 5f, 1f, 30f, 1f, hackerSpawnRate);
             hackerRechargeTasksNumber = CustomOption.Create(175, Types.Crewmate, "Number Of Tasks The Hacker Needs For Recharging", 2f, 1f, 5f, 1f, hackerSpawnRate);
-            hackerNoMove = CustomOption.Create(176, Types.Crewmate, "Cant Move During Mobile Gadget Duration", true, hackerSpawnRate);
 
             trackerSpawnRate = CustomOption.Create(200, Types.Crewmate, ColorString(Tracker.Color, "Tracker"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             trackerUpdateIntervall = CustomOption.Create(201, Types.Crewmate, "Tracker Update Intervall", 5f, 1f, 30f, 1f, trackerSpawnRate, Format: "s");
@@ -759,7 +759,6 @@ namespace TheSushiRoles
             VigilanteCamDuration = CustomOption.Create(285, Types.Crewmate, "Vigilante Duration", 10f, 2.5f, 60f, 2.5f, VigilanteSpawnRate, Format: "s");
             VigilanteCamMaxCharges = CustomOption.Create(286, Types.Crewmate, "Gadget Max Charges", 5f, 1f, 30f, 1f, VigilanteSpawnRate);
             VigilanteCamRechargeTasksNumber = CustomOption.Create(287, Types.Crewmate, "Number Of Tasks The Vigilante Needs For Recharging", 3f, 1f, 10f, 1f, VigilanteSpawnRate);
-            VigilanteNoMove = CustomOption.Create(288, Types.Crewmate, "Cant Move During Cam Duration", true, VigilanteSpawnRate);
 
             ChronosSpawnRate = CustomOption.Create(130, Types.Crewmate, ColorString(Chronos.Color, "Chronos"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             ChronosCooldown = CustomOption.Create(131, Types.Crewmate, "Chronos Cooldown", 30f, 20f, 120f, 5f, ChronosSpawnRate, Format: "s");
@@ -767,11 +766,11 @@ namespace TheSushiRoles
             ChronosReviveDuringRewind = CustomOption.Create(133, Types.Crewmate, "Chronos Revives During Rewind", false, ChronosSpawnRate);
             ChronosCharges = CustomOption.Create(134, Types.Crewmate, "Rewind Max Charges", 1f, 1f, 5f, 1f, ChronosSpawnRate);
 
-            mediumSpawnRate = CustomOption.Create(360, Types.Crewmate, ColorString(Medium.Color, "Medium"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            mediumCooldown = CustomOption.Create(361, Types.Crewmate, "Medium Questioning Cooldown", 30f, 5f, 120f, 5f, mediumSpawnRate, Format: "s");
-            mediumDuration = CustomOption.Create(362, Types.Crewmate, "Medium Questioning Duration", 3f, 0f, 15f, 1f, mediumSpawnRate, Format: "s");
-            mediumOneTimeUse = CustomOption.Create(363, Types.Crewmate, "Each Soul Can Only Be Questioned Once", false, mediumSpawnRate);
-            mediumChanceAdditionalInfo = CustomOption.Create(364, Types.Crewmate, "Chance That The Answer Contains \n    Additional Information", 0f, 0f, 100f, 10f, mediumSpawnRate, Format: "%");
+            PsychicSpawnRate = CustomOption.Create(360, Types.Crewmate, ColorString(Psychic.Color, "Psychic"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            PsychicCooldown = CustomOption.Create(361, Types.Crewmate, "Psychic Questioning Cooldown", 30f, 5f, 120f, 5f, PsychicSpawnRate, Format: "s");
+            PsychicDuration = CustomOption.Create(362, Types.Crewmate, "Psychic Questioning Duration", 3f, 0f, 15f, 1f, PsychicSpawnRate, Format: "s");
+            PsychicOneTimeUse = CustomOption.Create(363, Types.Crewmate, "Each Soul Can Only Be Questioned Once", false, PsychicSpawnRate);
+            PsychicChanceAdditionalInfo = CustomOption.Create(364, Types.Crewmate, "Chance That The Answer Contains \n    Additional Information", 0f, 0f, 100f, 10f, PsychicSpawnRate, Format: "%");
 
             trapperSpawnRate = CustomOption.Create(410, Types.Crewmate, ColorString(Trapper.Color, "Trapper"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             trapperCooldown = CustomOption.Create(420, Types.Crewmate, "Trapper Cooldown", 30f, 5f, 120f, 5f, trapperSpawnRate, Format: "s");
@@ -886,16 +885,16 @@ namespace TheSushiRoles
 
             blockedRolePairings.Add((byte)RoleId.Viper, new [] { (byte)RoleId.Warlock});
             blockedRolePairings.Add((byte)RoleId.Warlock, new [] { (byte)RoleId.Viper});
-            blockedRolePairings.Add((byte)RoleId.Vulture, new [] { (byte)RoleId.Janitor});
-            blockedRolePairings.Add((byte)RoleId.Janitor, new [] { (byte)RoleId.Vulture});
+            blockedRolePairings.Add((byte)RoleId.Scavenger, new [] { (byte)RoleId.Janitor});
+            blockedRolePairings.Add((byte)RoleId.Janitor, new [] { (byte)RoleId.Scavenger});
             blockedRolePairings.Add((byte)RoleId.Amnesiac, new [] { (byte)RoleId.Prosecutor});
             blockedRolePairings.Add((byte)RoleId.Prosecutor, new [] { (byte)RoleId.Amnesiac});
             blockedRolePairings.Add((byte)RoleId.Jester, new [] { (byte)RoleId.Prosecutor});
             blockedRolePairings.Add((byte)RoleId.Prosecutor, new [] { (byte)RoleId.Jester});
             blockedRolePairings.Add((byte)RoleId.Lawyer, new [] { (byte)RoleId.Prosecutor});
             blockedRolePairings.Add((byte)RoleId.Prosecutor, new [] { (byte)RoleId.Lawyer});
-            blockedRolePairings.Add((byte)RoleId.Camouflager, new [] { (byte)RoleId.Morphling});
-            blockedRolePairings.Add((byte)RoleId.Morphling, new [] { (byte)RoleId.Camouflager});
+            blockedRolePairings.Add((byte)RoleId.Painter, new [] { (byte)RoleId.Morphling});
+            blockedRolePairings.Add((byte)RoleId.Morphling, new [] { (byte)RoleId.Painter});
             
         }
     }

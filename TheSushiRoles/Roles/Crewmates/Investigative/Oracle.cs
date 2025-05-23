@@ -30,7 +30,7 @@ namespace TheSushiRoles.Roles
         {
             string msg = "";
 
-            var neutralEvilRoles = new List<PlayerControl> { Jester.Player, Vulture.Player, Arsonist.Player, Prosecutor.Player };
+            var neutralEvilRoles = new List<PlayerControl> { Jester.Player, Scavenger.Player, Arsonist.Player, Prosecutor.Player };
 
             var neutralBenignRoles = new List<PlayerControl> { Romantic.Player, Lawyer.Player, Amnesiac.Player };
 

@@ -30,7 +30,7 @@ namespace TheSushiRoles.Patches
                 __instance.playerIdHands.TryGetValue(player.PlayerId, out hand);
                 if (hand != null) 
                 {
-                    if (Camouflager.CamouflageTimer <= 0 && !Utils.MushroomSabotageActive()) 
+                    if (Painter.PaintTimer <= 0 && !Utils.MushroomSabotageActive()) 
                     {
                         if (player == Morphling.Player && Morphling.morphTimer > 0) 
                         {
@@ -79,15 +79,15 @@ namespace TheSushiRoles.Patches
             var player = __instance.myPlayer;
             __instance.StartCoroutine(Effects.Lerp(5.0f, new System.Action<float>((p) => 
             {
-                if (Camouflager.CamouflageTimer <= 0 && !Utils.MushroomSabotageActive() && player == Morphling.Player && Morphling.morphTimer > 0.1f) 
+                if (Painter.PaintTimer <= 0 && !Utils.MushroomSabotageActive() && player == Morphling.Player && Morphling.morphTimer > 0.1f) 
                 {
                     player.RawSetHat(Morphling.morphTarget.Data.DefaultOutfit.HatId, Morphling.morphTarget.Data.DefaultOutfit.ColorId);
                 }
-                else if (Camouflager.CamouflageTimer <= 0 && !Utils.MushroomSabotageActive() && player == Glitch.Player && Glitch.MimicTimer > 0.1f) 
+                else if (Painter.PaintTimer <= 0 && !Utils.MushroomSabotageActive() && player == Glitch.Player && Glitch.MimicTimer > 0.1f) 
                 {
                     player.RawSetHat(Glitch.MimicTarget.Data.DefaultOutfit.HatId, Glitch.MimicTarget.Data.DefaultOutfit.ColorId);
                 }
-                else if (Camouflager.CamouflageTimer <= 0 && !Utils.MushroomSabotageActive() && player == Hitman.Player && Hitman.MorphTimer > 0.1f) 
+                else if (Painter.PaintTimer <= 0 && !Utils.MushroomSabotageActive() && player == Hitman.Player && Hitman.MorphTimer > 0.1f) 
                 {
                     player.RawSetHat(Hitman.MorphTarget.Data.DefaultOutfit.HatId, Hitman.MorphTarget.Data.DefaultOutfit.ColorId);
                 }

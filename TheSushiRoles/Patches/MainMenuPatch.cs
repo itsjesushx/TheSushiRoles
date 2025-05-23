@@ -95,9 +95,9 @@ ExtraRolesAmongUs - Idea for the Engineer and Medic role came from NotHunter101.
 Among-Us-Sheriff-Mod - Idea for the Sheriff role came from Woodi-dev
 TooManyRolesMods - Idea for the Detective and Chronos roles comes from Hardel-DW. Also some code snippets from their implementation were used.
 TownOfUs - Idea for the Swapper, Arsonist and a similar Mayor role came from Slushiegoose
-Ottomated - Idea for the Morphling and Camouflager role came from Ottomated
+Ottomated - Idea for the Morphling and Painter role came from Ottomated
 Crowded-Mod - Our implementation for 10+ player lobbies was inspired by the one from the Crowded Mod Team
-Goose-Goose-Duck - Idea for the Vulture role came from Slushiegoose
+Goose-Goose-Duck - Idea for the Scavenger role came from Slushiegoose
 TheEpicRoles - Idea for the first kill Shield (partly) and the tabbed option menu (fully + some code), by LaicosVK DasMonschta Nova
 ugackMiner53 - Idea and core code for the Prop Hunt game mode</size>";
                 creditsString += "</align>";

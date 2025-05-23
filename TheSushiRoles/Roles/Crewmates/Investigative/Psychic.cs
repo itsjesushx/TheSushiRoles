@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace TheSushiRoles.Roles
 {
-    public static class Medium 
+    public static class Psychic 
     {
         public static PlayerControl Player;
         public static DeadPlayer target;
@@ -20,7 +20,7 @@ namespace TheSushiRoles.Roles
         public static bool oneTimeUse = false;
         public static float chanceAdditionalInfo = 0f;
         private static Sprite soulSprite;
-        enum SpecialMediumInfo 
+        enum SpecialPsychicInfo 
         {
             SheriffSuicide,
             ActiveLoverDies,
@@ -45,7 +45,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetQuestionSprite() 
         {
             if (question) return question;
-            question = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.MediumButton.png", 115f);
+            question = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.PsychicButton.png", 115f);
             return question;
         }
 
@@ -58,65 +58,65 @@ namespace TheSushiRoles.Roles
             futureDeadBodies = new List<Tuple<DeadPlayer, Vector3>>();
             souls = new List<SpriteRenderer>();
             meetingStartTime = DateTime.UtcNow;
-            Cooldown = CustomOptionHolder.mediumCooldown.GetFloat();
-            Duration = CustomOptionHolder.mediumDuration.GetFloat();
-            oneTimeUse = CustomOptionHolder.mediumOneTimeUse.GetBool();
-            chanceAdditionalInfo = CustomOptionHolder.mediumChanceAdditionalInfo.GetSelection() / 10f;
+            Cooldown = CustomOptionHolder.PsychicCooldown.GetFloat();
+            Duration = CustomOptionHolder.PsychicDuration.GetFloat();
+            oneTimeUse = CustomOptionHolder.PsychicOneTimeUse.GetBool();
+            chanceAdditionalInfo = CustomOptionHolder.PsychicChanceAdditionalInfo.GetSelection() / 10f;
         }
 
         public static string GetInfo(PlayerControl target, PlayerControl killer, DeadPlayer.CustomDeathReason DeathReason) 
         {
             string msg = "";
 
-            List<SpecialMediumInfo> infos = new List<SpecialMediumInfo>();
+            List<SpecialPsychicInfo> infos = new List<SpecialPsychicInfo>();
             // collect fitting death info types.
             // suicides:
             if (killer == target) 
             {
-                if ((target == Sheriff.Player) && DeathReason != DeadPlayer.CustomDeathReason.LoverSuicide) infos.Add(SpecialMediumInfo.SheriffSuicide);
-                if (target == Lovers.Lover1 || target == Lovers.Lover2) infos.Add(SpecialMediumInfo.PassiveLoverSuicide);
-                if (target == Warlock.Player && DeathReason != DeadPlayer.CustomDeathReason.LoverSuicide) infos.Add(SpecialMediumInfo.WarlockSuicide);
+                if ((target == Sheriff.Player) && DeathReason != DeadPlayer.CustomDeathReason.LoverSuicide) infos.Add(SpecialPsychicInfo.SheriffSuicide);
+                if (target == Lovers.Lover1 || target == Lovers.Lover2) infos.Add(SpecialPsychicInfo.PassiveLoverSuicide);
+                if (target == Warlock.Player && DeathReason != DeadPlayer.CustomDeathReason.LoverSuicide) infos.Add(SpecialPsychicInfo.WarlockSuicide);
             }
             else
             {
-                if (target == Lovers.Lover1 || target == Lovers.Lover2) infos.Add(SpecialMediumInfo.ActiveLoverDies);
-                if (target.Data.Role.IsImpostor && killer.Data.Role.IsImpostor) infos.Add(SpecialMediumInfo.ImpostorTeamkill);
+                if (target == Lovers.Lover1 || target == Lovers.Lover2) infos.Add(SpecialPsychicInfo.ActiveLoverDies);
+                if (target.Data.Role.IsImpostor && killer.Data.Role.IsImpostor) infos.Add(SpecialPsychicInfo.ImpostorTeamkill);
             }
-            if (target == Sidekick.Player && (killer == Jackal.Player)) infos.Add(SpecialMediumInfo.JackalKillsSidekick);
-            if (target == Lawyer.Player && killer == Lawyer.target) infos.Add(SpecialMediumInfo.LawyerKilledByClient);
-            if (target == Romantic.Player && killer == Romantic.beloved) infos.Add(SpecialMediumInfo.RomanticKilledByBeloved);
-            if (Medium.target.WasCleanedOrEaten) infos.Add(SpecialMediumInfo.BodyCleaned);
+            if (target == Sidekick.Player && (killer == Jackal.Player)) infos.Add(SpecialPsychicInfo.JackalKillsSidekick);
+            if (target == Lawyer.Player && killer == Lawyer.target) infos.Add(SpecialPsychicInfo.LawyerKilledByClient);
+            if (target == Romantic.Player && killer == Romantic.beloved) infos.Add(SpecialPsychicInfo.RomanticKilledByBeloved);
+            if (Psychic.target.WasCleanedOrEaten) infos.Add(SpecialPsychicInfo.BodyCleaned);
             
             if (infos.Count > 0) 
             {
                 var selectedInfo = infos[rnd.Next(infos.Count)];
                 switch (selectedInfo) 
                 {
-                    case SpecialMediumInfo.SheriffSuicide:
+                    case SpecialPsychicInfo.SheriffSuicide:
                         msg = "Yikes, that Sheriff shot backfired.";
                         break;
-                    case SpecialMediumInfo.WarlockSuicide:
+                    case SpecialPsychicInfo.WarlockSuicide:
                         msg = "MAYBE I cursed the person next to me and killed myself. Oops.";
                         break;
-                    case SpecialMediumInfo.ActiveLoverDies:
+                    case SpecialPsychicInfo.ActiveLoverDies:
                         msg = "I wanted to get out of this toxic relationship anyways.";
                         break;
-                    case SpecialMediumInfo.RomanticKilledByBeloved:
+                    case SpecialPsychicInfo.RomanticKilledByBeloved:
                         msg = "Why would my own beloved murder me? It must've been a mistake...I hope!";
                         break;
-                    case SpecialMediumInfo.PassiveLoverSuicide:
+                    case SpecialPsychicInfo.PassiveLoverSuicide:
                         msg = "The love of my life died, thus with a kiss I die.";
                         break;
-                    case SpecialMediumInfo.LawyerKilledByClient:
+                    case SpecialPsychicInfo.LawyerKilledByClient:
                         msg = "My client killed me. Do I still get paid?";
                         break;
-                    case SpecialMediumInfo.JackalKillsSidekick:
+                    case SpecialPsychicInfo.JackalKillsSidekick:
                         msg = "First they sidekicked me, then they killed me. At least I don't need to do tasks anymore.";
                         break;
-                    case SpecialMediumInfo.ImpostorTeamkill:
+                    case SpecialPsychicInfo.ImpostorTeamkill:
                         msg = "I guess they confused me for the Spy, is there even one?";
                         break;
-                    case SpecialMediumInfo.BodyCleaned:
+                    case SpecialPsychicInfo.BodyCleaned:
                         msg = "Is my dead body some kind of art now or... aaand it's gone.";
                         break;
                 }
@@ -124,9 +124,9 @@ namespace TheSushiRoles.Roles
             else
             {
                 int randomNumber = rnd.Next(4);
-                string typeOfColor = Utils.IsLighterColor(Medium.target.GetKiller) ? "lighter" : "darker";
-                float timeSinceDeath = (float)(Medium.meetingStartTime - Medium.target.DeathTime).TotalMilliseconds;
-                var roleString = RoleInfo.GetRolesString(Medium.target.player, false);
+                string typeOfColor = Utils.IsLighterColor(Psychic.target.GetKiller) ? "lighter" : "darker";
+                float timeSinceDeath = (float)(Psychic.meetingStartTime - Psychic.target.DeathTime).TotalMilliseconds;
+                var roleString = RoleInfo.GetRolesString(Psychic.target.player, false);
                 if (randomNumber == 0)
                 {
                     if (!roleString.Contains("Impostor") && !roleString.Contains("Crewmate"))
@@ -136,7 +136,7 @@ namespace TheSushiRoles.Roles
                 }
                 else if (randomNumber == 1) msg = "I'm not sure, but I guess a " + typeOfColor + " color killed me.";
                 else if (randomNumber == 2) msg = "If I counted correctly, I died " + Math.Round(timeSinceDeath / 1000) + "s before the next meeting started.";
-                else msg = "It seems like my killer is the " + RoleInfo.GetRolesString(Medium.target.GetKiller, false) + ".";
+                else msg = "It seems like my killer is the " + RoleInfo.GetRolesString(Psychic.target.GetKiller, false) + ".";
             }
 
             if (rnd.NextDouble() < chanceAdditionalInfo) 
@@ -164,7 +164,7 @@ namespace TheSushiRoles.Roles
                 msg += $"\nWhen you asked, {count} " + condition + (count == 1 ? " was" : " were") + " still alive";
             }
 
-            return Medium.target.player.Data.PlayerName + "'s Soul:\n" + msg;
+            return Psychic.target.player.Data.PlayerName + "'s Soul:\n" + msg;
         }
     }
 }

@@ -98,7 +98,7 @@ namespace TheSushiRoles.Patches
                 IsAlive = !playerControl.Data.IsDead });
             }
 
-            // Remove Jester, Arsonist, Vulture, Jackal, former Jackals from winners (if they win, they'll be readded)
+            // Remove Jester, Arsonist, Scavenger, Jackal, former Jackals from winners (if they win, they'll be readded)
             List<PlayerControl> notWinners = new List<PlayerControl>();
             if (Jester.Player != null) notWinners.Add(Jester.Player);
             if (Jackal.Player != null) notWinners.Add(Jackal.Player);
@@ -107,7 +107,7 @@ namespace TheSushiRoles.Patches
             if (Amnesiac.Player != null) notWinners.Add(Amnesiac.Player);
             if (Predator.Player != null) notWinners.Add(Predator.Player);
             if (Arsonist.Player != null) notWinners.Add(Arsonist.Player);
-            if (Vulture.Player != null) notWinners.Add(Vulture.Player);
+            if (Scavenger.Player != null) notWinners.Add(Scavenger.Player);
             if (Lawyer.Player != null) notWinners.Add(Lawyer.Player);
             if (Survivor.Player != null) notWinners.Add(Survivor.Player);
             if (Romantic.Player != null) notWinners.Add(Romantic.Player);
@@ -135,7 +135,7 @@ namespace TheSushiRoles.Patches
             bool JuggernautWin = Juggernaut.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.JuggernautWin;
             bool loversWin = Lovers.ExistingAndAlive() && (gameOverReason == (GameOverReason)CustomGameOverReason.LoversWin || (GameManager.Instance.DidHumansWin(gameOverReason) && !Lovers.ExistingWithKiller())); // Either they win if they are among the last 3 players, or they win if they are both Crewmates and both alive and the Crew wins (Team Imp/Jackal Lovers can only win solo wins)
             bool teamJackalWin = gameOverReason == (GameOverReason)CustomGameOverReason.TeamJackalWin && ((Jackal.Player != null && !Jackal.Player.Data.IsDead) || (Sidekick.Player != null && !Sidekick.Player.Data.IsDead));
-            bool vultureWin = Vulture.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.VultureWin;
+            bool ScavengerWin = Scavenger.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.ScavengerWin;
             bool prosecutorWin = Prosecutor.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.ProsecutorWin;
             bool PlaguebearerWin = Plaguebearer.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.PlaguebearerWin;
             bool PestilenceWin = Pestilence.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.PestilenceWin;
@@ -251,13 +251,13 @@ namespace TheSushiRoles.Patches
                 AdditionalTempData.winCondition = WinCondition.ArsonistWin;
             }
 
-            // Vulture win
-            else if (vultureWin) 
+            // Scavenger win
+            else if (ScavengerWin) 
             {
                 EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Vulture.Player.Data);
+                CachedPlayerData wpd = new CachedPlayerData(Scavenger.Player.Data);
                 EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.VultureWin;
+                AdditionalTempData.winCondition = WinCondition.ScavengerWin;
             }
 
             // Prosecutor win
@@ -490,10 +490,10 @@ namespace TheSushiRoles.Patches
                     __instance.BackgroundBar.material.SetColor("_Color", Pestilence.Color);
                     break;
             
-                case WinCondition.VultureWin:
-                    textRenderer.text = "Vulture Wins!";
-                    textRenderer.color = Vulture.Color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Vulture.Color);
+                case WinCondition.ScavengerWin:
+                    textRenderer.text = "Scavenger Wins!";
+                    textRenderer.color = Scavenger.Color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Scavenger.Color);
                     break;
 
                 case WinCondition.AgentWin:
@@ -750,7 +750,7 @@ namespace TheSushiRoles.Patches
             if (CheckAndEndGameForMiniLose(__instance)) return false;
             if (CheckAndEndGameForJesterWin(__instance)) return false;
             if (CheckAndEndGameForArsonistWin(__instance)) return false;
-            if (CheckAndEndGameForVultureWin(__instance)) return false;
+            if (CheckAndEndGameForScavengerWin(__instance)) return false;
             if (CheckAndEndGameForSabotageWin(__instance)) return false;
             if (CheckAndEndGameForTaskWin(__instance)) return false;
             if (CheckAndEndGameForProsecutorWin(__instance)) return false;
@@ -800,11 +800,11 @@ namespace TheSushiRoles.Patches
             return false;
         }
 
-        private static bool CheckAndEndGameForVultureWin(ShipStatus __instance) 
+        private static bool CheckAndEndGameForScavengerWin(ShipStatus __instance) 
         {
-            if (Vulture.IsVultureWin) 
+            if (Scavenger.IsScavengerWin) 
             {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.VultureWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ScavengerWin, false);
                 return true;
             }
             return false;

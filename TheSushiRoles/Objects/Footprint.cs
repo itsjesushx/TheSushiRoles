@@ -84,7 +84,7 @@ namespace TheSushiRoles.Objects
                 }
 
                 Color color;
-                if (AnonymousFootprints || Camouflager.CamouflageTimer > 0 || Utils.MushroomSabotageActive()) 
+                if (AnonymousFootprints || Painter.PaintTimer > 0 || Utils.MushroomSabotageActive()) 
                 {
                     color = Palette.PlayerColors[6];
                 }

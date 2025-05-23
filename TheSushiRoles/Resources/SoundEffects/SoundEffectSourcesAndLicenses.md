@@ -10,7 +10,7 @@
 |medicShield | | [energy](https://freesound.org/people/Leszek_Szary/sounds/146727/ )| CC0 1.0 |
 |morphlingSample |Combined and cut |[Scanner 03.wav](https://freesound.org/people/Glitchedtones/sounds/375942/ ) + [ scanner epson V600](https://freesound.org/people/gecop/sounds/521298/ )| CC0 1.0 both|
 |morphlingMorph | | [Whoosh](https://freesound.org/people/qubodup/sounds/60013/) | CC0 1.0 |
-|camouflagerCamo | same as morphlingMorph | - | - |
+|PainterCamo | same as morphlingMorph | - | - |
 |hackerHack | recorded by gendelo3 | - | GPLv3 |
 |hackerVitals  | (already has a sound) |-|-|
 |hackerAdmin  | (already has a sound) |-|-|
@@ -30,8 +30,8 @@
 |VigilanteSealVent | same as VigilantePlaceCam |-|-|
 |VigilanteCam | (already has a sound) |-|-|
 |arsonistDouse | | [Water Pouring Out of Bucket](https://freesound.org/people/Breviceps/sounds/508178/ )| CC0 1.0 |
-|vultureEat | combined | [Vulture](https://freesound.org/people/AntumDeluge/sounds/188041/ ) + [Eating Crisps](https://freesound.org/people/Sethroph/sounds/334209/ )| CC0 1.0 both| |
-|mediumAsk| |[ghost_sounds.wav](https://freesound.org/people/fishwithfeathers/sounds/177768/ )| CC0 1.0|
+|ScavengerEat | combined | [Scavenger](https://freesound.org/people/AntumDeluge/sounds/188041/ ) + [Eating Crisps](https://freesound.org/people/Sethroph/sounds/334209/ )| CC0 1.0 both| |
+|PsychicAsk| |[ghost_sounds.wav](https://freesound.org/people/fishwithfeathers/sounds/177768/ )| CC0 1.0|
 |SurvivorBlank | | [gun load.wav](https://freesound.org/people/Shelby_Wideman/sounds/178141/ )| CC0 1.0 |
 |witchSpell | | [witch's laugh](https://freesound.org/people/Yogoorth/sounds/589144/ ) | CC0 1.0 |
 |GatekeeperPlacePortal | same as tricksterPlaceBox| - | - |

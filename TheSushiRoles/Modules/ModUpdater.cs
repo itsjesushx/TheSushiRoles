@@ -188,14 +188,13 @@ namespace TheSushiRoles.Modules
 
             var text = button.transform.GetComponentInChildren<TMPro.TMP_Text>();
             string t = "Update TSR";
-            StartCoroutine(Effects.Lerp(0.1f, (System.Action<float>)(p => text.SetText(t))));
+            StartCoroutine(Effects.Lerp(0.1f, (Action<float>)(p => text.SetText(t))));
             passiveButton.OnMouseOut.AddListener((Action)(() => text.color = Color.red));
             passiveButton.OnMouseOver.AddListener((Action)(() => text.color = Color.white));
             var announcement = $"<size=150%>A new The Sushi Roles update to {latestRelease.Tag} is available</size>\n{latestRelease.Description}";
             var mgr = FindObjectOfType<MainMenuManager>(true);
             if (showPopUp) mgr.StartCoroutine(CoShowAnnouncement(announcement, shortTitle: "TSR Update", date : latestRelease.PublishedAt)) ;
             showPopUp = false;
-
         }
 
         [HideFromIl2Cpp]
@@ -211,7 +210,8 @@ namespace TheSushiRoles.Modules
 
             popUp.gameObject.SetActive(true);
 
-            Assets.InnerNet.Announcement creditsAnnouncement = new() {
+            Announcement creditsAnnouncement = new()
+            {
                 Id = "torAnnouncement",
                 Language = 0,
                 Number = 6969,
@@ -222,7 +222,8 @@ namespace TheSushiRoles.Modules
                 Date = date == "" ? DateTime.Now.Date.ToString() : date,
                 Text = announcement,
             };
-            mgr.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => {
+            mgr.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) =>
+            {
                 if (p == 1) {
                     var backup = DataManager.Player.Announcements.allAnnouncements;
                     DataManager.Player.Announcements.allAnnouncements = new();

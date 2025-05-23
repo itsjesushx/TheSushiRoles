@@ -206,7 +206,7 @@ namespace TheSushiRoles.Patches
             }
 
             // Crewmate roles with no changes: Mini
-            // Impostor roles with no changes: Morphling, Camouflager, Viper, Eraser, Janitor, Warlock, BountyHunter,  Witch
+            // Impostor roles with no changes: Morphling, Painter, Viper, Eraser, Janitor, Warlock, BountyHunter,  Witch
         }
 
         static void SetNameTags()
@@ -329,6 +329,7 @@ namespace TheSushiRoles.Patches
             var dt = Time.deltaTime;
             Hacker.hackerTimer -= dt;
             Trickster.lightsOutTimer -= dt;
+            Scavenger.ScavengeTimer -= dt;
             Tracker.corpsesTrackingTimer -= dt;
             Assassin.invisibleTimer -= dt;
             Wraith.VanishTimer -= dt;
@@ -338,7 +339,7 @@ namespace TheSushiRoles.Patches
 
         public static void MiniUpdate() 
         {
-            if (Mini.Player == null || Camouflager.CamouflageTimer > 0f || Utils.MushroomSabotageActive() || Mini.Player == Morphling.Player && Morphling.morphTimer > 0f || Mini.Player == Glitch.Player && Glitch.MimicTimer > 0f 
+            if (Mini.Player == null || Painter.PaintTimer > 0f || Utils.MushroomSabotageActive() || Mini.Player == Morphling.Player && Morphling.morphTimer > 0f || Mini.Player == Glitch.Player && Glitch.MimicTimer > 0f 
             || Mini.Player == Hitman.Player && Hitman.MorphTimer > 0f || Mini.Player == Assassin.Player && Assassin.isInvisble || Mini.Player == Wraith.Player && Wraith.IsVanished || SurveillanceMinigamePatch.nightVisionIsActive) return;
                 
             float growingProgress = Mini.GrowingProgress();

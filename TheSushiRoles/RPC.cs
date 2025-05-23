@@ -73,15 +73,18 @@ namespace TheSushiRoles
 
         public static void WorkaroundSetRoles(byte numberOfRoles, MessageReader reader)
         {
-                for (int i = 0; i < numberOfRoles; i++)
-                {                   
-                    byte playerId = (byte) reader.ReadPackedUInt32();
-                    byte roleId = (byte) reader.ReadPackedUInt32();
-                    try {
-                        SetRole(roleId, playerId);
-                    } catch (Exception e) {
-                        TheSushiRolesPlugin.Logger.LogError("Error while deserializing roles: " + e.Message);
-                    }
+            for (int i = 0; i < numberOfRoles; i++)
+            {                   
+                byte playerId = (byte) reader.ReadPackedUInt32();
+                byte roleId = (byte) reader.ReadPackedUInt32();
+                try
+                {
+                    SetRole(roleId, playerId);
+                }
+                catch (Exception e)
+                {
+                    TheSushiRolesPlugin.Logger.LogError("Error while deserializing roles: " + e.Message);
+                }
             }
             
         }
@@ -90,232 +93,232 @@ namespace TheSushiRoles
         {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) 
             {
-                if (player.PlayerId == playerId) 
+                if (player.PlayerId == playerId)
                 {
-                    switch ((RoleId)roleId) 
+                    switch ((RoleId)roleId)
                     {
-                    case RoleId.Jester:
-                        Jester.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.jester);
-                        break;
-                    case RoleId.Mayor:
-                        Mayor.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.mayor);
-                        break;
-                    case RoleId.Gatekeeper:
-                        Gatekeeper.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.gatekeeper);
-                        break;
-                    case RoleId.Engineer:
-                        Engineer.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.engineer);
-                        break;
-                    case RoleId.Sheriff:
-                        Sheriff.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.sheriff);
-                        break;
-                    case RoleId.VengefulRomantic:
-                        VengefulRomantic.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.vromantic);
-                        break;
-                    case RoleId.Blackmailer:
-                        Blackmailer.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.blackmailer);
-                        break;
-                    case RoleId.Glitch:
-                        Glitch.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.glitch);
-                        break;
-                    case RoleId.Werewolf:
-                        Werewolf.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.werewolf);
-                        break;
-                    case RoleId.Lighter:
-                        Lighter.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.lighter);
-                        break;
-                    case RoleId.Agent:
-                        Agent.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.agent);
-                        break;
-                    case RoleId.Hitman:
-                        Hitman.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.hitman);
-                        break;
-                    case RoleId.Undertaker:
-                        Undertaker.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.undertaker);
-                        break;
-                    case RoleId.Oracle:
-                        Oracle.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.oracle);
-                        break;
-                    case RoleId.Amnesiac:
-                        Amnesiac.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.amnesiac);
-                        break;
-                    case RoleId.Plaguebearer:
-                        Plaguebearer.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.plaguebearer);
-                        break;
-                    case RoleId.Pestilence:
-                        Pestilence.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.pestilence);
-                        break;
-                    case RoleId.Detective:
-                        Detective.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.detective);
-                        break;
-                    case RoleId.Chronos:
-                        Chronos.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.chronos);
-                        break;
-                    case RoleId.Veteran:
-                        Veteran.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.veteran);
-                        break;
-                    case RoleId.Medic:
-                        Medic.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.medic);
-                        break;
-                    case RoleId.Crusader:
-                        Crusader.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.crusader);
-                        break;
-                    case RoleId.Miner:
-                        Miner.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.miner);
-                        break;
-                    case RoleId.Swapper:
-                        Swapper.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.swapper);
-                        break;
-                    case RoleId.Mystic:
-                        Mystic.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.mystic);
-                        break;
-                    case RoleId.Juggernaut:
-                        Juggernaut.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.juggernaut);
-                        break;
-                    case RoleId.Morphling:
-                        Morphling.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.morphling);
-                        break;
-                    case RoleId.Camouflager:
-                        Camouflager.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.camouflager);
-                        break;
-                    case RoleId.Predator:
-                        Predator.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.predator);
-                        break;
-                    case RoleId.Hacker:
-                        Hacker.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.hacker);
-                        break;
-                    case RoleId.Tracker:
-                        Tracker.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.tracker);
-                        break;
-                    case RoleId.Viper:
-                        Viper.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.viper);
-                        break;
-                    case RoleId.Jackal:
-                        Jackal.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.jackal);
-                        break;
-                    case RoleId.Romantic:
-                        Romantic.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.romantic);
-                        break;
-                    case RoleId.Eraser:
-                        Eraser.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.eraser);
-                        break;
-                    case RoleId.Spy:
-                        Spy.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.spy);
-                        break;
-                    case RoleId.Trickster:
-                        Trickster.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.trickster);
-                        break;
-                    case RoleId.Janitor:
-                        Janitor.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.janitor);
-                        break;
-                    case RoleId.Warlock:
-                        Warlock.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.warlock);
-                        break;
-                    case RoleId.Monarch:
-                        Monarch.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.monarch);
-                        break;
-                    case RoleId.Grenadier:
-                        Grenadier.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.grenadier);
-                        break;
-                    case RoleId.Vigilante:
-                        Vigilante.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.vigilante);
-                        break;
-                    case RoleId.Arsonist:
-                        Arsonist.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.arsonist);
-                        break;
-                    case RoleId.BountyHunter:
-                        BountyHunter.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.bountyHunter);
-                        break;
-                    case RoleId.Vulture:
-                        Vulture.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.vulture);
-                        break;
-                    case RoleId.Medium:
-                        Medium.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.medium);
-                        break;
-                    case RoleId.Landlord:
-                        Landlord.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.landlord);
-                        break;
-                    case RoleId.Trapper:
-                        Trapper.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.trapper);
-                        break;
-                    case RoleId.Lawyer:
-                        Lawyer.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.lawyer);
-                        break;
-                    case RoleId.Prosecutor:
-                        Prosecutor.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.prosecutor);
-                        break;
-                    case RoleId.Survivor:
-                        Survivor.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.survivor);
-                        break;
-                    case RoleId.Witch:
-                        Witch.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.witch);
-                        break;
-                    case RoleId.Assassin:
-                        Assassin.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.assassin);
-                        break;
-                    case RoleId.Wraith:
-                        Wraith.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.wraith);
-                        break;
-                    case RoleId.Yoyo:
-                        Yoyo.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.yoyo);
-                        break;
+                        case RoleId.Jester:
+                            Jester.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.jester);
+                            break;
+                        case RoleId.Mayor:
+                            Mayor.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.mayor);
+                            break;
+                        case RoleId.Gatekeeper:
+                            Gatekeeper.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.gatekeeper);
+                            break;
+                        case RoleId.Engineer:
+                            Engineer.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.engineer);
+                            break;
+                        case RoleId.Sheriff:
+                            Sheriff.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.sheriff);
+                            break;
+                        case RoleId.VengefulRomantic:
+                            VengefulRomantic.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.vromantic);
+                            break;
+                        case RoleId.Blackmailer:
+                            Blackmailer.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.blackmailer);
+                            break;
+                        case RoleId.Glitch:
+                            Glitch.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.glitch);
+                            break;
+                        case RoleId.Werewolf:
+                            Werewolf.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.werewolf);
+                            break;
+                        case RoleId.Lighter:
+                            Lighter.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.lighter);
+                            break;
+                        case RoleId.Agent:
+                            Agent.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.agent);
+                            break;
+                        case RoleId.Hitman:
+                            Hitman.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.hitman);
+                            break;
+                        case RoleId.Undertaker:
+                            Undertaker.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.undertaker);
+                            break;
+                        case RoleId.Oracle:
+                            Oracle.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.oracle);
+                            break;
+                        case RoleId.Amnesiac:
+                            Amnesiac.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.amnesiac);
+                            break;
+                        case RoleId.Plaguebearer:
+                            Plaguebearer.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.plaguebearer);
+                            break;
+                        case RoleId.Pestilence:
+                            Pestilence.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.pestilence);
+                            break;
+                        case RoleId.Detective:
+                            Detective.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.detective);
+                            break;
+                        case RoleId.Chronos:
+                            Chronos.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.chronos);
+                            break;
+                        case RoleId.Veteran:
+                            Veteran.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.veteran);
+                            break;
+                        case RoleId.Medic:
+                            Medic.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.medic);
+                            break;
+                        case RoleId.Crusader:
+                            Crusader.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.crusader);
+                            break;
+                        case RoleId.Miner:
+                            Miner.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.miner);
+                            break;
+                        case RoleId.Swapper:
+                            Swapper.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.swapper);
+                            break;
+                        case RoleId.Mystic:
+                            Mystic.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.mystic);
+                            break;
+                        case RoleId.Juggernaut:
+                            Juggernaut.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.juggernaut);
+                            break;
+                        case RoleId.Morphling:
+                            Morphling.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.morphling);
+                            break;
+                        case RoleId.Painter:
+                            Painter.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.painter);
+                            break;
+                        case RoleId.Predator:
+                            Predator.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.predator);
+                            break;
+                        case RoleId.Hacker:
+                            Hacker.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.hacker);
+                            break;
+                        case RoleId.Tracker:
+                            Tracker.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.tracker);
+                            break;
+                        case RoleId.Viper:
+                            Viper.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.viper);
+                            break;
+                        case RoleId.Jackal:
+                            Jackal.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.jackal);
+                            break;
+                        case RoleId.Romantic:
+                            Romantic.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.romantic);
+                            break;
+                        case RoleId.Eraser:
+                            Eraser.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.eraser);
+                            break;
+                        case RoleId.Spy:
+                            Spy.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.spy);
+                            break;
+                        case RoleId.Trickster:
+                            Trickster.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.trickster);
+                            break;
+                        case RoleId.Janitor:
+                            Janitor.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.janitor);
+                            break;
+                        case RoleId.Warlock:
+                            Warlock.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.warlock);
+                            break;
+                        case RoleId.Monarch:
+                            Monarch.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.monarch);
+                            break;
+                        case RoleId.Grenadier:
+                            Grenadier.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.grenadier);
+                            break;
+                        case RoleId.Vigilante:
+                            Vigilante.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.vigilante);
+                            break;
+                        case RoleId.Arsonist:
+                            Arsonist.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.arsonist);
+                            break;
+                        case RoleId.BountyHunter:
+                            BountyHunter.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.bountyHunter);
+                            break;
+                        case RoleId.Scavenger:
+                            Scavenger.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.scavenger);
+                            break;
+                        case RoleId.Psychic:
+                            Psychic.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.psychic);
+                            break;
+                        case RoleId.Landlord:
+                            Landlord.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.landlord);
+                            break;
+                        case RoleId.Trapper:
+                            Trapper.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.trapper);
+                            break;
+                        case RoleId.Lawyer:
+                            Lawyer.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.lawyer);
+                            break;
+                        case RoleId.Prosecutor:
+                            Prosecutor.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.prosecutor);
+                            break;
+                        case RoleId.Survivor:
+                            Survivor.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.survivor);
+                            break;
+                        case RoleId.Witch:
+                            Witch.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.witch);
+                            break;
+                        case RoleId.Assassin:
+                            Assassin.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.assassin);
+                            break;
+                        case RoleId.Wraith:
+                            Wraith.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.wraith);
+                            break;
+                        case RoleId.Yoyo:
+                            Yoyo.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.yoyo);
+                            break;
                     }
-                    if (AmongUsClient.Instance.AmHost && player.IsVenter() && !player.Data.Role.IsImpostor) 
+                    if (AmongUsClient.Instance.AmHost && player.IsVenter() && !player.Data.Role.IsImpostor)
                     {
                         player.RpcSetRole(RoleTypes.Engineer);
                         player.CoSetRole(RoleTypes.Engineer, true);
@@ -725,9 +728,9 @@ namespace TheSushiRoles
 
         public static void CleanBody(byte playerId, byte cleaningPlayerId) 
         {
-            if (Medium.futureDeadBodies != null) 
+            if (Psychic.futureDeadBodies != null) 
             {
-                var deadBody = Medium.futureDeadBodies.Find(x => x.Item1.player.PlayerId == playerId).Item1;
+                var deadBody = Psychic.futureDeadBodies.Find(x => x.Item1.player.PlayerId == playerId).Item1;
                 if (deadBody != null) deadBody.WasCleanedOrEaten = true;
             }
 
@@ -738,12 +741,12 @@ namespace TheSushiRoles
                     UnityEngine.Object.Destroy(array[i].gameObject);
                 }     
             }
-            if (Vulture.Player != null && cleaningPlayerId == Vulture.Player.PlayerId) 
+            if (Scavenger.Player != null && cleaningPlayerId == Scavenger.Player.PlayerId) 
             {
-                Vulture.eatenBodies++;
-                if (Vulture.eatenBodies == Vulture.vultureNumberToWin) 
+                Scavenger.eatenBodies++;
+                if (Scavenger.eatenBodies == Scavenger.ScavengerNumberToWin) 
                 {
-                    Vulture.IsVultureWin = true;
+                    Scavenger.IsScavengerWin = true;
                 }
             }
         }
@@ -796,26 +799,44 @@ namespace TheSushiRoles
             Romantic.HasLover = true;
             Romantic.beloved = Utils.PlayerById(belovedId);
         }
-        public static void WerewolfMaul() 
+        public static void WerewolfMaul()
         {
-           var nearbyPlayers = Utils.GetClosestPlayers(Werewolf.Player.GetTruePosition(), Werewolf.Radius);
+            // stupid change to prevent werewolf from showing the kill animation more than once
+            
+            var nearbyPlayers = Utils.GetClosestPlayers(Werewolf.Player.GetTruePosition(), Werewolf.Radius);
+            HashSet<PlayerControl> alreadyKilled = new HashSet<PlayerControl>();
 
             foreach (var player in nearbyPlayers)
             {
-                if (Werewolf.Player == player || player.Data.IsDead || player == Lucky.Player && !Lucky.isBrokenArmor || player == Medic.Shielded || player == MapOptions.FirstPlayerKilled)
-                    continue;
-                    
-                Utils.CheckMurderAttemptAndKill(Werewolf.Player, player, showAnimation: false);
+                if (player == null || player.Data == null || alreadyKilled.Contains(player)) continue;
 
-                Utils.StartRPC(CustomRPC.ShareGhostInfo, 
-                PlayerControl.LocalPlayer.PlayerId, 
-                (byte)GhostInfoTypes.DeathReasonAndKiller, 
-                player.PlayerId, 
-                (byte)DeadPlayer.CustomDeathReason.Maul,
-                Werewolf.Player.PlayerId);
-                GameHistory.CreateDeathReason(player, DeadPlayer.CustomDeathReason.Maul, killer: Werewolf.Player);
+                if (player == Werewolf.Player || 
+                    player.Data.IsDead || 
+                    (player == Lucky.Player && !Lucky.ProtectionBroken) || 
+                    player == Medic.Shielded || 
+                    player == MapOptions.FirstPlayerKilled)
+                    continue;
+
+                PlayerControl finalTarget = Utils.GetRedirectedTarget(player);
+
+                if (finalTarget == null || finalTarget.Data.IsDead || alreadyKilled.Contains(finalTarget)) continue;
+
+                var result = Utils.CheckMurderAttemptAndKill(Werewolf.Player, finalTarget, showAnimation: false);
+
+                if (result == MurderAttemptResult.PerformKill || result == MurderAttemptResult.MirrorKill)
+                {
+                    alreadyKilled.Add(finalTarget);
+                    Utils.StartRPC(CustomRPC.ShareGhostInfo,
+                    PlayerControl.LocalPlayer.PlayerId,
+                    (byte)GhostInfoTypes.DeathReasonAndKiller,
+                    finalTarget.PlayerId,
+                    (byte)DeadPlayer.CustomDeathReason.Maul,
+                    Werewolf.Player.PlayerId);
+                    GameHistory.CreateDeathReason(finalTarget, DeadPlayer.CustomDeathReason.Maul, killer: Werewolf.Player);
+                }
             }
         }
+
 
         public static void Disperse()
         {
@@ -1047,7 +1068,7 @@ namespace TheSushiRoles
 
             Morphling.morphTimer = Morphling.Duration;
             Morphling.morphTarget = target;
-            if (Camouflager.CamouflageTimer <= 0f)
+            if (Painter.PaintTimer <= 0f)
                 Morphling.Player.SetLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId);
         }
 
@@ -1058,7 +1079,7 @@ namespace TheSushiRoles
 
             Glitch.MimicTimer = Glitch.MimicDuration;
             Glitch.MimicTarget = target;
-            if (Camouflager.CamouflageTimer <= 0f)
+            if (Painter.PaintTimer <= 0f)
                 Glitch.Player.SetLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId);
         }
 
@@ -1069,15 +1090,15 @@ namespace TheSushiRoles
 
             Hitman.MorphTimer = Hitman.MorphDuration;
             Hitman.MorphTarget = target;
-            if (Camouflager.CamouflageTimer <= 0f)
+            if (Painter.PaintTimer <= 0f)
                 Hitman.Player.SetLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId);
         }
 
-        public static void CamouflagerCamouflage() 
+        public static void PainterPaint() 
         {
-            if (Camouflager.Player == null) return;
+            if (Painter.Player == null) return;
 
-            Camouflager.CamouflageTimer = Camouflager.Duration;
+            Painter.PaintTimer = Painter.Duration;
             if (Utils.MushroomSabotageActive()) return; // Dont overwrite the fungle "camo"
 
             List<int> availableColors = Enumerable.Range(0, Palette.PlayerColors.Count).ToList();
@@ -1169,15 +1190,16 @@ namespace TheSushiRoles
             if (player == Hacker.Player) Hacker.ClearAndReload();
             if (player == Tracker.Player) Tracker.ClearAndReload();
             if (player == Swapper.Player) Swapper.ClearAndReload();
+            if (player == Landlord.Player) Landlord.ClearAndReload();
             if (player == Spy.Player) Spy.ClearAndReload();
             if (player == Crusader.Player) Crusader.ClearAndReload();
             if (player == Vigilante.Player) Vigilante.ClearAndReload();
-            if (player == Medium.Player) Medium.ClearAndReload();
+            if (player == Psychic.Player) Psychic.ClearAndReload();
             if (player == Trapper.Player) Trapper.ClearAndReload();
 
             // Impostor roles
             if (player == Morphling.Player) Morphling.ClearAndReload();
-            if (player == Camouflager.Player) Camouflager.ClearAndReload();
+            if (player == Painter.Player) Painter.ClearAndReload();
             if (player == Viper.Player) Viper.ClearAndReload();
             if (player == Eraser.Player) Eraser.ClearAndReload();
             if (player == Trickster.Player) Trickster.ClearAndReload();
@@ -1210,7 +1232,7 @@ namespace TheSushiRoles
             
             // Passive Neutral Roles
             if (player == Jester.Player) Jester.ClearAndReload();
-            if (player == Vulture.Player) Vulture.ClearAndReload();
+            if (player == Scavenger.Player) Scavenger.ClearAndReload();
             if (player == Lawyer.Player) Lawyer.ClearAndReload();
             if (player == Arsonist.Player) Arsonist.ClearAndReload();
             if (player == Amnesiac.Player) Amnesiac.ClearAndReload();
@@ -1272,7 +1294,7 @@ namespace TheSushiRoles
                 target.cosmetics.colorBlindText.gameObject.SetActive(DataManager.Settings.Accessibility.ColorBlindMode);
                 target.cosmetics.colorBlindText.color = target.cosmetics.colorBlindText.color.SetAlpha(1f);
 
-                if (Camouflager.CamouflageTimer <= 0 && !Utils.MushroomSabotageActive()) target.SetDefaultLook();
+                if (Painter.PaintTimer <= 0 && !Utils.MushroomSabotageActive()) target.SetDefaultLook();
                 Wraith.IsVanished = false;
                 return;
             }
@@ -1298,7 +1320,7 @@ namespace TheSushiRoles
                 target.cosmetics.colorBlindText.gameObject.SetActive(DataManager.Settings.Accessibility.ColorBlindMode);
                 target.cosmetics.colorBlindText.color = target.cosmetics.colorBlindText.color.SetAlpha(1f);
 
-                if (Camouflager.CamouflageTimer <= 0 && !Utils.MushroomSabotageActive()) target.SetDefaultLook();
+                if (Painter.PaintTimer <= 0 && !Utils.MushroomSabotageActive()) target.SetDefaultLook();
                 Assassin.isInvisble = false;
                 return;
             }
@@ -1724,7 +1746,7 @@ namespace TheSushiRoles
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
-                
+
                 case RoleId.Miner:
                     Utils.BecomeImpostor(Amnesiac.Player);
                     Miner.ClearAndReload();
@@ -1752,7 +1774,7 @@ namespace TheSushiRoles
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
-                
+
                 case RoleId.Crusader:
                     Crusader.ClearAndReload();
                     Crusader.Player = AmnesiacPlayer;
@@ -1815,7 +1837,7 @@ namespace TheSushiRoles
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
-                
+
                 case RoleId.Grenadier:
                     Utils.BecomeImpostor(Amnesiac.Player);
                     Grenadier.ClearAndReload();
@@ -1823,7 +1845,7 @@ namespace TheSushiRoles
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
-                
+
                 case RoleId.Blackmailer:
                     Utils.BecomeImpostor(Amnesiac.Player);
                     Blackmailer.ClearAndReload();
@@ -1855,17 +1877,24 @@ namespace TheSushiRoles
                     Amnesiac.Player = target;
                     break;
 
-                case RoleId.Camouflager:
+                case RoleId.Painter:
                     Utils.BecomeImpostor(Amnesiac.Player);
-                    Camouflager.ClearAndReload();
-                    Camouflager.Player = AmnesiacPlayer;
-                   Amnesiac.ClearAndReload();
+                    Painter.ClearAndReload();
+                    Painter.Player = AmnesiacPlayer;
+                    Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
 
                 case RoleId.Hacker:
                     Hacker.ClearAndReload();
                     Hacker.Player = AmnesiacPlayer;
+                    Amnesiac.ClearAndReload();
+                    Amnesiac.Player = target;
+                    break;
+
+                case RoleId.Landlord:
+                    Landlord.ClearAndReload();
+                    Landlord.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
@@ -1891,42 +1920,42 @@ namespace TheSushiRoles
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
-                
+
                 case RoleId.Predator:
                     Predator.ClearAndReload();
                     Predator.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
-                
+
                 case RoleId.Juggernaut:
                     Juggernaut.ClearAndReload();
                     Juggernaut.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
-                
+
                 case RoleId.Oracle:
                     Oracle.ClearAndReload();
                     Oracle.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
-                
+
                 case RoleId.Agent:
                     Agent.ClearAndReload();
                     Agent.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
-                
-                 case RoleId.Hitman:
+
+                case RoleId.Hitman:
                     Hitman.ClearAndReload();
                     Hitman.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
-                
+
                 case RoleId.Undertaker:
                     Utils.BecomeImpostor(Amnesiac.Player);
                     Undertaker.ClearAndReload();
@@ -1934,7 +1963,7 @@ namespace TheSushiRoles
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
-                
+
                 case RoleId.Romantic:
                     Romantic.ClearAndReload();
                     Romantic.Player = AmnesiacPlayer;
@@ -1942,7 +1971,7 @@ namespace TheSushiRoles
                     Amnesiac.Player = target;
                     break;
 
-                    // if its a jackal, make the amnesiac a Sidekick instead.
+                // if its a jackal, make the amnesiac a Sidekick instead.
                 case RoleId.Jackal:
                     Sidekick.ClearAndReload();
                     Sidekick.Player = AmnesiacPlayer;
@@ -1995,14 +2024,14 @@ namespace TheSushiRoles
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
-                
+
                 case RoleId.Plaguebearer:
                     Plaguebearer.ClearAndReload();
                     Plaguebearer.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
-                
+
                 case RoleId.Pestilence:
                     Pestilence.ClearAndReload();
                     Pestilence.Player = AmnesiacPlayer;
@@ -2071,16 +2100,16 @@ namespace TheSushiRoles
                     }
                     break;
 
-                case RoleId.Vulture:
-                    Vulture.ClearAndReload();
-                    Vulture.Player = AmnesiacPlayer;
+                case RoleId.Scavenger:
+                    Scavenger.ClearAndReload();
+                    Scavenger.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
 
-                case RoleId.Medium:
-                    Medium.ClearAndReload();
-                    Medium.Player = AmnesiacPlayer;
+                case RoleId.Psychic:
+                    Psychic.ClearAndReload();
+                    Psychic.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
@@ -2120,7 +2149,7 @@ namespace TheSushiRoles
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
-                
+
                 case RoleId.Wraith:
                     Utils.BecomeImpostor(Amnesiac.Player);
                     Wraith.ClearAndReload();
@@ -2212,10 +2241,10 @@ namespace TheSushiRoles
                 case GhostInfoTypes.WarlockTarget:
                     Warlock.curseVictim = Utils.PlayerById(reader.ReadByte());
                     break;
-                case GhostInfoTypes.MediumInfo:
-                    string mediumInfo = reader.ReadString();
+                case GhostInfoTypes.PsychicInfo:
+                    string PsychicInfo = reader.ReadString();
 		             if (Utils.ShouldShowGhostInfo())
-                    	FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(sender, mediumInfo);
+                    	FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(sender, PsychicInfo);
                     break;
                 case GhostInfoTypes.MysticInfo:
                     string mysticInfo = reader.ReadString();
@@ -2268,21 +2297,24 @@ namespace TheSushiRoles
             position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
             position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
             // Create Silhoutte At Start Position:
-            if (isFirstJump) {
+            if (isFirstJump)
+            {
                 Yoyo.MarkLocation(position);
                 new Silhouette(position, Yoyo.blinkDuration, true);
-            } else {
+            }
+            else
+            {
                 new Silhouette(position, 5, true);
                 Yoyo.markedLocation = null;
             }
             if (Chameleon.Players.Any(x => x.PlayerId == Yoyo.Player.PlayerId)) // Make the Yoyo visible if chameleon!
-                Chameleon.lastMoved[Yoyo.Player.PlayerId] = Time.time;            
+                Chameleon.lastMoved[Yoyo.Player.PlayerId] = Time.time;
         }
 
         public static void BreakArmor() 
         {
-            if (Lucky.Player == null || Lucky.isBrokenArmor) return;
-            Lucky.isBrokenArmor = true;
+            if (Lucky.Player == null || Lucky.ProtectionBroken) return;
+            Lucky.ProtectionBroken = true;
             if (PlayerControl.LocalPlayer.Data.IsDead) 
             {
                 Lucky.Player.ShowFailedMurder();
@@ -2482,8 +2514,8 @@ namespace TheSushiRoles
                 case CustomRPC.HitmanMorph:
                     RPCProcedure.HitmanMorph(reader.ReadByte());
                     break;
-                case CustomRPC.CamouflagerCamouflage:
-                    RPCProcedure.CamouflagerCamouflage();
+                case CustomRPC.PainterPaint:
+                    RPCProcedure.PainterPaint();
                     break;
                 case CustomRPC.GrenadierFlash:
                     RPCProcedure.GrenadierFlash();

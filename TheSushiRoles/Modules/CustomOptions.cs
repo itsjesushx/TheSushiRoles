@@ -1230,7 +1230,6 @@ namespace TheSushiRoles
 
         [HarmonyPatch(typeof(NormalGameOptionsV07), nameof(NormalGameOptionsV07.AreInvalid))]
         [HarmonyPrefix]
-        
         public static bool Prefix(NormalGameOptionsV07 __instance, ref int maxExpectedPlayers)
         {
             return __instance.MaxPlayers > maxExpectedPlayers || __instance.NumImpostors < 1
@@ -1246,7 +1245,8 @@ namespace TheSushiRoles
         {
             //prevents indexoutofrange exception breaking the setting if long happens to be selected
             //when host opens the laptop
-            if (__instance.Title == StringNames.GameKillDistance && __instance.Value == 3) {
+            if (__instance.Title == StringNames.GameKillDistance && __instance.Value == 3)
+            {
                 __instance.Value = 1;
                 GameOptionsManager.Instance.currentNormalGameOptions.KillDistance = 1;
                 GameManager.Instance.LogicOptions.SyncOptions();
@@ -1258,7 +1258,8 @@ namespace TheSushiRoles
         
         public static void Postfix(StringOption __instance)
         {
-            if (__instance.Title == StringNames.GameKillDistance && __instance.Values.Count == 3) {
+            if (__instance.Title == StringNames.GameKillDistance && __instance.Values.Count == 3)
+            {
                 __instance.Values = new(
                         new StringNames[] { (StringNames)49999, StringNames.SettingShort, StringNames.SettingMedium, StringNames.SettingLong });
             }
@@ -1298,7 +1299,7 @@ namespace TheSushiRoles
         public static void AddKillDistance()
         {
             NormalGameOptionsV07.KillDistances = new(new float[] { 0.5f, 1f, 1.8f, 2.5f });
-            NormalGameOptionsV07.KillDistanceStrings = new(new string[] { "Very Short", "Short", "Medium", "Long" });
+            NormalGameOptionsV07.KillDistanceStrings = new(new string[] { "Very Short", "Short", "Psychic", "Long" });
         }
 
         [HarmonyPatch(typeof(StringGameSetting), nameof(StringGameSetting.GetValueString))]

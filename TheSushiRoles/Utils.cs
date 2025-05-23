@@ -569,7 +569,7 @@ namespace TheSushiRoles
         }
         public static bool HidePlayerName(PlayerControl source, PlayerControl target)
         {
-            if (Camouflager.CamouflageTimer > 0f || MushroomSabotageActive()) return true; // No names are visible
+            if (Painter.PaintTimer > 0f || MushroomSabotageActive()) return true; // No names are visible
             if (Patches.SurveillanceMinigamePatch.nightVisionIsActive) return true;
             else if (Assassin.isInvisble && Assassin.Player == target) return true;
             else if (Wraith.IsVanished && Wraith.Player == target) return true;
@@ -719,7 +719,7 @@ namespace TheSushiRoles
                 isVenter = true;
             else if (Glitch.canEnterVents && Glitch.Player != null && Glitch.Player == player)
                 isVenter = true;
-            else if (Vulture.canUseVents && Vulture.Player != null && Vulture.Player == player)
+            else if (Scavenger.canUseVents && Scavenger.Player != null && Scavenger.Player == player)
                 isVenter = true;
             else if (player.Data?.Role != null && player.Data.Role.CanVent)
             {
@@ -730,7 +730,7 @@ namespace TheSushiRoles
 
         public static bool CheckLucky(PlayerControl target, bool breakShield, bool showShield, bool additionalCondition = true)
         {
-            if (target != null && Lucky.Player != null && Lucky.Player == target && !Lucky.isBrokenArmor && additionalCondition) {
+            if (target != null && Lucky.Player != null && Lucky.Player == target && !Lucky.ProtectionBroken && additionalCondition) {
                 if (breakShield) 
                 {
                     StartRPC(CustomRPC.BreakArmor);
@@ -847,8 +847,7 @@ namespace TheSushiRoles
             else if (TransportationToolPatches.IsUsingTransportation(target)) return MurderAttemptResult.SuppressKill;
             return MurderAttemptResult.PerformKill;
         }
-
-        public static void MurderPlayer(PlayerControl killer, PlayerControl target, bool showAnimation) 
+        public static void MurderPlayer(PlayerControl killer, PlayerControl target, bool showAnimation)
         {
             StartRPC(CustomRPC.UncheckedMurderPlayer, killer.PlayerId, target.PlayerId, showAnimation ? Byte.MaxValue : 0);
             RPCProcedure.UncheckedMurderPlayer(killer.PlayerId, target.PlayerId, showAnimation ? Byte.MaxValue : (byte)0);
@@ -859,20 +858,20 @@ namespace TheSushiRoles
             // The kill attempt will be shared using a custom RPC, hence combining modded and unmodded versions is impossible
             MurderAttemptResult murder = CheckMuderAttempt(killer, target, isMeetingStart, ignoreBlank, ignoreIfKillerIsDead);
 
-            if (murder == MurderAttemptResult.PerformKill) 
+            if (murder == MurderAttemptResult.PerformKill)
             {
                 MurderPlayer(killer, target, showAnimation);
             }
-            else if (murder == MurderAttemptResult.MirrorKill) 
+            else if (murder == MurderAttemptResult.MirrorKill)
             {
                 MurderPlayer(target, killer, showAnimation);
             }
-            else if (murder == MurderAttemptResult.DelayViperKill) 
+            else if (murder == MurderAttemptResult.DelayViperKill)
             {
-                HudManager.Instance.StartCoroutine(Effects.Lerp(10f, new Action<float>((p) => 
+                HudManager.Instance.StartCoroutine(Effects.Lerp(10f, new Action<float>((p) =>
                 {
 
-                    if (!TransportationToolPatches.IsUsingTransportation(target) && Viper.poisoned != null) 
+                    if (!TransportationToolPatches.IsUsingTransportation(target) && Viper.poisoned != null)
                     {
                         StartRPC(CustomRPC.ViperSetPoisoned, byte.MaxValue, byte.MaxValue);
                         RPCProcedure.ViperSetPoisoned(byte.MaxValue, byte.MaxValue);
@@ -969,7 +968,30 @@ namespace TheSushiRoles
                 return roleInfo.FactionId == Faction.Crewmates;
             return false;
         }
-        public static bool IsImpostor(this PlayerControl player) 
+        public static PlayerControl GetRedirectedTarget(PlayerControl original)
+        {
+            if (original == null) return null;
+
+            if (Landlord.FirstTarget != null && Landlord.SecondTarget != null)
+            {
+                bool firstDead = Landlord.FirstTarget.Data?.IsDead ?? true;
+                bool secondDead = Landlord.SecondTarget.Data?.IsDead ?? true;
+
+                if (original == Landlord.FirstTarget)
+                {
+                    return secondDead ? Landlord.Player : Landlord.SecondTarget;
+                }
+
+                if (original == Landlord.SecondTarget)
+                {
+                    return firstDead ? Landlord.Player : Landlord.FirstTarget;
+                }
+            }
+            return original;
+        }
+        public static bool In(this RoleId id, params RoleId[] list) => list.Contains(id);
+
+        public static bool IsImpostor(this PlayerControl player)
         {
             RoleInfo roleInfo = RoleInfo.GetRoleInfoForPlayer(player).FirstOrDefault();
             if (roleInfo != null)

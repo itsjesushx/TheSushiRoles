@@ -17,7 +17,6 @@ namespace TheSushiRoles.Roles
         public static int RechargeTasksNumber = 3;
         public static int RechargedTasks = 3;
         public static int Charges = 1;
-        public static bool cantMove = true;
         public static Vent ventTarget = null;
         public static Minigame minigame = null;
 
@@ -117,7 +116,6 @@ namespace TheSushiRoles.Roles
             totalScrews = remainingScrews = Mathf.RoundToInt(CustomOptionHolder.VigilanteTotalScrews.GetFloat());
             camPrice = Mathf.RoundToInt(CustomOptionHolder.VigilanteCamPrice.GetFloat());
             ventPrice = Mathf.RoundToInt(CustomOptionHolder.VigilanteVentPrice.GetFloat());
-            cantMove = CustomOptionHolder.VigilanteNoMove.GetBool();
         }
     }
 }

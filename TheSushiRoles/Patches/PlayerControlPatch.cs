@@ -42,7 +42,7 @@ namespace TheSushiRoles.Patches
                     }
                 }
             }
-            return result;
+            return Utils.GetRedirectedTarget(result);
         }
 
         static void SetPlayerOutline(PlayerControl target, Color Color) 
@@ -67,10 +67,10 @@ namespace TheSushiRoles.Patches
                 bool isMorphedHitman = target == Hitman.Player && Hitman.MorphTarget != null && Hitman.MorphTimer > 0f;
                 bool hasVisibleShield = false;
                 Color Color = Medic.ShieldedColor;
-                if (Camouflager.CamouflageTimer <= 0f && !Utils.MushroomSabotageActive() && Medic.ShieldVisible(target))
+                if (Painter.PaintTimer <= 0f && !Utils.MushroomSabotageActive() && Medic.ShieldVisible(target))
                     hasVisibleShield = true;
 
-                if (Camouflager.CamouflageTimer <= 0f && !Utils.MushroomSabotageActive() && MapOptions.FirstPlayerKilled != null && MapOptions.ShieldFirstKill && 
+                if (Painter.PaintTimer <= 0f && !Utils.MushroomSabotageActive() && MapOptions.FirstPlayerKilled != null && MapOptions.ShieldFirstKill && 
                     ((target == MapOptions.FirstPlayerKilled && !isMorphedMorphling && !isMimicGlitch && !isMorphedHitman) || 
                     (isMorphedMorphling && Morphling.morphTarget == MapOptions.FirstPlayerKilled) || 
                     (isMimicGlitch && Glitch.MimicTarget == MapOptions.FirstPlayerKilled) || 
@@ -80,7 +80,7 @@ namespace TheSushiRoles.Patches
                     Color = Color.blue;
                 }
 
-                if (PlayerControl.LocalPlayer.Data.IsDead && Lucky.Player != null && target == Lucky.Player && !Lucky.isBrokenArmor && !hasVisibleShield) 
+                if (PlayerControl.LocalPlayer.Data.IsDead && Lucky.Player != null && target == Lucky.Player && !Lucky.ProtectionBroken && !hasVisibleShield) 
                 {
                     hasVisibleShield = true;
                     Color = Color.yellow;
@@ -621,7 +621,7 @@ namespace TheSushiRoles.Patches
                     if (Tracker.localArrows[index] != null) Tracker.localArrows[index].Update(position);
                     index++;
                 }
-            } 
+            }
             else if (Tracker.localArrows.Count > 0) 
             {
                 foreach (Arrow arrow in Tracker.localArrows) UnityEngine.Object.Destroy(arrow.arrow);
@@ -639,7 +639,7 @@ namespace TheSushiRoles.Patches
 
             // Handle Mini (scaling down)
             if (Mini.Player != null && 
-                !(Camouflager.CamouflageTimer > 0f || Utils.MushroomSabotageActive() || 
+                !(Painter.PaintTimer > 0f || Utils.MushroomSabotageActive() || 
                   (Mini.Player == Morphling.Player && Morphling.morphTimer > 0) ||
                   (Mini.Player == Glitch.Player && Glitch.MimicTimer > 0) ||
                   (Mini.Player == Hitman.Player && Hitman.MorphTimer > 0)))
@@ -672,7 +672,7 @@ namespace TheSushiRoles.Patches
         
             // Handle Giant (scaling up)
             if (Giant.Player != null && 
-                !(Camouflager.CamouflageTimer > 0f || Utils.MushroomSabotageActive() || 
+                !(Painter.PaintTimer > 0f || Utils.MushroomSabotageActive() || 
                   (Giant.Player == Morphling.Player && Morphling.morphTimer > 0) ||
                   (Giant.Player == Glitch.Player && Glitch.MimicTimer > 0) ||
                   (Giant.Player == Hitman.Player && Hitman.MorphTimer > 0)))
@@ -939,12 +939,14 @@ namespace TheSushiRoles.Patches
             Vent target = null;
             Vector2 truePosition = PlayerControl.LocalPlayer.GetTruePosition();
             float closestDistance = float.MaxValue;
-            for (int i = 0; i < MapUtilities.CachedShipStatus.AllVents.Length; i++) {
+            for (int i = 0; i < MapUtilities.CachedShipStatus.AllVents.Length; i++)
+            {
                 Vent vent = MapUtilities.CachedShipStatus.AllVents[i];
                 if (vent.gameObject.name.StartsWith("JackInTheBoxVent_") || vent.gameObject.name.StartsWith("SealedVent_") || vent.gameObject.name.StartsWith("FutureSealedVent_")) continue;
                 if (SubmergedCompatibility.IsSubmerged && vent.Id == 9) continue; // cannot seal submergeds exit only vent!
                 float distance = Vector2.Distance(vent.transform.position, truePosition);
-                if (distance <= vent.UsableDistance && distance < closestDistance) {
+                if (distance <= vent.UsableDistance && distance < closestDistance)
+                {
                     closestDistance = distance;
                     target = vent;
                 }
@@ -1083,76 +1085,78 @@ namespace TheSushiRoles.Patches
             }
         }
 
-        static void VultureUpdate() 
+        static void ScavengerUpdate() 
         {
-            if (Vulture.Player == null || PlayerControl.LocalPlayer != Vulture.Player || Vulture.localArrows == null || !Vulture.showArrows) return;
-            if (Vulture.Player.Data.IsDead) 
-            {
-                foreach (Arrow arrow in Vulture.localArrows) UnityEngine.Object.Destroy(arrow.arrow);
-                Vulture.localArrows = new List<Arrow>();
-                return;
-            }
-
-            DeadBody[] deadBodies = UnityEngine.Object.FindObjectsOfType<DeadBody>();
-            bool arrowUpdate = Vulture.localArrows.Count != deadBodies.Count();
+            if (Scavenger.Player == null || PlayerControl.LocalPlayer != Scavenger.Player || Scavenger.localArrows == null) return;
             int index = 0;
-
-            if (arrowUpdate) {
-                foreach (Arrow arrow in Vulture.localArrows) UnityEngine.Object.Destroy(arrow.arrow);
-                Vulture.localArrows = new List<Arrow>();
-            }
-
-            foreach (DeadBody db in deadBodies) 
+            // Handle corpses tracking
+            if (Scavenger.Player != null && Scavenger.Player == PlayerControl.LocalPlayer && Scavenger.ScavengeTimer >= 0f && !Scavenger.Player.Data.IsDead)
             {
-                if (arrowUpdate) {
-                    Vulture.localArrows.Add(new Arrow(Color.blue));
-                    Vulture.localArrows[index].arrow.SetActive(true);
+                bool arrowsCountChanged = Scavenger.localArrows.Count != Scavenger.DeadBodyPositions.Count();
+
+                if (arrowsCountChanged)
+                {
+                    foreach (Arrow arrow in Scavenger.localArrows) UnityEngine.Object.Destroy(arrow.arrow);
+                    Scavenger.localArrows = new List<Arrow>();
                 }
-                if (Vulture.localArrows[index] != null) Vulture.localArrows[index].Update(db.transform.position);
-                index++;
+                foreach (Vector3 position in Scavenger.DeadBodyPositions)
+                {
+                    if (arrowsCountChanged)
+                    {
+                        Scavenger.localArrows.Add(new Arrow(Scavenger.Color));
+                        Scavenger.localArrows[index].arrow.SetActive(true);
+                    }
+                    if (Scavenger.localArrows[index] != null) Scavenger.localArrows[index].Update(position);
+                    index++;
+                }
+            }
+            else if (Scavenger.localArrows.Count > 0)
+            {
+                foreach (Arrow arrow in Scavenger.localArrows) UnityEngine.Object.Destroy(arrow.arrow);
+                Scavenger.localArrows = new List<Arrow>();
             }
         }
 
-        public static void MediumSetTarget() 
+        public static void PsychicSetTarget() 
         {
-            if (Medium.Player == null || Medium.Player != PlayerControl.LocalPlayer || Medium.Player.Data.IsDead || Medium.deadBodies == null || MapUtilities.CachedShipStatus?.AllVents == null) return;
+            if (Psychic.Player == null || Psychic.Player != PlayerControl.LocalPlayer || Psychic.Player.Data.IsDead || Psychic.deadBodies == null || MapUtilities.CachedShipStatus?.AllVents == null) return;
 
             DeadPlayer target = null;
             Vector2 truePosition = PlayerControl.LocalPlayer.GetTruePosition();
             float closestDistance = float.MaxValue;
             float usableDistance = MapUtilities.CachedShipStatus.AllVents.FirstOrDefault().UsableDistance;
-            foreach ((DeadPlayer dp, Vector3 ps) in Medium.deadBodies) {
+            foreach ((DeadPlayer dp, Vector3 ps) in Psychic.deadBodies) {
                 float distance = Vector2.Distance(ps, truePosition);
                 if (distance <= usableDistance && distance < closestDistance) {
                     closestDistance = distance;
                     target = dp;
                 }
             }
-            Medium.target = target;
+            Psychic.target = target;
         }
 
         static bool mushroomSaboWasActive = false;
-        static void MorphlingAndCamouflagerUpdate() 
+        static void MorphlingAndPainterUpdate() 
         {
             bool mushRoomSaboIsActive = Utils.MushroomSabotageActive();
             if (!mushroomSaboWasActive) mushroomSaboWasActive = mushRoomSaboIsActive;
             
-            float oldCamouflageTimer = Camouflager.CamouflageTimer;
+            float oldPaintTimer = Painter.PaintTimer;
             float oldMorphTimer = Morphling.morphTimer;
             float oldGlitchTimer = Glitch.MimicTimer;
             float oldHitmanTimer = Hitman.MorphTimer;
 
-            Camouflager.CamouflageTimer = Mathf.Max(0f, Camouflager.CamouflageTimer - Time.fixedDeltaTime);
+            Painter.PaintTimer = Mathf.Max(0f, Painter.PaintTimer - Time.fixedDeltaTime);
             Morphling.morphTimer = Mathf.Max(0f, Morphling.morphTimer - Time.fixedDeltaTime);
             Glitch.MimicTimer = Mathf.Max(0f, Glitch.MimicTimer - Time.fixedDeltaTime);
             Hitman.MorphTimer = Mathf.Max(0f, Hitman.MorphTimer - Time.fixedDeltaTime);
 
             if (mushRoomSaboIsActive) return;
 
-            // Camouflage reset and set Morphling look if necessary
-            if (oldCamouflageTimer > 0f && Camouflager.CamouflageTimer <= 0f)
+            // Paint reset and set Morphling look if necessary
+            if (oldPaintTimer > 0f && Painter.PaintTimer <= 0f)
             {
-                Camouflager.ResetCamouflage();
+                Painter.ResetPaint();
                 if (Morphling.morphTimer > 0f && Morphling.Player != null && Morphling.morphTarget != null) 
                 {
                     PlayerControl target = Morphling.morphTarget;
@@ -1188,7 +1192,7 @@ namespace TheSushiRoles.Patches
                     PlayerControl target = Hitman.MorphTarget;
                     Hitman.Player.SetLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId);
                 }
-                if (Camouflager.CamouflageTimer > 0) 
+                if (Painter.PaintTimer > 0) 
                 {
                     List<int> availableColors = Enumerable.Range(0, Palette.PlayerColors.Count).ToList();
                     System.Random rng = new System.Random();
@@ -1205,12 +1209,12 @@ namespace TheSushiRoles.Patches
                 }
             }
 
-            // Morphling reset (only if camouflage is inactive)
-            if (Camouflager.CamouflageTimer <= 0f && oldMorphTimer > 0f && Morphling.morphTimer <= 0f && Morphling.Player != null)
+            // Morphling reset (only if paint is inactive)
+            if (Painter.PaintTimer <= 0f && oldMorphTimer > 0f && Morphling.morphTimer <= 0f && Morphling.Player != null)
                 Morphling.ResetMorph();
-            if (Camouflager.CamouflageTimer <= 0f && oldGlitchTimer > 0f && Glitch.MimicTimer <= 0f && Glitch.Player != null)
+            if (Painter.PaintTimer <= 0f && oldGlitchTimer > 0f && Glitch.MimicTimer <= 0f && Glitch.Player != null)
                 Glitch.ResetMimic();
-            if (Camouflager.CamouflageTimer <= 0f && oldHitmanTimer > 0f && Hitman.MorphTimer <= 0f && Hitman.Player != null)
+            if (Painter.PaintTimer <= 0f && oldHitmanTimer > 0f && Hitman.MorphTimer <= 0f && Hitman.Player != null)
                 Hitman.ResetMorph();
             mushroomSaboWasActive = false;
         }
@@ -1503,12 +1507,12 @@ namespace TheSushiRoles.Patches
                 OracleSetTarget();
                 // BountyHunter
                 BountyHunterUpdate();
-                // Vulture
-                VultureUpdate();
-                // Medium
-                MediumSetTarget();
-                // Morphling and Camouflager
-                MorphlingAndCamouflagerUpdate();
+                // Scavenger
+                ScavengerUpdate();
+                // Psychic
+                PsychicSetTarget();
+                // Morphling and Painter
+                MorphlingAndPainterUpdate();
                 // Undertaker
                 UndertakerUpdate();
                 // Hitman
@@ -1564,7 +1568,7 @@ namespace TheSushiRoles.Patches
         private static Vector2 offset = Vector2.zero;
         public static void Prefix(PlayerPhysics __instance) 
         {
-            bool correctOffset = Camouflager.CamouflageTimer <= 0f && !Utils.MushroomSabotageActive() && (__instance.myPlayer == Mini.Player ||  (Morphling.Player != null && __instance.myPlayer == Morphling.Player && Morphling.morphTarget == Mini.Player && Morphling.morphTimer > 0f) 
+            bool correctOffset = Painter.PaintTimer <= 0f && !Utils.MushroomSabotageActive() && (__instance.myPlayer == Mini.Player ||  (Morphling.Player != null && __instance.myPlayer == Morphling.Player && Morphling.morphTarget == Mini.Player && Morphling.morphTimer > 0f) 
             || (Glitch.Player != null && __instance.myPlayer == Glitch.Player && Glitch.MimicTarget == Mini.Player && Glitch.MimicTimer > 0f) 
             || (Hitman.Player != null && __instance.myPlayer == Hitman.Player && Hitman.MorphTarget == Mini.Player && Hitman.MorphTimer > 0f));
             
@@ -1726,10 +1730,10 @@ namespace TheSushiRoles.Patches
             // Tracker store body positions
             if (Tracker.deadBodyPositions != null) Tracker.deadBodyPositions.Add(target.transform.position);
 
-            // Medium add body
-            if (Medium.deadBodies != null)
+            // Psychic add body
+            if (Psychic.deadBodies != null)
             {
-                Medium.futureDeadBodies.Add(new Tuple<DeadPlayer, Vector3>(deadPlayer, target.transform.position));
+                Psychic.futureDeadBodies.Add(new Tuple<DeadPlayer, Vector3>(deadPlayer, target.transform.position));
             }
 
             // Set bountyHunter Cooldown

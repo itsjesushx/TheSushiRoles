@@ -114,7 +114,7 @@ namespace TheSushiRoles.Patches
             Dictionary<byte, int> CrewSettings = new Dictionary<byte, int>();
             
             ImpSettings.Add((byte)RoleId.Morphling, CustomOptionHolder.morphlingSpawnRate.GetSelection());
-            ImpSettings.Add((byte)RoleId.Camouflager, CustomOptionHolder.camouflagerSpawnRate.GetSelection());
+            ImpSettings.Add((byte)RoleId.Painter, CustomOptionHolder.PainterSpawnRate.GetSelection());
             ImpSettings.Add((byte)RoleId.Grenadier, CustomOptionHolder.GrenadierSpawnRate.GetSelection());
             ImpSettings.Add((byte)RoleId.Viper, CustomOptionHolder.ViperSpawnRate.GetSelection());
             ImpSettings.Add((byte)RoleId.Miner, CustomOptionHolder.MinerSpawnRate.GetSelection());
@@ -142,7 +142,7 @@ namespace TheSushiRoles.Patches
 
             NeutralEvilSettings.Add((byte)RoleId.Jester, CustomOptionHolder.jesterSpawnRate.GetSelection());
             NeutralEvilSettings.Add((byte)RoleId.Arsonist, CustomOptionHolder.arsonistSpawnRate.GetSelection());
-            NeutralEvilSettings.Add((byte)RoleId.Vulture, CustomOptionHolder.vultureSpawnRate.GetSelection());
+            NeutralEvilSettings.Add((byte)RoleId.Scavenger, CustomOptionHolder.ScavengerSpawnRate.GetSelection());
             NeutralEvilSettings.Add((byte)RoleId.Prosecutor, CustomOptionHolder.ProsecutorSpawnRate.GetSelection());
 
             NeutralBenignSettings.Add((byte)RoleId.Amnesiac, CustomOptionHolder.AmnesiacSpawnRate.GetSelection());
@@ -166,7 +166,7 @@ namespace TheSushiRoles.Patches
             CrewSettings.Add((byte)RoleId.Hacker, CustomOptionHolder.hackerSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Tracker, CustomOptionHolder.trackerSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Crusader, CustomOptionHolder.CrusaderSpawnRate.GetSelection());
-            CrewSettings.Add((byte)RoleId.Medium, CustomOptionHolder.mediumSpawnRate.GetSelection());
+            CrewSettings.Add((byte)RoleId.Psychic, CustomOptionHolder.PsychicSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Trapper, CustomOptionHolder.trapperSpawnRate.GetSelection());
             if (Impostors.Count > 1) 
             {

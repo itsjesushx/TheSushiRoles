@@ -23,40 +23,76 @@ namespace TheSushiRoles.Roles
         }
         public static string GetInfo(PlayerControl target)
         {
-            var role = RoleInfo.GetRoleInfoForPlayer(target);
-            if (target == null) return "";
-            if (role == null) return "";
+            var roles = RoleInfo.GetRoleInfoForPlayer(target);
+            if (target == null || roles == null) return "";
 
             string message = "";
-            foreach (RoleInfo roleInfo in role) 
+
+            foreach (RoleInfo roleInfo in roles)
             {
-                if (roleInfo.RoleId == RoleId.Jester || roleInfo.RoleId == RoleId.Prosecutor || roleInfo.RoleId == RoleId.Agent || roleInfo.RoleId == RoleId.Monarch || roleInfo.RoleId == RoleId.Mayor || roleInfo.RoleId == RoleId.Lawyer)
+                var id = roleInfo.RoleId;
+
+                if (id.In(
+                    RoleId.Jester, RoleId.Mayor, RoleId.Agent, RoleId.Lawyer,
+                    RoleId.Prosecutor, RoleId.Monarch, RoleId.Yoyo, RoleId.Landlord))
                 {
-                    message = "I dance on the edge of chaos, hold secrets, and strike with precision. \n\n(Jester, Prosecutor, Agent, Monarch, Mayor, or Lawyer)";
+                    message = "I twist truth and law with charm and deception. My games govern hearts and halls. \n\n(Jester, Mayor, Agent, Lawyer, Prosecutor, Monarch, Yoyo, Landlord)";
                 }
-                else if (roleInfo.RoleId == RoleId.Wraith || roleInfo.RoleId == RoleId.Swapper || roleInfo.RoleId == RoleId.Witch || roleInfo.RoleId == RoleId.Blackmailer || roleInfo.RoleId == RoleId.Tracker)
+                else if (id.In(
+                    RoleId.Wraith, RoleId.Assassin, RoleId.Witch, RoleId.Blackmailer,
+                    RoleId.Trickster, RoleId.Swapper, RoleId.Eraser, RoleId.Spy))
                 {
-                    message = "I bend reality, manipulate, and uncover hidden truths. \n\n(Wraith, Swapper, Witch, Blackmailer, or Tracker)";
+                    message = "I cloak my steps, whisper secrets, and shift the board without a trace. \n\n(Wraith, Assassin, Witch, Blackmailer, Trickster, Swapper, Eraser, Spy)";
                 }
-                else if (roleInfo.RoleId == RoleId.Detective || roleInfo.RoleId == RoleId.Hacker || roleInfo.RoleId == RoleId.Morphling || roleInfo.RoleId == RoleId.Medium || roleInfo.RoleId == RoleId.Hitman)
+                else if (id.In(
+                    RoleId.Detective, RoleId.Hacker, RoleId.Oracle, RoleId.Mystic,
+                    RoleId.Psychic, RoleId.Chronos, RoleId.Painter, RoleId.Morphling))
                 {
-                    message = "I uncover secrets, blur identities, and execute plans. \n\n(Detective, Hacker, Morphling, Medium, or Hitman)";
+                    message = "I peer through time and disguise, revealing fates and faces unknown. \n\n(Detective, Hacker, Oracle, Mystic, Psychic, Chronos, Painter, Morphling)";
                 }
-                else if (roleInfo.RoleId == RoleId.Engineer || roleInfo.RoleId == RoleId.Vulture || roleInfo.RoleId == RoleId.Miner || roleInfo.RoleId == RoleId.Undertaker || roleInfo.RoleId == RoleId.Janitor || roleInfo.RoleId == RoleId.Sheriff)
+                else if (id.In(
+                    RoleId.Engineer, RoleId.Miner, RoleId.Janitor, RoleId.Scavenger,
+                    RoleId.Undertaker, RoleId.Trapper, RoleId.Grenadier, RoleId.Sheriff))
                 {
-                    message = "I build, adapt, and ensure order prevails. \n\n(Engineer, Vulture, Undertaker, Miner, Janitor, or Sheriff)";
+                    message = "I wield tools of war and work, cleaning, building, burying, or blasting. \n\n(Engineer, Miner, Janitor, Scavenger, Undertaker, Trapper, Grenadier, Sheriff)";
                 }
-                else if (roleInfo.RoleId == RoleId.Veteran || roleInfo.RoleId == RoleId.BountyHunter || roleInfo.RoleId == RoleId.Warlock || roleInfo.RoleId == RoleId.Werewolf || roleInfo.RoleId == RoleId.Juggernaut)
+                else if (id.In(
+                    RoleId.Veteran, RoleId.BountyHunter, RoleId.Juggernaut, RoleId.Arsonist,
+                    RoleId.Warlock, RoleId.Predator, RoleId.Viper, RoleId.Werewolf))
                 {
-                    message = "I stand ready, wield dark power, and leave destruction in my wake. \n\n(Veteran, Bounty Hunter, Warlock, Werewolf, or Juggernaut)";
+                    message = "I am the storm. Fire, fang, and fury — nothing survives my wrath. \n\n(Veteran, Bounty Hunter, Juggernaut, Arsonist, Warlock, Predator, Viper, Werewolf)";
                 }
-                else 
+                else if (id.In(
+                    RoleId.Medic, RoleId.Crusader, RoleId.Romantic, RoleId.VengefulRomantic,
+                    RoleId.Survivor))
                 {
-                    message = "Error";
+                    message = "I guard, love, endure — or avenge. Compassion and fury walk with me. \n\n(Medic, Crusader, Romantic, Vengeful Romantic, Survivor)";
                 }
+                else if (id.In(
+                    RoleId.Plaguebearer, RoleId.Pestilence, RoleId.Glitch, RoleId.Jackal))
+                {
+                    message = "I am neither ally nor enemy — I am the anomaly, spreading decay or carving a lone path. \n\n(Plaguebearer, Pestilence, Glitch, Jackal)";
+                }
+                else if (id.In(
+                    RoleId.Lighter, RoleId.Hitman, RoleId.Tracker, RoleId.Crewmate, RoleId.Impostor))
+                {
+                    message = "From humble light to lethal aim, I walk among you — familiar or fatal. \n\n(Lighter, Hitman, Tracker, Crewmate, Impostor)";
+                }
+                else if (id.In(
+                    RoleId.Gatekeeper, RoleId.Amnesiac, RoleId.Painter, RoleId.Oracle))
+                {
+                    message = "Some guard the gates, others forget themselves — but all touch the threads of fate. \n\n(Gatekeeper, Amnesiac, Painter, Oracle)";
+                }
+                else
+                {
+                    message = "I am the unknown, the undefined... yet part of the great design. \n\n(Unclassified)";
+                }
+
+                if (!string.IsNullOrEmpty(message)) break;
             }
-            return CurrentTarget.Data.PlayerName + "'s Mind:\n" + message;
+            return target.Data.PlayerName + "'s Mind:\n" + message;
         }
+
 
         public static int Charges;
         public static int RechargeTasksNumber;

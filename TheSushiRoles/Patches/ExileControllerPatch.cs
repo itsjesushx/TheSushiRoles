@@ -306,18 +306,18 @@ namespace TheSushiRoles.Patches
 
             if (Miner.MineVisibility == 1) MinerVent.ConvertToVents();
 
-            // Medium spawn souls
-            if (Medium.Player != null && PlayerControl.LocalPlayer == Medium.Player) 
+            // Psychic spawn souls
+            if (Psychic.Player != null && PlayerControl.LocalPlayer == Psychic.Player) 
             {
-                if (Medium.souls != null) 
+                if (Psychic.souls != null) 
                 {
-                    foreach (SpriteRenderer sr in Medium.souls) UnityEngine.Object.Destroy(sr.gameObject);
-                    Medium.souls = new List<SpriteRenderer>();
+                    foreach (SpriteRenderer sr in Psychic.souls) UnityEngine.Object.Destroy(sr.gameObject);
+                    Psychic.souls = new List<SpriteRenderer>();
                 }
 
-                if (Medium.futureDeadBodies != null) 
+                if (Psychic.futureDeadBodies != null) 
                 {
-                    foreach ((DeadPlayer db, Vector3 ps) in Medium.futureDeadBodies) 
+                    foreach ((DeadPlayer db, Vector3 ps) in Psychic.futureDeadBodies) 
                     {
                         GameObject s = new GameObject();
                         //s.transform.position = ps;
@@ -325,11 +325,11 @@ namespace TheSushiRoles.Patches
                         s.layer = 5;
                         var rend = s.AddComponent<SpriteRenderer>();
                         s.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                        rend.sprite = Medium.GetSoulSprite();
-                        Medium.souls.Add(rend);
+                        rend.sprite = Psychic.GetSoulSprite();
+                        Psychic.souls.Add(rend);
                     }
-                    Medium.deadBodies = Medium.futureDeadBodies;
-                    Medium.futureDeadBodies = new List<Tuple<DeadPlayer, Vector3>>();
+                    Psychic.deadBodies = Psychic.futureDeadBodies;
+                    Psychic.futureDeadBodies = new List<Tuple<DeadPlayer, Vector3>>();
                 }
             }
 

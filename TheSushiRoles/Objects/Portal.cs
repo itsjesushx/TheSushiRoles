@@ -55,9 +55,9 @@ namespace TheSushiRoles.Objects
 
             int colorId = playerControl.Data.DefaultOutfit.ColorId;
 
-            if (Camouflager.CamouflageTimer > 0 || Utils.MushroomSabotageActive()) 
+            if (Painter.PaintTimer > 0 || Utils.MushroomSabotageActive()) 
             {
-                playerNameDisplay = "A camouflaged player";
+                playerNameDisplay = "An anonymous player";
                 colorId = 6;
             }
             
