@@ -19,16 +19,16 @@ Even more roles are coming soon.
 | [Yo-Yo](#yoyo) | [Sheriff](#sheriff) | [Jackal](#jackal) | [Tie Breaker](#tie-breaker) |  |
 | [Morphling](#morphling) | [Trapper](#trapper)| [Sidekick](#sidekick) | [Bait](#bait) | |
 | [Camouflager](#camouflager) | [Lighter](#lighter) | [Vulture](#vulture) | [Lovers](#lovers) | |
-| [Poisoner](#poisoner) | [Detective](#detective) | [Lawyer](#lawyer) | [Sunglasses](#sunglasses) | |
+| [Viper](#viper) | [Detective](#detective) | [Lawyer](#lawyer) | [Blind](#blind) | |
 | [Eraser](#eraser) | [Chronos](#time-master) | [Prosecutor](#prosecutor) | [Mini](#mini) | |
-| [Trickster](#trickster) | [Medic](#medic) | [Pursuer](#pursuer) | [VIP](#vip) |  |
-| [Cleaner](#cleaner) | [Swapper](#swapper) | [Agent](#agent) | [Invert](#invert) | |
+| [Trickster](#trickster) | [Medic](#medic) | [Survivor](#survivor) | [VIP](#vip) |  |
+| [Janitor](#janitor) | [Swapper](#swapper) | [Agent](#agent) | [Drunk](#drunk) | |
 | [Warlock](#warlock) | [Mystic](#mystic) | [Glitch](#glitch)    | [Chameleon](#chameleon) | |
-| [Bounty Hunter](#bounty-hunter) | [Hacker](#hacker) | [Juggernaut](#Juggernaut)   | [Armored](#armored) |
+| [Bounty Hunter](#bounty-hunter) | [Hacker](#hacker) | [Juggernaut](#Juggernaut)   | [Lucky](#lucky) |
 | [Witch](#witch) | [Tracker](#tracker) | [Predator](#serial-killer)  |  |
-| [Ninja](#ninja) | [Crusader](#crusader) | [Romantic](#romantic)   |  |
+| [Assassin](#Assassin) | [Crusader](#crusader) | [Romantic](#romantic)   |  |
 | | [Spy](#spy) | [Werewolf](#werewolf) |  | |
-| | [Portalmaker](#portalmaker) | [Amnesiac](#amnesiac) |  |  |
+| | [Gatekeeper](#portalmaker) | [Amnesiac](#amnesiac) |  |  |
 | | [Vigilante](#vigilante) |  [Plaguebearer](#plaguebearer) |  |  |
 |  | [Medium](#medium) | [Pestilence](#plaguebearer)  |  |  |
 |  |[Veteran](#veteran)    |  |  |  |
@@ -41,13 +41,7 @@ If you want to learn how the new killers work, go to [Neutral Killers guide](#ne
 # Releases  
 | Among Us - Version| The Sushi Roles Version | Link |
 |----------|-------------|-----------------|
-| V2024.10.29s & V2024.10.29e | v2.5.0 | [Download](https://github.com/itsjesushx/TheSushiRoles/releases/download/v2.5.0/TSR.v2.5.0.zip) |
-| V2024.10.29s & V2024.10.29e | v2.2.0 | Old Codebase (Not available anymore) |
-| V2024.10.29s & V2024.10.29e | v2.0.0 | Old Codebase (Not available anymore) |
-| V2024.10.29s & V2024.10.29e | v1.6.0 | Old Codebase (Not available anymore) |
-| V2024.10.29s & V2024.10.29e | v1.2.1 | Old Codebase (Not available anymore) |
-| V2024.10.29s & V2024.10.29e | v1.2.0 | Old Codebase (Not available anymore) |
-| V2024.10.29s & V2024.10.29e | v1.0.0 | Old Codebase (Not available anymore) |
+| V2024.10.29s & V2024.10.29e | v1.0.0 | [Download](https://github.com/itsjesushx/TheSushiRoles/releases/download/v1.0.0/TSR.v1.0.0.zip) |
 
 -----------------------
   
@@ -79,34 +73,26 @@ Not working? You might want to install the dependency [vc_redist](https://aka.ms
 4. Launch the game via Steam
 
 # Credits & Resources
-**Thanks to [TheOtherRoles](https://github.com/TheOtherRolesAU/TheOtherRoles) for providing the mod's codebase!**
-Thanks to miniduikboot & GD for hosting modded servers!
-
-[MyDragonBreath](https://github.com/myDragonBreath/AmongUs.MultiClientInstancing) - for TheSushiRoles Debugger.
-[OxygenFilter](https://github.com/NuclearPowered/Reactor.OxygenFilter) - For all the versions between v2.3.0 and v2.6.1, we were using the OxygenFilter for automatic deobfuscation\
-[Reactor](https://github.com/NuclearPowered/Reactor) - The framework used for all versions before v2.0.0\
-[BepInEx](https://github.com/BepInEx) - Used to hook to game functions\
-[Essentials](https://github.com/DorCoMaNdO/Reactor-Essentials) - Custom game options by **DorCoMaNdO**:
-- Before v1.6: We used the default Essentials release
-- v1.6-v1.8: We slightly changed the default Essentials release. The changes can be found on this [branch](https://github.com/Eisbison/Reactor-Essentials/tree/feature/TheOtherRoles-Adaption) of our fork.
-- v2.0.0 and later: We're no longer using Reactor anymore we are using our own implementation inspired by the one from **DorCoMaNdO**
-
-[Jackal and Sidekick](https://www.twitch.tv/dhalucard) - Original idea for the Jackal and Sidekick came from **Dhalucard**\
+**Thanks to [TheOtherRoles](https://github.com/TheOtherRolesAU/TheOtherRoles) for providing the mod's orginal codebase!**
+[MyDragonBreath's AmongUs MultiClientInstancing](https://github.com/myDragonBreath/AmongUs.MultiClientInstancing) - for TheSushiRoles Debugger.
+[Reactor](https://github.com/NuclearPowered/Reactor) - The framework used.\
+[BepInEx](https://github.com/BepInEx) - Used to hook to game functions.\
+[Jackal and Sidekick](https://github.com/TheOtherRolesAU/TheOtherRoles) - Original Codebase, and idea for the Jackal and Sidekick came from **TheOtherRoles**\
 [Among-Us-Love-Couple-Mod](https://github.com/Woodi-dev/Among-Us-Love-Couple-Mod) - Idea for the Lovers modifier came from **Woodi-dev**\
 [Jester](https://github.com/Maartii/Jester) - Idea for the Jester role came from **Maartii**\
 [ExtraRolesAmongUs](https://github.com/NotHunter101/ExtraRolesAmongUs) - Idea for the Engineer and Medic role came from **NotHunter101**. Also some code snippets from their implementation were used.\
 [Among-Us-Sheriff-Mod](https://github.com/Woodi-dev/Among-Us-Sheriff-Mod) - Idea for the Sheriff role came from **Woodi-dev**\
-[TooManyRolesMods](https://github.com/Hardel-DW/TooManyRolesMods) - Idea for the Detective and Chronos roles came from **Hardel-DW**. Also some code snippets from their implementation were used.\
+[TooManyRolesMods](https://github.com/Hardel-DW/TooManyRolesMods) - Idea for the Detective and Chronos roles came from **Hardel-DW**.\
 [TownOfUs](https://github.com/slushiegoose/Town-Of-Us) - Idea for the Swapper, Arsonist and a similar Mayor role came from **Slushiegoose**\
 [Ottomated](https://twitter.com/ottomated_) - Idea for the Morphling and Camouflager role came from **Ottomated**\
 [Crowded-Mod](https://github.com/CrowdedMods/CrowdedMod) - Our implementation for 10+ player lobbies were inspired by the one from the **Crowded Mod Team**\
 [Goose-Goose-Duck](https://store.steampowered.com/app/1568590/Goose_Goose_Duck) - Idea for the Vulture role came from **Slushiegoose**\
-[TheEpicRoles](https://github.com/LaicosVK/TheEpicRoles) - Idea for the first kill shield (partly) and the tabbed option menu (fully + some code), by **LaicosVK** **DasMonschta** **Nova**\
-[Ninja](#ninja), [Lawyer](#lawyer) / [Pursuer](#pursuer), [Portalmaker](#portalmaker), [Guesser Modifier](#guesser-modifier) - Idea: [K3ndo](https://github.com/K3ndoo) ; Developed by [Gendelo](https://github.com/gendelo3) & [Mallöris](https://github.com/Mallaris) \
-[ugackMiner53](https://github.com/ugackMiner53/PropHunt) - Idea and core code for the Prop Hunt game mode
+[TheEpicRoles](https://github.com/LaicosVK/TheEpicRoles) - Idea for the first kill shield and the tabbed option menu, by **LaicosVK** **DasMonschta** **Nova**\
+[Brybry16](https://github.com/Brybry16/BetterPolus) - For the Better Polus Implementation.\
+[Town of Us-R](https://github.com/eDonnes124/Town-Of-Us-R) - Idea for the Veteran, Undertaker, Juggernaut, Plaguebearer & Pestilence, Glitch, Oracle, Predator and a similar Amnesiac role came from **eDonnes124**\
 
 # Settings
-The mod adds a few new settings to Among Us (in addition to the role settings):
+The mod adds a few new settings to Among Us (in addition to the role settings) mostly Quality of Life:
 - **Any Player Can Stop The Start:** If turned off, only the host can stop the game start. If on, all players can do it. Non-hosts stopping the start will send a chat message indicating who stopped it.
 - **Number of Crewmates:** The number of Crewmate roles can be set inside a lobby.
 - **Number of Neutral Benigns:** The number of Neutral Benign roles can be set inside a lobby.
@@ -123,15 +109,15 @@ The mod adds a few new settings to Among Us (in addition to the role settings):
 - **Shield Last Game First Kill** The first killed player of the previous round will be shielded for all players visible until the first meeting.
 - **Finish Tasks Before Haunting Or Zooming Out ** The zoom out function as well as haunting will be hidden for the player until all their tasks are finished
 - **Disable MedbayWalk Animation:** Disables the visual walk that a player makes when they start to walk to the scanner.
-- **Enable Better Skeld Vent Improvements:** Enable this to drastically change
 - **Enable Better Polus Features:** Using better polus plugin, but its built inside the mod.
 - **Admin Table Shows Dead Bodies**
 - **Cams Switch To Night Vision If Lights Are Off**  No colors and cosmetics can be seen on the cameras when the lights are off. Mini can be spottet!
+- **Limit Player Abilities When 2 Players Are Left Alive** If enabled, when players (usually last killers) are in a 1v1, they won't be able to report bodies, call meetings, sabotage (if impostors) or use vents.
+- **Game Start Cooldowns** Changes everyone's cooldown at the start of each game.
 - **Impostor Vision Ignores Night Vision Cams**
 - **Play On A Random Map** If enabled it allows you to set percentages for each current map, except ehT dlekS. 
 - **Ghosts Can See Everything.** If enabled it allows ghosts to see everyone's Roles, Modifiers & Abilities.
 - **Ghosts Can See Votes.**
-- **Ghosts Can Additionally See Modifier.**
 - **Ghosts See Tasks And Other Info** Other Info: Things like who is cursed, cuffed etc. but also the medic shield, flashes, engineer fix etc.
 - **The map is accessable during a meeting and will show your last location when a body gets reported/meeting gets called.**
 - **When you're a ghost and done with tasks, you'll get a zoom out/overview function.**
@@ -252,23 +238,23 @@ are hidden and all players have the same color.\
 | Camo Duration | Time players stay camouflaged
 -----------------------
 
-## Poisoner
+## Viper
 ### **Faction: Impostors**
-The Poisoner is an Impostor, that can bite other player. Poisoned players die after a configurable amount of time\
-The Poisoner can also place blind traps in the map, if a player steps on them, they can't use Vent or report buttons (Clicking a body even if you are blind won't work either) and won't see anything.\
+The Viper is an Impostor, that can bite other player. Poisoned players die after a configurable amount of time\
+The Viper can also place blind traps in the map, if a player steps on them, they can't use Vent or report buttons (Clicking a body even if you are blind won't work either) and won't see anything.\
 \
 **NOTE:**
 - If a poisoned player is still alive when a meeting is being called, they die at the start of the meeting.
-- The Cooldown is the same as the default kill Cooldown (+ the kill delay if the Poisoner bites the target).
-- If there is a Poisoner in the game, there can't be a Warlock.
-- If the Poisoner bites a player and gets killed before the bite is performed, the biten player will survive.
+- The Cooldown is the same as the default kill Cooldown (+ the kill delay if the Viper bites the target).
+- If there is a Viper in the game, there can't be a Warlock.
+- If the Viper bites a player and gets killed before the bite is performed, the biten player will survive.
 
 ### Game Options
 | Name | Description |
 |----------|:-------------:|
-| Poisoner Spawn Chance | -
-| Poisoner Kill Delay | -
-| Poisoner Cooldown | Sets the kill/bite Cooldown
+| Viper Spawn Chance | -
+| Viper Kill Delay | -
+| Viper Cooldown | Sets the kill/bite Cooldown
 | Blind Cooldown | -
 | Blind Duration | -
 -----------------------
@@ -312,19 +298,19 @@ If the boxes are converted to a vent network, the Trickster gains a new ability 
 | Trickster Lights Out Duration | Duration after which the light is automatically restored
 -----------------------
 
-## Cleaner
+## Janitor
 ### **Faction: Impostors**
-The Cleaner is an Impostor who has the ability to clean up dead bodies.\
+The Janitor is an Impostor who has the ability to clean up dead bodies.\
 \
 **NOTE:**
 - The Kill and Clean Cooldown are shared, preventing them from immediately cleaning their own kills.
-- If there is a Cleaner in the game, there can't be a Vulture.
+- If there is a Janitor in the game, there can't be a Vulture.
 
 ### Game Options
 | Name | Description |
 |----------|:-------------:|
-| Cleaner Spawn Chance | -
-| Cleaner Cooldown | Cooldown for cleaning dead bodies
+| Janitor Spawn Chance | -
+| Janitor Cooldown | Cooldown for cleaning dead bodies
 -----------------------
 
 ## Warlock
@@ -336,7 +322,7 @@ The Warlock can still perform normal kills, but the two buttons share the same C
 \
 **NOTE:**
 - The Warlock can always kill their Impostor mates (and even themself) using the "cursed kill"
-- If there is a Warlock in the game, there can't be a Poisoner
+- If there is a Warlock in the game, there can't be a Viper
 - Performing a normal kill, doesn't lift the curse
 
 ### Game Options
@@ -375,7 +361,7 @@ Depending on the options, there'll be an arrow pointing towards the current targ
 The Witch is an Impostor who has the ability to cast a spell on other players.\
 During the next meeting, the spellbound player will be highlighted and they'll die right after the meeting.\
 There are multiple options listed down below with which you can configure to fit your taste.\
-Similar to the Poisoner, shields and blanks will be checked twice (at the end of casting the spell on the player and at the end of the meeting, when the spell will be activated).\
+Similar to the Viper, shields and blanks will be checked twice (at the end of casting the spell on the player and at the end of the meeting, when the spell will be activated).\
 This can result in players being marked as spelled during the meeting, but not dying in the end (when they get a shield or the Witch gets blanked after they were spelled by the Witch).\
 If the Witch dies before the meeting starts or if the Witch is being guessed during the meeting, the spellbound players will be highlighted but they'll survive in any case.\
 Depending on the options you can choose whether voting the Witch out will save all the spellbound players or not.\
@@ -411,30 +397,30 @@ The Spy, the Grenadier, other Impostors and dead people won't be affected by the
 | Flash Radius | How wide the flash radius is
 -----------------------
 
-## Ninja
+## Assassin
 ### **Faction: Impostors**
-The Ninja is an Impostor who has the ability to kill another player all over the map.\
+The Assassin is an Impostor who has the ability to kill another player all over the map.\
 You can mark a player with your ability and by using the ability again, you jump to the position of the marked player and kill it.\
 Depending on the options you know where your marked player is.\
-If the Ninja uses its ability, it will leave a trace (leaves) for a configurable amount of time where it activated the ability and additionally where it killed the before marked player.\
-When performing a ninja ability kill, the ninja can be invisible for some seconds (depends on options)\
+If the Assassin uses its ability, it will leave a trace (leaves) for a configurable amount of time where it activated the ability and additionally where it killed the before marked player.\
+When performing a Assassin ability kill, the Assassin can be invisible for some seconds (depends on options)\
 \
 **NOTE:**
-- The Ninja has a 5 second Cooldown after marking a player
+- The Assassin has a 5 second Cooldown after marking a player
 - The trace has a darker (black) or lighter (white) color depending on the players color that will fade into green
 - The mark on the marked player will reset after a meeting or after using the ability to kill the marked player. Performing a normal kill will **NOT** reset the mark
-- If the Ninja tries to kill a shielded player (e.g. Medic shield, Shield last game first kill ), the kill will not be performed
+- If the Assassin tries to kill a shielded player (e.g. Medic shield, Shield last game first kill ), the kill will not be performed
 - If the marked target is on a different floor on Submerged, the arrow will always point to the elevator
 
 ### Game Options
 | Name | Description |
 |----------|:-------------:|
-| Ninja Spawn Chance | -
-| Ninja Mark Cooldown | -
-| Ninja Knows Location Of Target | -
+| Assassin Spawn Chance | -
+| Assassin Mark Cooldown | -
+| Assassin Knows Location Of Target | -
 | Trace Duration | -
 | Time Till Trace Color Has Faded | -
-| Time The Ninja Is Invisible | -
+| Time The Assassin Is Invisible | -
 -----------------------
 
 ## YoYo
@@ -723,7 +709,7 @@ The Plaguebearer or Pestilence needs to be the last killer alive to win the game
 The Vulture does not have any tasks, they have to win the game as a solo.\
 The Vulture is a neutral role that must eat a specified number of corpses (depending on the options) in order to win.\
 Depending on the options, when a player dies, the Vulture gets an arrow pointing to the corpse.\
-If there is a Vulture in the game, there can't be a Cleaner.
+If there is a Vulture in the game, there can't be a Janitor.
 
 **NOTE**
 - If the corpse is on a different floor on Submerged, the arrow will always point to the elevator
@@ -775,16 +761,16 @@ Depending on the options, the client can also be a Jester.\
 The Lawyer needs their client to win in order to win the game.\
 Their client doesn't know that it is their client.\
 If their client gets voted out, the Lawyer dies with the client.\
-If their client dies, the Lawyer changes their role and becomes the [Pursuer](#pursuer), which has a different goal to win the game.\
+If their client dies, the Lawyer changes their role and becomes the [Survivor](#survivor), which has a different goal to win the game.\
 \
 How the Lawyer wins:
 - Lawyer dead/alive, client alive and client wins: The Lawyer wins together with the team of the client.
 - If their client is Jester and the Jester gets voted out, the Lawyer wins together with the Jester.
 
 **NOTE:**
-- If the client disconnects, the Lawyer will also turn into the Pursuer.
+- If the client disconnects, the Lawyer will also turn into the Survivor.
 - The Lawyer needs to figure out the role of their client depending on the options.
-- The tasks only count, if the Lawyer gets promoted to Pursuer.
+- The tasks only count, if the Lawyer gets promoted to Survivor.
 - If the Lawyer dies before their client, they will lose all their tasks and will get the overview immediately.
 
 ### Game Options
@@ -792,7 +778,7 @@ How the Lawyer wins:
 |----------|:-------------:|
 | Lawyer Spawn Chance | -
 | Chance That The Lawyer Is Prosecutor | -
-| Lawyer/Prosecutor Vision | Pursuer has normal vision
+| Lawyer/Prosecutor Vision | Survivor has normal vision
 | Lawyer/Prosecutor Knows Target Role | -
 | Lawyer/Prosecutor Can Call Emergency Meeting | -
 | Lawyer Target Can Be The Jester | -
@@ -803,27 +789,27 @@ How the Lawyer wins:
 The Prosecutor is a neutral role that resembles the Lawyer. The Prosecutor has a client who is a Crewmate.\
 The Prosecutor needs their client to be voted out in order to win the game.\
 The Prosecutor's client doesn't know that they are their client.\
-If the client gets sidekicked, the Prosecutor changes their role and becomes the [Pursuer](#pursuer).\
-If the Prosecutor's client dies, the Prosecutor changes their role and becomes the [Pursuer](#pursuer), which has a different goal to win the game.
+If the client gets sidekicked, the Prosecutor changes their role and becomes the [Survivor](#survivor).\
+If the Prosecutor's client dies, the Prosecutor changes their role and becomes the [Survivor](#survivor), which has a different goal to win the game.
 
 **NOTE:**
-- If the client disconnects, the Prosecutor will also turn into the Pursuer.
+- If the client disconnects, the Prosecutor will also turn into the Survivor.
 - The Prosecutor needs to figure out the role of their client depending on the options.
-- The tasks only count, if the Prosecutor gets promoted to Pursuer.
+- The tasks only count, if the Prosecutor gets promoted to Survivor.
 - If the Prosecutor dies before their client, they will lose all their tasks and will get the overview immediately.
 
-## Pursuer
+## Survivor
 ### **Faction: Neutral (Benign)**
-The Pursuer is still a neutral role, but has a different goal to win the game; they have to be alive when the game ends and the Crew wins.\
-In order to achieve this goal, the Pursuer has an ability called "Blank", where they can fill a killer's (this also includes the Sheriff) weapon with a blank. So, if the killer attempts to kill someone, the killer will miss their target, and their Cooldowns will be triggered as usual.\
+The Survivor is still a neutral role, but has a different goal to win the game; they have to be alive when the game ends and the Crew wins.\
+In order to achieve this goal, the Survivor has an ability called "Blank", where they can fill a killer's (this also includes the Sheriff) weapon with a blank. So, if the killer attempts to kill someone, the killer will miss their target, and their Cooldowns will be triggered as usual.\
 If the killer fires the "Blank", shields (e.g. Medic shield) will not be triggered.\
-The Pursuer has tasks (which can already be done while being a Lawyer/Prosecutor), that count towards the task win for the Crewmates. If the Pursuer dies, their tasks won't be counted anymore.
+The Survivor has tasks (which can already be done while being a Lawyer/Prosecutor), that count towards the task win for the Crewmates. If the Survivor dies, their tasks won't be counted anymore.
 
 ### Game Options
 | Name | Description |
 |----------|:-------------:|
-| Pursuer Blank Cooldown | -
-| Pursuer Number Of Blanks | -
+| Survivor Blank Cooldown | -
+| Survivor Number Of Blanks | -
 -----------------------
 
 ## Mayor
@@ -1048,7 +1034,7 @@ The Mystic can also interact with players to investigate about their role, once 
 - `I uncover secrets, blur identities, and execute plans`:
   - *(Detective, Hacker, Morphling, Medium, or Hitman)*
 - `I build, adapt, and ensure order prevails`:
-  - *(Engineer, Vulture, Undertaker, Miner, Cleaner, or Sheriff)*
+  - *(Engineer, Vulture, Undertaker, Miner, Janitor, or Sheriff)*
 - `I stand ready, wield dark power, and leave destruction in my wake`:
   - *(Veteran, Bounty Hunter, Warlock, Werewolf, or Juggernaut)**
 - `If a role isn't added to the Mystic list (basically if I forget to add it) it will prompt "Error".`
@@ -1134,28 +1120,28 @@ You can set whether the Sheriff can kill the Spy or not (in order to keep the li
 | Spy Has Impostor Vision | Give the Spy the same vision as the Impostors have
 -----------------------
 
-## Portalmaker
+## Gatekeeper
 ### **Faction: Crewmates**
-The Portalmaker is a Crewmate that can place two portals on the map.\
+The Gatekeeper is a Crewmate that can place two portals on the map.\
 These two portals are connected to each other.\
 Those portals will be visible after the next meeting and can be used by everyone.\
-Additionally to that, the Portalmaker gets information about who used the portals and when in the chat during each meeting, depending on the options.\
-The Portalmaker can teleport themself to their placed portals from anywhere if the setting is enabled.
+Additionally to that, the Gatekeeper gets information about who used the portals and when in the chat during each meeting, depending on the options.\
+The Gatekeeper can teleport themself to their placed portals from anywhere if the setting is enabled.
 
 **NOTE:**
-- The extra button to use a portal will appear after the Portalmaker set their portals and a meeting/body report was called.
+- The extra button to use a portal will appear after the Gatekeeper set their portals and a meeting/body report was called.
 - While one player uses a portal, it is blocked for any other player until the player got teleported.
-- All ghosts can still use the portals, but won't block any living player from using it and the Portalmaker won't get any information about it in chat.
+- All ghosts can still use the portals, but won't block any living player from using it and the Gatekeeper won't get any information about it in chat.
 - If a morphed person uses a portal it will show the morphed name/color depending on the options.
 - If a camouflaged person uses a portal it will show "A comouflaged person used the portal."
 
 ### Game Options
 | Name | Description
 |----------|:-------------:|
-| Portalmaker Spawn Chance | -
-| Portalmaker Cooldown | -
+| Gatekeeper Spawn Chance | -
+| Gatekeeper Cooldown | -
 | Use Portal Cooldown | -
-| Portalmaker Log Only Shows Color Type | -
+| Gatekeeper Log Only Shows Color Type | -
 | Log Shows Time | -
 | Can Port To Portal From Everywhere | -
 -----------------------
@@ -1205,7 +1191,7 @@ The souls will always prefer to answer with the role specific information first!
 - Teamkill Impostor: "I guess they confused me for the Spy, is there even one?"
 - Submerged o2-Kill: "Do I really need that mask for breathing?"
 - Warlock self kill: "MAYBE I cursed the person next to me and killed myself. Oops."
-- Vulture/Cleaner eats/cleans body: "Is my dead body some kind of art now or... aaand it's gone."
+- Vulture/Janitor eats/cleans body: "Is my dead body some kind of art now or... aaand it's gone."
 
 **Else random:**
 - "I'm not sure, but I guess a darker/lighter color killed me."
@@ -1380,21 +1366,21 @@ In a 2 Crewmates vs 2 Impostors (or 2 members of team Jackal) and the Lovers are
 **NOTE:**
 - The Modifier **Lover** can't be guessed, you'll have to guess the primary role of one of the Lovers, to kill both of them.
 
-## Sunglasses
+## Blind
 
-The Sunglasses will lower the Crewmate's vision by a small percentage. The percentage is configurable in the options.\
+The Blind will lower the Crewmate's vision by a small percentage. The percentage is configurable in the options.\
 The vision will also be affected when lights out.
 
 **NOTE:**
-- Sunglasses only affects Crewmates.
-- If you have the Sunglasses Modifier and get sidekicked, you will lose the Modifier.
+- Blind only affects Crewmates.
+- If you have the Blind Modifier and get sidekicked, you will lose the Modifier.
 
 ### Game Options
 | Name | Description
 |----------|:-------------:|
-| Sunglasses Spawn Chance | -
-| Sunglasses Quantity | -
-| Vision With Sunglasses | -
+| Blind Spawn Chance | -
+| Blind Quantity | -
+| Vision With Blind | -
 
 -----------------------
 ## Disperser
@@ -1460,9 +1446,9 @@ Teams:
 | Show Team Color | -
 -----------------------
 
-## Invert
+## Drunk
 
-The Invert Modifier inverts your controls (no matter if keyboard or mouse).\
+The Drunk Modifier inverts your controls (no matter if keyboard or mouse).\
 \
 **NOTE**
 This is a Global Modifier, meaning everyone can have it
@@ -1470,8 +1456,8 @@ This is a Global Modifier, meaning everyone can have it
 ### Game Options
 | Name | Description
 |----------|:-------------:|
-| Invert Spawn Chance | -
-| Invert Quantity | -
+| Drunk Spawn Chance | -
+| Drunk Quantity | -
 -----------------------
 
 ## Chameleon
@@ -1492,20 +1478,20 @@ This is a Global Modifier, meaning everyone can have it
 | Minimum Visibility | -
 -----------------------
 
-## Armored
+## Lucky
 
-The Armored is a Modifier that protects the player from the first shot that would have killed them. There can only be one Armored player per round.
+The Lucky is a Modifier that protects the player from the first shot that would have killed them. There can only be one Lucky player per round.
 \
 **NOTE:**
-- Armored is only active during the round and does not protect from guesses or votes. 
-- Armored is applied after all other shields or protections, so that the Armor only breaks if the player would have otherwise died.
-- If a killer tries to kill the Armored, they will see the Armor break with a nice animation.
-- The Armored player has no indicator whatsoever if the Armor is still active, unless they break it (Warlock, Sheriff)
+- Lucky is only active during the round and does not protect from guesses or votes. 
+- Lucky is applied after all other shields or protections, so that the Armor only breaks if the player would have otherwise died.
+- If a killer tries to kill the Lucky, they will see the Armor break with a nice animation.
+- The Lucky player has no indicator whatsoever if the Armor is still active, unless they break it (Warlock, Sheriff)
 
 ### Game Options
 | Name | Description
 |----------|:-------------:|
-| Armored Spawn Chance | -
+| Lucky Spawn Chance | -
 -----------------------
 
 ## GCERROR

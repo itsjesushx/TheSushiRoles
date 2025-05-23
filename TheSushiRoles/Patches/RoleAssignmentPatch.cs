@@ -47,7 +47,7 @@ namespace TheSushiRoles.Patches
         {
             Utils.StartRPC(CustomRPC.ResetVaribles);
             RPCProcedure.ResetVariables();
-            if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek /*|| Modules.RoleDraft.isEnabled*/) return; // Don't assign Roles in Hide N Seek
+            if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek || Modules.RoleDraft.isEnabled) return; // Don't assign Roles in Hide N Seek
             AssignRoles();
         }
 
@@ -116,7 +116,7 @@ namespace TheSushiRoles.Patches
             ImpSettings.Add((byte)RoleId.Morphling, CustomOptionHolder.morphlingSpawnRate.GetSelection());
             ImpSettings.Add((byte)RoleId.Camouflager, CustomOptionHolder.camouflagerSpawnRate.GetSelection());
             ImpSettings.Add((byte)RoleId.Grenadier, CustomOptionHolder.GrenadierSpawnRate.GetSelection());
-            ImpSettings.Add((byte)RoleId.Poisoner, CustomOptionHolder.poisonerSpawnRate.GetSelection());
+            ImpSettings.Add((byte)RoleId.Viper, CustomOptionHolder.ViperSpawnRate.GetSelection());
             ImpSettings.Add((byte)RoleId.Miner, CustomOptionHolder.MinerSpawnRate.GetSelection());
             ImpSettings.Add((byte)RoleId.Blackmailer, CustomOptionHolder.BlackmailerSpawnRate.GetSelection());
             ImpSettings.Add((byte)RoleId.Eraser, CustomOptionHolder.eraserSpawnRate.GetSelection());
@@ -124,7 +124,7 @@ namespace TheSushiRoles.Patches
             ImpSettings.Add((byte)RoleId.Warlock, CustomOptionHolder.warlockSpawnRate.GetSelection());
             ImpSettings.Add((byte)RoleId.BountyHunter, CustomOptionHolder.bountyHunterSpawnRate.GetSelection());
             ImpSettings.Add((byte)RoleId.Witch, CustomOptionHolder.witchSpawnRate.GetSelection());
-            ImpSettings.Add((byte)RoleId.Ninja, CustomOptionHolder.ninjaSpawnRate.GetSelection());
+            ImpSettings.Add((byte)RoleId.Assassin, CustomOptionHolder.AssassinSpawnRate.GetSelection());
             ImpSettings.Add((byte)RoleId.Wraith, CustomOptionHolder.WraithSpawnRate.GetSelection());
             ImpSettings.Add((byte)RoleId.Undertaker, CustomOptionHolder.UndertakerSpawnRate .GetSelection());
             ImpSettings.Add((byte)RoleId.Yoyo, CustomOptionHolder.yoyoSpawnRate.GetSelection());
@@ -150,9 +150,10 @@ namespace TheSushiRoles.Patches
             NeutralBenignSettings.Add((byte)RoleId.Romantic, CustomOptionHolder.RomanticSpawnChance.GetSelection());
 
             CrewSettings.Add((byte)RoleId.Mayor, CustomOptionHolder.mayorSpawnRate.GetSelection());
+            CrewSettings.Add((byte)RoleId.Landlord, CustomOptionHolder.LandlordSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Veteran, CustomOptionHolder.VeteranSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Sheriff, CustomOptionHolder.sheriffSpawnRate.GetSelection());
-            CrewSettings.Add((byte)RoleId.Portalmaker, CustomOptionHolder.portalmakerSpawnRate.GetSelection());
+            CrewSettings.Add((byte)RoleId.Gatekeeper, CustomOptionHolder.GatekeeperSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Engineer, CustomOptionHolder.engineerSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Lighter, CustomOptionHolder.lighterSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Detective, CustomOptionHolder.detectiveSpawnRate.GetSelection());
@@ -171,8 +172,8 @@ namespace TheSushiRoles.Patches
             {
                 // Only add Spy if more than 1 impostor as the spy role is otherwise useless
                 CrewSettings.Add((byte)RoleId.Spy, CustomOptionHolder.spySpawnRate.GetSelection());
-                // Only add Cleaner if more than 1 impostor as the Cleaner role is otherwise useless
-                ImpSettings.Add((byte)RoleId.Cleaner, CustomOptionHolder.cleanerSpawnRate.GetSelection());
+                // Only add Janitor if more than 1 impostor as the Janitor role is otherwise useless
+                ImpSettings.Add((byte)RoleId.Janitor, CustomOptionHolder.JanitorSpawnRate.GetSelection());
             }
             CrewSettings.Add((byte)RoleId.Vigilante, CustomOptionHolder.VigilanteSpawnRate.GetSelection());
 
@@ -441,12 +442,12 @@ namespace TheSushiRoles.Patches
                 ModifierId.Lazy,
                 ModifierId.Sleuth,
                 ModifierId.Disperser,
-                ModifierId.Sunglasses,
+                ModifierId.Blind,
                 ModifierId.Giant,
                 ModifierId.Vip,
-                ModifierId.Invert,
+                ModifierId.Drunk,
                 ModifierId.Chameleon,
-                ModifierId.Armored
+                ModifierId.Lucky
             });
 
             if (rnd.Next(1, 101) <= CustomOptionHolder.modifierLover.GetSelection() * 10) 
@@ -619,17 +620,17 @@ namespace TheSushiRoles.Patches
             List<PlayerControl> impPlayer = new List<PlayerControl>(playerList);
             impPlayer.RemoveAll(x => !x.Data.Role.IsImpostor);
             crewPlayer.RemoveAll(x => !x.IsCrew());
-            if (modifiers.Contains(ModifierId.Sunglasses)) 
+            if (modifiers.Contains(ModifierId.Blind)) 
             {
-                int sunglassesCount = 0;
-                while (sunglassesCount < modifiers.FindAll(x => x == ModifierId.Sunglasses).Count) 
+                int BlindCount = 0;
+                while (BlindCount < modifiers.FindAll(x => x == ModifierId.Blind).Count) 
                 {
-                    playerId = SetModifierToRandomPlayer((byte)ModifierId.Sunglasses, crewPlayer);
+                    playerId = SetModifierToRandomPlayer((byte)ModifierId.Blind, crewPlayer);
                     crewPlayer.RemoveAll(x => x.PlayerId == playerId);
                     playerList.RemoveAll(x => x.PlayerId == playerId);
-                    sunglassesCount++;
+                    BlindCount++;
                 }
-                modifiers.RemoveAll(x => x == ModifierId.Sunglasses);
+                modifiers.RemoveAll(x => x == ModifierId.Blind);
             }
              if (modifiers.Contains(ModifierId.Disperser)) 
             {
@@ -668,9 +669,9 @@ namespace TheSushiRoles.Patches
                     selection = CustomOptionHolder.modifierLazy.GetSelection();
                     if (multiplyQuantity) selection *= CustomOptionHolder.modifierLazyQuantity.GetQuantity();
                     break;
-                case ModifierId.Sunglasses:
-                    selection = CustomOptionHolder.modifierSunglasses.GetSelection();
-                    if (multiplyQuantity) selection *= CustomOptionHolder.modifierSunglassesQuantity.GetQuantity();
+                case ModifierId.Blind:
+                    selection = CustomOptionHolder.modifierBlind.GetSelection();
+                    if (multiplyQuantity) selection *= CustomOptionHolder.modifierBlindQuantity.GetQuantity();
                     break;
                 case ModifierId.Disperser:
                     selection = CustomOptionHolder.ModifierDisperser.GetSelection();
@@ -679,9 +680,9 @@ namespace TheSushiRoles.Patches
                     selection = CustomOptionHolder.modifierVip.GetSelection();
                     if (multiplyQuantity) selection *= CustomOptionHolder.modifierVipQuantity.GetQuantity();
                     break;
-                case ModifierId.Invert:
-                    selection = CustomOptionHolder.modifierInvert.GetSelection();
-                    if (multiplyQuantity) selection *= CustomOptionHolder.modifierInvertQuantity.GetQuantity();
+                case ModifierId.Drunk:
+                    selection = CustomOptionHolder.modifierDrunk.GetSelection();
+                    if (multiplyQuantity) selection *= CustomOptionHolder.modifierDrunkQuantity.GetQuantity();
                     break;
                 case ModifierId.Chameleon:
                     selection = CustomOptionHolder.modifierChameleon.GetSelection();
@@ -691,8 +692,8 @@ namespace TheSushiRoles.Patches
                     selection = CustomOptionHolder.ModifierSleuth.GetSelection();
                     if (multiplyQuantity) selection *= CustomOptionHolder.ModifierSleuthQuantity.GetQuantity();
                     break;
-                case ModifierId.Armored:
-                    selection = CustomOptionHolder.modifierArmored.GetSelection();
+                case ModifierId.Lucky:
+                    selection = CustomOptionHolder.modifierLucky.GetSelection();
                     break;
             }
                  

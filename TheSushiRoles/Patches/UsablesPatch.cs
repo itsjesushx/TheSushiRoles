@@ -199,16 +199,16 @@ namespace TheSushiRoles.Patches
                 if (res == MurderAttemptResult.BlankKill) 
                 {
                     PlayerControl.LocalPlayer.killTimer = GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown;
-                    if (PlayerControl.LocalPlayer == Cleaner.Player)
-                        Cleaner.Player.killTimer = HudManagerStartPatch.cleanerCleanButton.Timer = HudManagerStartPatch.cleanerCleanButton.MaxTimer;
+                    if (PlayerControl.LocalPlayer == Janitor.Player)
+                        Janitor.Player.killTimer = HudManagerStartPatch.JanitorCleanButton.Timer = HudManagerStartPatch.JanitorCleanButton.MaxTimer;
                     else if (PlayerControl.LocalPlayer == Warlock.Player)
                         Warlock.Player.killTimer = HudManagerStartPatch.warlockCurseButton.Timer = HudManagerStartPatch.warlockCurseButton.MaxTimer;
                     else if (PlayerControl.LocalPlayer == Mini.Player && Mini.Player.Data.Role.IsImpostor)
                         Mini.Player.SetKillTimer(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown * (Mini.IsGrownUp ? 0.66f : 2f));
                     else if (PlayerControl.LocalPlayer == Witch.Player)
                         Witch.Player.killTimer = HudManagerStartPatch.witchSpellButton.Timer = HudManagerStartPatch.witchSpellButton.MaxTimer;
-                    else if (PlayerControl.LocalPlayer == Ninja.Player)
-                        Ninja.Player.killTimer = HudManagerStartPatch.ninjaButton.Timer = HudManagerStartPatch.ninjaButton.MaxTimer;
+                    else if (PlayerControl.LocalPlayer == Assassin.Player)
+                        Assassin.Player.killTimer = HudManagerStartPatch.AssassinButton.Timer = HudManagerStartPatch.AssassinButton.MaxTimer;
                 }
                 __instance.SetTarget(null);
             }
@@ -255,7 +255,7 @@ namespace TheSushiRoles.Patches
             }
 
             // Deactivate emergency button for Swapper
-            if (Poisoner.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId)) 
+            if (Viper.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId)) 
             {
                 CanCallEmergency = false;
                 statusText = "You are Blind trapped. You can't use the button";
@@ -748,7 +748,7 @@ namespace TheSushiRoles.Patches
             if (isLightsOut && !nightVisionIsActive && nightVisionEnabled && !ignoreNightVision) {  // only update when something changed!
                 foreach (PlayerControl pc in PlayerControl.AllPlayerControls) 
                 {
-                    if (pc == Ninja.Player && Ninja.invisibleTimer > 0f || pc == Wraith.Player && Wraith.VanishTimer > 0f) 
+                    if (pc == Assassin.Player && Assassin.invisibleTimer > 0f || pc == Wraith.Player && Wraith.VanishTimer > 0f) 
                     {
                         continue;
                     }
@@ -812,7 +812,7 @@ namespace TheSushiRoles.Patches
                         PlayerControl target = Hitman.MorphTarget;
                         Hitman.Player.SetLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId, false);
                     }
-                    else if (pc == Ninja.Player && Ninja.invisibleTimer > 0f || pc == Wraith.Player && Wraith.VanishTimer > 0f ) 
+                    else if (pc == Assassin.Player && Assassin.invisibleTimer > 0f || pc == Wraith.Player && Wraith.VanishTimer > 0f ) 
                     {
                         continue;
                     }

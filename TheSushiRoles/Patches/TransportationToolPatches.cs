@@ -101,4 +101,29 @@ namespace TheSushiRoles.Patches
             Lazy.position = PlayerControl.LocalPlayer.transform.position;
         }
     }
+        [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.ClimbLadder))]
+        public class SaveLadderPlayer
+        {
+            public static void Prefix(PlayerPhysics __instance, [HarmonyArgument(0)] Ladder source, [HarmonyArgument(1)] byte climbLadderSid)
+            {
+                if (PlayerControl.LocalPlayer == Landlord.Player)
+                    Landlord.UnteleportablePlayers.Add(__instance.myPlayer.PlayerId, DateTime.UtcNow);
+            }
+        }
+
+        [HarmonyPatch(typeof(MovingPlatformBehaviour), nameof(MovingPlatformBehaviour.Use), new Type[] {})]
+        public class SavePlatformPlayer
+        {
+            public static void Prefix(MovingPlatformBehaviour __instance)
+            {
+                if (PlayerControl.LocalPlayer == Landlord.Player)
+                {
+                   Landlord.UnteleportablePlayers.Add(PlayerControl.LocalPlayer.PlayerId, DateTime.UtcNow);
+                }
+                else
+                {
+                    Utils.StartRPC(CustomRPC.SetUnteleportable, PlayerControl.LocalPlayer.PlayerId);
+                }
+            }
+        }
 }

@@ -67,7 +67,7 @@ namespace TheSushiRoles.Patches
         public static void UpdatePostfix(HauntMenuMinigame __instance) 
         {
             if (GameOptionsManager.Instance.currentGameOptions.GameMode != GameModes.Normal) return;
-            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && Poisoner.Player != PlayerControl.LocalPlayer)
+            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && Viper.Player != PlayerControl.LocalPlayer)
                 __instance.gameObject.transform.localPosition = new UnityEngine.Vector3(-6f, -1.1f, __instance.gameObject.transform.localPosition.z);
             return;
         }

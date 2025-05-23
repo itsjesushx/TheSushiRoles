@@ -4,21 +4,21 @@ using UnityEngine;
 
 namespace TheSushiRoles.Objects 
 {
-    class NinjaTrace 
+    class AssassinTrace 
     {
-        public static List<NinjaTrace> traces = new List<NinjaTrace>();
+        public static List<AssassinTrace> traces = new List<AssassinTrace>();
         private GameObject trace;
         private float timeRemaining;
         private static Sprite TraceSprite;
         public static Sprite GetTraceSprite() 
         {
             if (TraceSprite) return TraceSprite;
-            TraceSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.NinjaTraceW.png", 225f);
+            TraceSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.AssassinTraceW.png", 225f);
             return TraceSprite;
         }
-        public NinjaTrace(Vector2 p, float Duration=1f) 
+        public AssassinTrace(Vector2 p, float Duration=1f) 
         {
-            trace = new GameObject("NinjaTrace");
+            trace = new GameObject("AssassinTrace");
             trace.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
             //Vector3 position = new Vector3(p.x, p.y, PlayerControl.LocalPlayer.transform.localPosition.z + 0.001f); // just behind player
             Vector3 position = new Vector3(p.x, p.y, p.y / 1000f + 0.01f);
@@ -30,11 +30,11 @@ namespace TheSushiRoles.Objects
 
             timeRemaining = Duration;
 
-            // display the ninjas color in the trace
-            float colorDuration = CustomOptionHolder.ninjaTraceColorTime.GetFloat();
+            // display the Assassins color in the trace
+            float colorDuration = CustomOptionHolder.AssassinTraceColorTime.GetFloat();
             FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(colorDuration, new Action<float>((p) => {
-                Color c = Palette.PlayerColors[(int)Ninja.Player.Data.DefaultOutfit.ColorId];
-                if (Utils.IsLighterColor(Ninja.Player)) c = Color.white;
+                Color c = Palette.PlayerColors[(int)Assassin.Player.Data.DefaultOutfit.ColorId];
+                if (Utils.IsLighterColor(Assassin.Player)) c = Color.white;
                 else c = Palette.PlayerColors[6];
                 Color g = Color.green; // Usual display color.
                 Color combinedColor = Mathf.Clamp01(p) * g + Mathf.Clamp01(1 - p) * c;
@@ -57,12 +57,12 @@ namespace TheSushiRoles.Objects
 
         public static void ClearTraces() 
         {
-            traces = new List<NinjaTrace>();
+            traces = new List<AssassinTrace>();
         }
 
         public static void UpdateAll() 
         {
-            foreach (NinjaTrace traceCurrent in new List<NinjaTrace>(traces))
+            foreach (AssassinTrace traceCurrent in new List<AssassinTrace>(traces))
             {
                 traceCurrent.timeRemaining -= Time.fixedDeltaTime;
                 if (traceCurrent.timeRemaining < 0)

@@ -26,13 +26,19 @@ namespace TheSushiRoles
         public static CustomOption abilitiesCountMax;
         public static CustomOption abilitiesCountMin;
 
-        /*public static CustomOption isDraftMode;
+        public static CustomOption LandlordSpawnRate;
+        public static CustomOption LandlordCooldown;
+        public static CustomOption LandlordCharges;
+        public static CustomOption LandlordRechargeTasksNumber;
+        public static CustomOption LandlordDuration;
+
+        public static CustomOption isDraftMode;
         public static CustomOption draftModeAmountOfChoices;
         public static CustomOption draftModeTimeToChoose;
         public static CustomOption draftModeShowRoles;
         public static CustomOption draftModeHideImpRoles;
         public static CustomOption draftModeHideNeutralKRoles;
-        public static CustomOption draftModeHideNeutralRoles;*/
+        public static CustomOption draftModeHideNeutralRoles;
 
         public static CustomOption anyPlayerCanStopStart;
         public static CustomOption enableEventMode;
@@ -56,9 +62,9 @@ namespace TheSushiRoles
         public static CustomOption camouflagerCooldown;
         public static CustomOption camouflagerDuration;
 
-        public static CustomOption poisonerSpawnRate;
-        public static CustomOption poisonerKillDelay;
-        public static CustomOption poisonerCooldown;
+        public static CustomOption ViperSpawnRate;
+        public static CustomOption ViperKillDelay;
+        public static CustomOption ViperCooldown;
         public static CustomOption BlindCooldown;
         public static CustomOption BlindDuration;
 
@@ -112,12 +118,12 @@ namespace TheSushiRoles
         public static CustomOption WraithCooldown;
         public static CustomOption WraithDuration;
 
-        public static CustomOption ninjaSpawnRate;
-        public static CustomOption ninjaCooldown;
-        public static CustomOption ninjaKnowsTargetLocation;
-        public static CustomOption ninjaTraceTime;
-        public static CustomOption ninjaTraceColorTime;
-        public static CustomOption ninjaInvisibleDuration;
+        public static CustomOption AssassinSpawnRate;
+        public static CustomOption AssassinCooldown;
+        public static CustomOption AssassinKnowsTargetLocation;
+        public static CustomOption AssassinTraceTime;
+        public static CustomOption AssassinTraceColorTime;
+        public static CustomOption AssassinInvisibleDuration;
 
         public static CustomOption mayorSpawnRate;
         public static CustomOption mayorCanSeeVoteColors;
@@ -126,12 +132,12 @@ namespace TheSushiRoles
         public static CustomOption mayorMaxRemoteMeetings;
         public static CustomOption mayorChooseSingleVote;
 
-        public static CustomOption portalmakerSpawnRate;
-        public static CustomOption portalmakerCooldown;
-        public static CustomOption portalmakerUsePortalCooldown;
-        public static CustomOption portalmakerLogOnlyColorType;
-        public static CustomOption portalmakerLogHasTime;
-        public static CustomOption portalmakerCanPortalFromAnywhere;
+        public static CustomOption GatekeeperSpawnRate;
+        public static CustomOption GatekeeperCooldown;
+        public static CustomOption GatekeeperUsePortalCooldown;
+        public static CustomOption GatekeeperLogOnlyColorType;
+        public static CustomOption GatekeeperLogHasTime;
+        public static CustomOption GatekeeperCanPortalFromAnywhere;
 
         public static CustomOption engineerSpawnRate;
         public static CustomOption engineerNumberOfFixes;
@@ -228,8 +234,8 @@ namespace TheSushiRoles
         public static CustomOption tricksterLightsOutCooldown;
         public static CustomOption tricksterLightsOutDuration;
 
-        public static CustomOption cleanerSpawnRate;
-        public static CustomOption cleanerCooldown;
+        public static CustomOption JanitorSpawnRate;
+        public static CustomOption JanitorCooldown;
         
         public static CustomOption warlockSpawnRate;
         public static CustomOption warlockCooldown;
@@ -288,8 +294,8 @@ namespace TheSushiRoles
         public static CustomOption ProsecutorKnowsRole;
         public static CustomOption ProsecutorCanCallEmergency;
 
-        public static CustomOption pursuerCooldown;
-        public static CustomOption pursuerBlanksNumber;
+        public static CustomOption SurvivorCooldown;
+        public static CustomOption SurvivorBlanksNumber;
 
         public static CustomOption UndertakerSpawnRate;
         public static CustomOption UndertakerCooldown;
@@ -344,9 +350,9 @@ namespace TheSushiRoles
 
         public static CustomOption modifierTieBreaker;
 
-        public static CustomOption modifierSunglasses;
-        public static CustomOption modifierSunglassesQuantity;
-        public static CustomOption modifierSunglassesVision;
+        public static CustomOption modifierBlind;
+        public static CustomOption modifierBlindQuantity;
+        public static CustomOption modifierBlindVision;
 
         public static CustomOption AmnesiacSpawnRate;
         
@@ -364,9 +370,9 @@ namespace TheSushiRoles
         public static CustomOption modifierVipQuantity;
         public static CustomOption modifierVipShowColor;
 
-        public static CustomOption modifierInvert;
-        public static CustomOption modifierInvertQuantity;
-        public static CustomOption modifierInvertDuration;
+        public static CustomOption modifierDrunk;
+        public static CustomOption modifierDrunkQuantity;
+        public static CustomOption modifierDrunkDuration;
 
         public static CustomOption modifierChameleon;
         public static CustomOption modifierChameleonQuantity;
@@ -374,7 +380,7 @@ namespace TheSushiRoles
         public static CustomOption modifierChameleonFadeDuration;
         public static CustomOption modifierChameleonMinVisibility;
         
-        public static CustomOption modifierArmored;
+        public static CustomOption modifierLucky;
 
         public static CustomOption maxNumberOfMeetings;
         public static CustomOption blockSkippingInEmergencyMeetings;
@@ -426,7 +432,7 @@ namespace TheSushiRoles
         public static CustomOption dynamicMapEnableSubmerged;
         public static CustomOption dynamicMapSeparateSettings;
 
-        public static CustomOption ShowHidePursuerSettings;
+        public static CustomOption ShowHideSurvivorSettings;
 
         //Guesser Gamemode
         public static CustomOption GuesserCrewNumber;
@@ -477,12 +483,12 @@ namespace TheSushiRoles
             abilitiesCountMin = CustomOption.Create(308, Types.General, ColorString(Color.cyan, "Minimum Abilities"), 0f, 0f, 15f, 1f);
             abilitiesCountMax = CustomOption.Create(309, Types.General, ColorString(Color.cyan, "Maximum Abilities"), 0f, 0f, 15f, 1f);
 
-            /*isDraftMode = CustomOption.Create(600, Types.General, ColorString(Color.yellow, "Enable Role Draft"), false, null, true, null, "Role Draft");
+            isDraftMode = CustomOption.Create(600, Types.General, ColorString(Color.yellow, "Enable Role Draft"), false, null, true, null, "Role Draft");
             draftModeAmountOfChoices = CustomOption.Create(601, Types.General, ColorString(Color.yellow, "Max Amount Of Roles\nTo Choose From"), 5f, 2f, 15f, 1f, isDraftMode, false);
             draftModeTimeToChoose = CustomOption.Create(602, Types.General, ColorString(Color.yellow, "Time For Selection"), 5f, 3f, 20f, 1f, isDraftMode, false, Format: "s");
             draftModeShowRoles = CustomOption.Create(603, Types.General, ColorString(Color.yellow, "Show Picked Roles"), false, isDraftMode, false);
             draftModeHideImpRoles = CustomOption.Create(604, Types.General, ColorString(Color.yellow, "Hide Impostor Roles"), false, draftModeShowRoles, false);
-            draftModeHideNeutralRoles = CustomOption.Create(605, Types.General, ColorString(Color.yellow, "Hide Neutral Roles"), false, draftModeShowRoles, false);*/
+            draftModeHideNeutralRoles = CustomOption.Create(605, Types.General, ColorString(Color.yellow, "Hide Neutral Roles"), false, draftModeShowRoles, false);
 
             morphlingSpawnRate = CustomOption.Create(20, Types.Impostor, ColorString(Morphling.Color, "Morphling"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             morphlingCooldown = CustomOption.Create(21, Types.Impostor, "Morphling Cooldown", 30f, 10f, 60f, 2.5f, morphlingSpawnRate, Format: "s");
@@ -501,11 +507,11 @@ namespace TheSushiRoles
             camouflagerCooldown = CustomOption.Create(31, Types.Impostor, "Camouflager Cooldown", 30f, 10f, 60f, 2.5f, camouflagerSpawnRate, Format: "s");
             camouflagerDuration = CustomOption.Create(32, Types.Impostor, "Camo Duration", 10f, 1f, 20f, 0.5f, camouflagerSpawnRate, Format: "s");
 
-            poisonerSpawnRate = CustomOption.Create(40, Types.Impostor, ColorString(Poisoner.Color, "Poisoner"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            poisonerKillDelay = CustomOption.Create(41, Types.Impostor, "Poisoner Kill Delay", 3f, 1f, 20f, 1f, poisonerSpawnRate, Format: "s");
-            poisonerCooldown = CustomOption.Create(42, Types.Impostor, "Poisoner Cooldown", 30f, 10f, 60f, 2.5f, poisonerSpawnRate, Format: "s");
-            BlindCooldown = CustomOption.Create(530, Types.Impostor, "Blind Cooldown", 30f, 10f, 60f, 2.5f, poisonerSpawnRate, Format: "s");
-            BlindDuration = CustomOption.Create(531, Types.Impostor, "Blind Duration", 10f, 1f, 20f, 0.5f, poisonerSpawnRate, Format: "s");
+            ViperSpawnRate = CustomOption.Create(40, Types.Impostor, ColorString(Viper.Color, "Viper"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            ViperKillDelay = CustomOption.Create(41, Types.Impostor, "Viper Kill Delay", 3f, 1f, 20f, 1f, ViperSpawnRate, Format: "s");
+            ViperCooldown = CustomOption.Create(42, Types.Impostor, "Viper Cooldown", 30f, 10f, 60f, 2.5f, ViperSpawnRate, Format: "s");
+            BlindCooldown = CustomOption.Create(530, Types.Impostor, "Blind Cooldown", 30f, 10f, 60f, 2.5f, ViperSpawnRate, Format: "s");
+            BlindDuration = CustomOption.Create(531, Types.Impostor, "Blind Duration", 10f, 1f, 20f, 0.5f, ViperSpawnRate, Format: "s");
 
             eraserSpawnRate = CustomOption.Create(230, Types.Impostor, ColorString(Eraser.Color, "Eraser"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             eraserCooldown = CustomOption.Create(231, Types.Impostor, "Eraser Cooldown", 30f, 10f, 120f, 5f, eraserSpawnRate, Format: "s");
@@ -520,10 +526,10 @@ namespace TheSushiRoles
             tricksterLightsOutCooldown = CustomOption.Create(252, Types.Impostor, "Trickster Lights Out Cooldown", 30f, 10f, 60f, 5f, tricksterSpawnRate, Format: "s");
             tricksterLightsOutDuration = CustomOption.Create(253, Types.Impostor, "Trickster Lights Out Duration", 15f, 5f, 60f, 2.5f, tricksterSpawnRate, Format: "s");
 
-            cleanerSpawnRate = CustomOption.Create(260, Types.Impostor, ColorString(Cleaner.Color, "Cleaner"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            cleanerCooldown = CustomOption.Create(261, Types.Impostor, "Cleaner Cooldown", 30f, 10f, 60f, 2.5f, cleanerSpawnRate, Format: "s");
+            JanitorSpawnRate = CustomOption.Create(260, Types.Impostor, ColorString(Janitor.Color, "Janitor"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            JanitorCooldown = CustomOption.Create(261, Types.Impostor, "Janitor Cooldown", 30f, 10f, 60f, 2.5f, JanitorSpawnRate, Format: "s");
 
-            warlockSpawnRate = CustomOption.Create(270, Types.Impostor, ColorString(Cleaner.Color, "Warlock"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            warlockSpawnRate = CustomOption.Create(270, Types.Impostor, ColorString(Janitor.Color, "Warlock"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             warlockCooldown = CustomOption.Create(271, Types.Impostor, "Warlock Cooldown", 30f, 10f, 60f, 2.5f, warlockSpawnRate, Format: "s");
             warlockRootTime = CustomOption.Create(272, Types.Impostor, "Warlock Root Time", 5f, 0f, 15f, 1f, warlockSpawnRate, Format: "s");
 
@@ -542,16 +548,16 @@ namespace TheSushiRoles
             witchTriggerBothCooldowns = CustomOption.Create(375, Types.Impostor, "Trigger Both Cooldowns", true, witchSpawnRate);
             witchVoteSavesTargets = CustomOption.Create(376, Types.Impostor, "Voting The Witch Saves All The Targets", true, witchSpawnRate);
 
-            UndertakerSpawnRate = CustomOption.Create(377, Types.Impostor, ColorString(Ninja.Color, "Undertaker"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            UndertakerSpawnRate = CustomOption.Create(377, Types.Impostor, ColorString(Assassin.Color, "Undertaker"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             UndertakerCooldown = CustomOption.Create(378, Types.Impostor, "Undertaker Cooldown", 30f, 10f, 120f, 5f, UndertakerSpawnRate, Format: "s");
             UndertakerDragSpeed = CustomOption.Create(379, Types.Impostor, "Undertaker Drag Speed", 1f, 0.5f, 3f, 0.1f, UndertakerSpawnRate, Format: "x");
 
-            ninjaSpawnRate = CustomOption.Create(380, Types.Impostor, ColorString(Ninja.Color, "Ninja"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            ninjaCooldown = CustomOption.Create(381, Types.Impostor, "Ninja Mark Cooldown", 30f, 10f, 120f, 5f, ninjaSpawnRate, Format: "s");
-            ninjaKnowsTargetLocation = CustomOption.Create(382, Types.Impostor, "Ninja Knows Location Of Target", true, ninjaSpawnRate);
-            ninjaTraceTime = CustomOption.Create(383, Types.Impostor, "Trace Duration", 5f, 1f, 20f, 0.5f, ninjaSpawnRate, Format: "s");
-            ninjaTraceColorTime = CustomOption.Create(384, Types.Impostor, "Time Till Trace Color Has Faded", 2f, 0f, 20f, 0.5f, ninjaSpawnRate, Format: "s");
-            ninjaInvisibleDuration = CustomOption.Create(385, Types.Impostor, "Time The Ninja Is Invisible", 3f, 0f, 20f, 1f, ninjaSpawnRate, Format: "s");
+            AssassinSpawnRate = CustomOption.Create(380, Types.Impostor, ColorString(Assassin.Color, "Assassin"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            AssassinCooldown = CustomOption.Create(381, Types.Impostor, "Assassin Mark Cooldown", 30f, 10f, 120f, 5f, AssassinSpawnRate, Format: "s");
+            AssassinKnowsTargetLocation = CustomOption.Create(382, Types.Impostor, "Assassin Knows Location Of Target", true, AssassinSpawnRate);
+            AssassinTraceTime = CustomOption.Create(383, Types.Impostor, "Trace Duration", 5f, 1f, 20f, 0.5f, AssassinSpawnRate, Format: "s");
+            AssassinTraceColorTime = CustomOption.Create(384, Types.Impostor, "Time Till Trace Color Has Faded", 2f, 0f, 20f, 0.5f, AssassinSpawnRate, Format: "s");
+            AssassinInvisibleDuration = CustomOption.Create(385, Types.Impostor, "Time The Assassin Is Invisible", 3f, 0f, 20f, 1f, AssassinSpawnRate, Format: "s");
 
             GrenadierSpawnRate = CustomOption.Create(386, Types.Impostor, ColorString(Grenadier.Color, "Grenadier"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             GrenadierCooldown = CustomOption.Create(387, Types.Impostor, "Grenadier Cooldown", 30f, 10f, 120f, 5f, GrenadierSpawnRate, Format: "s");
@@ -596,14 +602,14 @@ namespace TheSushiRoles
             lawyerTargetCanBeJester = CustomOption.Create(351, Types.Neutral, "Lawyer Target Can Be The Jester", false, lawyerSpawnRate);
 
             ProsecutorSpawnRate = CustomOption.Create(3501, Types.Neutral, ColorString(Prosecutor.Color, "Prosecutor"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            ProsecutorBecomeEnum = CustomOption.Create(3545, Types.Neutral, "Prosecutor Role On Target Death", new string [] {"Jester", "Amnesiac", "Pursuer" }, ProsecutorSpawnRate);
+            ProsecutorBecomeEnum = CustomOption.Create(3545, Types.Neutral, "Prosecutor Role On Target Death", new string [] {"Jester", "Amnesiac", "Survivor" }, ProsecutorSpawnRate);
             ProsecutorVision = CustomOption.Create(3541, Types.Neutral, "Vision", 1f, 0.25f, 3f, 0.25f, ProsecutorSpawnRate);
             ProsecutorKnowsRole = CustomOption.Create(3551, Types.Neutral, "Prosecutor Knows Target Role", true, ProsecutorSpawnRate);
             ProsecutorCanCallEmergency = CustomOption.Create(524, Types.Neutral, "Prosecutor Can Call Emergency Meeting", true, ProsecutorSpawnRate);
 
-            ShowHidePursuerSettings = CustomOption.Create(3561, Types.Neutral, "Show/Hide Pursuer Options", true, null, true);
-            pursuerCooldown = CustomOption.Create(356, Types.Neutral, "Pursuer Blank Cooldown", 30f, 5f, 60f, 2.5f, ShowHidePursuerSettings, Format: "s");
-            pursuerBlanksNumber = CustomOption.Create(357, Types.Neutral, "Pursuer Number Of Blanks", 5f, 1f, 20f, 1f, ShowHidePursuerSettings);
+            ShowHideSurvivorSettings = CustomOption.Create(3561, Types.Neutral, "Show/Hide Survivor Options", true, null, true);
+            SurvivorCooldown = CustomOption.Create(356, Types.Neutral, "Survivor Blank Cooldown", 30f, 5f, 60f, 2.5f, ShowHideSurvivorSettings, Format: "s");
+            SurvivorBlanksNumber = CustomOption.Create(357, Types.Neutral, "Survivor Number Of Blanks", 5f, 1f, 20f, 1f, ShowHideSurvivorSettings);
 
             GlitchSpawnRate = CustomOption.Create(103, Types.Neutral, ColorString(Glitch.Color, "Glitch"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             GlitchCanUseVents = CustomOption.Create(107, Types.Neutral, "Glitch Can Use Vents", false, GlitchSpawnRate);
@@ -717,6 +723,11 @@ namespace TheSushiRoles
             swapperSwapsNumber = CustomOption.Create(153, Types.Crewmate, "Initial Swap Charges", 1f, 0f, 5f, 1f, swapperSpawnRate);
             swapperRechargeTasksNumber = CustomOption.Create(154, Types.Crewmate, "Number Of Tasks The Swapper Needs For Recharging", 2f, 1f, 10f, 1f, swapperSpawnRate);
 
+            LandlordSpawnRate = CustomOption.Create(537, Types.Crewmate, ColorString(Landlord.Color, "LandLord"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            LandlordCooldown = CustomOption.Create(538, Types.Crewmate, "Teleport Cooldown", 30f, 10f, 120f, 2.5f, LandlordSpawnRate, Format: "s");
+            LandlordCharges = CustomOption.Create(539, Types.Crewmate, "Initial Teleport Charges", 1f, 0f, 5f, 1f, LandlordSpawnRate);
+            LandlordRechargeTasksNumber = CustomOption.Create(540, Types.Crewmate, "Number Of Tasks The Landlord Needs For Recharging", 2f, 1f, 10f, 1f, LandlordSpawnRate);
+
 
             MysticSpawnRate = CustomOption.Create(160, Types.Crewmate, ColorString(Mystic.Color, "Mystic"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             MysticMode = CustomOption.Create(161, Types.Crewmate, "Mystic Mode", new string[]{ "Show Death Flash + Souls", "Show Death Flash", "Show Souls"}, MysticSpawnRate);
@@ -748,12 +759,12 @@ namespace TheSushiRoles
             spyCanEnterVents = CustomOption.Create(243, Types.Crewmate, "Spy Can Enter Vents", false, spySpawnRate);
             spyHasImpostorVision = CustomOption.Create(244, Types.Crewmate, "Spy Has Impostor Vision", false, spySpawnRate);
 
-            portalmakerSpawnRate = CustomOption.Create(390, Types.Crewmate, ColorString(Portalmaker.Color, "Portalmaker"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            portalmakerCooldown = CustomOption.Create(391, Types.Crewmate, "Portalmaker Cooldown", 30f, 10f, 60f, 2.5f, portalmakerSpawnRate, Format: "s");
-            portalmakerUsePortalCooldown = CustomOption.Create(392, Types.Crewmate, "Use Portal Cooldown", 30f, 10f, 60f, 2.5f, portalmakerSpawnRate, Format: "s");
-            portalmakerLogOnlyColorType = CustomOption.Create(393, Types.Crewmate, "Portalmaker Log Only Shows Color Type", true, portalmakerSpawnRate);
-            portalmakerLogHasTime = CustomOption.Create(394, Types.Crewmate, "Log Shows Time", true, portalmakerSpawnRate);
-            portalmakerCanPortalFromAnywhere = CustomOption.Create(395, Types.Crewmate, "Can Port To Portal From Everywhere", true, portalmakerSpawnRate);
+            GatekeeperSpawnRate = CustomOption.Create(390, Types.Crewmate, ColorString(Gatekeeper.Color, "Gatekeeper"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            GatekeeperCooldown = CustomOption.Create(391, Types.Crewmate, "Gatekeeper Cooldown", 30f, 10f, 60f, 2.5f, GatekeeperSpawnRate, Format: "s");
+            GatekeeperUsePortalCooldown = CustomOption.Create(392, Types.Crewmate, "Use Portal Cooldown", 30f, 10f, 60f, 2.5f, GatekeeperSpawnRate, Format: "s");
+            GatekeeperLogOnlyColorType = CustomOption.Create(393, Types.Crewmate, "Gatekeeper Log Only Shows Color Type", true, GatekeeperSpawnRate);
+            GatekeeperLogHasTime = CustomOption.Create(394, Types.Crewmate, "Log Shows Time", true, GatekeeperSpawnRate);
+            GatekeeperCanPortalFromAnywhere = CustomOption.Create(395, Types.Crewmate, "Can Port To Portal From Everywhere", true, GatekeeperSpawnRate);
 
             VigilanteSpawnRate = CustomOption.Create(280, Types.Crewmate, ColorString(Vigilante.Color, "Vigilante"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             VigilanteCooldown = CustomOption.Create(281, Types.Crewmate, "Vigilante Cooldown", 30f, 10f, 60f, 2.5f, VigilanteSpawnRate, Format: "s");
@@ -807,9 +818,9 @@ namespace TheSushiRoles
             modifierLoverImpLoverRate = CustomOption.Create(1041, Types.Modifier, "Chance That One Lover Is A Killer", 0f, 0f, 100f, 10f, modifierLover, Format: "%");
             modifierLoverBothDie = CustomOption.Create(1042, Types.Modifier, "Lovers Die Together", true, modifierLover);
 
-            modifierSunglasses = CustomOption.Create(1050, Types.Modifier, ColorString(Color.yellow, "Sunglasses"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            modifierSunglassesQuantity = CustomOption.Create(1051, Types.Modifier, ColorString(Color.yellow, "Sunglasses Quantity"), rates, modifierSunglasses);
-            modifierSunglassesVision = CustomOption.Create(1052, Types.Modifier, "Vision With Sunglasses", new string[] { "-10%", "-20%", "-30%", "-40%", "-50%" }, modifierSunglasses);
+            modifierBlind = CustomOption.Create(1050, Types.Modifier, ColorString(Color.yellow, "Blind"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            modifierBlindQuantity = CustomOption.Create(1051, Types.Modifier, ColorString(Color.yellow, "Blind Quantity"), rates, modifierBlind);
+            modifierBlindVision = CustomOption.Create(1052, Types.Modifier, "Vision With Blind", new string[] { "-10%", "-20%", "-30%", "-40%", "-50%" }, modifierBlind);
 
             modifierMini = CustomOption.Create(1061, Types.Modifier, ColorString(Color.yellow, "Mini"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             modifierMiniGrowingUpDuration = CustomOption.Create(1062, Types.Modifier, "Mini Growing Up Duration", 400f, 100f, 1500f, 100f, modifierMini);
@@ -827,9 +838,9 @@ namespace TheSushiRoles
             ModifierDisperserCharges = CustomOption.Create(1023, Types.Modifier, "Initial Disperser Charges", 1f, 0f, 5f, 1f, ModifierDisperser);
             ModifierDisperserKillCharges = CustomOption.Create(1024, Types.Modifier, "Disperse Charges per Kill", 1f, 0f, 5f, 1f, ModifierDisperser);
 
-            modifierInvert = CustomOption.Create(1080, Types.Modifier, ColorString(Color.yellow, "Invert"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            modifierInvertQuantity = CustomOption.Create(1081, Types.Modifier, ColorString(Color.yellow, "Modifier Quantity"), rates, modifierInvert);
-            modifierInvertDuration = CustomOption.Create(1082, Types.Modifier, "Number Of Meetings Inverted", 3f, 1f, 15f, 1f, modifierInvert);
+            modifierDrunk = CustomOption.Create(1080, Types.Modifier, ColorString(Color.yellow, "Drunk"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            modifierDrunkQuantity = CustomOption.Create(1081, Types.Modifier, ColorString(Color.yellow, "Modifier Quantity"), rates, modifierDrunk);
+            modifierDrunkDuration = CustomOption.Create(1082, Types.Modifier, "Number Of Meetings Being Drunk", 3f, 1f, 15f, 1f, modifierDrunk);
 
             modifierChameleon = CustomOption.Create(1090, Types.Modifier, ColorString(Color.yellow, "Chameleon"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             modifierChameleonQuantity = CustomOption.Create(1091, Types.Modifier, ColorString(Color.yellow, "Chameleon Quantity"), rates, modifierChameleon);
@@ -837,7 +848,7 @@ namespace TheSushiRoles
             modifierChameleonFadeDuration = CustomOption.Create(1093, Types.Modifier, "Fade Duration", 1f, 0.25f, 10f, 0.25f, modifierChameleon, Format: "s");
             modifierChameleonMinVisibility = CustomOption.Create(1094, Types.Modifier, "Minimum Visibility", new string[] { "0%", "10%", "20%", "30%", "40%", "50%" }, modifierChameleon);
 
-            modifierArmored = CustomOption.Create(1101, Types.Modifier, ColorString(Color.yellow, "Armored"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            modifierLucky = CustomOption.Create(1101, Types.Modifier, ColorString(Color.yellow, "Lucky"), 0f, 0f, 100f, 10f, null, true, Format: "%");
 
             // Guesser Gamemode (2000 - 2999)
             GuesserCrewNumber = CustomOption.Create(2001, Types.Ability, ColorString(Palette.CrewmateBlue, "Number of Crew Guesser"), 15f, 0f, 15f, 1f, null, true, Heading: "Guesser Settings");
@@ -888,10 +899,10 @@ namespace TheSushiRoles
             dynamicMapEnableSubmerged = CustomOption.Create(505, Types.General, "Submerged", 0f, 0f, 100f, 10f, dynamicMap, false, Format: "%");
             dynamicMapSeparateSettings = CustomOption.Create(509, Types.General, "Use Random Map Setting Presets", false, dynamicMap, false);
 
-            blockedRolePairings.Add((byte)RoleId.Poisoner, new [] { (byte)RoleId.Warlock});
-            blockedRolePairings.Add((byte)RoleId.Warlock, new [] { (byte)RoleId.Poisoner});
-            blockedRolePairings.Add((byte)RoleId.Vulture, new [] { (byte)RoleId.Cleaner});
-            blockedRolePairings.Add((byte)RoleId.Cleaner, new [] { (byte)RoleId.Vulture});
+            blockedRolePairings.Add((byte)RoleId.Viper, new [] { (byte)RoleId.Warlock});
+            blockedRolePairings.Add((byte)RoleId.Warlock, new [] { (byte)RoleId.Viper});
+            blockedRolePairings.Add((byte)RoleId.Vulture, new [] { (byte)RoleId.Janitor});
+            blockedRolePairings.Add((byte)RoleId.Janitor, new [] { (byte)RoleId.Vulture});
             blockedRolePairings.Add((byte)RoleId.Amnesiac, new [] { (byte)RoleId.Prosecutor});
             blockedRolePairings.Add((byte)RoleId.Prosecutor, new [] { (byte)RoleId.Amnesiac});
             blockedRolePairings.Add((byte)RoleId.Jester, new [] { (byte)RoleId.Prosecutor});

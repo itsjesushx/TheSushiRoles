@@ -7,6 +7,8 @@ using AmongUs.Data;
 using Assets.CoreScripts;
 using Reactor.Networking.Extensions;
 using Reactor.Utilities.Extensions;
+using System.Collections;
+using Reactor.Utilities;
 
 namespace TheSushiRoles
 {
@@ -100,9 +102,9 @@ namespace TheSushiRoles
                         Mayor.Player = player;
                         GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.mayor);
                         break;
-                    case RoleId.Portalmaker:
-                        Portalmaker.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.portalmaker);
+                    case RoleId.Gatekeeper:
+                        Gatekeeper.Player = player;
+                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.gatekeeper);
                         break;
                     case RoleId.Engineer:
                         Engineer.Player = player;
@@ -216,9 +218,9 @@ namespace TheSushiRoles
                         Tracker.Player = player;
                         GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.tracker);
                         break;
-                    case RoleId.Poisoner:
-                        Poisoner.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.poisoner);
+                    case RoleId.Viper:
+                        Viper.Player = player;
+                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.viper);
                         break;
                     case RoleId.Jackal:
                         Jackal.Player = player;
@@ -240,9 +242,9 @@ namespace TheSushiRoles
                         Trickster.Player = player;
                         GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.trickster);
                         break;
-                    case RoleId.Cleaner:
-                        Cleaner.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.cleaner);
+                    case RoleId.Janitor:
+                        Janitor.Player = player;
+                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.janitor);
                         break;
                     case RoleId.Warlock:
                         Warlock.Player = player;
@@ -273,8 +275,12 @@ namespace TheSushiRoles
                         GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.vulture);
                         break;
                     case RoleId.Medium:
-                        Medium.medium = player;
+                        Medium.Player = player;
                         GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.medium);
+                        break;
+                    case RoleId.Landlord:
+                        Landlord.Player = player;
+                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.landlord);
                         break;
                     case RoleId.Trapper:
                         Trapper.Player = player;
@@ -288,17 +294,17 @@ namespace TheSushiRoles
                         Prosecutor.Player = player;
                         GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.prosecutor);
                         break;
-                    case RoleId.Pursuer:
-                        Pursuer.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.pursuer);
+                    case RoleId.Survivor:
+                        Survivor.Player = player;
+                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.survivor);
                         break;
                     case RoleId.Witch:
                         Witch.Player = player;
                         GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.witch);
                         break;
-                    case RoleId.Ninja:
-                        Ninja.Player = player;
-                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.ninja);
+                    case RoleId.Assassin:
+                        Assassin.Player = player;
+                        GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.assassin);
                         break;
                     case RoleId.Wraith:
                         Wraith.Player = player;
@@ -355,8 +361,8 @@ namespace TheSushiRoles
                 case ModifierId.Tiebreaker:
                     Tiebreaker.Player = player;
                     break;
-                case ModifierId.Sunglasses:
-                    Sunglasses.Players.Add(player);
+                case ModifierId.Blind:
+                    Blind.Players.Add(player);
                     break;
                 case ModifierId.Mini:
                     Mini.Player = player;
@@ -370,29 +376,281 @@ namespace TheSushiRoles
                 case ModifierId.Vip:
                     Vip.Players.Add(player);
                     break;
-                case ModifierId.Invert:
-                    Invert.Players.Add(player);
+                case ModifierId.Drunk:
+                    Drunk.Players.Add(player);
                     break;
                 case ModifierId.Chameleon:
                     Chameleon.Players.Add(player);
                     break;
-                case ModifierId.Armored:
-                    Armored.Player = player;
+                case ModifierId.Lucky:
+                    Lucky.Player = player;
                     break;
             }
         }
 
         public static void VersionHandshake(int major, int minor, int build, int revision, Guid guid, int clientId) 
         {
-            System.Version ver;
+            Version ver;
             if (revision < 0) 
-                ver = new System.Version(major, minor, build);
+                ver = new Version(major, minor, build);
             else 
-                ver = new System.Version(major, minor, build, revision);
+                ver = new Version(major, minor, build, revision);
             GameStartManagerPatch.playerVersions[clientId] = new GameStartManagerPatch.PlayerVersion(ver, guid);
         }
+        public static void LandlordHandleTeleport(HudManager __instance)
+        {
+            Landlord.Charges--;
 
-        public static void UseUncheckedVent(int ventId, byte playerId, byte isEnter) 
+            if (Landlord.SecondTarget.CheckFortifiedPlayer())
+            {
+                Utils.ShowFlash(Landlord.Color);
+                return;
+            }
+            if (!Landlord.UnteleportablePlayers.ContainsKey(Landlord.FirstTarget.PlayerId) && !Landlord.UnteleportablePlayers.ContainsKey(Landlord.SecondTarget.PlayerId))
+            {
+                if (Landlord.FirstTarget.CheckVeteranPestilenceKill())
+                {
+                    Coroutines.Start(LandlordTransportPlayers(Landlord.FirstTarget.PlayerId, Landlord.Player.PlayerId, true));
+
+                    Utils.StartRPC(CustomRPC.LandlordTeleport, Landlord.FirstTarget.PlayerId, Landlord.Player.PlayerId, true);
+
+                    HudManagerStartPatch.LandlordButton.Timer = 0f;
+                    return;
+                }
+
+                Coroutines.Start(LandlordTransportPlayers(Landlord.FirstTarget.PlayerId, Landlord.SecondTarget.PlayerId, false));
+
+                Utils.StartRPC(CustomRPC.LandlordTeleport, Landlord.FirstTarget.PlayerId, Landlord.SecondTarget.PlayerId, false);
+
+                HudManagerStartPatch.LandlordButton.Timer = 0f;
+            }
+            else
+            {
+                __instance.StartCoroutine(Effects.SwayX(HudManagerStartPatch.LandlordButton.actionButton.transform));
+            }
+        }
+        public static IEnumerator LandlordOpenSecondMenu()
+        {
+            try
+            {
+                Patches.ShapeShifterMenu.Singleton.Menu.ForceClose();
+            }
+            catch
+            {
+
+            }
+            yield return (object)new WaitForSeconds(0.05f);
+            Landlord.SwappingMenus = false;
+            if (MeetingHud.Instance || PlayerControl.LocalPlayer != Landlord.Player) yield break;
+            List<byte> transportTargets = new List<byte>();
+            foreach (var player in PlayerControl.AllPlayerControls)
+            {
+                if (!player.Data.Disconnected && player != Landlord.FirstTarget)
+                {
+                    if (!player.Data.IsDead) transportTargets.Add(player.PlayerId);
+                    else
+                    {
+                        foreach (var body in UnityEngine.Object.FindObjectsOfType<DeadBody>())
+                        {
+                            if (body.ParentId == player.PlayerId) transportTargets.Add(player.PlayerId);
+                        }
+                    }
+                }
+            }
+            byte[] transporttargetIDs = transportTargets.ToArray();
+            var pk = new ShapeShifterMenu(HudManagerStartPatch.LandlordButton, (x) =>
+            {
+                Landlord.SecondTarget = x;
+                LandlordHandleTeleport(HudManager.Instance);
+            }, (y) =>
+            {
+                return transporttargetIDs.Contains(y.PlayerId);
+            });
+            Coroutines.Start(pk.Open(0f, true));
+        }        
+        public static IEnumerator LandlordTransportPlayers(byte player1, byte player2, bool die)
+        {
+            var Target1 = Utils.PlayerById(player1);
+            var Target2 = Utils.PlayerById(player2);
+            var deadBodies = UnityEngine.Object.FindObjectsOfType<DeadBody>();
+            DeadBody Player1Body = null;
+            DeadBody Player2Body = null;
+            if (Target1.Data.IsDead)
+            {
+                foreach (var body in deadBodies) if (body.ParentId == Target1.PlayerId) Player1Body = body;
+                if (Player1Body == null) yield break;
+            }
+            if (Target2.Data.IsDead)
+            {
+                foreach (var body in deadBodies) if (body.ParentId == Target2.PlayerId) Player2Body = body;
+                if (Player2Body == null) yield break;
+            }
+
+            if (Target1.inVent && PlayerControl.LocalPlayer.PlayerId == Target1.PlayerId)
+            {
+                while (SubmergedCompatibility.GetInTransition())
+                {
+                    yield return null;
+                }
+                Target1.MyPhysics.ExitAllVents();
+            }
+            if (Target2.inVent && PlayerControl.LocalPlayer.PlayerId == Target2.PlayerId)
+            {
+                while (SubmergedCompatibility.GetInTransition())
+                {
+                    yield return null;
+                }
+                Target2.MyPhysics.ExitAllVents();
+            }
+
+            if (Player1Body == null && Player2Body == null)
+            {
+                Target1.MyPhysics.ResetMoveState();
+                Target2.MyPhysics.ResetMoveState();
+                var Target1Position = Target1.GetTruePosition();
+                Target1Position = new Vector2(Target1Position.x, Target1Position.y + 0.3636f);
+                var Target2Position = Target2.GetTruePosition();
+                Target2Position = new Vector2(Target2Position.x, Target2Position.y + 0.3636f);
+                if (Target1.transform.localScale == new Vector3(0.4f, 0.4f, 1.0f))
+                {
+                    Target1Position = new Vector2(Target1Position.x, Target1Position.y + 0.2233912f * 0.75f);
+                    Target2Position = new Vector2(Target2Position.x, Target2Position.y - 0.2233912f * 0.75f);
+                }
+                if (Target2.transform.localScale == new Vector3(0.4f, 0.4f, 1.0f))
+                {
+                    Target1Position = new Vector2(Target1Position.x, Target1Position.y - 0.2233912f * 0.75f);
+                    Target2Position = new Vector2(Target2Position.x, Target2Position.y + 0.2233912f * 0.75f);
+                }
+
+                foreach (var lazy in Lazy.Players)
+                {
+
+                    if (Target1 != lazy)
+                    {
+                        Target1.transform.position = Target2Position;
+                        Target1.NetTransform.SnapTo(Target2Position);
+                    }
+                    if (die) Utils.CheckMuderAttempt(Target1, Target2, true);
+                    else
+                    {
+                        if (Target2 != lazy)
+                        {
+                            Target2.transform.position = Target1Position;
+                            Target2.NetTransform.SnapTo(Target1Position);
+                        }
+                    }
+                }
+
+                if (SubmergedCompatibility.IsSubmerged)
+                {
+                    if (PlayerControl.LocalPlayer.PlayerId == Target1.PlayerId)
+                    {
+                        SubmergedCompatibility.ChangeFloor(Target1.GetTruePosition().y > -7);
+                        SubmergedCompatibility.CheckOutOfBoundsElevator(PlayerControl.LocalPlayer);
+                    }
+                    if (PlayerControl.LocalPlayer.PlayerId == Target2.PlayerId)
+                    {
+                        SubmergedCompatibility.ChangeFloor(Target2.GetTruePosition().y > -7);
+                        SubmergedCompatibility.CheckOutOfBoundsElevator(PlayerControl.LocalPlayer);
+                    }
+                }
+
+            }
+            else if (Player1Body != null && Player2Body == null)
+            {
+                DropBody(Player1Body.ParentId);
+                HitmanDropBody(Player1Body.ParentId);
+                Target2.MyPhysics.ResetMoveState();
+                var Target1Position = Player1Body.TruePosition;
+                Target1Position = new Vector2(Target1Position.x, Target1Position.y + 0.3636f);
+                var Target2Position = Target2.GetTruePosition();
+                Target2Position = new Vector2(Target2Position.x, Target2Position.y + 0.3636f);
+                if (Target2.transform.localScale == new Vector3(0.4f, 0.4f, 1.0f))
+                {
+                    Target1Position = new Vector2(Target1Position.x, Target1Position.y - 0.2233912f * 0.75f);
+                    Target2Position = new Vector2(Target2Position.x, Target2Position.y + 0.2233912f * 0.75f);
+                }
+                foreach (var lazy in Lazy.Players)
+                {
+                    if (Target1 != lazy) Player1Body.transform.position = Target2Position;
+                    if (Target2 != lazy)
+                    {
+                        Target2.transform.position = Target1Position;
+                        Target2.NetTransform.SnapTo(Target1Position);
+                    }
+                }
+
+                if (SubmergedCompatibility.IsSubmerged)
+                {
+                    if (PlayerControl.LocalPlayer.PlayerId == Target2.PlayerId)
+                    {
+                        SubmergedCompatibility.ChangeFloor(Target2.GetTruePosition().y > -7);
+                        SubmergedCompatibility.CheckOutOfBoundsElevator(PlayerControl.LocalPlayer);
+                    }
+                }
+            }
+            else if (Player1Body == null && Player2Body != null)
+            {
+                DropBody(Player2Body.ParentId);
+                HitmanDropBody(Player2Body.ParentId);
+                Target1.MyPhysics.ResetMoveState();
+                var Target1Position = Target1.GetTruePosition();
+                Target1Position = new Vector2(Target1Position.x, Target1Position.y + 0.3636f);
+                var Target2Position = Player2Body.TruePosition;
+                Target2Position = new Vector2(Target2Position.x, Target2Position.y + 0.3636f);
+                if (Target1.transform.localScale == new Vector3(0.4f, 0.4f, 1.0f))
+                {
+                    Target1Position = new Vector2(Target1Position.x, Target1Position.y + 0.2233912f * 0.75f);
+                    Target2Position = new Vector2(Target2Position.x, Target2Position.y - 0.2233912f * 0.75f);
+                }
+                foreach (var lazy in Lazy.Players)
+                {
+                    if (Target2 != lazy) Player2Body.transform.position = Target1Position;
+                    if (Target1 != lazy)
+                    {
+                        Target1.transform.position = Target2Position;
+                        Target1.NetTransform.SnapTo(Target2Position);
+                    }
+                }
+
+                if (SubmergedCompatibility.IsSubmerged)
+                {
+                    if (PlayerControl.LocalPlayer.PlayerId == Target1.PlayerId)
+                    {
+                        SubmergedCompatibility.ChangeFloor(Target1.GetTruePosition().y > -7);
+                        SubmergedCompatibility.CheckOutOfBoundsElevator(PlayerControl.LocalPlayer);
+                    }
+                }
+            }
+            else if (Player1Body != null && Player2Body != null)
+            {
+                DropBody(Player2Body.ParentId);
+                HitmanDropBody(Player2Body.ParentId);
+                var TempPosition = Player1Body.TruePosition;
+
+                foreach (var lazy in Lazy.Players)
+                {
+                    if (Target1 != lazy) Player1Body.transform.position = Player2Body.TruePosition;
+                    if (Target2 != lazy) Player2Body.transform.position = TempPosition;
+                }
+            }
+
+            if (PlayerControl.LocalPlayer.PlayerId == Target1.PlayerId ||
+                PlayerControl.LocalPlayer.PlayerId == Target2.PlayerId)
+            {
+                Utils.ShowFlash(Landlord.Color);
+                if (Minigame.Instance) Minigame.Instance.Close();
+            }
+
+            Target1.moveable = true;
+            Target2.moveable = true;
+            Target1.Collider.enabled = true;
+            Target2.Collider.enabled = true;
+            Target1.NetTransform.enabled = true;
+            Target2.NetTransform.enabled = true;
+        }
+
+        public static void UseUncheckedVent(int ventId, byte playerId, byte isEnter)
         {
             PlayerControl player = Utils.PlayerById(playerId);
             if (player == null) return;
@@ -515,7 +773,7 @@ namespace TheSushiRoles
             if (PlayerControl.LocalPlayer == Veteran.Player)
             {
                 PlayerControl player = Utils.PlayerById(targetId);
-                Utils.CheckMurderAttemptAndKill(Veteran.Player, player);
+                Utils.CheckMuderAttempt(Veteran.Player, player);
             }
         }
         public static void PestilenceKill(byte targetId)
@@ -523,7 +781,7 @@ namespace TheSushiRoles
             if (PlayerControl.LocalPlayer == Pestilence.Player)
             {
                 PlayerControl player = Utils.PlayerById(targetId);
-                Utils.CheckMurderAttemptAndKill(Pestilence.Player, player);
+                Utils.CheckMuderAttempt(Pestilence.Player, player);
             }
         }
 
@@ -544,7 +802,7 @@ namespace TheSushiRoles
 
             foreach (var player in nearbyPlayers)
             {
-                if (Werewolf.Player == player || player.Data.IsDead || player == Armored.Player && !Armored.isBrokenArmor || player == Medic.Shielded || player == MapOptions.FirstPlayerKilled)
+                if (Werewolf.Player == player || player.Data.IsDead || player == Lucky.Player && !Lucky.isBrokenArmor || player == Medic.Shielded || player == MapOptions.FirstPlayerKilled)
                     continue;
                     
                 Utils.CheckMurderAttemptAndKill(Werewolf.Player, player, showAnimation: false);
@@ -837,20 +1095,20 @@ namespace TheSushiRoles
             }
         }
 
-        public static void PoisonerSetPoisoned(byte targetId, byte performReset) 
+        public static void ViperSetPoisoned(byte targetId, byte performReset) 
         {
             if (performReset != 0) 
             {
-                Poisoner.poisoned = null;
+                Viper.poisoned = null;
                 return;
             }
 
-            if (Poisoner.Player == null) return;
+            if (Viper.Player == null) return;
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) 
             {
                 if (player.PlayerId == targetId && !player.Data.IsDead) 
                 {
-                        Poisoner.poisoned = player;
+                        Viper.poisoned = player;
                 }
             }
         }
@@ -898,7 +1156,7 @@ namespace TheSushiRoles
 
             // Crewmate roles
             if (player == Mayor.Player) Mayor.ClearAndReload();
-            if (player == Portalmaker.Player) Portalmaker.ClearAndReload();
+            if (player == Gatekeeper.Player) Gatekeeper.ClearAndReload();
             if (player == Engineer.Player) Engineer.ClearAndReload();
             if (player == Sheriff.Player) Sheriff.ClearAndReload();
             if (player == Oracle.Player) Oracle.ClearAndReload();
@@ -914,22 +1172,22 @@ namespace TheSushiRoles
             if (player == Spy.Player) Spy.ClearAndReload();
             if (player == Crusader.Player) Crusader.ClearAndReload();
             if (player == Vigilante.Player) Vigilante.ClearAndReload();
-            if (player == Medium.medium) Medium.ClearAndReload();
+            if (player == Medium.Player) Medium.ClearAndReload();
             if (player == Trapper.Player) Trapper.ClearAndReload();
 
             // Impostor roles
             if (player == Morphling.Player) Morphling.ClearAndReload();
             if (player == Camouflager.Player) Camouflager.ClearAndReload();
-            if (player == Poisoner.Player) Poisoner.ClearAndReload();
+            if (player == Viper.Player) Viper.ClearAndReload();
             if (player == Eraser.Player) Eraser.ClearAndReload();
             if (player == Trickster.Player) Trickster.ClearAndReload();
             if (player == Undertaker.Player) Undertaker.ClearAndReload();
-            if (player == Cleaner.Player) Cleaner.ClearAndReload();
+            if (player == Janitor.Player) Janitor.ClearAndReload();
             if (player == Blackmailer.Player) Blackmailer.ClearAndReload();
             if (player == Warlock.Player) Warlock.ClearAndReload();
             if (player == Witch.Player) Witch.ClearAndReload();
             if (player == Miner.Player) Miner.ClearAndReload();
-            if (player == Ninja.Player) Ninja.ClearAndReload();
+            if (player == Assassin.Player) Assassin.ClearAndReload();
             if (player == BountyHunter.Player) BountyHunter.ClearAndReload();
             if (player == Wraith.Player) Wraith.ClearAndReload();
             if (player == Grenadier.Player) Grenadier.ClearAndReload();
@@ -957,7 +1215,7 @@ namespace TheSushiRoles
             if (player == Arsonist.Player) Arsonist.ClearAndReload();
             if (player == Amnesiac.Player) Amnesiac.ClearAndReload();
             if (player == Romantic.Player) Romantic.ClearAndReload();
-            if (player == Pursuer.Player) Pursuer.ClearAndReload();
+            if (player == Survivor.Player) Survivor.ClearAndReload();
         }
 
         public static void SetFutureErased(byte playerId) 
@@ -994,14 +1252,14 @@ namespace TheSushiRoles
             BlackmailMeetingUpdate.shookAlready = false;
         }
 
-        public static void PlaceNinjaTrace(byte[] buff) 
+        public static void PlaceAssassinTrace(byte[] buff) 
         {
             Vector3 position = Vector3.zero;
             position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
             position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
-            new NinjaTrace(position, Ninja.traceTime);
-            if (PlayerControl.LocalPlayer != Ninja.Player)
-                Ninja.ninjaMarked = null;
+            new AssassinTrace(position, Assassin.traceTime);
+            if (PlayerControl.LocalPlayer != Assassin.Player)
+                Assassin.AssassinMarked = null;
         }
 
         public static void SetVanish(byte playerId, byte flag)
@@ -1041,7 +1299,7 @@ namespace TheSushiRoles
                 target.cosmetics.colorBlindText.color = target.cosmetics.colorBlindText.color.SetAlpha(1f);
 
                 if (Camouflager.CamouflageTimer <= 0 && !Utils.MushroomSabotageActive()) target.SetDefaultLook();
-                Ninja.isInvisble = false;
+                Assassin.isInvisble = false;
                 return;
             }
 
@@ -1052,8 +1310,8 @@ namespace TheSushiRoles
             target.cosmetics.currentBodySprite.BodySprite.color = color;
             target.cosmetics.colorBlindText.gameObject.SetActive(false);
             target.cosmetics.colorBlindText.color = target.cosmetics.colorBlindText.color.SetAlpha(canSee ? 0.1f : 0f);
-            Ninja.invisibleTimer = Ninja.invisibleDuration;
-            Ninja.isInvisble = true;
+            Assassin.invisibleTimer = Assassin.invisibleDuration;
+            Assassin.isInvisble = true;
         }
 
         public static void PlacePortal(byte[] buff) 
@@ -1189,9 +1447,9 @@ namespace TheSushiRoles
             PlayerControl client = Lawyer.target;
             Lawyer.ClearAndReload(false);
 
-            Pursuer.Player = player;
+            Survivor.Player = player;
             var newRole = RoleInfo.GetRoleInfoForPlayer(player).FirstOrDefault();
-            if (newRole != null && newRole != RoleInfo.pursuer) GameHistory.AddToRoleHistory(player.PlayerId, newRole);
+            if (newRole != null && newRole != RoleInfo.survivor) GameHistory.AddToRoleHistory(player.PlayerId, newRole);
 
             if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId && client != null) 
             {
@@ -1224,8 +1482,8 @@ namespace TheSushiRoles
             }
             else
             {
-                Pursuer.Player = player;
-                if (newRole != null && newRole != RoleInfo.pursuer) GameHistory.AddToRoleHistory(player.PlayerId, newRole);
+                Survivor.Player = player;
+                if (newRole != null && newRole != RoleInfo.survivor) GameHistory.AddToRoleHistory(player.PlayerId, newRole);
             }
 
             if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId && client != null) 
@@ -1419,8 +1677,8 @@ namespace TheSushiRoles
         {
             PlayerControl target = Utils.PlayerById(playerId);
             if (target == null) return;
-            Pursuer.blankedList.RemoveAll(x => x.PlayerId == playerId);
-            if (value > 0) Pursuer.blankedList.Add(target);            
+            Survivor.blankedList.RemoveAll(x => x.PlayerId == playerId);
+            if (value > 0) Survivor.blankedList.Add(target);            
         }
         public static void SetFirstKill(byte playerId) 
         {
@@ -1488,9 +1746,9 @@ namespace TheSushiRoles
                     Amnesiac.Player = target;
                     break;
 
-                case RoleId.Portalmaker:
-                    Portalmaker.ClearAndReload();
-                    Portalmaker.Player = AmnesiacPlayer;
+                case RoleId.Gatekeeper:
+                    Gatekeeper.ClearAndReload();
+                    Gatekeeper.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
@@ -1619,10 +1877,10 @@ namespace TheSushiRoles
                     Amnesiac.Player = target;
                     break;
 
-                case RoleId.Poisoner:
+                case RoleId.Viper:
                     Utils.BecomeImpostor(Amnesiac.Player);
-                    Poisoner.ClearAndReload();
-                    Poisoner.Player = AmnesiacPlayer;
+                    Viper.ClearAndReload();
+                    Viper.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
@@ -1715,10 +1973,10 @@ namespace TheSushiRoles
                     Amnesiac.Player = target;
                     break;
 
-                case RoleId.Cleaner:
+                case RoleId.Janitor:
                     Utils.BecomeImpostor(Amnesiac.Player);
-                    Cleaner.ClearAndReload();
-                    Cleaner.Player = AmnesiacPlayer;
+                    Janitor.ClearAndReload();
+                    Janitor.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
@@ -1822,7 +2080,7 @@ namespace TheSushiRoles
 
                 case RoleId.Medium:
                     Medium.ClearAndReload();
-                    Medium.medium = AmnesiacPlayer;
+                    Medium.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
@@ -1833,9 +2091,9 @@ namespace TheSushiRoles
                     Amnesiac.Player = target;
                     break;
 
-                case RoleId.Pursuer:
-                    Pursuer.ClearAndReload();
-                    Pursuer.Player = AmnesiacPlayer;
+                case RoleId.Survivor:
+                    Survivor.ClearAndReload();
+                    Survivor.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
@@ -1855,10 +2113,10 @@ namespace TheSushiRoles
                     Amnesiac.Player = target;
                     break;
 
-                case RoleId.Ninja:
+                case RoleId.Assassin:
                     Utils.BecomeImpostor(Amnesiac.Player);
-                    Ninja.ClearAndReload();
-                    Ninja.Player = AmnesiacPlayer;
+                    Assassin.ClearAndReload();
+                    Assassin.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
@@ -1902,7 +2160,7 @@ namespace TheSushiRoles
 
         public static void SetBlindTrap(byte[] buff) 
         {
-            if (Poisoner.Player == null) return;
+            if (Viper.Player == null) return;
 
             Vector3 position = Vector3.zero;
             position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
@@ -1948,8 +2206,8 @@ namespace TheSushiRoles
                 case GhostInfoTypes.BountyTarget:
                     BountyHunter.bounty = Utils.PlayerById(reader.ReadByte());
                     break;
-                case GhostInfoTypes.NinjaMarked:
-                    Ninja.ninjaMarked = Utils.PlayerById(reader.ReadByte());
+                case GhostInfoTypes.AssassinMarked:
+                    Assassin.AssassinMarked = Utils.PlayerById(reader.ReadByte());
                     break;
                 case GhostInfoTypes.WarlockTarget:
                     Warlock.curseVictim = Utils.PlayerById(reader.ReadByte());
@@ -1975,10 +2233,10 @@ namespace TheSushiRoles
 		    	        FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(sender, detectiveInfo);
                     break;
                 case GhostInfoTypes.BlankUsed:
-                    Pursuer.blankedList.Remove(sender);
+                    Survivor.blankedList.Remove(sender);
                     break;
-                case GhostInfoTypes.PoisonerTimer:
-                    HudManagerStartPatch.poisonerKillButton.Timer = (float)reader.ReadByte();
+                case GhostInfoTypes.ViperTimer:
+                    HudManagerStartPatch.ViperKillButton.Timer = (float)reader.ReadByte();
                     break;
                 case GhostInfoTypes.DeathReasonAndKiller:
                     GameHistory.CreateDeathReason(Utils.PlayerById(reader.ReadByte()), (DeadPlayer.CustomDeathReason)reader.ReadByte(), Utils.PlayerById(reader.ReadByte()));
@@ -2023,11 +2281,11 @@ namespace TheSushiRoles
 
         public static void BreakArmor() 
         {
-            if (Armored.Player == null || Armored.isBrokenArmor) return;
-            Armored.isBrokenArmor = true;
+            if (Lucky.Player == null || Lucky.isBrokenArmor) return;
+            Lucky.isBrokenArmor = true;
             if (PlayerControl.LocalPlayer.Data.IsDead) 
             {
-                Armored.Player.ShowFailedMurder();
+                Lucky.Player.ShowFailedMurder();
             }
         }
     }
@@ -2057,12 +2315,12 @@ namespace TheSushiRoles
                     byte playerId = reader.ReadByte();
                     RPCProcedure.SetRole(roleId, playerId);
                     break;
-               /* case CustomRPC.DraftModePickOrder:
+                case CustomRPC.DraftModePickOrder:
                     Modules.RoleDraft.ReceivePickOrder(reader.ReadByte(), reader);
                     break;
                 case CustomRPC.DraftModePick:
                     Modules.RoleDraft.ReceivePick(reader.ReadByte(), reader.ReadByte());
-                    break;*/
+                    break;
                 case CustomRPC.SetModifier:
                     byte modifierId = reader.ReadByte();
                     byte pId = reader.ReadByte();
@@ -2176,6 +2434,15 @@ namespace TheSushiRoles
                 case CustomRPC.FortifiedMurderAttempt:
                     RPCProcedure.FortifiedMurderAttempt();
                     break;
+                case CustomRPC.LandlordTeleport:
+                        Coroutines.Start(RPCProcedure.LandlordTransportPlayers(reader.ReadByte(), reader.ReadByte(), reader.ReadBoolean()));
+                        break;
+                case CustomRPC.SetUnteleportable:
+                    if (PlayerControl.LocalPlayer == Landlord.Player)
+                    {
+                        Landlord.UnteleportablePlayers.Add(reader.ReadByte(), DateTime.UtcNow);
+                    }
+                    break;
                 case CustomRPC.Confess:
                     byte confessorId = reader.ReadByte();
                     Oracle.Confessor = Utils.PlayerById(confessorId);
@@ -2230,10 +2497,10 @@ namespace TheSushiRoles
                 case CustomRPC.WerewolfMaul:
                     RPCProcedure.WerewolfMaul();
                     break;
-                case CustomRPC.PoisonerSetPoisoned:
+                case CustomRPC.ViperSetPoisoned:
                     byte poisonedId = reader.ReadByte();
                     byte reset = reader.ReadByte();
-                    RPCProcedure.PoisonerSetPoisoned(poisonedId, reset);
+                    RPCProcedure.ViperSetPoisoned(poisonedId, reset);
                     break;
                 case CustomRPC.TrackerUsedTracker:
                     RPCProcedure.TrackerUsedTracker(reader.ReadByte());
@@ -2258,8 +2525,8 @@ namespace TheSushiRoles
                 case CustomRPC.SetFutureShielded:
                     RPCProcedure.SetFutureShielded(reader.ReadByte());
                     break;
-                case CustomRPC.PlaceNinjaTrace:
-                    RPCProcedure.PlaceNinjaTrace(reader.ReadBytesAndSize());
+                case CustomRPC.PlaceAssassinTrace:
+                    RPCProcedure.PlaceAssassinTrace(reader.ReadBytesAndSize());
                     break;
                 case CustomRPC.PlacePortal:
                     RPCProcedure.PlacePortal(reader.ReadBytesAndSize());

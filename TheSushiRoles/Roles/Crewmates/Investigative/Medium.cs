@@ -7,7 +7,7 @@ namespace TheSushiRoles.Roles
 {
     public static class Medium 
     {
-        public static PlayerControl medium;
+        public static PlayerControl Player;
         public static DeadPlayer target;
         public static DeadPlayer soulTarget;
         public static Color Color = new Color32(98, 120, 115, byte.MaxValue);
@@ -51,7 +51,7 @@ namespace TheSushiRoles.Roles
 
         public static void ClearAndReload() 
         {
-            medium = null;
+            Player = null;
             target = null;
             soulTarget = null;
             deadBodies = new List<Tuple<DeadPlayer, Vector3>>();

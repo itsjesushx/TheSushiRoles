@@ -15,10 +15,11 @@ namespace TheSushiRoles
             Sheriff.ClearAndReload();
             Lighter.ClearAndReload();
             Detective.ClearAndReload();
+            Landlord.ClearAndReload();
             Monarch.ClearAndReload();
             Chronos.ClearAndReload();
             Medic.ClearAndReload();
-            Portalmaker.ClearAndReload();
+            Gatekeeper.ClearAndReload();
             Swapper.ClearAndReload();
             Tracker.ClearAndReload();
             Mystic.ClearAndReload();
@@ -38,7 +39,7 @@ namespace TheSushiRoles
             Arsonist.ClearAndReload();
             Lawyer.ClearAndReload();
             Prosecutor.ClearAndReload();
-            Pursuer.ClearAndReload();
+            Survivor.ClearAndReload();
 
             // Neutral Killers
             Glitch.ClearAndReload();
@@ -55,9 +56,9 @@ namespace TheSushiRoles
         
             // Impostor Roles
             Blackmailer.ClearAndReload();
-            Cleaner.ClearAndReload();
+            Janitor.ClearAndReload();
             Morphling.ClearAndReload();
-            Poisoner.ClearAndReload();
+            Viper.ClearAndReload();
             Camouflager.ClearAndReload();
             Eraser.ClearAndReload();
             Grenadier.ClearAndReload();
@@ -68,21 +69,21 @@ namespace TheSushiRoles
             Wraith.ClearAndReload();
             Witch.ClearAndReload();
             BountyHunter.ClearAndReload();
-            Ninja.ClearAndReload();
+            Assassin.ClearAndReload();
             Yoyo.ClearAndReload();
 
             // Modifier
             Bait.ClearAndReload();
             Lazy.ClearAndReload();
             Tiebreaker.ClearAndReload();
-            Sunglasses.ClearAndReload();
+            Blind.ClearAndReload();
             Mini.ClearAndReload();
             Disperser.ClearAndReload();
             Vip.ClearAndReload();
             Giant.ClearAndReload();
-            Invert.ClearAndReload();
+            Drunk.ClearAndReload();
             Chameleon.ClearAndReload();
-            Armored.ClearAndReload();
+            Lucky.ClearAndReload();
             Sidekick.ClearAndReload();
             Lovers.ClearAndReload();
             Sleuth.ClearAndReload();
@@ -94,7 +95,7 @@ namespace TheSushiRoles
 
             // Other Clears and Reloads
             JackInTheBox.ClearJackInTheBoxes();
-            NinjaTrace.ClearTraces();
+            AssassinTrace.ClearTraces();
             Silhouette.ClearSilhouettes();
             Portal.ClearPortals();
             Trap.ClearTraps();

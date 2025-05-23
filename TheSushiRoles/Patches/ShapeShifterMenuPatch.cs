@@ -5,103 +5,124 @@ using System.Linq;
 using Reactor.Utilities.Extensions;
 using UnityEngine;
 
-namespace TheSushiRoles.Patches
+namespace TheSushiRoles.Patches;
+
+// Class from Town of Us R https://github.com/eDonnes124/Town-Of-Us-R/blob/master/source/Patches/NeutralRoles/PlayerMenu.cs/
+public class ShapeShifterMenu
 {
-    // Taken from Town of Us https://github.com/eDonnes124/Town-Of-Us-R/blob/master/source/Patches/NeutralRoles/PlayerMenu.cs/
-    public class ShapeShifterMenu
+    public ShapeshifterMinigame Menu;
+    public Select Click;
+    public Include Inclusion;
+    public List<PlayerControl> Targets;
+    public static ShapeShifterMenu Singleton;
+
+    public CustomButton OriginatingButton;
+    public delegate void Select(PlayerControl player);
+    public delegate bool Include(PlayerControl player);
+
+    public ShapeShifterMenu(CustomButton originatingButton, Select click, Include inclusion)
     {
-        public ShapeshifterMinigame Menu;
-        public Select Click;
-        public Include Inclusion;
-        public List<PlayerControl> Targets;
-        public static ShapeShifterMenu Singleton;
-        public delegate void Select(PlayerControl player);
-        public delegate bool Include(PlayerControl player);
-        public ShapeShifterMenu(Select click, Include inclusion)
+        OriginatingButton = originatingButton;
+        Click = click;
+        Inclusion = inclusion;
+        if (Singleton != null)
         {
-            Click = click;
-            Inclusion = inclusion;
-            if (Singleton != null)
+            Singleton.Menu.DestroyImmediate();
+            Singleton = null;
+        }
+        Singleton = this;
+    }
+    // had to add this constructor to make it work when i want to use the menu without a button
+    public ShapeShifterMenu(Select click, Include inclusion) : this(null, click, inclusion) { }
+
+    public IEnumerator Open(float delay, bool includeDead = false)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+
+        while (ExileController.Instance != null) { yield return 0; }
+
+        Targets = PlayerControl.AllPlayerControls.ToArray()
+            .Where(x => Inclusion(x) && (!x.Data.IsDead || includeDead) && !x.Data.Disconnected)
+            .ToList();
+
+        if (Menu == null)
+        {
+            if (Camera.main == null) yield break;
+            Menu = GameObject.Instantiate(GetShapeshifterMenu(), Camera.main.transform, false);
+        }
+
+        Menu.transform.SetParent(Camera.main.transform, false);
+        Menu.transform.localPosition = new(0f, 0f, -50f);
+        Menu.Begin(null);
+    }
+
+    private static ShapeshifterMinigame GetShapeshifterMenu()
+    {
+        var rolePrefab = RoleManager.Instance.AllRoles.First(r => r.Role == RoleTypes.Shapeshifter);
+        return GameObject.Instantiate(rolePrefab?.Cast<ShapeshifterRole>(), GameData.Instance.transform).ShapeshifterMenu;
+    }
+
+    public void Clicked(PlayerControl player)
+    {
+        Click(player);
+
+        // Add cooldown when the target is set
+        if (OriginatingButton != null)
+        {
+            OriginatingButton.Timer = OriginatingButton.MaxTimer;
+        }
+
+        Menu.Close();
+    }
+
+    [HarmonyPatch(typeof(ShapeshifterMinigame), nameof(ShapeshifterMinigame.Begin))]
+    public static class MenuPatch
+    {
+        public static bool Prefix(ShapeshifterMinigame __instance)
+        {
+            var menu = Singleton;
+
+            if (menu == null)
+                return true;
+
+            __instance.potentialVictims = new();
+            var list2 = new Il2CppSystem.Collections.Generic.List<UiElement>();
+
+            for (var i = 0; i < menu.Targets.Count; i++)
             {
-                Singleton.Menu.DestroyImmediate();
-                Singleton = null;
-            }
-            Singleton = this;
-        }
+                var player = menu.Targets[i];
+                bool isDead = player.Data.IsDead;
+                player.Data.IsDead = false;
 
-        public IEnumerator Open(float delay, bool includeDead = false)
+                var num = i % 3;
+                var num2 = i / 3;
+                var panel = GameObject.Instantiate(__instance.PanelPrefab, __instance.transform);
+                panel.transform.localPosition = new(__instance.XStart + (num * __instance.XOffset), __instance.YStart + (num2 * __instance.YOffset), -1f);
+                panel.SetPlayer(i, player.Data, (Action)(() => menu.Clicked(player)));
+
+                __instance.potentialVictims.Add(panel);
+                list2.Add(panel.Button);
+
+                player.Data.IsDead = isDead;
+            }
+
+            ControllerManager.Instance.OpenOverlayMenu(__instance.name, __instance.BackButton, __instance.DefaultButtonSelected, list2);
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.StartMeeting))]
+    public static class StartMeeting
+    {
+        public static void Prefix(PlayerControl __instance)
         {
-            yield return new WaitForSecondsRealtime(delay);
-            
-            while (ExileController.Instance != null) { yield return 0; }
-            Targets = PlayerControl.AllPlayerControls.ToArray().Where(x => Inclusion(x) && (!x.Data.IsDead || includeDead) && !x.Data.Disconnected).ToList();
-            if (Menu == null)
+            if (__instance == null) return;
+
+            try
             {
-                if (Camera.main == null) yield break;
-                Menu = GameObject.Instantiate(GetShapeshifterMenu(), Camera.main.transform, false);
+                ShapeShifterMenu.Singleton.Menu.Close();
             }
-
-            Menu.transform.SetParent(Camera.main.transform, false);
-            Menu.transform.localPosition = new(0f, 0f, -50f);
-            Menu.Begin(null);
-        }
-
-        private static ShapeshifterMinigame GetShapeshifterMenu()
-        {
-            var rolePrefab = RoleManager.Instance.AllRoles.First(r => r.Role == RoleTypes.Shapeshifter);
-            return GameObject.Instantiate(rolePrefab?.Cast<ShapeshifterRole>(), GameData.Instance.transform).ShapeshifterMenu;
-        }
-
-        public void Clicked(PlayerControl player)
-        {
-            Click(player);
-            Menu.Close();
-        }
-
-        [HarmonyPatch(typeof(ShapeshifterMinigame), nameof(ShapeshifterMinigame.Begin))]
-        public static class MenuPatch
-        {
-            public static bool Prefix(ShapeshifterMinigame __instance)
-            {
-                var menu = Singleton;
-
-                if (menu == null)
-                    return true;
-
-                __instance.potentialVictims = new();
-                var list2 = new Il2CppSystem.Collections.Generic.List<UiElement>();
-
-                for (var i = 0; i < menu.Targets.Count; i++)
-                {
-                    var player = menu.Targets[i];
-                    bool isDead = player.Data.IsDead;
-                    player.Data.IsDead = false;
-                    var num = i % 3;
-                    var num2 = i / 3;
-                    var panel = GameObject.Instantiate(__instance.PanelPrefab, __instance.transform);
-                    panel.transform.localPosition = new(__instance.XStart + (num * __instance.XOffset), __instance.YStart + (num2 * __instance.YOffset), -1f);
-                    panel.SetPlayer(i, player.Data, (Action)(() => menu.Clicked(player)));
-                    __instance.potentialVictims.Add(panel);
-                    list2.Add(panel.Button);
-                    player.Data.IsDead = isDead;
-                }
-
-                ControllerManager.Instance.OpenOverlayMenu(__instance.name, __instance.BackButton, __instance.DefaultButtonSelected, list2);
-                return false;
-            }
-        }
-        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.StartMeeting))]
-        public static class StartMeeting
-        {
-            public static void Prefix(PlayerControl __instance)
-            {
-                if (__instance == null) return;
-                try
-                {
-                    ShapeShifterMenu.Singleton.Menu.Close();
-                }
-                catch { }
-            }
+            catch { }
         }
     }
 }

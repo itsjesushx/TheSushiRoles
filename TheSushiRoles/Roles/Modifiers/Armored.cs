@@ -1,6 +1,6 @@
 namespace TheSushiRoles.Roles.Modifiers
 {
-    public static class Armored 
+    public static class Lucky 
     {
         public static PlayerControl Player;
         public static bool isBrokenArmor = false;

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace TheSushiRoles.Roles
 {
-    public static class Portalmaker 
+    public static class Gatekeeper 
     {
         public static PlayerControl Player;
         public static Color Color = new Color32(69, 69, 169, byte.MaxValue);
@@ -59,11 +59,11 @@ namespace TheSushiRoles.Roles
         public static void ClearAndReload() 
         {
             Player = null;
-            Cooldown = CustomOptionHolder.portalmakerCooldown.GetFloat();
-            usePortalCooldown = CustomOptionHolder.portalmakerUsePortalCooldown.GetFloat();
-            logOnlyHasColors = CustomOptionHolder.portalmakerLogOnlyColorType.GetBool();
-            logShowsTime = CustomOptionHolder.portalmakerLogHasTime.GetBool();
-            canPortalFromAnywhere = CustomOptionHolder.portalmakerCanPortalFromAnywhere.GetBool();
+            Cooldown = CustomOptionHolder.GatekeeperCooldown.GetFloat();
+            usePortalCooldown = CustomOptionHolder.GatekeeperUsePortalCooldown.GetFloat();
+            logOnlyHasColors = CustomOptionHolder.GatekeeperLogOnlyColorType.GetBool();
+            logShowsTime = CustomOptionHolder.GatekeeperLogHasTime.GetBool();
+            canPortalFromAnywhere = CustomOptionHolder.GatekeeperCanPortalFromAnywhere.GetBool();
         }
     }
 }

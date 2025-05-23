@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -48,6 +49,16 @@ namespace TheSushiRoles
 
         private static Type CustomPlayerData;
         private static FieldInfo hasMap;
+
+        private static FieldInfo SubmergedInstance;
+        private static FieldInfo SubmergedElevators;
+
+        private static FieldInfo getSubElevatorSystem;
+        private static Type SubmarineElevator;
+        private static MethodInfo GetInElevator;
+
+        private static Type SubmarineElevatorSystem;
+        private static FieldInfo UpperDeckIsTargetFloor;
 
         private static Type SpawnInState;
         private static FieldInfo currentState;
@@ -128,6 +139,16 @@ namespace TheSushiRoles
 
             VentPatchDataType = Types.First(t => t.Name == "VentPatchData");
 
+            SubmergedInstance = AccessTools.Field(SubmarineStatusType, "instance");
+            SubmergedElevators = AccessTools.Field(SubmarineStatusType, "elevators");
+
+            SubmarineElevator = Types.First(t => t.Name == "SubmarineElevator");
+            GetInElevator = AccessTools.Method(SubmarineElevator, "GetInElevator", new Type[] { typeof(PlayerControl) });
+            getSubElevatorSystem = AccessTools.Field(SubmarineElevator, "system");
+
+            SubmarineElevatorSystem = Types.First(t => t.Name == "SubmarineElevatorSystem");
+            UpperDeckIsTargetFloor = AccessTools.Field(SubmarineElevatorSystem, "upperDeckIsTargetFloor");
+
             InTransitionField = AccessTools.Property(VentPatchDataType, "InTransition");
 
             CustomTaskTypesType = Types.First(t => t.Name == "CustomTaskTypes");
@@ -192,6 +213,34 @@ namespace TheSushiRoles
             if (!Loaded) return;
             MonoBehaviour _floorHandler = ((Component)GetFloorHandlerMethod.Invoke(null, new object[] { PlayerControl.LocalPlayer })).TryCast(FloorHandlerType) as MonoBehaviour;
             RpcRequestChangeFloorMethod.Invoke(_floorHandler, new object[] { toUpper });
+        }
+        public static void CheckOutOfBoundsElevator(PlayerControl player)
+        {
+            if (!Loaded) return;
+            if (!IsSubmerged) return;
+
+            Tuple<bool, object> elevator = GetPlayerElevator(player);
+            if (!elevator.Item1) return;
+            bool CurrentFloor = (bool)UpperDeckIsTargetFloor.GetValue(getSubElevatorSystem.GetValue(elevator.Item2)); //true is top, false is bottom
+            bool PlayerFloor = player.transform.position.y > -7f; //true is top, false is bottom
+
+            if (CurrentFloor != PlayerFloor)
+            {
+                ChangeFloor(CurrentFloor);
+            }
+        }
+
+        public static Tuple<bool, object> GetPlayerElevator(PlayerControl player)
+        {
+            if (!IsSubmerged) return Tuple.Create(false, (object)null);
+            IList elevatorlist = Utils.createList(SubmarineElevator);
+            elevatorlist = (IList)SubmergedElevators.GetValue(SubmergedInstance.GetValue(null));
+            foreach (object elevator in elevatorlist)
+            {
+                if ((bool)GetInElevator.Invoke(elevator, new object[] { player })) return Tuple.Create(true, elevator);
+            }
+
+            return Tuple.Create(false, (object)null);
         }
 
         public static bool GetInTransition()

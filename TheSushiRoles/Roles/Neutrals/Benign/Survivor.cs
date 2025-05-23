@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace TheSushiRoles.Roles
 {
-    public static class Pursuer 
+    public static class Survivor 
     {        
         public static PlayerControl Player;
         public static PlayerControl target;
@@ -19,7 +19,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetTargetSprite() 
         {
             if (blank) return blank;
-            blank = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.PursuerButton.png", 115f);
+            blank = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.SurvivorButton.png", 115f);
             return blank;
         }
 
@@ -31,8 +31,8 @@ namespace TheSushiRoles.Roles
             blanks = 0;
             notAckedExiled = false;
 
-            Cooldown = CustomOptionHolder.pursuerCooldown.GetFloat();
-            blanksNumber = Mathf.RoundToInt(CustomOptionHolder.pursuerBlanksNumber.GetFloat());
+            Cooldown = CustomOptionHolder.SurvivorCooldown.GetFloat();
+            blanksNumber = Mathf.RoundToInt(CustomOptionHolder.SurvivorBlanksNumber.GetFloat());
         }
     }
 }

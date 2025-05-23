@@ -39,7 +39,7 @@ namespace TheSushiRoles
                         || playerInfo.PlayerId == Lawyer.Player?.PlayerId // Tasks of the Lawyer do not count
                         || playerInfo.PlayerId == Prosecutor.Player?.PlayerId // Tasks of the Prosecutor do not count
                         || playerInfo.PlayerId == Agent.Player?.PlayerId // Tasks of the Agent do not count
-                        || (playerInfo.PlayerId == Pursuer.Player?.PlayerId && Pursuer.Player.Data.IsDead) // Tasks of the Pursuer only count, if he's alive
+                        || (playerInfo.PlayerId == Survivor.Player?.PlayerId && Survivor.Player.Data.IsDead) // Tasks of the Survivor only count, if he's alive
                        )
                         continue;
                     var (playerCompleted, playerTotal) = TaskInfo(playerInfo);

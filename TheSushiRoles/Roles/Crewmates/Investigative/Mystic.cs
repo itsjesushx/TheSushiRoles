@@ -42,9 +42,9 @@ namespace TheSushiRoles.Roles
                 {
                     message = "I uncover secrets, blur identities, and execute plans. \n\n(Detective, Hacker, Morphling, Medium, or Hitman)";
                 }
-                else if (roleInfo.RoleId == RoleId.Engineer || roleInfo.RoleId == RoleId.Vulture || roleInfo.RoleId == RoleId.Miner || roleInfo.RoleId == RoleId.Undertaker || roleInfo.RoleId == RoleId.Cleaner || roleInfo.RoleId == RoleId.Sheriff)
+                else if (roleInfo.RoleId == RoleId.Engineer || roleInfo.RoleId == RoleId.Vulture || roleInfo.RoleId == RoleId.Miner || roleInfo.RoleId == RoleId.Undertaker || roleInfo.RoleId == RoleId.Janitor || roleInfo.RoleId == RoleId.Sheriff)
                 {
-                    message = "I build, adapt, and ensure order prevails. \n\n(Engineer, Vulture, Undertaker, Miner, Cleaner, or Sheriff)";
+                    message = "I build, adapt, and ensure order prevails. \n\n(Engineer, Vulture, Undertaker, Miner, Janitor, or Sheriff)";
                 }
                 else if (roleInfo.RoleId == RoleId.Veteran || roleInfo.RoleId == RoleId.BountyHunter || roleInfo.RoleId == RoleId.Warlock || roleInfo.RoleId == RoleId.Werewolf || roleInfo.RoleId == RoleId.Juggernaut)
                 {

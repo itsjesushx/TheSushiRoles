@@ -51,7 +51,7 @@ namespace TheSushiRoles.Objects
             if (Morphling.Player != null && Morphling.morphTimer > 0) playerControl = Morphling.morphTarget;  // Will output info of morph-target instead
             if (Glitch.Player != null && Glitch.MimicTimer > 0) playerControl = Glitch.MimicTarget;  // Will output info of Mimic-target instead
             if (Hitman.Player != null && Hitman.MorphTimer > 0) playerControl = Hitman.MorphTarget;  // Will output info of Morph-target instead
-            string playerNameDisplay = Portalmaker.logOnlyHasColors ? "A player (" + (Utils.IsLighterColor(playerControl) ? "L" : "D") + ")" : playerControl.Data.PlayerName;
+            string playerNameDisplay = Gatekeeper.logOnlyHasColors ? "A player (" + (Utils.IsLighterColor(playerControl) ? "L" : "D") + ")" : playerControl.Data.PlayerName;
 
             int colorId = playerControl.Data.DefaultOutfit.ColorId;
 
@@ -104,8 +104,8 @@ namespace TheSushiRoles.Objects
             animationFgRenderer = portalFgAnimationGameObject.AddComponent<SpriteRenderer>();
             animationFgRenderer.material = FastDestroyableSingleton<HatManager>.Instance.PlayerMaterial;
 
-            // Only render the inactive portals for the Portalmaker
-            bool playerSees = PlayerControl.LocalPlayer == Portalmaker.Player  || PlayerControl.LocalPlayer.Data.IsDead;
+            // Only render the inactive portals for the Gatekeeper
+            bool playerSees = PlayerControl.LocalPlayer == Gatekeeper.Player  || PlayerControl.LocalPlayer.Data.IsDead;
             portalGameObject.SetActive(playerSees);
             portalFgAnimationGameObject.SetActive(true);
 
@@ -151,7 +151,7 @@ namespace TheSushiRoles.Objects
                 firstPortal.portalGameObject.SetActive(true);
                 secondPortal.portalGameObject.SetActive(true);
                 bothPlacedAndEnabled = true;
-                HudManagerStartPatch.portalmakerButtonText2.text = "2. " + secondPortal.room;
+                HudManagerStartPatch.GatekeeperButtonText2.text = "2. " + secondPortal.room;
             }
 
             // reset teleported players

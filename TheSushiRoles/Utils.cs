@@ -154,12 +154,12 @@ namespace TheSushiRoles
 
         public static void HandlePoisonedOnBodyReport() 
         {
-            if (Poisoner.Player == null) return;
+            if (Viper.Player == null) return;
             
             // Murder the poisoned player and reset poisoned (regardless whether the kill was successful or not)
-            CheckMurderAttemptAndKill(Poisoner.Player, Poisoner.poisoned, true, false);
-            StartRPC(CustomRPC.PoisonerSetPoisoned, byte.MaxValue, byte.MaxValue);
-            RPCProcedure.PoisonerSetPoisoned(byte.MaxValue, byte.MaxValue);
+            CheckMurderAttemptAndKill(Viper.Player, Viper.poisoned, true, false);
+            StartRPC(CustomRPC.ViperSetPoisoned, byte.MaxValue, byte.MaxValue);
+            RPCProcedure.ViperSetPoisoned(byte.MaxValue, byte.MaxValue);
         }
 
         public static void RefreshRoleDescription(this PlayerControl player) 
@@ -248,9 +248,9 @@ namespace TheSushiRoles
         }
         internal static string GetModifierString(ModifierInfo modInfo)
         {
-            if (modInfo.Name == "Invert") 
+            if (modInfo.Name == "Drunk") 
             {
-                return ColorString(modInfo.Color, $"Modifier: <b>{modInfo.Name}</b>\n{modInfo.ShortDescription} ({Invert.meetings})");
+                return ColorString(modInfo.Color, $"Modifier: <b>{modInfo.Name}</b>\n{modInfo.ShortDescription} ({Drunk.meetings})");
             }
 
             return ColorString(modInfo.Color, $"Modifier: <b>{modInfo.Name}</b>\n{modInfo.ShortDescription}");
@@ -464,7 +464,7 @@ namespace TheSushiRoles
         }
         public static void Revive(PlayerControl player)
         {
-            if (Poisoner.poisoned == player) Poisoner.poisoned = null;
+            if (Viper.poisoned == player) Viper.poisoned = null;
 
             player.Revive();
             MapOptions.RevivedPlayers.Add(player.PlayerId);
@@ -562,11 +562,16 @@ namespace TheSushiRoles
             }
             RoleInfo.RoleTexts.Clear();
         }
-        public static bool HidePlayerName(PlayerControl source, PlayerControl target) 
+        public static IList createList(Type myType)
+        {
+            Type genericListType = typeof(List<>).MakeGenericType(myType);
+            return (IList)Activator.CreateInstance(genericListType);
+        }
+        public static bool HidePlayerName(PlayerControl source, PlayerControl target)
         {
             if (Camouflager.CamouflageTimer > 0f || MushroomSabotageActive()) return true; // No names are visible
             if (Patches.SurveillanceMinigamePatch.nightVisionIsActive) return true;
-            else if (Ninja.isInvisble && Ninja.Player == target) return true;
+            else if (Assassin.isInvisble && Assassin.Player == target) return true;
             else if (Wraith.IsVanished && Wraith.Player == target) return true;
             else if (!MapOptions.hidePlayerNames) return false; // All names are visible
             else if (source == null || target == null) return true;
@@ -723,9 +728,9 @@ namespace TheSushiRoles
             return isVenter;
         }
 
-        public static bool CheckArmored(PlayerControl target, bool breakShield, bool showShield, bool additionalCondition = true)
+        public static bool CheckLucky(PlayerControl target, bool breakShield, bool showShield, bool additionalCondition = true)
         {
-            if (target != null && Armored.Player != null && Armored.Player == target && !Armored.isBrokenArmor && additionalCondition) {
+            if (target != null && Lucky.Player != null && Lucky.Player == target && !Lucky.isBrokenArmor && additionalCondition) {
                 if (breakShield) 
                 {
                     StartRPC(CustomRPC.BreakArmor);
@@ -753,7 +758,7 @@ namespace TheSushiRoles
             if (MapOptions.ShieldFirstKill && MapOptions.FirstPlayerKilled == target) return MurderAttemptResult.SuppressKill;
 
             // Handle blank shot
-            if (!ignoreBlank && Pursuer.blankedList.Any(x => x.PlayerId == killer.PlayerId)) 
+            if (!ignoreBlank && Survivor.blankedList.Any(x => x.PlayerId == killer.PlayerId)) 
             {
                 StartRPC(CustomRPC.SetBlanked, killer.PlayerId, (byte)0);
                 RPCProcedure.SetBlanked(killer.PlayerId, 0);
@@ -829,15 +834,15 @@ namespace TheSushiRoles
                     return MurderAttemptResult.MirrorKill;
                 }
 
-                // Block Armored with armor kill
-                else if (CheckArmored(target, true, killer == PlayerControl.LocalPlayer, Sheriff.Player == null || killer.PlayerId != Sheriff.Player.PlayerId || !target.IsCrew() && Sheriff.canKillNeutrals || IsKiller(target)))
+                // Block Lucky with armor kill
+                else if (CheckLucky(target, true, killer == PlayerControl.LocalPlayer, Sheriff.Player == null || killer.PlayerId != Sheriff.Player.PlayerId || !target.IsCrew() && Sheriff.canKillNeutrals || IsKiller(target)))
                 {
                     return MurderAttemptResult.BlankKill;
                 }
             
-            if (TransportationToolPatches.IsUsingTransportation(target) && !blockRewind && killer == Poisoner.Player) 
+            if (TransportationToolPatches.IsUsingTransportation(target) && !blockRewind && killer == Viper.Player) 
             {
-                return MurderAttemptResult.DelayPoisonerKill;
+                return MurderAttemptResult.DelayViperKill;
             }
             else if (TransportationToolPatches.IsUsingTransportation(target)) return MurderAttemptResult.SuppressKill;
             return MurderAttemptResult.PerformKill;
@@ -862,15 +867,15 @@ namespace TheSushiRoles
             {
                 MurderPlayer(target, killer, showAnimation);
             }
-            else if (murder == MurderAttemptResult.DelayPoisonerKill) 
+            else if (murder == MurderAttemptResult.DelayViperKill) 
             {
                 HudManager.Instance.StartCoroutine(Effects.Lerp(10f, new Action<float>((p) => 
                 {
 
-                    if (!TransportationToolPatches.IsUsingTransportation(target) && Poisoner.poisoned != null) 
+                    if (!TransportationToolPatches.IsUsingTransportation(target) && Viper.poisoned != null) 
                     {
-                        StartRPC(CustomRPC.PoisonerSetPoisoned, byte.MaxValue, byte.MaxValue);
-                        RPCProcedure.PoisonerSetPoisoned(byte.MaxValue, byte.MaxValue);
+                        StartRPC(CustomRPC.ViperSetPoisoned, byte.MaxValue, byte.MaxValue);
+                        RPCProcedure.ViperSetPoisoned(byte.MaxValue, byte.MaxValue);
                         MurderPlayer(killer, target, showAnimation);
                     }
                 })));

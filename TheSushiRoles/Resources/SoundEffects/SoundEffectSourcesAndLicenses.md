@@ -3,7 +3,7 @@
 | Name | Comment | Url | License |
 |---|---|---|---|
 |engineerRepair| | [Repair_metal.wav](https://freesound.org/people/zbig77/sounds/244985/ ) | CC0 1.0|
-|janitorClean + cleanerClean | combined, shortened + fade out | [Vacuum cleaner.wav](https://freesound.org/people/Accorman/sounds/573797/ ) + [Windowcleaner Spray](https://freesound.org/people/Rudmer_Rotteveel/sounds/536409/ )| CC0 1.0 both|
+|janitorClean + JanitorClean | combined, shortened + fade out | [Vacuum Janitor.wav](https://freesound.org/people/Accorman/sounds/573797/ ) + [WindowJanitor Spray](https://freesound.org/people/Rudmer_Rotteveel/sounds/536409/ )| CC0 1.0 both|
 |sheriffKill | (already has a sound)  |-|-|
 |deputyHack | | [Ratchet close long.wav](https://freesound.org/people/jameswrowles/sounds/437230/ ) | CC0 1.0|
 |chronosShield  | | [Mechanical alarm clock is ticking (SLAVA).wav](https://freesound.org/people/ST303/sounds/171043/ ) | CC0 1.0|
@@ -16,7 +16,7 @@
 |hackerAdmin  | (already has a sound) |-|-|
 |trackerTrackPlayer | | [CASHIER-REGISTER-KEYBOARD-BEEP-CALC.wav](https://freesound.org/people/newagesoup/sounds/348240/) | CC0 1.0 |
 |trackerTrackCorpses |sniffing sound|[Male_Breath_Sniff_Stereo_NT4.wav](https://freesound.org/people/Nox_Sound/sounds/554905/ ) | CC0 1.0 |
-|poisonerKill |combined |[Gore Rend](https://freesound.org/people/magnuswaker/sounds/563491/ ) +  [R15-53-Blood Sucking.wav](https://freesound.org/people/craigsmith/sounds/487070/ ) | CC0 1.0 both|
+|ViperKill |combined |[Gore Rend](https://freesound.org/people/magnuswaker/sounds/563491/ ) +  [R15-53-Blood Sucking.wav](https://freesound.org/people/craigsmith/sounds/487070/ ) | CC0 1.0 both|
 |jackalKill | (already has a sound) |-|-|
 |jackalSidekick | | [Snare - Nice.wav]( https://freesound.org/people/molodiaz/sounds/593550/ )| CC0 1.0 |
 |lighterLight | |[Torch Click 2](https://freesound.org/people/BenjaminNelan/sounds/410360/ ) | CC0 1.0 |
@@ -32,9 +32,9 @@
 |arsonistDouse | | [Water Pouring Out of Bucket](https://freesound.org/people/Breviceps/sounds/508178/ )| CC0 1.0 |
 |vultureEat | combined | [Vulture](https://freesound.org/people/AntumDeluge/sounds/188041/ ) + [Eating Crisps](https://freesound.org/people/Sethroph/sounds/334209/ )| CC0 1.0 both| |
 |mediumAsk| |[ghost_sounds.wav](https://freesound.org/people/fishwithfeathers/sounds/177768/ )| CC0 1.0|
-|pursuerBlank | | [gun load.wav](https://freesound.org/people/Shelby_Wideman/sounds/178141/ )| CC0 1.0 |
+|SurvivorBlank | | [gun load.wav](https://freesound.org/people/Shelby_Wideman/sounds/178141/ )| CC0 1.0 |
 |witchSpell | | [witch's laugh](https://freesound.org/people/Yogoorth/sounds/589144/ ) | CC0 1.0 |
-|portalmakerPlacePortal | same as tricksterPlaceBox| - | - |
+|GatekeeperPlacePortal | same as tricksterPlaceBox| - | - |
 |portalUse | | [Static electronic noise - Xbox 360](https://freesound.org/people/scenes/sounds/431654/ ) + [Teleport Slurp](https://freesound.org/people/GameAudio/sounds/220163/  ) | CC0 1.0 both |
 |fail | | [twitch: SmeggyTV: Mein Auge](https://www.twitch.tv/smeggytv/clip/KindQuaintEndiveDancingBanana-Zoc-bXUnqNCoqQD5 )  | License granted for use in TSR |
 |trapperTrap | | [Karabiner_Click_04.wav](https://freesound.org/people/Rudmer_Rotteveel/sounds/457454/ ) &  [Steel Spring Bear Trap](https://freesound.org/people/fractionalist/sounds/644245/ )| CC0 1.0 both |

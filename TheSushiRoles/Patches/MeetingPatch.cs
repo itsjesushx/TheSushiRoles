@@ -268,14 +268,14 @@ namespace TheSushiRoles.Patches
                 Swapper.playerId1 = Byte.MaxValue;
                 Swapper.playerId2 = Byte.MaxValue;
 
-                // Lovers, Lawyer & Pursuer save next to be exiled, because RPC of ending game comes before RPC of exiled
+                // Lovers, Lawyer & Survivor save next to be exiled, because RPC of ending game comes before RPC of exiled
                 Lovers.notAckedExiledIsLover = false;
-                Pursuer.notAckedExiled = false;
+                Survivor.notAckedExiled = false;
                 VengefulRomantic.notAckedExiled = false;
                 if (exiled != null) 
                 {
                     Lovers.notAckedExiledIsLover = ((Lovers.Lover1 != null && Lovers.Lover1.PlayerId == exiled.PlayerId) || (Lovers.Lover2 != null && Lovers.Lover2.PlayerId == exiled.PlayerId));
-                    Pursuer.notAckedExiled = (Pursuer.Player != null && Pursuer.Player.PlayerId == exiled.PlayerId) || (Lawyer.Player != null && Lawyer.target != null && Lawyer.target.PlayerId == exiled.PlayerId && Lawyer.target != Jester.Player);
+                    Survivor.notAckedExiled = (Survivor.Player != null && Survivor.Player.PlayerId == exiled.PlayerId) || (Lawyer.Player != null && Lawyer.target != null && Lawyer.target.PlayerId == exiled.PlayerId && Lawyer.target != Jester.Player);
                     VengefulRomantic.notAckedExiled = (VengefulRomantic.Player != null && VengefulRomantic.Player.PlayerId == exiled.PlayerId) || (Romantic.Player != null && Romantic.beloved != null && Romantic.beloved.PlayerId == exiled.PlayerId && Romantic.beloved != Jester.Player);
                 }
 
@@ -476,7 +476,7 @@ namespace TheSushiRoles.Patches
                 else if (roleData.NeutralKillingSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.NeutralKillingSettings[(byte)roleInfo.RoleId] == 0) continue;
                 else if (roleData.CrewSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.CrewSettings[(byte)roleInfo.RoleId] == 0) continue;
                 else if (roleInfo.RoleId == RoleId.Pestilence) continue;
-                if (roleInfo.RoleId == RoleId.Pursuer && CustomOptionHolder.lawyerSpawnRate.GetSelection() == 0) continue;
+                if (roleInfo.RoleId == RoleId.Survivor && CustomOptionHolder.lawyerSpawnRate.GetSelection() == 0) continue;
                 if (roleInfo.RoleId == RoleId.Spy && roleData.Impostors.Count <= 1) continue;
 
                 Transform buttonParent = (new GameObject()).transform;
@@ -752,8 +752,8 @@ namespace TheSushiRoles.Patches
                 // Mini
                 Mini.timeOfMeetingStart = DateTime.UtcNow;
                 Mini.ageOnMeetingStart = Mathf.FloorToInt(Mini.GrowingProgress() * 18);
-                // Reset poisoner poisoned
-                Poisoner.poisoned = null;
+                // Reset Viper poisoned
+                Viper.poisoned = null;
                 // Count meetings
                 if (meetingTarget == null) MapOptions.meetingsCount++;
                 // Save the meeting target
@@ -762,16 +762,16 @@ namespace TheSushiRoles.Patches
                 MapOptions.Meetingtime = GameOptionsManager.Instance.currentNormalGameOptions.DiscussionTime + GameOptionsManager.Instance.currentNormalGameOptions.VotingTime + 7f;
 
 
-                // Add Portal info into Portalmaker Chat:
-                if (Portalmaker.Player != null && (PlayerControl.LocalPlayer == Portalmaker.Player || Utils.ShouldShowGhostInfo()) && !Portalmaker.Player.Data.IsDead) {
+                // Add Portal info into Gatekeeper Chat:
+                if (Gatekeeper.Player != null && (PlayerControl.LocalPlayer == Gatekeeper.Player || Utils.ShouldShowGhostInfo()) && !Gatekeeper.Player.Data.IsDead) {
                     if (Portal.teleportedPlayers.Count > 0) {
                         string msg = "Portal Log:\n";
                         foreach (var entry in Portal.teleportedPlayers) {
                             float timeBeforeMeeting = ((float)(DateTime.UtcNow - entry.time).TotalMilliseconds) / 1000;
-                            msg += Portalmaker.logShowsTime ? $"{(int)timeBeforeMeeting}s ago: " : "";
+                            msg += Gatekeeper.logShowsTime ? $"{(int)timeBeforeMeeting}s ago: " : "";
                             msg = msg + $"{entry.name} used the teleporter\n";
                         }
-                        FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(Portalmaker.Player, $"{msg}");
+                        FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(Gatekeeper.Player, $"{msg}");
                     }
                 }
 

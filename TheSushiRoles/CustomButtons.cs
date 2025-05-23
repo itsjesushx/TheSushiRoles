@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using Reactor.Utilities.Extensions;
+using Reactor.Utilities;
 
 namespace TheSushiRoles
 {
@@ -26,19 +27,20 @@ namespace TheSushiRoles
         private static CustomButton VeteranAlertButton;
         private static CustomButton morphlingButton;
         private static CustomButton camouflagerButton;
-        private static CustomButton portalmakerPlacePortalButton;
+        private static CustomButton GatekeeperPlacePortalButton;
         private static CustomButton MinerMineButton;
         private static CustomButton usePortalButton;
-        private static CustomButton portalmakerMoveToPortalButton;
+        private static CustomButton GatekeeperMoveToPortalButton;
         private static CustomButton hackerButton;
         public static CustomButton hackerVitalsButton;
         public static CustomButton hackerAdminTableButton;
         private static CustomButton UndertakerButton;
         private static CustomButton HitmanDragButton;
+        public static CustomButton LandlordButton;
         private static CustomButton trackerTrackPlayerButton;
         private static CustomButton trackerTrackCorpsesButton;
         private static CustomButton RomanticSetTargetButton;
-        public static CustomButton poisonerKillButton;
+        public static CustomButton ViperKillButton;
         public static CustomButton HitmanKillButton;
         public static CustomButton JuggernautKillButton;
         public static CustomButton jackalKillButton;
@@ -57,23 +59,23 @@ namespace TheSushiRoles
         private static CustomButton lightsOutButton;
         public static CustomButton WraithButton;
         public static CustomButton GrenadierButton;
-        public static CustomButton cleanerCleanButton;
+        public static CustomButton JanitorCleanButton;
         public static CustomButton warlockCurseButton;
         public static CustomButton VigilanteButton;
         public static CustomButton VigilanteCamButton;
         public static CustomButton arsonistButton;
         public static CustomButton vultureEatButton;
         public static CustomButton mediumButton;
-        public static CustomButton pursuerButton;
+        public static CustomButton SurvivorButton;
         public static CustomButton witchSpellButton;
-        public static CustomButton ninjaButton;
+        public static CustomButton AssassinButton;
         public static CustomButton mayorMeetingButton;
         public static CustomButton CowardButton;
         public static CustomButton trapperButton;
         public static CustomButton yoyoButton;
         public static CustomButton yoyoAdminTableButton;
         public static CustomButton zoomOutButton;
-        public static CustomButton PoisonerBlindButton;
+        public static CustomButton ViperBlindButton;
 
         public static Dictionary<byte, List<CustomButton>> PlayerHackedButtons = null;
         public static PoolablePlayer targetDisplay;
@@ -86,14 +88,15 @@ namespace TheSushiRoles
         public static TMPro.TMP_Text CrusaderChargesText;
         public static TMPro.TMP_Text MonarchChargesText;
         public static TMPro.TMP_Text GlitchButtonHacksText;
+        public static TMPro.TMP_Text LandlordButtonChargesText;
         public static TMPro.TMP_Text ChronosChargesText;
-        public static TMPro.TMP_Text pursuerButtonBlanksText;
+        public static TMPro.TMP_Text SurvivorButtonBlanksText;
         public static TMPro.TMP_Text hackerAdminTableChargesText;
         public static TMPro.TMP_Text hackerVitalsChargesText;
         public static TMPro.TMP_Text DisperserChargesText;
         public static TMPro.TMP_Text trapperChargesText;
-        public static TMPro.TMP_Text portalmakerButtonText1;
-        public static TMPro.TMP_Text portalmakerButtonText2;
+        public static TMPro.TMP_Text GatekeeperButtonText1;
+        public static TMPro.TMP_Text GatekeeperButtonText2;
 
         public static void SetCustomButtonCooldowns() 
         {
@@ -119,9 +122,10 @@ namespace TheSushiRoles
             medicShieldButton.MaxTimer = 0f;
             OracleButton.MaxTimer = Oracle.Cooldown;
             RomanticSetTargetButton.MaxTimer = 0f;
-            PoisonerBlindButton.MaxTimer = Poisoner.BlindCooldown;
+            ViperBlindButton.MaxTimer = Viper.BlindCooldown;
             VeteranAlertButton.MaxTimer = Veteran.Cooldown;
             BlackmailButton.MaxTimer = Blackmailer.Cooldown;
+            LandlordButton.MaxTimer = Landlord.Cooldown;
             PredatorTerminateButton.MaxTimer = Predator.TerminateCooldown;
             PredatorKillButton.MaxTimer = Predator.TerminateKillCooldown;
             GrenadierButton.MaxTimer = Grenadier.Cooldown;
@@ -132,17 +136,17 @@ namespace TheSushiRoles
             MimicButton.MaxTimer = Glitch.MimicCooldown;
             HitmanMorphButton.MaxTimer = Hitman.MorphCooldown;
             camouflagerButton.MaxTimer = Camouflager.Cooldown;
-            portalmakerPlacePortalButton.MaxTimer = Portalmaker.Cooldown;
+            GatekeeperPlacePortalButton.MaxTimer = Gatekeeper.Cooldown;
             MinerMineButton.MaxTimer = Miner.Cooldown;
-            usePortalButton.MaxTimer = Portalmaker.usePortalCooldown;
+            usePortalButton.MaxTimer = Gatekeeper.usePortalCooldown;
             CrusaderButton.MaxTimer = Crusader.Cooldown;
             MonarchKnightButton.MaxTimer = Monarch.Cooldown;
             MysticButton.MaxTimer = Mystic.Cooldown;
-            portalmakerMoveToPortalButton.MaxTimer = Portalmaker.usePortalCooldown;
+            GatekeeperMoveToPortalButton.MaxTimer = Gatekeeper.usePortalCooldown;
             hackerButton.MaxTimer = Hacker.Cooldown;
             hackerVitalsButton.MaxTimer = Hacker.Cooldown;
             hackerAdminTableButton.MaxTimer = Hacker.Cooldown;
-            poisonerKillButton.MaxTimer = Poisoner.Cooldown;
+            ViperKillButton.MaxTimer = Viper.Cooldown;
             trackerTrackPlayerButton.MaxTimer = 0f;
             PestilenceButton.MaxTimer = Pestilence.Cooldown;
             jackalKillButton.MaxTimer = Jackal.Cooldown;
@@ -155,17 +159,17 @@ namespace TheSushiRoles
             eraserButton.MaxTimer = Eraser.Cooldown;
             placeJackInTheBoxButton.MaxTimer = Trickster.placeBoxCooldown;
             lightsOutButton.MaxTimer = Trickster.lightsOutCooldown;
-            cleanerCleanButton.MaxTimer = Cleaner.Cooldown;
+            JanitorCleanButton.MaxTimer = Janitor.Cooldown;
             warlockCurseButton.MaxTimer = Warlock.Cooldown;
             VigilanteButton.MaxTimer = Vigilante.Cooldown;
             VigilanteCamButton.MaxTimer = Vigilante.Cooldown;
             arsonistButton.MaxTimer = Arsonist.Cooldown;
             vultureEatButton.MaxTimer = Vulture.Cooldown;
             mediumButton.MaxTimer = Medium.Cooldown;
-            pursuerButton.MaxTimer = Pursuer.Cooldown;
+            SurvivorButton.MaxTimer = Survivor.Cooldown;
             trackerTrackCorpsesButton.MaxTimer = Tracker.corpsesTrackingCooldown;
             witchSpellButton.MaxTimer = Witch.Cooldown;
-            ninjaButton.MaxTimer = Ninja.Cooldown;
+            AssassinButton.MaxTimer = Assassin.Cooldown;
             mayorMeetingButton.MaxTimer = GameManager.Instance.LogicOptions.GetEmergencyCooldown();
             CowardButton.MaxTimer = GameManager.Instance.LogicOptions.GetEmergencyCooldown();
             trapperButton.MaxTimer = Trapper.Cooldown;
@@ -177,7 +181,7 @@ namespace TheSushiRoles
             hackerButton.EffectDuration = Hacker.Duration;
             hackerVitalsButton.EffectDuration = Hacker.Duration;
             hackerAdminTableButton.EffectDuration = Hacker.Duration;
-            poisonerKillButton.EffectDuration = Poisoner.delay;
+            ViperKillButton.EffectDuration = Viper.delay;
             camouflagerButton.EffectDuration = Camouflager.Duration;
             GrenadierButton.EffectDuration = Grenadier.GrenadeDuration;
             morphlingButton.EffectDuration = Morphling.Duration;
@@ -399,8 +403,8 @@ namespace TheSushiRoles
                             targetId = PlayerControl.LocalPlayer.PlayerId;
                         }
 
-                        // Armored sheriff shot doesnt kill if backfired
-                        if (targetId == Sheriff.Player.PlayerId && Utils.CheckArmored(Sheriff.Player, true, true))
+                        // Lucky sheriff shot doesnt kill if backfired
+                        if (targetId == Sheriff.Player.PlayerId && Utils.CheckLucky(Sheriff.Player, true, true))
                             return;
                         Utils.StartRPC(CustomRPC.UncheckedMurderPlayer, Sheriff.Player.Data.PlayerId, targetId, byte.MaxValue);
                         RPCProcedure.UncheckedMurderPlayer(Sheriff.Player.Data.PlayerId, targetId, Byte.MaxValue);
@@ -441,7 +445,7 @@ namespace TheSushiRoles
                                     Utils.StartRPC(CustomRPC.DragBody, playerInfo.PlayerId);
                                     RPCProcedure.DragBody(playerInfo.PlayerId);
                                     Undertaker.CurrentTarget = deadBody;
-                                    SoundEffectsManager.Play("cleanerClean");
+                                    SoundEffectsManager.Play("JanitorClean");
                                     break;
                                 }
                             }
@@ -454,9 +458,7 @@ namespace TheSushiRoles
 
                    byte playerId = PlayerControl.LocalPlayer.PlayerId;
 
-                    var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.DropBody, SendOption.Reliable, -1);
-                    writer.Write(playerId);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    Utils.StartRPC(CustomRPC.DropBody, playerId);
                     RPCProcedure.DropBody(playerId);
                 }
             },
@@ -519,7 +521,7 @@ namespace TheSushiRoles
                                     Utils.StartRPC(CustomRPC.HitmanDragBody, playerInfo.PlayerId);
                                     RPCProcedure.HitmanDragBody(playerInfo.PlayerId);
                                     Hitman.BodyTarget = deadBody;
-                                    SoundEffectsManager.Play("cleanerClean");
+                                    SoundEffectsManager.Play("JanitorClean");
                                     break;
                                 }
                             }
@@ -634,6 +636,67 @@ namespace TheSushiRoles
             GlitchButtonHacksText.enableWordWrapping = false;
             GlitchButtonHacksText.transform.localScale = Vector3.one * 0.5f;
             GlitchButtonHacksText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+
+            // Landlord Teleport
+            LandlordButton = new CustomButton(
+                () => 
+                {
+                    try
+                    {
+                        ShapeShifterMenu.Singleton.Menu.ForceClose();
+                    }
+                    catch
+                    {
+                        Landlord.FirstTarget = null;
+                        Landlord.SecondTarget = null;
+                        List<byte> transportTargets = new List<byte>();
+                        foreach (var player in PlayerControl.AllPlayerControls)
+                        {
+                            if (!player.Data.Disconnected)
+                            {
+                                if (!player.Data.IsDead) transportTargets.Add(player.PlayerId);
+                                else
+                                {
+                                    foreach (var body in UnityEngine.Object.FindObjectsOfType<DeadBody>())
+                                    {
+                                        if (body.ParentId == player.PlayerId) transportTargets.Add(player.PlayerId);
+                                    }
+                                }
+                            }
+                        }
+                        byte[] transporttargetIDs = transportTargets.ToArray();
+                        var pk = new ShapeShifterMenu(LandlordButton, (x) =>
+                        {
+                            Landlord.FirstTarget = x;
+                            Landlord.SwappingMenus = true;
+                            Coroutines.Start(RPCProcedure.LandlordOpenSecondMenu());
+                        }, (y) =>
+                        {
+                            return transporttargetIDs.Contains(y.PlayerId);
+                        });
+                            Coroutines.Start(pk.Open(0f, true));
+                    }
+                },
+                () => 
+                { return Landlord.Player != null && Landlord.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => 
+                {
+                    if (LandlordButtonChargesText != null) LandlordButtonChargesText.text = $"{Landlord.Charges}";
+                    return Landlord.Player != null && Landlord.Player == PlayerControl.LocalPlayer && Landlord.Charges > 0 && PlayerControl.LocalPlayer.CanMove;
+                },
+                () => { LandlordButton.Timer = LandlordButton.MaxTimer; },
+                Landlord.GetButtonSprite(),
+                CustomButton.ButtonPositions.lowerRowRight,
+                __instance,
+                KeyCode.F,
+                buttonText: "TELEPORT"
+            );
+            // Landlord Charges counter
+            LandlordButtonChargesText = GameObject.Instantiate(LandlordButton.actionButton.cooldownTimerText, LandlordButton.actionButton.cooldownTimerText.transform.parent);
+            LandlordButtonChargesText.text = "";
+            LandlordButtonChargesText.enableWordWrapping = false;
+            LandlordButtonChargesText.transform.localScale = Vector3.one * 0.5f;
+            LandlordButtonChargesText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
 
             // Chronos Rewind Time
             ChronosRewindButton = new CustomButton(
@@ -969,15 +1032,13 @@ namespace TheSushiRoles
                         MimicButton.buttonText = "SAMPLE";
                         SoundEffectsManager.Play("morphlingMorph");
                     }
-                    else if (Glitch.CurrentTarget != null) 
+                    else if (Glitch.CurrentTarget != null)
                     {
                         Glitch.sampledTarget = Glitch.CurrentTarget;
                         MimicButton.Sprite = Glitch.GetMimicSprite();
                         MimicButton.EffectDuration = 1f;
                         SoundEffectsManager.Play("morphlingSample");
                         MimicButton.buttonText = "MORPH";
-                        // Add poolable player to the button so that the target outfit is shown
-                        SetButtonTargetDisplay(Glitch.sampledTarget, MimicButton);
                     }
                 },
                 () => { return Glitch.Player != null && Glitch.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
@@ -990,7 +1051,6 @@ namespace TheSushiRoles
                     MimicButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                     Glitch.sampledTarget = null;
                     MimicButton.buttonText = "SAMPLE";
-                    SetButtonTargetDisplay(null);
                 },
                 Glitch.GetSampleSprite(),
                 CustomButton.ButtonPositions.upperRowLeft,
@@ -1005,9 +1065,6 @@ namespace TheSushiRoles
                         MimicButton.Timer = MimicButton.MaxTimer;
                         MimicButton.Sprite = Glitch.GetSampleSprite();
                         SoundEffectsManager.Play("morphlingMorph");
-
-                        // Reset the poolable player
-                        SetButtonTargetDisplay(null);
                     }
                 },
                 buttonText: "SAMPLE"
@@ -1639,76 +1696,76 @@ namespace TheSushiRoles
             DisperserChargesText.transform.localScale = Vector3.one * 0.5f;
             DisperserChargesText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
     
-            poisonerKillButton = new CustomButton(
+            ViperKillButton = new CustomButton(
                 () => 
                 {
-                    MurderAttemptResult murder = Utils.CheckMuderAttempt(Poisoner.Player, Poisoner.CurrentTarget);
+                    MurderAttemptResult murder = Utils.CheckMuderAttempt(Viper.Player, Viper.CurrentTarget);
                     if (murder == MurderAttemptResult.PerformKill) 
                     {
-                        Poisoner.poisoned = Poisoner.CurrentTarget;
+                        Viper.poisoned = Viper.CurrentTarget;
                          // Notify players about poisoned
-                        Utils.StartRPC(CustomRPC.PoisonerSetPoisoned, Poisoner.poisoned.PlayerId, (byte)0);
-                        RPCProcedure.PoisonerSetPoisoned(Poisoner.poisoned.PlayerId, 0);
+                        Utils.StartRPC(CustomRPC.ViperSetPoisoned, Viper.poisoned.PlayerId, (byte)0);
+                        RPCProcedure.ViperSetPoisoned(Viper.poisoned.PlayerId, 0);
 
-                        byte lastTimer = (byte)Poisoner.delay;
-                        FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Poisoner.delay, new Action<float>((p) => { // Delayed action
+                        byte lastTimer = (byte)Viper.delay;
+                        FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Viper.delay, new Action<float>((p) => { // Delayed action
                             if (p <= 1f) 
                             {
-                                byte timer = (byte)poisonerKillButton.Timer;
+                                byte timer = (byte)ViperKillButton.Timer;
                                 if (timer != lastTimer) 
                                 {
                                     lastTimer = timer;
-                                    Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.PoisonerTimer, timer);
+                                    Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.ViperTimer, timer);
                                 }
                             }
                             if (p == 1f) 
                             {
                                 // Perform kill if possible and reset poisoned (regardless whether the kill was successful or not)
-                                var res = Utils.CheckMurderAttemptAndKill(Poisoner.Player, Poisoner.poisoned, showAnimation: false);
+                                var res = Utils.CheckMurderAttemptAndKill(Viper.Player, Viper.poisoned, showAnimation: false);
                                 if (res == MurderAttemptResult.PerformKill) 
                                 {
-                                    Utils.StartRPC(CustomRPC.PoisonerSetPoisoned, byte.MaxValue, byte.MaxValue);
-                                    RPCProcedure.PoisonerSetPoisoned(byte.MaxValue, byte.MaxValue);
+                                    Utils.StartRPC(CustomRPC.ViperSetPoisoned, byte.MaxValue, byte.MaxValue);
+                                    RPCProcedure.ViperSetPoisoned(byte.MaxValue, byte.MaxValue);
                                 }
                             }
                         })));
-                        SoundEffectsManager.Play("poisonerPoison");
-                        poisonerKillButton.HasEffect = true; // Trigger effect on this click
+                        SoundEffectsManager.Play("ViperPoison");
+                        ViperKillButton.HasEffect = true; // Trigger effect on this click
                     }
                     else if (murder == MurderAttemptResult.BlankKill) 
                     {
-                        poisonerKillButton.Timer = poisonerKillButton.MaxTimer;
-                        poisonerKillButton.HasEffect = false;
+                        ViperKillButton.Timer = ViperKillButton.MaxTimer;
+                        ViperKillButton.HasEffect = false;
                     } 
                     else 
                     {
-                        poisonerKillButton.HasEffect = false;
+                        ViperKillButton.HasEffect = false;
                     }
                 },
-                () => { return Poisoner.Player != null && Poisoner.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => { return Viper.Player != null && Viper.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => 
                 {
-                    return Poisoner.CurrentTarget != null && PlayerControl.LocalPlayer.CanMove;
+                    return Viper.CurrentTarget != null && PlayerControl.LocalPlayer.CanMove;
                 },
                 () => {
-                    poisonerKillButton.Timer = poisonerKillButton.MaxTimer;
-                    poisonerKillButton.isEffectActive = false;
-                    poisonerKillButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
+                    ViperKillButton.Timer = ViperKillButton.MaxTimer;
+                    ViperKillButton.isEffectActive = false;
+                    ViperKillButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
-                Poisoner.GetButtonSprite(),
+                Viper.GetButtonSprite(),
                 CustomButton.ButtonPositions.upperRowRight,
                 __instance,
                 KeyCode.Q,
                 false,
                 0f,
                 () => {
-                    poisonerKillButton.Timer = poisonerKillButton.MaxTimer;
+                    ViperKillButton.Timer = ViperKillButton.MaxTimer;
                 },
                 buttonText: "POISON"
             );
 
-            // Poisoner blind button
-            PoisonerBlindButton = new CustomButton(
+            // Viper blind button
+            ViperBlindButton = new CustomButton(
                 () => 
                 {
                     var pos = PlayerControl.LocalPlayer.transform.position;
@@ -1720,28 +1777,28 @@ namespace TheSushiRoles
                     RPCProcedure.SetBlindTrap(buff);
 
                     SoundEffectsManager.Play("trapperTrap");
-                    PoisonerBlindButton.Timer = PoisonerBlindButton.MaxTimer;
+                    ViperBlindButton.Timer = ViperBlindButton.MaxTimer;
                 },
                 () => 
                 { 
-                    return Poisoner.Player != null && Poisoner.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; 
+                    return Viper.Player != null && Viper.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; 
                 },
                 () => 
                 {
                     return PlayerControl.LocalPlayer.CanMove;
                 },
-                () => { PoisonerBlindButton.Timer = PoisonerBlindButton.MaxTimer; },
-                Poisoner.GetBlindSprite(),
+                () => { ViperBlindButton.Timer = ViperBlindButton.MaxTimer; },
+                Viper.GetBlindSprite(),
                 CustomButton.ButtonPositions.upperRowCenter,
                 __instance,
                 KeyCode.G,
                 buttonText: "BLIND TRAP"
             );
 
-            portalmakerPlacePortalButton = new CustomButton(
+            GatekeeperPlacePortalButton = new CustomButton(
                 () => 
                 {
-                    portalmakerPlacePortalButton.Timer = portalmakerPlacePortalButton.MaxTimer;
+                    GatekeeperPlacePortalButton.Timer = GatekeeperPlacePortalButton.MaxTimer;
 
                     var pos = PlayerControl.LocalPlayer.transform.position;
                     byte[] buff = new byte[sizeof(float) * 2];
@@ -1752,14 +1809,14 @@ namespace TheSushiRoles
                     RPCProcedure.PlacePortal(buff);
                     SoundEffectsManager.Play("tricksterPlaceBox");
                 },
-                () => { return Portalmaker.Player != null && Portalmaker.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Portal.secondPortal == null; },
+                () => { return Gatekeeper.Player != null && Gatekeeper.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Portal.secondPortal == null; },
                 () => { return PlayerControl.LocalPlayer.CanMove && Portal.secondPortal == null; },
-                () => { portalmakerPlacePortalButton.Timer = portalmakerPlacePortalButton.MaxTimer; },
-                Portalmaker.GetPlacePortalButtonSprite(),
+                () => { GatekeeperPlacePortalButton.Timer = GatekeeperPlacePortalButton.MaxTimer; },
+                Gatekeeper.GetPlacePortalButtonSprite(),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
-                buttonText: "PLACE PORTAL"
+                buttonText: "CAST PORTAL"
             );
 
             MinerMineButton = new CustomButton(
@@ -1812,7 +1869,7 @@ namespace TheSushiRoles
                     }
                     RPCProcedure.UsePortal(PlayerControl.LocalPlayer.PlayerId, portalMakerSoloTeleport ? (byte)1 : (byte)0);
                     usePortalButton.Timer = usePortalButton.MaxTimer;
-                    portalmakerMoveToPortalButton.Timer = usePortalButton.MaxTimer;
+                    GatekeeperMoveToPortalButton.Timer = usePortalButton.MaxTimer;
                     SoundEffectsManager.Play("portalUse");
                     FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Portal.teleportDuration, new Action<float>((p) => { // Delayed action
                         PlayerControl.LocalPlayer.moveable = false;
@@ -1830,19 +1887,19 @@ namespace TheSushiRoles
                     })));
                     },
                 () => {
-                    if (PlayerControl.LocalPlayer == Portalmaker.Player && Portal.bothPlacedAndEnabled)
-                        portalmakerButtonText1.text = Portal.LocationNearEntry(PlayerControl.LocalPlayer.transform.position) || !Portalmaker.canPortalFromAnywhere ? "" : "1. " + Portal.firstPortal.room;
+                    if (PlayerControl.LocalPlayer == Gatekeeper.Player && Portal.bothPlacedAndEnabled)
+                        GatekeeperButtonText1.text = Portal.LocationNearEntry(PlayerControl.LocalPlayer.transform.position) || !Gatekeeper.canPortalFromAnywhere ? "" : "1. " + Portal.firstPortal.room;
                     return Portal.bothPlacedAndEnabled; },
-                () => { return PlayerControl.LocalPlayer.CanMove && (Portal.LocationNearEntry(PlayerControl.LocalPlayer.transform.position) || Portalmaker.canPortalFromAnywhere && PlayerControl.LocalPlayer == Portalmaker.Player) && !Portal.isTeleporting; },
+                () => { return PlayerControl.LocalPlayer.CanMove && (Portal.LocationNearEntry(PlayerControl.LocalPlayer.transform.position) || Gatekeeper.canPortalFromAnywhere && PlayerControl.LocalPlayer == Gatekeeper.Player) && !Portal.isTeleporting; },
                 () => { usePortalButton.Timer = usePortalButton.MaxTimer; },
-                Portalmaker.getUsePortalButtonSprite(),
+                Gatekeeper.getUsePortalButtonSprite(),
                 new Vector3(0.9f, -0.06f, 0),
                 __instance,
                 KeyCode.J,
                 mirror: true
             );
 
-            portalmakerMoveToPortalButton = new CustomButton(
+            GatekeeperMoveToPortalButton = new CustomButton(
                 () => 
                 {
                     bool didTeleport = false;
@@ -1855,7 +1912,7 @@ namespace TheSushiRoles
                     }
                     RPCProcedure.UsePortal(PlayerControl.LocalPlayer.PlayerId, 2);
                     usePortalButton.Timer = usePortalButton.MaxTimer;
-                    portalmakerMoveToPortalButton.Timer = usePortalButton.MaxTimer;
+                    GatekeeperMoveToPortalButton.Timer = usePortalButton.MaxTimer;
                     SoundEffectsManager.Play("portalUse");
                     FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Portal.teleportDuration, new Action<float>((p) => { // Delayed action
                         PlayerControl.LocalPlayer.moveable = false;
@@ -1875,10 +1932,10 @@ namespace TheSushiRoles
                         }
                     })));
                 },
-                () => { return Portalmaker.canPortalFromAnywhere && Portal.bothPlacedAndEnabled && PlayerControl.LocalPlayer == Portalmaker.Player; },
+                () => { return Gatekeeper.canPortalFromAnywhere && Portal.bothPlacedAndEnabled && PlayerControl.LocalPlayer == Gatekeeper.Player; },
                 () => { return PlayerControl.LocalPlayer.CanMove && !Portal.LocationNearEntry(PlayerControl.LocalPlayer.transform.position) && !Portal.isTeleporting; },
-                () => { portalmakerMoveToPortalButton.Timer = usePortalButton.MaxTimer; },
-                Portalmaker.getUsePortalButtonSprite(),
+                () => { GatekeeperMoveToPortalButton.Timer = usePortalButton.MaxTimer; },
+                Gatekeeper.getUsePortalButtonSprite(),
                 new Vector3(0.9f, 1f, 0),
                 __instance,
                 KeyCode.G,
@@ -1887,17 +1944,17 @@ namespace TheSushiRoles
             );
 
 
-            portalmakerButtonText1 = GameObject.Instantiate(usePortalButton.actionButton.cooldownTimerText, usePortalButton.actionButton.cooldownTimerText.transform.parent);
-            portalmakerButtonText1.text = "";
-            portalmakerButtonText1.enableWordWrapping = false;
-            portalmakerButtonText1.transform.localScale = Vector3.one * 0.5f;
-            portalmakerButtonText1.transform.localPosition += new Vector3(-0.05f, 0.55f, -1f);
+            GatekeeperButtonText1 = GameObject.Instantiate(usePortalButton.actionButton.cooldownTimerText, usePortalButton.actionButton.cooldownTimerText.transform.parent);
+            GatekeeperButtonText1.text = "";
+            GatekeeperButtonText1.enableWordWrapping = false;
+            GatekeeperButtonText1.transform.localScale = Vector3.one * 0.5f;
+            GatekeeperButtonText1.transform.localPosition += new Vector3(-0.05f, 0.55f, -1f);
 
-            portalmakerButtonText2 = GameObject.Instantiate(portalmakerMoveToPortalButton.actionButton.cooldownTimerText, portalmakerMoveToPortalButton.actionButton.cooldownTimerText.transform.parent);
-            portalmakerButtonText2.text = "";
-            portalmakerButtonText2.enableWordWrapping = false;
-            portalmakerButtonText2.transform.localScale = Vector3.one * 0.5f;
-            portalmakerButtonText2.transform.localPosition += new Vector3(-0.05f, 0.55f, -1f);
+            GatekeeperButtonText2 = GameObject.Instantiate(GatekeeperMoveToPortalButton.actionButton.cooldownTimerText, GatekeeperMoveToPortalButton.actionButton.cooldownTimerText.transform.parent);
+            GatekeeperButtonText2.text = "";
+            GatekeeperButtonText2.enableWordWrapping = false;
+            GatekeeperButtonText2.transform.localScale = Vector3.one * 0.5f;
+            GatekeeperButtonText2.transform.localPosition += new Vector3(-0.05f, 0.55f, -1f);
 
 
             // Jackal Sidekick Button
@@ -2051,8 +2108,8 @@ namespace TheSushiRoles
                 }
             );
 
-            // Cleaner Clean
-            cleanerCleanButton = new CustomButton(
+            // Janitor Clean
+            JanitorCleanButton = new CustomButton(
                 () => 
                 {
                     foreach (Collider2D collider2D in Physics2D.OverlapCircleAll(PlayerControl.LocalPlayer.GetTruePosition(), PlayerControl.LocalPlayer.MaxReportDistance, Constants.PlayersOnlyMask)) {
@@ -2067,21 +2124,21 @@ namespace TheSushiRoles
                                 {
                                     NetworkedPlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
                                     
-                                    Utils.StartRPC(CustomRPC.CleanBody, playerInfo.PlayerId, Cleaner.Player.PlayerId);
-                                    RPCProcedure.CleanBody(playerInfo.PlayerId, Cleaner.Player.PlayerId);
+                                    Utils.StartRPC(CustomRPC.CleanBody, playerInfo.PlayerId, Janitor.Player.PlayerId);
+                                    RPCProcedure.CleanBody(playerInfo.PlayerId, Janitor.Player.PlayerId);
 
-                                    Cleaner.Player.killTimer = cleanerCleanButton.Timer = cleanerCleanButton.MaxTimer;
-                                    SoundEffectsManager.Play("cleanerClean");
+                                    Janitor.Player.killTimer = JanitorCleanButton.Timer = JanitorCleanButton.MaxTimer;
+                                    SoundEffectsManager.Play("JanitorClean");
                                     break;
                                 }
                             }
                         }
                     }
                 },
-                () => { return Cleaner.Player != null && Cleaner.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => { return Janitor.Player != null && Janitor.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return __instance.ReportButton.graphic.color == Palette.EnabledColor && PlayerControl.LocalPlayer.CanMove; },
-                () => { cleanerCleanButton.Timer = cleanerCleanButton.MaxTimer; },
-                Cleaner.GetButtonSprite(),
+                () => { JanitorCleanButton.Timer = JanitorCleanButton.MaxTimer; },
+                Janitor.GetButtonSprite(),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
@@ -2374,7 +2431,7 @@ namespace TheSushiRoles
                 },
                 () =>
                 {
-                    return Medium.medium != null && Medium.medium == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead;
+                    return Medium.Player != null && Medium.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
                 () =>
                 {
@@ -2450,43 +2507,43 @@ namespace TheSushiRoles
                 buttonText: "ASK"
             );
 
-            // Pursuer button
-            pursuerButton = new CustomButton(
+            // Survivor button
+            SurvivorButton = new CustomButton(
                 () => {
-                    if (Pursuer.target != null) 
+                    if (Survivor.target != null) 
                     {
-                        if (Pursuer.target.CheckVeteranPestilenceKill() || Pursuer.target.CheckFortifiedPlayer()) return;
+                        if (Survivor.target.CheckVeteranPestilenceKill() || Survivor.target.CheckFortifiedPlayer()) return;
                         
-                        Utils.StartRPC(CustomRPC.SetBlanked, Pursuer.target.PlayerId, Byte.MaxValue);
-                        RPCProcedure.SetBlanked(Pursuer.target.PlayerId, Byte.MaxValue);
+                        Utils.StartRPC(CustomRPC.SetBlanked, Survivor.target.PlayerId, Byte.MaxValue);
+                        RPCProcedure.SetBlanked(Survivor.target.PlayerId, Byte.MaxValue);
 
-                        Pursuer.target = null;
+                        Survivor.target = null;
 
-                        Pursuer.blanks++;
-                        pursuerButton.Timer = pursuerButton.MaxTimer;
-                        SoundEffectsManager.Play("pursuerBlank");
+                        Survivor.blanks++;
+                        SurvivorButton.Timer = SurvivorButton.MaxTimer;
+                        SoundEffectsManager.Play("SurvivorBlank");
                     }
 
                 },
-                () => { return Pursuer.Player != null && Pursuer.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Pursuer.blanks < Pursuer.blanksNumber; },
+                () => { return Survivor.Player != null && Survivor.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Survivor.blanks < Survivor.blanksNumber; },
                 () => {
-                    if (pursuerButtonBlanksText != null) pursuerButtonBlanksText.text = $"{Pursuer.blanksNumber - Pursuer.blanks}";
+                    if (SurvivorButtonBlanksText != null) SurvivorButtonBlanksText.text = $"{Survivor.blanksNumber - Survivor.blanks}";
 
-                    return Pursuer.blanksNumber > Pursuer.blanks && PlayerControl.LocalPlayer.CanMove && Pursuer.target != null;
+                    return Survivor.blanksNumber > Survivor.blanks && PlayerControl.LocalPlayer.CanMove && Survivor.target != null;
                 },
-                () => { pursuerButton.Timer = pursuerButton.MaxTimer; },
-                Pursuer.GetTargetSprite(),
+                () => { SurvivorButton.Timer = SurvivorButton.MaxTimer; },
+                Survivor.GetTargetSprite(),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F
             );
 
-            // Pursuer button blanks left
-            pursuerButtonBlanksText = GameObject.Instantiate(pursuerButton.actionButton.cooldownTimerText, pursuerButton.actionButton.cooldownTimerText.transform.parent);
-            pursuerButtonBlanksText.text = "";
-            pursuerButtonBlanksText.enableWordWrapping = false;
-            pursuerButtonBlanksText.transform.localScale = Vector3.one * 0.5f;
-            pursuerButtonBlanksText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+            // Survivor button blanks left
+            SurvivorButtonBlanksText = GameObject.Instantiate(SurvivorButton.actionButton.cooldownTimerText, SurvivorButton.actionButton.cooldownTimerText.transform.parent);
+            SurvivorButtonBlanksText.text = "";
+            SurvivorButtonBlanksText.enableWordWrapping = false;
+            SurvivorButtonBlanksText.transform.localScale = Vector3.one * 0.5f;
+            SurvivorButtonBlanksText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
 
 
             // Witch Spell button
@@ -2545,14 +2602,14 @@ namespace TheSushiRoles
                 }
             );
 
-            // Ninja mark and assassinate button 
-            ninjaButton = new CustomButton(
+            // Assassin mark and assassinate button 
+            AssassinButton = new CustomButton(
                 () => 
                 {
-                    if (Ninja.ninjaMarked != null) 
+                    if (Assassin.AssassinMarked != null) 
                     {
                         // Murder attempt with teleport
-                        MurderAttemptResult attempt = Utils.CheckMuderAttempt(Ninja.Player, Ninja.ninjaMarked);
+                        MurderAttemptResult attempt = Utils.CheckMuderAttempt(Assassin.Player, Assassin.AssassinMarked);
                         if (attempt == MurderAttemptResult.PerformKill) 
                         {
                             // Create first trace before killing
@@ -2561,62 +2618,62 @@ namespace TheSushiRoles
                             Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                             Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                            Utils.StartRPC(CustomRPC.PlaceNinjaTrace, buff);
-                            RPCProcedure.PlaceNinjaTrace(buff);
+                            Utils.StartRPC(CustomRPC.PlaceAssassinTrace, buff);
+                            RPCProcedure.PlaceAssassinTrace(buff);
 
-                            Utils.StartRPC(CustomRPC.SetInvisible, Ninja.Player.PlayerId, byte.MinValue);
-                            RPCProcedure.SetInvisible(Ninja.Player.PlayerId, byte.MinValue);
+                            Utils.StartRPC(CustomRPC.SetInvisible, Assassin.Player.PlayerId, byte.MinValue);
+                            RPCProcedure.SetInvisible(Assassin.Player.PlayerId, byte.MinValue);
 
                             // Perform Kill
 
-                            Utils.StartRPC(CustomRPC.UncheckedMurderPlayer, PlayerControl.LocalPlayer.PlayerId, Ninja.ninjaMarked.PlayerId, byte.MaxValue);
+                            Utils.StartRPC(CustomRPC.UncheckedMurderPlayer, PlayerControl.LocalPlayer.PlayerId, Assassin.AssassinMarked.PlayerId, byte.MaxValue);
                             if (SubmergedCompatibility.IsSubmerged) 
                             {
-                                SubmergedCompatibility.ChangeFloor(Ninja.ninjaMarked.transform.localPosition.y > -7);
+                                SubmergedCompatibility.ChangeFloor(Assassin.AssassinMarked.transform.localPosition.y > -7);
                             }
-                                RPCProcedure.UncheckedMurderPlayer(PlayerControl.LocalPlayer.PlayerId, Ninja.ninjaMarked.PlayerId, byte.MaxValue);
+                                RPCProcedure.UncheckedMurderPlayer(PlayerControl.LocalPlayer.PlayerId, Assassin.AssassinMarked.PlayerId, byte.MaxValue);
                             // Create Second trace after killing
-                            pos = Ninja.ninjaMarked.transform.position;
+                            pos = Assassin.AssassinMarked.transform.position;
                             buff = new byte[sizeof(float) * 2];
                             Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                             Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                            Utils.StartRPC(CustomRPC.PlaceNinjaTrace, buff);
-                            RPCProcedure.PlaceNinjaTrace(buff);
+                            Utils.StartRPC(CustomRPC.PlaceAssassinTrace, buff);
+                            RPCProcedure.PlaceAssassinTrace(buff);
                         }
 
                         if (attempt == MurderAttemptResult.BlankKill || attempt == MurderAttemptResult.PerformKill) 
                         {
-                            ninjaButton.Timer = ninjaButton.MaxTimer;
-                            Ninja.Player.killTimer = GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown;
+                            AssassinButton.Timer = AssassinButton.MaxTimer;
+                            Assassin.Player.killTimer = GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown;
                         } 
                         else if (attempt == MurderAttemptResult.SuppressKill) 
                         {
-                            ninjaButton.Timer = 0f;
+                            AssassinButton.Timer = 0f;
                         }
-                        Ninja.ninjaMarked = null;
+                        Assassin.AssassinMarked = null;
                         return;
                     } 
-                    if (Ninja.CurrentTarget != null) 
+                    if (Assassin.CurrentTarget != null) 
                     {
-                        Ninja.ninjaMarked = Ninja.CurrentTarget;
-                        ninjaButton.Timer = 5f;
+                        Assassin.AssassinMarked = Assassin.CurrentTarget;
+                        AssassinButton.Timer = 5f;
                         SoundEffectsManager.Play("warlockCurse");
 
                         // Ghost Info
-                        Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.NinjaMarked, Ninja.ninjaMarked.PlayerId);
+                        Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.AssassinMarked, Assassin.AssassinMarked.PlayerId);
                     }
                 },
-                () => { return Ninja.Player != null && Ninja.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => { return Assassin.Player != null && Assassin.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {  // CouldUse
-                    ninjaButton.Sprite = Ninja.ninjaMarked != null ? Ninja.GetKillButtonSprite() : Ninja.GetMarkButtonSprite(); 
-                    return (Ninja.CurrentTarget != null || Ninja.ninjaMarked != null && !TransportationToolPatches.IsUsingTransportation(Ninja.ninjaMarked)) && PlayerControl.LocalPlayer.CanMove;
+                    AssassinButton.Sprite = Assassin.AssassinMarked != null ? Assassin.GetKillButtonSprite() : Assassin.GetMarkButtonSprite(); 
+                    return (Assassin.CurrentTarget != null || Assassin.AssassinMarked != null && !TransportationToolPatches.IsUsingTransportation(Assassin.AssassinMarked)) && PlayerControl.LocalPlayer.CanMove;
                 },
                 () => {  // on meeting ends
-                    ninjaButton.Timer = ninjaButton.MaxTimer;
-                    Ninja.ninjaMarked = null;
+                    AssassinButton.Timer = AssassinButton.MaxTimer;
+                    Assassin.AssassinMarked = null;
                 },
-                Ninja.GetMarkButtonSprite(),
+                Assassin.GetMarkButtonSprite(),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F                   
@@ -2627,7 +2684,7 @@ namespace TheSushiRoles
                {
                    PlayerControl.LocalPlayer.NetTransform.Halt(); // Stop current movement 
                    Mayor.remoteMeetingsLeft--;
-                   Utils.HandlePoisonedOnBodyReport(); // Manually call Poisoner handling, since the CmdReportDeadBody Prefix won't be called
+                   Utils.HandlePoisonedOnBodyReport(); // Manually call Viper handling, since the CmdReportDeadBody Prefix won't be called
                    RPCProcedure.UncheckedCmdReportDeadBody(PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
                    Utils.StartRPC(CustomRPC.UncheckedCmdReportDeadBody, PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
                    mayorMeetingButton.Timer = 1f;
@@ -2658,7 +2715,7 @@ namespace TheSushiRoles
                () => 
                {
                    PlayerControl.LocalPlayer.NetTransform.Halt(); // Stop current movement 
-                   Utils.HandlePoisonedOnBodyReport(); // Manually call Poisoner handling, since the CmdReportDeadBody Prefix won't be called
+                   Utils.HandlePoisonedOnBodyReport(); // Manually call Viper handling, since the CmdReportDeadBody Prefix won't be called
                    RPCProcedure.UncheckedCmdReportDeadBody(PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
                    Utils.StartRPC(CustomRPC.UncheckedCmdReportDeadBody, PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
                },

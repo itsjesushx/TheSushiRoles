@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace TheSushiRoles.Roles
 {
-    public static class Cleaner 
+    public static class Janitor 
     {
         public static PlayerControl Player;
         public static Color Color = Palette.ImpostorRed;
@@ -20,7 +20,7 @@ namespace TheSushiRoles.Roles
         public static void ClearAndReload() 
         {
             Player = null;
-            Cooldown = CustomOptionHolder.cleanerCooldown.GetFloat();
+            Cooldown = CustomOptionHolder.JanitorCooldown.GetFloat();
         }
     }
 }

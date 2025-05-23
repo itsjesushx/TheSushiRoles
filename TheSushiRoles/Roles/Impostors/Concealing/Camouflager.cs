@@ -24,7 +24,7 @@ namespace TheSushiRoles.Roles
             CamouflageTimer = 0f;
             foreach (PlayerControl p in PlayerControl.AllPlayerControls) 
             {
-                if (p == Ninja.Player && Ninja.isInvisble) continue;
+                if (p == Assassin.Player && Assassin.isInvisble) continue;
                 if (p == Wraith.Player && Wraith.IsVanished) continue;
                 p.SetDefaultLook();
             }

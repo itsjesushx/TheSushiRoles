@@ -1,13 +1,10 @@
-﻿/*using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
 using Hazel;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using System.Collections;
-
-using static TheSushiRoles.TheSushiRoles;
 using UnityEngine.UI;
 using Reactor.Utilities.Extensions;
 
@@ -18,7 +15,6 @@ namespace TheSushiRoles.Modules
     {
         public static bool isEnabled => CustomOptionHolder.isDraftMode.GetBool();
         public static bool IsRunning = false;
-
         public static List<byte> pickOrder = new();
         private static bool picked = false;
         private static float timer = 0f;
@@ -28,7 +24,6 @@ namespace TheSushiRoles.Modules
         public static IEnumerator CoSelectRoles(IntroCutscene __instance)
         {
             IsRunning = true;
-            SoundEffectsManager.Play("draft", volume: 1f, true, true);
             alreadyPicked.Clear();
             bool playedAlert = false;
             feedText = UnityEngine.Object.Instantiate(__instance.TeamTitle, __instance.transform);
@@ -71,20 +66,21 @@ namespace TheSushiRoles.Modules
                 yield return null;
             }
 
-            while (pickOrder.Count > 0) {
+            while (pickOrder.Count > 0)
+            {
                 picked = false;
                 timer = 0;
                 float maxTimer = CustomOptionHolder.draftModeTimeToChoose.GetFloat();
                 string playerText = "";
-                while (timer < maxTimer || !picked) 
+                while (timer < maxTimer || !picked)
                 {
                     if (pickOrder.Count == 0)
                         break;
                     // wait for pick
                     timer += Time.deltaTime;
-                    if (PlayerControl.LocalPlayer.PlayerId == pickOrder[0]) 
+                    if (PlayerControl.LocalPlayer.PlayerId == pickOrder[0])
                     {
-                        if (!playedAlert) 
+                        if (!playedAlert)
                         {
                             playedAlert = true;
                             SoundManager.Instance.PlaySound(ShipStatus.Instance.SabotageSound, false, 1f, null);
@@ -92,15 +88,15 @@ namespace TheSushiRoles.Modules
                         // Animate beginning of choice, by changing background color
                         float min = 50 / 255f;
                         Color backGroundColor = new Color(min, min, min, 1);
-                        if (timer < 1) 
+                        if (timer < 1)
                         {
                             float max = 230 / 255f;
-                            if (timer < 0.5f) 
+                            if (timer < 0.5f)
                             { // White flash                              
                                 float p = timer / 0.5f;
                                 float value = (float)Math.Pow(p, 2f) * max;
                                 backGroundColor = new Color(value, value, value, 1);
-                            } else 
+                            } else
                             {
                                 float p = (1 - timer) / 0.5f;
                                 float value = (float)Math.Pow(p, 2f) * max + (1 - (float)Math.Pow(p, 2f)) * min;
@@ -119,18 +115,18 @@ namespace TheSushiRoles.Modules
                         foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos) 
                         {
                             int impostorCount = PlayerControl.AllPlayerControls.ToArray().ToList().Where(x => x.Data.Role.IsImpostor).Count();
-                            if (roleInfo.FactionId == Faction.Modifier) continue;
                             // Remove Impostor Roles
-                            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && !roleInfo.isImpostor) continue;
-                            if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor && roleInfo.isImpostor) continue;
+                            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && roleInfo.FactionId != Faction.Impostors) continue;
+                            if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor && roleInfo.FactionId == Faction.Impostors) continue;
 
                             RoleManagerSelectRolesPatch.RoleAssignmentData roleData = RoleManagerSelectRolesPatch.getRoleAssignmentData();
-                            roleData.crewSettings.Add((byte)RoleId.Sheriff, CustomOptionHolder.sheriffSpawnRate.GetSelection());
-                            if (roleData.neutralSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.neutralSettings[(byte)roleInfo.RoleId] == 0) continue;
-                            else if (roleData.impSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.impSettings[(byte)roleInfo.RoleId] == 0) continue;
+                            roleData.CrewSettings.Add((byte)RoleId.Sheriff, CustomOptionHolder.sheriffSpawnRate.GetSelection());
+                            if (roleData.NeutralBenignSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.NeutralBenignSettings[(byte)roleInfo.RoleId] == 0) continue;
+                            else if (roleData.ImpSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.ImpSettings[(byte)roleInfo.RoleId] == 0) continue;
+                            else if (roleData.NeutralEvilSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.NeutralEvilSettings[(byte)roleInfo.RoleId] == 0) continue;
                             else if (roleData.NeutralKillingSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.NeutralKillingSettings[(byte)roleInfo.RoleId] == 0) continue;
-                            else if (roleData.crewSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.crewSettings[(byte)roleInfo.RoleId] == 0) continue;
-                            if (roleInfo.RoleId == RoleId.Pursuer) continue;
+                            else if (roleData.CrewSettings.ContainsKey((byte)roleInfo.RoleId) && roleData.CrewSettings[(byte)roleInfo.RoleId] == 0) continue;
+                            if (roleInfo.RoleId == RoleId.Survivor) continue;
                             if (roleInfo.RoleId == RoleId.Spy && impostorCount < 2) continue;
                             if (alreadyPicked.Contains((byte)roleInfo.RoleId) && roleInfo.RoleId != RoleId.Crewmate) continue;
                             if (roleInfo.RoleId == RoleId.Crewmate) continue;
@@ -138,15 +134,16 @@ namespace TheSushiRoles.Modules
                             int impsPicked = alreadyPicked.Where(x => RoleInfo.RoleInfoById[(RoleId)x].isImpostor).Count();
 
                             // Hanlde forcing of 100% roles for impostors
-                            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor) {
+                            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor)
+                            {
                                 int impsMax = CustomOptionHolder.impostorRolesCountMax.GetSelection();
                                 int impsMin = CustomOptionHolder.impostorRolesCountMin.GetSelection();
                                 if (impsMin > impsMax) impsMin = impsMax;
                                 int impsLeft = pickOrder.Where(x => Utils.PlayerById(x).Data.Role.IsImpostor).Count();
-                                int imps100 = roleData.impSettings.Where(x => x.Value == 10).Count();
+                                int imps100 = roleData.ImpSettings.Where(x => x.Value == 10).Count();
                                 if (imps100 > impsMax) imps100 = impsMax;
-                                int imps100Picked = alreadyPicked.Where(x => roleData.impSettings.GetValueSafe(x) == 10).Count();
-                                if (imps100 - imps100Picked >= impsLeft && !(roleData.impSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0)) continue;
+                                int imps100Picked = alreadyPicked.Where(x => roleData.ImpSettings.GetValueSafe(x) == 10).Count();
+                                if (imps100 - imps100Picked >= impsLeft && !(roleData.ImpSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0)) continue;
                                 if (impsMin - impsPicked >= impsLeft && roleInfo.RoleId == RoleId.Impostor) continue;
                                 if (impsPicked >= impsMax && roleInfo.RoleId != RoleId.Impostor) continue;
                             }
@@ -155,76 +152,98 @@ namespace TheSushiRoles.Modules
                             else 
                             {
                                 // No more neutrals possible!
-                                int neutralsPicked = alreadyPicked.Where(x => RoleInfo.RoleInfoById[(RoleId)x].FactionId == Faction.Neutrals).Count();
-                                int neutralsKPicked = alreadyPicked.Where(x => RoleInfo.RoleInfoById[(RoleId)x].FactionId == RoleAlignment.NeutralKilling).Count();
+                                int neutralBenignsPicked = alreadyPicked.Where(x => RoleInfo.RoleInfoById[(RoleId)x].Alignment == RoleAlignment.NeutralBenign).Count();
+                                int neutralEvilsPicked = alreadyPicked.Where(x => RoleInfo.RoleInfoById[(RoleId)x].Alignment == RoleAlignment.NeutralEvil).Count();
+                                int neutralsKillersPicked = alreadyPicked.Where(x => RoleInfo.RoleInfoById[(RoleId)x].Alignment == RoleAlignment.NeutralKilling).Count();
                                 int crewPicked = alreadyPicked.Where(x => RoleInfo.RoleInfoById[(RoleId)x].FactionId == Faction.Crewmates).Count();
                                 
-                                int neutralsMax = CustomOptionHolder.MaxNeutralEvilRoles.GetSelection();
-                                int neutralsMin = CustomOptionHolder.MinNeutralEvilRoles.GetSelection();
+                                int neutralBenignsMax = CustomOptionHolder.MaxNeutralBenignRoles.GetSelection();
+                                int neutralBenignsMin = CustomOptionHolder.MinNeutralBenignRoles.GetSelection();
+                                int neutralEvilsMax = CustomOptionHolder.MaxNeutralEvilRoles.GetSelection();
+                                int neutralEvilsMin = CustomOptionHolder.MinNeutralEvilRoles.GetSelection();
                                 int neutralsKMin = CustomOptionHolder.neutralKillingRolesCountMin.GetSelection();
                                 int neutralsKMax = CustomOptionHolder.neutralKillingRolesCountMax.GetSelection();
 
-                                int neutrals100 = roleData.neutralSettings.Where(x => x.Value == 10).Count();
+                                int neutralBenigns100 = roleData.NeutralBenignSettings.Where(x => x.Value == 10).Count();
+                                int neutralEvils100 = roleData.NeutralEvilSettings.Where(x => x.Value == 10).Count();
                                 int neutralsK100 = roleData.NeutralKillingSettings.Where(x => x.Value == 10).Count();
 
                                 if (neutralsK100 > neutralsKMin) neutralsKMin = neutralsK100;
                                 if (neutralsKMin > neutralsKMax) neutralsKMin = neutralsKMax;
 
-                                if (neutrals100 > neutralsMin) neutralsMin = neutrals100;
-                                if (neutralsMin > neutralsMax) neutralsMin = neutralsMax;
+                                if (neutralBenigns100 > neutralBenignsMin) neutralBenignsMin = neutralBenigns100;
+                                if (neutralBenignsMin > neutralBenignsMax) neutralBenignsMin = neutralBenignsMax;
+
+                                if (neutralEvils100 > neutralEvilsMin) neutralEvilsMin = neutralEvils100;
+                                if (neutralEvilsMin > neutralEvilsMax) neutralEvilsMin = neutralEvilsMax;
 
                                 // If crewmate fill disabled and crew picked the amount of allowed crewmates alreay: no more crewmate except vanilla crewmate allowed!
-                                int crewLimit = PlayerControl.AllPlayerControls.Count - impostorCount - (neutralsMin > neutrals100 ? neutralsMin : neutrals100 > neutralsMax ? neutralsMax : neutrals100) - (neutralsKMin > neutralsK100 ? neutralsKMin : neutralsK100 > neutralsKMax ? neutralsKMax : neutralsK100);
+                                int crewLimit = PlayerControl.AllPlayerControls.Count - impostorCount - (neutralEvilsMin > neutralBenigns100 ? neutralBenignsMin : neutralBenigns100 > neutralBenignsMax ? neutralBenignsMax : neutralBenigns100) - (neutralEvilsMin > neutralEvils100 ? neutralEvilsMin : neutralEvils100 > neutralEvilsMax ? neutralEvilsMax : neutralEvils100) - (neutralsKMin > neutralsK100 ? neutralsKMin : neutralsK100 > neutralsKMax ? neutralsKMax : neutralsK100);
                                 int maxCrew = crewLimit;
                                 if (maxCrew > crewLimit)
                                     maxCrew = crewLimit;
-                                if (crewPicked >= crewLimit && roleInfo.FactionId != Faction.Neutrals && roleInfo.FactionId != RoleAlignment.NeutralKilling && roleInfo.RoleId != RoleId.Crewmate) continue;
+                                if (crewPicked >= crewLimit && roleInfo.FactionId != Faction.Neutrals && roleInfo.Alignment != RoleAlignment.NeutralKilling && roleInfo.RoleId != RoleId.Crewmate) continue;
                                 // no crewmates allowed!
                                 if (roleInfo.RoleId == RoleId.Crewmate) continue;
 
                                 bool allowAnyNeutralK = false;
-                                if (neutralsKPicked >= neutralsKMax && roleInfo.FactionId == RoleAlignment.NeutralKilling) continue;
+                                if (neutralsKillersPicked >= neutralsKMax && roleInfo.Alignment == RoleAlignment.NeutralKilling) continue;
                                 // More neutrals needed? Then no more crewmates! This takes precedence over crew roles set to 100%!
                                 var crewmatesLeft1 = pickOrder.Count - pickOrder.Where(x => Utils.PlayerById(x).Data.Role.IsImpostor).Count();
                                 var crewmatesLeft = pickOrder.Count - pickOrder.Where(x => Utils.PlayerById(x).Data.Role.IsImpostor).Count();
 
-                                bool allowAnyNeutral = false;
-                                if (neutralsPicked >= neutralsMax && roleInfo.FactionId == Faction.Neutrals) continue;
-                                // More neutrals needed? Then no more crewmates! This takes precedence over crew roles set to 100%!
+                                bool allowAnyNeutralBenign = false;
+                                if (neutralBenignsPicked >= neutralBenignsMax && roleInfo.Alignment == RoleAlignment.NeutralBenign) continue;
+                                crewmatesLeft = pickOrder.Count - pickOrder.Where(x => Utils.PlayerById(x).Data.Role.IsImpostor).Count();
+                                
+                                bool allowAnyNeutralEvil = false;
+                                if (neutralBenignsPicked >= neutralBenignsMax && roleInfo.Alignment == RoleAlignment.NeutralBenign) continue;
                                 crewmatesLeft = pickOrder.Count - pickOrder.Where(x => Utils.PlayerById(x).Data.Role.IsImpostor).Count();
 
-                                if (crewmatesLeft <= neutralsMin - neutralsPicked && roleInfo.FactionId != Faction.Neutrals  || crewmatesLeft <= neutralsKMin - neutralsKPicked && roleInfo.FactionId != RoleAlignment.NeutralKilling) 
+                                if (crewmatesLeft <= neutralBenignsMin - neutralBenignsPicked && roleInfo.Alignment != RoleAlignment.NeutralBenign
+                                || crewmatesLeft <= neutralsKMin - neutralsKillersPicked && roleInfo.Alignment != RoleAlignment.NeutralKilling
+                                || crewmatesLeft <= neutralEvilsMin - neutralEvilsPicked && roleInfo.Alignment != RoleAlignment.NeutralEvil)
                                 {
                                     continue;
-                                } 
-                                else if (neutralsMin - neutrals100 > neutralsPicked)
-                                    allowAnyNeutral = true;
-                                else if (neutralsKMin - neutralsK100 > neutralsKPicked)
+                                }
+                                else if (neutralBenignsMin - neutralBenigns100 > neutralBenignsPicked)
+                                    allowAnyNeutralBenign = true;
+                                else if (neutralEvilsMin - neutralEvils100 > neutralEvilsPicked)
+                                    allowAnyNeutralEvil = true;
+                                else if (neutralsKMin - neutralsK100 > neutralsKillersPicked)
                                     allowAnyNeutralK = true;
                                 // Handle 100% Roles PER Faction.
 
-                                int neutrals100Picked = alreadyPicked.Where(x => roleData.neutralSettings.GetValueSafe(x) == 10).Count();
-                                if (neutrals100 > neutralsMax) neutrals100 = neutralsMax;
+                                int neutralEvils100Picked = alreadyPicked.Where(x => roleData.NeutralEvilSettings.GetValueSafe(x) == 10).Count();
+                                if (neutralEvils100 > neutralEvilsMax) neutralEvils100 = neutralEvilsMax;
+
+                                int neutralBenigns100Picked = alreadyPicked.Where(x => roleData.NeutralBenignSettings.GetValueSafe(x) == 10).Count();
+                                if (neutralBenigns100 > neutralBenignsMax) neutralBenigns100 = neutralBenignsMax;
 
                                 int neutralsK100Picked = alreadyPicked.Where(x => roleData.NeutralKillingSettings.GetValueSafe(x) == 10).Count();
                                 if (neutralsK100 > neutralsKMax) neutralsK100 = neutralsKMax;
 
-                                int crew100 = roleData.crewSettings.Where(x => x.Value == 10).Count();
-                                int crew100Picked = alreadyPicked.Where(x => roleData.crewSettings.GetValueSafe(x) == 10).Count();
-                                if (neutrals100 > neutralsMax) neutrals100 = neutralsMax;
+                                int crew100 = roleData.CrewSettings.Where(x => x.Value == 10).Count();
+                                int crew100Picked = alreadyPicked.Where(x => roleData.CrewSettings.GetValueSafe(x) == 10).Count();
+                                
+                                if (neutralBenigns100 > neutralBenignsMax) neutralBenigns100 = neutralBenignsMax;
+                                if (neutralEvils100 > neutralBenignsMax) neutralEvils100 = neutralEvilsMax;
                                 if (neutralsK100 > neutralsKMax) neutralsK100 = neutralsKMax;
 
                                 if (crew100 > maxCrew) crew100 = maxCrew;
-                                if ((neutrals100 - neutrals100Picked >= crewmatesLeft || roleInfo.FactionId == Faction.Neutrals && neutrals100 - neutrals100Picked >= neutralsMax - neutralsPicked) && !(neutrals100Picked >= neutralsMax) && !(roleData.neutralSettings.Any(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId))) continue;
-                                if ((neutralsK100 - neutralsK100Picked >= crewmatesLeft || roleInfo.FactionId == RoleAlignment.NeutralKilling && neutralsK100 - neutralsK100Picked >= neutralsKMax - neutralsKPicked) && !(neutralsK100Picked >= neutralsKMax) && !(roleData.NeutralKillingSettings.Any(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId))) continue;
+                                if ((neutralEvils100 - neutralEvils100Picked >= crewmatesLeft || roleInfo.Alignment == RoleAlignment.NeutralEvil && neutralEvils100 - neutralEvils100Picked >= neutralEvilsMax - neutralEvilsPicked) && !(neutralEvils100Picked >= neutralEvilsMax) && !(roleData.NeutralEvilSettings.Any(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId))) continue;
+                                if ((neutralsK100 - neutralsK100Picked >= crewmatesLeft || roleInfo.Alignment == RoleAlignment.NeutralKilling && neutralsK100 - neutralsK100Picked >= neutralsKMax - neutralsK100Picked) && !(neutralsK100Picked >= neutralsKMax) && !(roleData.NeutralKillingSettings.Any(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId))) continue;
+                                if ((neutralBenigns100 - neutralBenigns100Picked >= crewmatesLeft || roleInfo.Alignment == RoleAlignment.NeutralBenign && neutralsK100 - neutralBenigns100Picked >= neutralBenignsMax - neutralBenignsPicked) && !(neutralBenigns100Picked >= neutralBenignsMax) && !(roleData.NeutralBenignSettings.Any(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId))) continue;
 
-                                if (!(allowAnyNeutral && roleInfo.FactionId == Faction.Neutrals) && crew100 - crew100Picked >= crewmatesLeft && !(roleData.crewSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0)) continue;
-                                if (!(allowAnyNeutralK && roleInfo.FactionId == RoleAlignment.NeutralKilling) && crew100 - crew100Picked >= crewmatesLeft && !(roleData.crewSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0)) continue;
+                                if (!(allowAnyNeutralBenign && roleInfo.Alignment == RoleAlignment.NeutralBenign) && crew100 - crew100Picked >= crewmatesLeft && !(roleData.CrewSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0)) continue;
+                                if (!(allowAnyNeutralEvil && roleInfo.Alignment == RoleAlignment.NeutralEvil) && crew100 - crew100Picked >= crewmatesLeft && !(roleData.CrewSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0)) continue;
+                                if (!(allowAnyNeutralK && roleInfo.Alignment == RoleAlignment.NeutralKilling) && crew100 - crew100Picked >= crewmatesLeft && !(roleData.CrewSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0)) continue;
 
-                                if (!(allowAnyNeutral && roleInfo.FactionId == Faction.Neutrals) && neutrals100 + crew100 - neutrals100Picked - crew100Picked >= crewmatesLeft && !(roleData.crewSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0 || roleData.neutralSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0)) continue;
-                                if (!(allowAnyNeutralK && roleInfo.FactionId == RoleAlignment.NeutralKilling) && neutralsK100 + crew100 - neutralsK100Picked - crew100Picked >= crewmatesLeft && !(roleData.crewSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0 || roleData.NeutralKillingSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0)) continue;
+                                if (!(allowAnyNeutralEvil && roleInfo.Alignment == RoleAlignment.NeutralEvil) && neutralEvils100 + crew100 - neutralEvils100Picked - crew100Picked >= crewmatesLeft && !(roleData.CrewSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0 || roleData.NeutralEvilSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0)) continue;
+                                if (!(allowAnyNeutralBenign && roleInfo.Alignment == RoleAlignment.NeutralBenign) && neutralBenigns100 + crew100 - neutralBenigns100Picked - crew100Picked >= crewmatesLeft && !(roleData.CrewSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0 || roleData.NeutralBenignSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0)) continue;
+                                if (!(allowAnyNeutralK && roleInfo.Alignment == RoleAlignment.NeutralKilling) && neutralsK100 + crew100 - neutralsK100Picked - crew100Picked >= crewmatesLeft && !(roleData.CrewSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0 || roleData.NeutralKillingSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.RoleId).Count() > 0)) continue;
                             }
-                            // Handle role pairings that are blocked, e.g. Poisoner Warlock, Cleaner Vulture etc.
+                            // Handle role pairings that are blocked, e.g. Viper Warlock, Janitor Vulture etc.
                             bool blocked = false;
                             foreach (var blockedRoleId in CustomOptionHolder.blockedRolePairings) 
                             {
@@ -320,12 +339,14 @@ namespace TheSushiRoles.Modules
                             }
                         }
 
-                    } else {
+                    }
+                    else
+                    {
                         int currentPick = PlayerControl.AllPlayerControls.Count - pickOrder.Count + 1;
                         playerText = $"Anonymous Player {currentPick}";
                         HudManager.Instance.FullScreen.color = Color.black;
                     }
-                    __instance.TeamTitle.text = $"{Utils.ColorString(Color.white, "<size=280%>Welcome to the Role Draft!</size>")}\n\n\n<size=200%> Currently Picking:</size>\n\n\n<size=250%>{playerText}</size>";
+                    __instance.TeamTitle.text = $"{Utils.ColorString(Color.white, "<size=280%>Role Draft! Get Ready!/size>")}\n\n\n<size=200%> Currently Picking:</size>\n\n\n<size=250%>{playerText}</size>";
                     int waitMore = pickOrder.IndexOf(PlayerControl.LocalPlayer.PlayerId);
                     string waitMoreText = "";
                     if (waitMore > 0) {
@@ -354,7 +375,6 @@ namespace TheSushiRoles.Modules
                 yield return null;
             }
 
-            SoundEffectsManager.Stop("draft");
             IsRunning = false;
             yield break;
         }
@@ -382,12 +402,17 @@ namespace TheSushiRoles.Modules
                     roleString = Utils.ColorString(Palette.ImpostorRed, "Impostor Role");
                     roleLength = "Impostor Role".Length;
                 }                    
-                else if (CustomOptionHolder.draftModeHideNeutralRoles.GetBool() && roleInfo.FactionId == Faction.Neutrals && !(playerId == PlayerControl.LocalPlayer.PlayerId)) 
+                else if (CustomOptionHolder.draftModeHideNeutralRoles.GetBool() && roleInfo.Alignment == RoleAlignment.NeutralEvil && !(playerId == PlayerControl.LocalPlayer.PlayerId)) 
                 {
-                    roleString = Utils.ColorString(Palette.Blue, "Neutral Role");
+                    roleString = Utils.ColorString(Palette.Blue, "Neutral Evil Role");
                     roleLength = "Neutral Role".Length;
                 }
-                else if (CustomOptionHolder.draftModeHideNeutralKRoles.GetBool() && roleInfo.FactionId == RoleAlignment.NeutralKilling && !(playerId == PlayerControl.LocalPlayer.PlayerId)) 
+                else if (CustomOptionHolder.draftModeHideNeutralRoles.GetBool() && roleInfo.Alignment == RoleAlignment.NeutralBenign && !(playerId == PlayerControl.LocalPlayer.PlayerId)) 
+                {
+                    roleString = Utils.ColorString(Palette.Blue, "Neutral Benign Role");
+                    roleLength = "Neutral Role".Length;
+                }
+                else if (CustomOptionHolder.draftModeHideNeutralKRoles.GetBool() && roleInfo.Alignment == RoleAlignment.NeutralKilling && !(playerId == PlayerControl.LocalPlayer.PlayerId))
                 {
                     roleString = Utils.ColorString(Palette.Blue, "Neutral Killer Role");
                     roleLength = "Neutral Role".Length;
@@ -457,7 +482,6 @@ namespace TheSushiRoles.Modules
 
 
         [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.ShowTeam))]
-
         class ShowRolePatch
         {
             [HarmonyPostfix]
@@ -471,8 +495,6 @@ namespace TheSushiRoles.Modules
                 };
                 __result = newEnumerator.GetEnumerator().WrapToIl2Cpp();
             }
-
         }
     }
 }
-*/

@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace TheSushiRoles.Roles
 {
-    public static class Ninja 
+    public static class Assassin 
     {
         public static PlayerControl Player;
         public static Color Color = Palette.ImpostorRed;
-        public static PlayerControl ninjaMarked;
+        public static PlayerControl AssassinMarked;
         public static PlayerControl CurrentTarget;
         public static float Cooldown = 30f;
         public static float traceTime = 1f;
@@ -20,25 +20,25 @@ namespace TheSushiRoles.Roles
         public static Sprite GetMarkButtonSprite() 
         {
             if (markButtonSprite) return markButtonSprite;
-            markButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.NinjaMarkButton.png", 115f);
+            markButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.AssassinMarkButton.png", 115f);
             return markButtonSprite;
         }
 
         public static Sprite GetKillButtonSprite() 
         {
             if (killButtonSprite) return killButtonSprite;
-            killButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.NinjaAssassinateButton.png", 115f);
+            killButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.AssassinAssassinateButton.png", 115f);
             return killButtonSprite;
         }
 
         public static void ClearAndReload()
         {
             Player = null;
-            CurrentTarget = ninjaMarked = null;
-            Cooldown = CustomOptionHolder.ninjaCooldown.GetFloat();
-            knowsTargetLocation = CustomOptionHolder.ninjaKnowsTargetLocation.GetBool();
-            traceTime = CustomOptionHolder.ninjaTraceTime.GetFloat();
-            invisibleDuration = CustomOptionHolder.ninjaInvisibleDuration.GetFloat();
+            CurrentTarget = AssassinMarked = null;
+            Cooldown = CustomOptionHolder.AssassinCooldown.GetFloat();
+            knowsTargetLocation = CustomOptionHolder.AssassinKnowsTargetLocation.GetBool();
+            traceTime = CustomOptionHolder.AssassinTraceTime.GetFloat();
+            invisibleDuration = CustomOptionHolder.AssassinInvisibleDuration.GetFloat();
             invisibleTimer = 0f;
             isInvisble = false;
             if (arrow?.arrow != null) UnityEngine.Object.Destroy(arrow.arrow);

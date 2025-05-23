@@ -109,7 +109,7 @@ namespace TheSushiRoles.Patches
             if (Arsonist.Player != null) notWinners.Add(Arsonist.Player);
             if (Vulture.Player != null) notWinners.Add(Vulture.Player);
             if (Lawyer.Player != null) notWinners.Add(Lawyer.Player);
-            if (Pursuer.Player != null) notWinners.Add(Pursuer.Player);
+            if (Survivor.Player != null) notWinners.Add(Survivor.Player);
             if (Romantic.Player != null) notWinners.Add(Romantic.Player);
             if (Juggernaut.Player != null) notWinners.Add(Juggernaut.Player);
             if (VengefulRomantic.Player != null) notWinners.Add(VengefulRomantic.Player);
@@ -282,7 +282,7 @@ namespace TheSushiRoles.Patches
                         if (p == null) continue;
                         if (p == Lovers.Lover1 || p == Lovers.Lover2)
                             EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
-                        else if (p == Pursuer.Player && !Pursuer.Player.Data.IsDead)
+                        else if (p == Survivor.Player && !Survivor.Player.Data.IsDead)
                             EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
                         else if (p.IsCrew())
                             EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
@@ -368,12 +368,12 @@ namespace TheSushiRoles.Patches
                 AdditionalTempData.additionalWinConditions.Add(WinCondition.AdditionalBelovedBonusWin); // The beloved wins together with the romantic
             }
 
-            // Possible Additional winner: Pursuer
-            if (Pursuer.Player != null && !Pursuer.Player.Data.IsDead && !Pursuer.notAckedExiled) 
+            // Possible Additional winner: Survivor
+            if (Survivor.Player != null && !Survivor.Player.Data.IsDead && !Survivor.notAckedExiled) 
             {
-                if (!EndGameResult.CachedWinners.ToArray().Any(x => x.PlayerName == Pursuer.Player.Data.PlayerName))
-                    EndGameResult.CachedWinners.Add(new CachedPlayerData(Pursuer.Player.Data));
-                AdditionalTempData.additionalWinConditions.Add(WinCondition.AdditionalAlivePursuerWin);
+                if (!EndGameResult.CachedWinners.ToArray().Any(x => x.PlayerName == Survivor.Player.Data.PlayerName))
+                    EndGameResult.CachedWinners.Add(new CachedPlayerData(Survivor.Player.Data));
+                AdditionalTempData.additionalWinConditions.Add(WinCondition.AdditionalAliveSurvivorWin);
             }
             // Possible Additional winner: Amnesiac
             if (Amnesiac.Player != null && !Amnesiac.Player.Data.IsDead) 
@@ -510,8 +510,8 @@ namespace TheSushiRoles.Patches
 
                 case WinCondition.ProsecutorWin:
                     textRenderer.text = "Prosecutor Wins!";
-                    textRenderer.color = Lawyer.Color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Lawyer.Color);
+                    textRenderer.color = Prosecutor.Color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Prosecutor.Color);
                     break;
 
                 case WinCondition.LoversTeamWin:
@@ -630,9 +630,9 @@ namespace TheSushiRoles.Patches
                 {
                     textRenderer.text += $"\n{Utils.ColorString(Romantic.Color, "The Beloved wins with their lover.")}";
                 }
-                else if (cond == WinCondition.AdditionalAlivePursuerWin) 
+                else if (cond == WinCondition.AdditionalAliveSurvivorWin) 
                 {
-                    textRenderer.text += $"\n{Utils.ColorString(Pursuer.Color, "The Pursuer is alive. They also win.")}";
+                    textRenderer.text += $"\n{Utils.ColorString(Survivor.Color, "The Survivor is alive. They also win.")}";
                 }
                 else if (cond == WinCondition.AdditionalLoversPartnerWin)
                 {

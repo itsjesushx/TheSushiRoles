@@ -12,8 +12,8 @@ namespace TheSushiRoles.Patches
         {
             if ((!__instance.Systems.ContainsKey(SystemTypes.Electrical) && !Utils.IsFungle()) || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return true;
 
-            // Blinded players by poisoner
-            if (Poisoner.BlindedPlayers.Contains(player.PlayerId))
+            // Blinded players by Viper
+            if (Viper.BlindedPlayers.Contains(player.PlayerId))
             {
                 __result = 0f;
                 return false;
@@ -71,8 +71,8 @@ namespace TheSushiRoles.Patches
             {
                 __result = GetNeutralLightRadius(__instance, false);
             }
-            if (Sunglasses.Players.FindAll(x => x.PlayerId == player.PlayerId).Count > 0) // Sunglasses
-                __result *= 1f - Sunglasses.vision * 0.1f;
+            if (Blind.Players.FindAll(x => x.PlayerId == player.PlayerId).Count > 0) // Blind
+                __result *= 1f - Blind.vision * 0.1f;
 
             return false;
         }

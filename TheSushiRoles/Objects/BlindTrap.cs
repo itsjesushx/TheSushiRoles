@@ -37,7 +37,7 @@ namespace TheSushiRoles.Objects
             triggerable = true;
             traps.Add(this);
 
-            if (PlayerControl.LocalPlayer.PlayerId == Poisoner.Player.PlayerId || PlayerControl.LocalPlayer.Data.IsDead)
+            if (PlayerControl.LocalPlayer.PlayerId == Viper.Player.PlayerId || PlayerControl.LocalPlayer.Data.IsDead)
             {
                 trap.SetActive(true);
                 SetAlpha(0.5f);
@@ -77,19 +77,19 @@ namespace TheSushiRoles.Objects
                 t.trap.SetActive(true);
                 t.SetAlpha(1f);
                 SoundEffectsManager.Play("trapperTrap");
-                Poisoner.BlindedPlayers.Add(playerId);
+                Viper.BlindedPlayers.Add(playerId);
             }
-            else if (PlayerControl.LocalPlayer.PlayerId == Poisoner.Player.PlayerId)
+            else if (PlayerControl.LocalPlayer.PlayerId == Viper.Player.PlayerId)
             {
                 t.trap.SetActive(true);
                 t.SetAlpha(0.5f);
             }
 
-            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Poisoner.BlindDuration, new Action<float>((p) =>
+            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Viper.BlindDuration, new Action<float>((p) =>
             {
                 if (p == 1f)
                 {
-                    Poisoner.BlindedPlayers.Remove(player.PlayerId);
+                    Viper.BlindedPlayers.Remove(player.PlayerId);
                 }
             })));
 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace TheSushiRoles.Roles
 {
-    public static class Poisoner 
+    public static class Viper 
     {
         public static PlayerControl Player;
         public static Color Color = Palette.ImpostorRed;
@@ -37,8 +37,8 @@ namespace TheSushiRoles.Roles
             Player = null;
             poisoned = null;
             CurrentTarget = null;
-            delay = CustomOptionHolder.poisonerKillDelay.GetFloat();
-            Cooldown = CustomOptionHolder.poisonerCooldown.GetFloat();
+            delay = CustomOptionHolder.ViperKillDelay.GetFloat();
+            Cooldown = CustomOptionHolder.ViperCooldown.GetFloat();
             BlindCooldown = CustomOptionHolder.BlindCooldown.GetFloat();
             BlindDuration = CustomOptionHolder.BlindDuration.GetFloat();
             BlindedPlayers = new HashSet<byte>();

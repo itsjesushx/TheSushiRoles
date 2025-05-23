@@ -5,7 +5,7 @@ namespace TheSushiRoles.Roles
     public class Jester
     {
         public static PlayerControl Player;
-        public static Color Color = new Color32(236, 98, 165, byte.MaxValue);
+        public static Color Color = new Color32(255, 191, 204, byte.MaxValue);
         public static bool IsJesterWin = false;
         public static bool canCallEmergency = true;
         public static bool hasImpostorVision = false;

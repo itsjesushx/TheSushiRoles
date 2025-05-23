@@ -206,7 +206,7 @@ namespace TheSushiRoles.Patches
             }
 
             // Crewmate roles with no changes: Mini
-            // Impostor roles with no changes: Morphling, Camouflager, Poisoner, Eraser, Cleaner, Warlock, BountyHunter,  Witch
+            // Impostor roles with no changes: Morphling, Camouflager, Viper, Eraser, Janitor, Warlock, BountyHunter,  Witch
         }
 
         static void SetNameTags()
@@ -330,7 +330,7 @@ namespace TheSushiRoles.Patches
             Hacker.hackerTimer -= dt;
             Trickster.lightsOutTimer -= dt;
             Tracker.corpsesTrackingTimer -= dt;
-            Ninja.invisibleTimer -= dt;
+            Assassin.invisibleTimer -= dt;
             Wraith.VanishTimer -= dt;
             foreach (byte key in Glitch.HackedKnows.Keys)
                 Glitch.HackedKnows[key] -= dt;
@@ -339,7 +339,7 @@ namespace TheSushiRoles.Patches
         public static void MiniUpdate() 
         {
             if (Mini.Player == null || Camouflager.CamouflageTimer > 0f || Utils.MushroomSabotageActive() || Mini.Player == Morphling.Player && Morphling.morphTimer > 0f || Mini.Player == Glitch.Player && Glitch.MimicTimer > 0f 
-            || Mini.Player == Hitman.Player && Hitman.MorphTimer > 0f || Mini.Player == Ninja.Player && Ninja.isInvisble || Mini.Player == Wraith.Player && Wraith.IsVanished || SurveillanceMinigamePatch.nightVisionIsActive) return;
+            || Mini.Player == Hitman.Player && Hitman.MorphTimer > 0f || Mini.Player == Assassin.Player && Assassin.isInvisble || Mini.Player == Wraith.Player && Wraith.IsVanished || SurveillanceMinigamePatch.nightVisionIsActive) return;
                 
             float growingProgress = Mini.GrowingProgress();
             float scale = growingProgress * 0.35f + 0.35f;
@@ -374,7 +374,7 @@ namespace TheSushiRoles.Patches
                 return;
             }
             bool enabled = true;
-            if (Poisoner.Player != null && Poisoner.Player == PlayerControl.LocalPlayer) enabled = false;
+            if (Viper.Player != null && Viper.Player == PlayerControl.LocalPlayer) enabled = false;
             
             if (enabled) __instance.KillButton.Show();
             else __instance.KillButton.Hide();
@@ -385,7 +385,7 @@ namespace TheSushiRoles.Patches
         static void UpdateReportButton(HudManager __instance) 
         {
             if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
-            if (Poisoner.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId)) __instance.ReportButton.Hide();
+            if (Viper.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId)) __instance.ReportButton.Hide();
             if (Glitch.HackedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Glitch.HackedKnows[PlayerControl.LocalPlayer.PlayerId] > 0 || MeetingHud.Instance || Utils.TwoPlayersAlive() && MapOptions.LimitAbilities) __instance.ReportButton.Hide();
             else if (!__instance.ReportButton.isActiveAndEnabled) __instance.ReportButton.Show();
         }
@@ -394,12 +394,12 @@ namespace TheSushiRoles.Patches
         {
             if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
             if (Utils.TwoPlayersAlive() && MapOptions.LimitAbilities) return;
-            if (PlayerControl.LocalPlayer == Poisoner.Player) 
+            if (PlayerControl.LocalPlayer == Viper.Player) 
             {
                 __instance.ImpostorVentButton.Show();
                 __instance.ImpostorVentButton.transform.localPosition = CustomButton.ButtonPositions.upperRowLeft;
             }
-            if (Poisoner.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId)) __instance.ImpostorVentButton.Hide();
+            if (Viper.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId)) __instance.ImpostorVentButton.Hide();
             if (PlayerControl.LocalPlayer == Wraith.Player) __instance.ImpostorVentButton.Hide();
             if (Glitch.HackedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Glitch.HackedKnows[PlayerControl.LocalPlayer.PlayerId] > 0 || MeetingHud.Instance) __instance.ImpostorVentButton.Hide();
             else if (PlayerControl.LocalPlayer.IsVenter() && !__instance.ImpostorVentButton.isActiveAndEnabled) 
@@ -477,7 +477,7 @@ namespace TheSushiRoles.Patches
         public static bool Prefix(DeadBody __instance) 
         {
             if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.HideNSeek) return false;
-            if (Poisoner.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId) || Utils.TwoPlayersAlive() && MapOptions.LimitAbilities  || Glitch.HackedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Glitch.HackedKnows[PlayerControl.LocalPlayer.PlayerId] > 0f)  return false;
+            if (Viper.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId) || Utils.TwoPlayersAlive() && MapOptions.LimitAbilities  || Glitch.HackedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Glitch.HackedKnows[PlayerControl.LocalPlayer.PlayerId] > 0f)  return false;
             return true;
         }
     }

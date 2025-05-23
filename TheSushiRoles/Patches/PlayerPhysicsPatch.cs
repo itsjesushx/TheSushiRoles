@@ -29,10 +29,25 @@ public static class PlayerPhysiscs_Awake_Patch
                 if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove)
                     __instance.body.velocity *= Hitman.DragSpeed;
         }
-            else if (__instance.myPlayer == Giant.Player)
-            {
-                if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove)
-                    __instance.body.velocity *= Giant.Speed;
-            }
+        else if (__instance.myPlayer == Giant.Player)
+        {
+            if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove)
+                __instance.body.velocity *= Giant.Speed;
+        }
+        else if (__instance.myPlayer == Morphling.Player && Morphling.morphTarget == Giant.Player && Morphling.morphTimer > 0f)
+        {
+            if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove)
+                __instance.body.velocity *= Giant.Speed;
+        }
+        else if (__instance.myPlayer == Glitch.Player && Glitch.MimicTarget == Giant.Player && Glitch.MimicTimer > 0f)
+        {
+            if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove)
+                __instance.body.velocity *= Giant.Speed;
+        }
+        else if (__instance.myPlayer == Hitman.Player && Hitman.MorphTarget == Giant.Player && Hitman.MorphTimer > 0f) 
+        {
+            if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove)
+                __instance.body.velocity *= Giant.Speed;
         }
     }
+}

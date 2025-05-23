@@ -12,7 +12,7 @@ namespace TheSushiRoles.Roles
         public static bool KnowsRole = false;
         public static bool targetWasGuessed = false;
         public static bool IsProsecutorWin = false;
-        public static int BecomeEnum; // 0 = Jester, 1 = Amnesiac, 2 = Pursuer
+        public static int BecomeEnum; // 0 = Jester, 1 = Amnesiac, 2 = Survivor
         public static void ClearAndReload(bool clearTarget = true) 
         {
             Player = null;

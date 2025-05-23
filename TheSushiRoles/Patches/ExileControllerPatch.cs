@@ -307,7 +307,7 @@ namespace TheSushiRoles.Patches
             if (Miner.MineVisibility == 1) MinerVent.ConvertToVents();
 
             // Medium spawn souls
-            if (Medium.medium != null && PlayerControl.LocalPlayer == Medium.medium) 
+            if (Medium.Player != null && PlayerControl.LocalPlayer == Medium.Player) 
             {
                 if (Medium.souls != null) 
                 {
@@ -336,8 +336,8 @@ namespace TheSushiRoles.Patches
             // Lazy set position
             Lazy.SetPosition();
 
-            // Invert add meeting
-            if (Invert.meetings > 0) Invert.meetings--;
+            // Drunk add meeting
+            if (Drunk.meetings > 0) Drunk.meetings--;
 
             Chameleon.lastMoved.Clear();
 
