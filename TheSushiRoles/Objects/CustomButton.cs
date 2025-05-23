@@ -271,7 +271,7 @@ namespace TheSushiRoles.Objects
                 actionButtonMat.SetFloat(Desat, 1f);
             }
         
-            if (Timer >= 0 && !Modules.RoleDraft.IsRunning) // Make sure role draft has finished or isnt running)
+            if (Timer >= 0)
             {
                 if (HasEffect && isEffectActive)
                     Timer -= Time.deltaTime;

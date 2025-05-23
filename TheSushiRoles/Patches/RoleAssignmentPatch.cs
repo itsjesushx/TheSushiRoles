@@ -47,7 +47,7 @@ namespace TheSushiRoles.Patches
         {
             Utils.StartRPC(CustomRPC.ResetVaribles);
             RPCProcedure.ResetVariables();
-            if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek || Modules.RoleDraft.isEnabled) return; // Don't assign Roles in Hide N Seek
+            if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return; // Don't assign Roles in Hide N Seek
             AssignRoles();
         }
 

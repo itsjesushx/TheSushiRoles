@@ -2315,12 +2315,6 @@ namespace TheSushiRoles
                     byte playerId = reader.ReadByte();
                     RPCProcedure.SetRole(roleId, playerId);
                     break;
-                case CustomRPC.DraftModePickOrder:
-                    Modules.RoleDraft.ReceivePickOrder(reader.ReadByte(), reader);
-                    break;
-                case CustomRPC.DraftModePick:
-                    Modules.RoleDraft.ReceivePick(reader.ReadByte(), reader.ReadByte());
-                    break;
                 case CustomRPC.SetModifier:
                     byte modifierId = reader.ReadByte();
                     byte pId = reader.ReadByte();

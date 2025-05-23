@@ -32,14 +32,6 @@ namespace TheSushiRoles
         public static CustomOption LandlordRechargeTasksNumber;
         public static CustomOption LandlordDuration;
 
-        public static CustomOption isDraftMode;
-        public static CustomOption draftModeAmountOfChoices;
-        public static CustomOption draftModeTimeToChoose;
-        public static CustomOption draftModeShowRoles;
-        public static CustomOption draftModeHideImpRoles;
-        public static CustomOption draftModeHideNeutralKRoles;
-        public static CustomOption draftModeHideNeutralRoles;
-
         public static CustomOption anyPlayerCanStopStart;
         public static CustomOption enableEventMode;
         public static CustomOption deadImpsBlockSabotage;
@@ -482,13 +474,6 @@ namespace TheSushiRoles
             modifiersCountMax = CustomOption.Create(307, Types.General, ColorString(Color.cyan, "Maximum Modifiers"), 0f, 0f, 15f, 1f);
             abilitiesCountMin = CustomOption.Create(308, Types.General, ColorString(Color.cyan, "Minimum Abilities"), 0f, 0f, 15f, 1f);
             abilitiesCountMax = CustomOption.Create(309, Types.General, ColorString(Color.cyan, "Maximum Abilities"), 0f, 0f, 15f, 1f);
-
-            isDraftMode = CustomOption.Create(600, Types.General, ColorString(Color.yellow, "Enable Role Draft"), false, null, true, null, "Role Draft");
-            draftModeAmountOfChoices = CustomOption.Create(601, Types.General, ColorString(Color.yellow, "Max Amount Of Roles\nTo Choose From"), 5f, 2f, 15f, 1f, isDraftMode, false);
-            draftModeTimeToChoose = CustomOption.Create(602, Types.General, ColorString(Color.yellow, "Time For Selection"), 5f, 3f, 20f, 1f, isDraftMode, false, Format: "s");
-            draftModeShowRoles = CustomOption.Create(603, Types.General, ColorString(Color.yellow, "Show Picked Roles"), false, isDraftMode, false);
-            draftModeHideImpRoles = CustomOption.Create(604, Types.General, ColorString(Color.yellow, "Hide Impostor Roles"), false, draftModeShowRoles, false);
-            draftModeHideNeutralRoles = CustomOption.Create(605, Types.General, ColorString(Color.yellow, "Hide Neutral Roles"), false, draftModeShowRoles, false);
 
             morphlingSpawnRate = CustomOption.Create(20, Types.Impostor, ColorString(Morphling.Color, "Morphling"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             morphlingCooldown = CustomOption.Create(21, Types.Impostor, "Morphling Cooldown", 30f, 10f, 60f, 2.5f, morphlingSpawnRate, Format: "s");

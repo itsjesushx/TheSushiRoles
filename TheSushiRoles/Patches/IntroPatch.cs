@@ -139,14 +139,6 @@ namespace TheSushiRoles.Patches
             RoleInfo roleInfo = infos.Where(info => info.FactionId != Faction.Other).FirstOrDefault();
             var neutralColor = new Color32(76, 84, 78, 255);
             if (roleInfo == null) return;
-            if (roleInfo == null || roleInfo == RoleInfo.crewmate) 
-            {
-                if (Modules.RoleDraft.isEnabled && CustomOptionHolder.MaxNeutralEvilRoles.GetSelection() > 0) 
-                {
-                    __instance.TeamTitle.text = "<size=60%>Crewmate" + Utils.ColorString(Palette.CrewmateBlue, " / ") + Utils.ColorString(neutralColor, "Neutral") + "</size>";
-                }
-                return;
-            }
             if (roleInfo.FactionId == Faction.Neutrals) 
             {
                 __instance.BackgroundBar.material.color = neutralColor;

@@ -168,8 +168,6 @@ namespace TheSushiRoles
         VeteranAlertKill,
         ChronosRewindTime,
         FortifiedMurderAttempt,
-        DraftModePickOrder,
-        DraftModePick,
         SwapperSwap,
         MorphlingMorph,
         CamouflagerCamouflage,
