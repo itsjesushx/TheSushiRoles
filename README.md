@@ -13,22 +13,22 @@ Even more roles are coming soon.
 **Roles & Modifiers List:**
 
 | Impostor Roles | Crewmate Roles | Neutral Roles | Modifiers | Abilities |
-|----------|-------------|-----------------|----------------|
+|----------|-------------|-----------------|----------------|----------------|
 | [Grenadier](#grenadier) | [Mayor](#mayor) | [Jester](#jester) | [Sleuth](#sleuth) | [Paranoid](#paranoid) |
 | [Undertaker](#undertaker) | [Engineer](#engineer) | [Arsonist](#arsonist) | [Lazy](#lazy) | [Coward](#coward) |
 | [Yo-Yo](#yoyo) | [Sheriff](#sheriff) | [Jackal](#jackal) | [Tie Breaker](#tie-breaker) |  |
 | [Morphling](#morphling) | [Trapper](#trapper)| [Sidekick](#sidekick) | [Bait](#bait) | |
 | [Painter](#painter) | [Lighter](#lighter) | [Scavenger](#scavenger) | [Lovers](#lovers) | |
 | [Viper](#viper) | [Detective](#detective) | [Lawyer](#lawyer) | [Blind](#blind) | |
-| [Eraser](#eraser) | [Chronos](#time-master) | [Prosecutor](#prosecutor) | [Mini](#mini) | |
+| [Eraser](#eraser) | [Chronos](#chronos) | [Prosecutor](#prosecutor) | [Mini](#mini) | |
 | [Trickster](#trickster) | [Medic](#medic) | [Survivor](#survivor) | [VIP](#vip) |  |
 | [Janitor](#janitor) | [Swapper](#swapper) | [Agent](#agent) | [Drunk](#drunk) | |
 | [Warlock](#warlock) | [Mystic](#mystic) | [Glitch](#glitch)    | [Chameleon](#chameleon) | |
-| [Bounty Hunter](#bounty-hunter) | [Hacker](#hacker) | [Juggernaut](#Juggernaut)   | [Lucky](#lucky) |
-| [Witch](#witch) | [Tracker](#tracker) | [Predator](#serial-killer)  |  |
-| [Assassin](#Assassin) | [Crusader](#crusader) | [Romantic](#romantic)   |  |
+| [Bounty Hunter](#bounty-hunter) | [Hacker](#hacker) | [Juggernaut](#juggernaut)   | [Lucky](#lucky) |
+| [Witch](#witch) | [Tracker](#tracker) | [Predator](#predator)  |  |
+| [Assassin](#assassin) | [Crusader](#crusader) | [Romantic](#romantic)   |  |
 | | [Spy](#spy) | [Werewolf](#werewolf) |  | |
-| | [Gatekeeper](#portalmaker) | [Amnesiac](#amnesiac) |  |  |
+| | [Gatekeeper](#gatekeeper) | [Amnesiac](#amnesiac) |  |  |
 | | [Vigilante](#vigilante) |  [Plaguebearer](#plaguebearer) |  |  |
 |  | [Psychic](#psychic) | [Pestilence](#plaguebearer)  |  |  |
 |  |[Veteran](#veteran)    |  |  |  |
