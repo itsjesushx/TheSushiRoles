@@ -203,8 +203,6 @@ namespace TheSushiRoles.Patches
                         Janitor.Player.killTimer = HudManagerStartPatch.JanitorCleanButton.Timer = HudManagerStartPatch.JanitorCleanButton.MaxTimer;
                     else if (PlayerControl.LocalPlayer == Warlock.Player)
                         Warlock.Player.killTimer = HudManagerStartPatch.warlockCurseButton.Timer = HudManagerStartPatch.warlockCurseButton.MaxTimer;
-                    else if (PlayerControl.LocalPlayer == Mini.Player && Mini.Player.Data.Role.IsImpostor)
-                        Mini.Player.SetKillTimer(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown * (Mini.IsGrownUp ? 0.66f : 2f));
                     else if (PlayerControl.LocalPlayer == Witch.Player)
                         Witch.Player.killTimer = HudManagerStartPatch.witchSpellButton.Timer = HudManagerStartPatch.witchSpellButton.MaxTimer;
                     else if (PlayerControl.LocalPlayer == Assassin.Player)

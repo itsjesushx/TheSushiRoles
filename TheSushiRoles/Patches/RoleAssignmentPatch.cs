@@ -129,8 +129,6 @@ namespace TheSushiRoles.Patches
             ImpSettings.Add((byte)RoleId.Wraith, CustomOptionHolder.WraithSpawnRate.GetSelection());
             ImpSettings.Add((byte)RoleId.Undertaker, CustomOptionHolder.UndertakerSpawnRate .GetSelection());
             ImpSettings.Add((byte)RoleId.Yoyo, CustomOptionHolder.yoyoSpawnRate.GetSelection());
-            if (Impostors.Count > 1)
-                ImpSettings.Add((byte)RoleId.Cultist, CustomOptionHolder.CultistSpawnRate.GetSelection());
 
             NeutralKillingSettings.Add((byte)RoleId.Jackal, CustomOptionHolder.jackalSpawnRate.GetSelection());
             NeutralKillingSettings.Add((byte)RoleId.Plaguebearer, CustomOptionHolder.PlaguebearerSpawnRate.GetSelection());
@@ -171,12 +169,15 @@ namespace TheSushiRoles.Patches
             CrewSettings.Add((byte)RoleId.Crusader, CustomOptionHolder.CrusaderSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Psychic, CustomOptionHolder.PsychicSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Trapper, CustomOptionHolder.trapperSpawnRate.GetSelection());
-            if (Impostors.Count > 1) 
+            if (Impostors.Count > 1)
             {
                 // Only add Spy if more than 1 impostor as the spy role is otherwise useless
                 CrewSettings.Add((byte)RoleId.Spy, CustomOptionHolder.spySpawnRate.GetSelection());
-                // Only add Janitor if more than 1 impostor as the Janitor role is otherwise useless
+                // Only add Janitor if more than 1 impostor as the Janitor role is otherwise hard to play as
                 ImpSettings.Add((byte)RoleId.Janitor, CustomOptionHolder.JanitorSpawnRate.GetSelection());
+
+                // Only add Cultist if there's more than one impostor, otherwise it will spawn with 1 impostor and then its gonna be 2 impostors..
+                ImpSettings.Add((byte)RoleId.Cultist, CustomOptionHolder.CultistSpawnRate.GetSelection());
             }
             CrewSettings.Add((byte)RoleId.Vigilante, CustomOptionHolder.VigilanteSpawnRate.GetSelection());
 
@@ -349,7 +350,7 @@ namespace TheSushiRoles.Patches
 
                     data.Impostors.Remove(player);
                     data.Crewmates.Add(player);
-                    
+
                     // add another crewmate role for the player that was turned into a crewmate
                     data.MaxCrewmateRoles++;
                 }

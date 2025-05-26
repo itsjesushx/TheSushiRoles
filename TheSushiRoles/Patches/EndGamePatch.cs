@@ -129,7 +129,6 @@ namespace TheSushiRoles.Patches
             bool arsonistWin = Arsonist.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.ArsonistWin;
             bool glitchWin = Glitch.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.GlitchWin;
             bool wwWin = Werewolf.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.WerewolfWin;
-            bool miniLose = Mini.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.MiniLose;
             bool SKWin = Predator.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.PredatorWin;
             bool RomanticWin = VengefulRomantic.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.VRomanticWin;
             bool JuggernautWin = Juggernaut.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.JuggernautWin;
@@ -142,18 +141,8 @@ namespace TheSushiRoles.Patches
             bool HitmanWin = Hitman.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.HitmanWin;
             bool AgentWin = Agent.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.AgentWin;
 
-            // Mini lose
-            if (miniLose) 
-            {
-                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Mini.Player.Data);
-                wpd.IsYou = false; // If "no one is the Mini", it will display the Mini, but also show defeat to everyone
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.MiniLose;
-            }
-
             // Hitman Win
-            else if (HitmanWin) 
+            if (HitmanWin) 
             {
                 EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 CachedPlayerData wpd = new CachedPlayerData(Hitman.Player.Data);
@@ -562,12 +551,6 @@ namespace TheSushiRoles.Patches
                     __instance.BackgroundBar.material.SetColor("_Color", Werewolf.Color);
                     break;
 
-                case WinCondition.MiniLose:
-                    textRenderer.text = "Mini died. Everyone lost!";
-                    textRenderer.color = Mini.Color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Mini.Color);
-                    break;
-
                 case WinCondition.Default:
                     switch (OnGameEndPatch.gameOverReason)
                     {
@@ -747,7 +730,6 @@ namespace TheSushiRoles.Patches
             if (DestroyableSingleton<TutorialManager>.InstanceExists)
                 return true;
             var statistics = new PlayerStatistics(__instance);
-            if (CheckAndEndGameForMiniLose(__instance)) return false;
             if (CheckAndEndGameForJesterWin(__instance)) return false;
             if (CheckAndEndGameForArsonistWin(__instance)) return false;
             if (CheckAndEndGameForScavengerWin(__instance)) return false;
@@ -767,16 +749,6 @@ namespace TheSushiRoles.Patches
             if (CheckAndEndGameForCrewmateWin(__instance, statistics)) return false;
             if (CheckAndEndGameForHitmanWin(__instance, statistics)) return false;
             if (CheckAndEndGameForAgentWin(__instance, statistics)) return false;
-            return false;
-        }
-
-        private static bool CheckAndEndGameForMiniLose(ShipStatus __instance) 
-        {
-            if (Mini.IsMiniLose) 
-            {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MiniLose, false);
-                return true;
-            }
             return false;
         }
 

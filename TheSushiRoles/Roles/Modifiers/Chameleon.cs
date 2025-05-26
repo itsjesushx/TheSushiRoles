@@ -7,6 +7,7 @@ namespace TheSushiRoles.Roles.Modifiers
     public static class Chameleon 
     {
         public static List<PlayerControl> Players = new List<PlayerControl>();
+        public static Color Color = new Color32(237, 221, 142, byte.MaxValue);
         public static float minVisibility = 0.2f;
         public static float holdDuration = 1f;
         public static float fadeDuration = 0.5f;

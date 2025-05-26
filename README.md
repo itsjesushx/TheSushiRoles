@@ -18,7 +18,7 @@ Even more roles are coming soon.
 | [Undertaker](#undertaker) | [Engineer](#engineer) | [Arsonist](#arsonist) | [Lazy](#lazy) | [Coward](#coward) |
 | [Yo-Yo](#yoyo) | [Sheriff](#sheriff) | [Jackal](#jackal) | [Tie Breaker](#tie-breaker) |  |
 | [Morphling](#morphling) | [Trapper](#trapper)| [Pestilence](#plaguebearer) | [Bait](#bait) | |
-| [Painter](#painter) | [Lighter](#lighter) | [Scavenger](#scavenger) | [Lovers](#lovers) | |
+| [Painter](#painter) | [Landlord](#landlord) | [Scavenger](#scavenger) | [Lovers](#lovers) | |
 | [Viper](#viper) | [Detective](#detective) | [Lawyer](#lawyer) | [Blind](#blind) | |
 | [Eraser](#eraser) | [Chronos](#chronos) | [Prosecutor](#prosecutor) | [Mini](#mini) | |
 | [Trickster](#trickster) | [Medic](#medic) | [Survivor](#survivor) | [VIP](#vip) |  |
@@ -26,7 +26,7 @@ Even more roles are coming soon.
 | [Warlock](#warlock) | [Mystic](#mystic) | [Glitch](#glitch)    | [Chameleon](#chameleon) | |
 | [Bounty Hunter](#bounty-hunter) | [Hacker](#hacker) | [Juggernaut](#juggernaut)   | [Lucky](#lucky) |
 | [Witch](#witch) | [Tracker](#tracker) | [Predator](#predator)  |  [Recruit](#recruit)  |
-| [Assassin](#assassin) | [Crusader](#crusader) | [Romantic](#romantic)   |  |
+| [Assassin](#assassin) | [Crusader](#crusader) | [Romantic](#romantic)   | [Lighter](#lighter) |
 | [Cultist](#cultist) | [Spy](#spy) | [Werewolf](#werewolf) |  | |
 | | [Gatekeeper](#gatekeeper) | [Amnesiac](#amnesiac) |  |  |
 | | [Vigilante](#vigilante) |  [Plaguebearer](#plaguebearer) |  |  |
@@ -34,7 +34,7 @@ Even more roles are coming soon.
 |  |[Veteran](#veteran)    |  |  |  |
 |  |[Oracle](#oracle) |  |  |  |
 |  | [Monarch](#monarch) |  |  |
-|  | [Landlord](#landlord) |  |  |
+|  |  |  |  |
 
 The [Role Assignment](#role-assignment) section explains how the roles are being distributed among the players.
 If you want to learn how the new killers work, go to [Neutral Killers guide](#neutral-killers) to see it.
@@ -106,7 +106,7 @@ The mod adds a few new settings to Among Us (in addition to the role settings) m
 - **Map:** The map can be changed inside a lobby.
 - **Maximum Number Of Meetings:** You can set the maximum number of meetings that can be called in total (Every player still has personal maximum of buttons, but if the maximum number of meetings is reached you can't use your meetings even if you have some left. Impostor and Jackal meetings also count).
 - **Allow Skips On Emergency Meetings:** If set to false, there will not be a skip button in emergency meetings. If a player does not vote, they'll vote themself.
-- **Hide Player Names:** Hides the names of all players that have role which is unknown to you. Team Lovers/Impostors/Jackal still see the names of their teammates. Impostors can also see the name of the Spy and everyone can still see the age of the mini.
+- **Hide Player Names:** Hides the names of all players that have role which is unknown to you. Team Lovers/Impostors/Jackal still see the names of their teammates. Impostors can also see the name of the Spy.
 - **Allow Parallel MedBay Scans:** Allows players to perform their MedBay scans at the same time.
 - **Shield Last Game First Kill** The first killed player of the previous round will be shielded for all players visible until the first meeting.
 - **Finish Tasks Before Haunting Or Zooming Out ** The zoom out function as well as haunting will be hidden for the player until all their tasks are finished
@@ -190,7 +190,7 @@ First you need to choose how many special roles of each kind (Impostor/Neutral/C
 The count you set will only be reached, if there are enough Crewmates/Impostors in the game and if enough roles are set to be in the game (i.e. they are set to > 0%). The roles are then being distributed as follows:
 - First all roles that are set to 100% are being assigned to arbitrary players.
 - After that each role that has 10%-90% selected adds 1-9 tickets to a ticket pool (there exists a ticket pool for Crewmates, Neutrals and Impostors). Then the roles will be selected randomly from the pools as long it's possible (until the selected number is reached, until there are no more Crewmates/Impostors or until there are no more tickets). If a role is selected from the pool, obviously all the tickets of that role are being removed.
-- The Lovers and Mini are being selected independently (without using the ticket system) according to the spawn chance you selected. After that the Crewmate, Neutral and Impostor roles are selected and assigned in a random order.
+- The Lovers are being selected independently (without using the ticket system) according to the spawn chance you selected. After that the Crewmate, Neutral and Impostor roles are selected and assigned in a random order.
 - If you have Cultist role on, the game will automatically add a Crewmate role slot, as when Cultist spawns, it removes the second impostor, giving them basic crewmate if the lobby has the roles set for the amount of players it has.
 
 **Example:**\
@@ -547,19 +547,17 @@ The Neutral Killers enable multiple new outcomes of the game, listing some examp
 - The Crew could be eliminated, then any alive Neutral Killer fight against the Impostors (or against another Neutral Killer, or a Crewmate Power role) (The Crew can still make a task win in this scenario)
 
 The priority of each Neutral Killer win condition is the following:
-1. Crewmate Mini lose by vote
-2. Any Neutral Evil Win
-3. Team Impostor wins by sabotage
-4. Team Crew wins by tasks (also possible if the whole Crew is dead)
-5. Lovers among the last three players win
-6. Any Neutral Killer wins by outnumbering (When the Neutral Killer contains an equal or greater amount of players than the Crew and there are 0 Impostors left, and no other Neutral killers are alive and the same Neutral Killer contains no Lover)
-7. Team Impostor wins by outnumbering (When the team Impostors contains an equal or greater amount of players than the Crew and there are 0 Neutral Killers and team Impostors contains no Lover)
-8. Team Crew wins by outnumbering (When there is no player that is a Neutral Killer and the team Impostors left)
+1. Any Neutral Evil Win
+2. Team Impostor wins by sabotage
+3. Team Crew wins by tasks (also possible if the whole Crew is dead)
+4. Lovers among the last three players win
+5. Any Neutral Killer wins by outnumbering (When the Neutral Killer contains an equal or greater amount of players than the Crew and there are 0 Impostors left, and no other Neutral killers are alive and the same Neutral Killer contains no Lover)
+6. Team Impostor wins by outnumbering (When the team Impostors contains an equal or greater amount of players than the Crew and there are 0 Neutral Killers and team Impostors contains no Lover)
+7. Team Crew wins by outnumbering (When there is no player that is a Neutral Killer and the team Impostors left)
 
 **NOTE:**
 - The game will NOT end if one of these crewmate roles are alive with the last killers: Sheriff, Mayor, Veteran (with charges), Swapper or if a Crewmate Tiebreaker is alive.
 - The Neutral Killers may be killed by a Sheriff.
-- A Neutral Killer cannot target the Mini (excluding Glitch), while it's growing up. After that they can kill it or interact with them.
 - The Crew can still win, even if all of their members are dead, if they finish their tasks fast enough (That's why converting the last Crewmate with tasks left into a Recruit results in a task win for the crew.)
 
 If Impostors and multiple Neutral Killers are in the game, the game continues even if all Crewmates are dead. Crewmates may still win in this case by completing their tasks. Each Neutral Killer and Impostor have to kill each other.
@@ -968,19 +966,6 @@ If they try to kill a Crewmate, they die instead.\
 | Sheriff Cooldown | -
 | Sheriff Can Kill Neutrals | -
 -----------------------
-## Lighter
-### **Faction: Crewmates**
-The Lighter has a different vision than everyone else depending on the settings.\
-Their vision looks like a flashlight cone which can be moved around (known from the Hide'n'Seek mode).
-
-### Game Options
-| Name | Description |
-|----------|:-------------:|
-| Lighter Spawn Chance | -
-| Vision On Lights On | The vision the Lighter has when the lights are on
-| Vision On Lights Off | The vision the Lighter has when the lights are down
-| Flashlight Width | -
------------------------
 
 ## Detective
 ### **Faction: Crewmates**
@@ -1321,6 +1306,21 @@ This is a Global Modifier, meaning everyone can have it
 | Lazy Quantity | -
 -----------------------
 
+## Lighter
+The Lighter has a different vision than everyone else depending on the settings.\
+Their vision looks like a flashlight cone which can be moved around (known from the Hide'n'Seek mode).
+
+**NOTE**
+This is a Global Modifier, meaning everyone can have it
+### Game Options
+| Name | Description |
+|----------|:-------------:|
+| Lighter Spawn Chance | -
+| Vision On Lights On | The vision the Lighter has when the lights are on
+| Vision On Lights Off | The vision the Lighter has when the lights are down
+| Flashlight Width | -
+-----------------------
+
 ## Tie Breaker
 
 If the Voting ends in a tie, the Tie Breaker takes place and the player with the Tie Breaker Modifier gets an extra vote thats not visible to anyone.\
@@ -1428,32 +1428,13 @@ Does not appear on Airship.
 ## Mini
 
 The Mini's character is smaller and hence visible to everyone in the game.\
-The Mini cannot be killed until it turns 18 years old, however it can be voted out.
 
-**Impostor/Jackal Mini:**
-- While growing up the kill Cooldown is doubled. When it's fully grown up its kill Cooldown is 2/3 of the default one.
-- If it gets thrown out of the ship, everything is fine.
-
-**Crewmate Mini:**
-- The Crewmate Mini aims to play out the strength its invincibility in the early game.
-- If it gets thrown out of the ship before it turns 18, everyone loses. So think twice before you vote out a Mini.
-
-**Neutral Mini:**
-- The Cooldown is not effected, except for the Team Team Jackal.
-- If it gets thrown out of the ship, everything is fine except for the Jester.
-- If the Jester Mini gets voted out the game will end in a Jester win.
-
-**NOTE:**
-- If the Sheriff tries to kill the Mini before it's fully grown, nothing happens.
-- The Sheriff can kill the Impostor/Neutral Mini, but only if it's fully grown up.
-- If the Mini's primary role is guessed correctly, it dies like every other role and nothing further happens.
 
 ### Game Options
 | Name | Description |
 |----------|:-------------:|
 | Mini Spawn Chance | -
-| Mini  | Mini Growing Up Duration
-| Mini Grows Up In Meeting | -
+| Mini Speed | -
 -----------------------
 
 ## VIP

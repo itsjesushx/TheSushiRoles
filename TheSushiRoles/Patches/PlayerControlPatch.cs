@@ -370,7 +370,6 @@ namespace TheSushiRoles.Patches
                 // Only exclude Recruit from beeing targeted if the jackal can create Recruits from impostors
                 if (Recruit.Player != null) untargetablePlayers.Add(Recruit.Player);
             }
-            if (Mini.Player != null && !Mini.IsGrownUp) untargetablePlayers.Add(Mini.Player); // Exclude Jackal from targeting the Mini unless it has grown up
             Jackal.CurrentTarget = SetTarget(targetPlayersInVents: true, untargetablePlayers: untargetablePlayers);
             SetPlayerOutline(Jackal.CurrentTarget, Jackal.Color);
         }
@@ -379,7 +378,6 @@ namespace TheSushiRoles.Patches
         {
             if (Juggernaut.Player == null || Juggernaut.Player != PlayerControl.LocalPlayer) return;
             var untargetablePlayers = new List<PlayerControl>();
-            if (Mini.Player != null && !Mini.IsGrownUp) untargetablePlayers.Add(Mini.Player); // Exclude Juggernaut from targeting the Mini unless it has grown up
             Juggernaut.CurrentTarget = SetTarget(targetPlayersInVents: true, untargetablePlayers: untargetablePlayers);
             SetPlayerOutline(Juggernaut.CurrentTarget, Juggernaut.Color);
         }
@@ -388,7 +386,6 @@ namespace TheSushiRoles.Patches
         {
             if (Predator.Player == null || Predator.Player != PlayerControl.LocalPlayer) return;
             var untargetablePlayers = new List<PlayerControl>();
-            if (Mini.Player != null && !Mini.IsGrownUp) untargetablePlayers.Add(Mini.Player); // Exclude Predator from targeting the Mini unless it has grown up
             Predator.CurrentTarget = SetTarget(targetPlayersInVents: true, untargetablePlayers: untargetablePlayers);
             SetPlayerOutline(Predator.CurrentTarget, Predator.Color);
         }
@@ -397,7 +394,6 @@ namespace TheSushiRoles.Patches
         {
             if (Werewolf.Player == null || Werewolf.Player != PlayerControl.LocalPlayer) return;
             var untargetablePlayers = new List<PlayerControl>();
-            if (Mini.Player != null && !Mini.IsGrownUp) untargetablePlayers.Add(Mini.Player); // Exclude Werewolf from targeting the Mini unless it has grown up
             Werewolf.CurrentTarget = SetTarget(targetPlayersInVents: true, untargetablePlayers: untargetablePlayers);
             SetPlayerOutline(Werewolf.CurrentTarget, Werewolf.Color);
         }
@@ -407,7 +403,6 @@ namespace TheSushiRoles.Patches
             if (Recruit.Player == null || Recruit.Player != PlayerControl.LocalPlayer) return;
             var untargetablePlayers = new List<PlayerControl>();
             if (Jackal.Player != null) untargetablePlayers.Add(Jackal.Player);
-            if (Mini.Player != null && !Mini.IsGrownUp) untargetablePlayers.Add(Mini.Player); // Exclude Recruit from targeting the Mini unless it has grown up
             Recruit.CurrentTarget = SetTarget(targetPlayersInVents: true, untargetablePlayers: untargetablePlayers);
             SetPlayerOutline(Recruit.CurrentTarget, Recruit.Color);
         }
@@ -664,56 +659,57 @@ namespace TheSushiRoles.Patches
 
             // Handle Mini (scaling down)
             if (Mini.Player != null && 
-                !(Painter.PaintTimer > 0f || Utils.MushroomSabotageActive() || 
-                  (Mini.Player == Morphling.Player && Morphling.morphTimer > 0) ||
-                  (Mini.Player == Glitch.Player && Glitch.MimicTimer > 0) ||
-                  (Mini.Player == Hitman.Player && Hitman.MorphTimer > 0)))
+            !(Painter.PaintTimer > 0f || Utils.MushroomSabotageActive() || 
+              (Mini.Player == Morphling.Player && Morphling.morphTimer > 0) ||
+              (Mini.Player == Glitch.Player && Glitch.MimicTimer > 0) ||
+              (Mini.Player == Hitman.Player && Hitman.MorphTimer > 0)))
             {
-                float growingProgress = Mini.GrowingProgress();
-                float scale = growingProgress * 0.35f + 0.35f;
-                float correctedColliderRadius = Mini.defaultColliderRadius * 0.7f / scale;
-        
-                if (p == Mini.Player) 
-                {
-                    p.transform.localScale = new Vector3(scale, scale, 1f);
-                    collider.radius = correctedColliderRadius;
-                }
-                if (Morphling.Player != null && p == Morphling.Player && Morphling.morphTarget == Mini.Player && Morphling.morphTimer > 0f) 
-                {
-                    p.transform.localScale = new Vector3(scale, scale, 1f);
-                    collider.radius = correctedColliderRadius;
-                }
-                if (Glitch.Player != null && p == Glitch.Player && Glitch.MimicTarget == Mini.Player && Glitch.MimicTimer > 0f) 
-                {
-                    p.transform.localScale = new Vector3(scale, scale, 1f);
-                    collider.radius = correctedColliderRadius;
-                }
-                if (Hitman.Player != null && p == Hitman.Player && Hitman.MorphTarget == Mini.Player && Hitman.MorphTimer > 0f) 
-                {
-                    p.transform.localScale = new Vector3(scale, scale, 1f);
-                    collider.radius = correctedColliderRadius;
-                }
+            Vector3 miniScale = Mini.SizeFactor;
+            float baseRadius = Mini.defaultColliderRadius;
+            float scaleFactor = miniScale.x / 0.7f;
+            float correctedColliderRadius = baseRadius * 0.7f / scaleFactor;
+
+            if (p == Mini.Player) 
+            {
+                p.transform.localScale = miniScale;
+                collider.radius = correctedColliderRadius;
+            }
+            if (Morphling.Player != null && p == Morphling.Player && Morphling.morphTarget == Mini.Player && Morphling.morphTimer > 0f) 
+            {
+                p.transform.localScale = miniScale;
+                collider.radius = correctedColliderRadius;
+            }
+            if (Glitch.Player != null && p == Glitch.Player && Glitch.MimicTarget == Mini.Player && Glitch.MimicTimer > 0f) 
+            {
+                p.transform.localScale = miniScale;
+                collider.radius = correctedColliderRadius;
+            }
+            if (Hitman.Player != null && p == Hitman.Player && Hitman.MorphTarget == Mini.Player && Hitman.MorphTimer > 0f) 
+            {
+                p.transform.localScale = miniScale;
+                collider.radius = correctedColliderRadius;
+            }
             }
         
             // Handle Giant (scaling up)
             if (Giant.Player != null && 
-                !(Painter.PaintTimer > 0f || Utils.MushroomSabotageActive() || 
-                  (Giant.Player == Morphling.Player && Morphling.morphTimer > 0) ||
-                  (Giant.Player == Glitch.Player && Glitch.MimicTimer > 0) ||
-                  (Giant.Player == Hitman.Player && Hitman.MorphTimer > 0)))
+            !(Painter.PaintTimer > 0f || Utils.MushroomSabotageActive() || 
+              (Giant.Player == Morphling.Player && Morphling.morphTimer > 0) ||
+              (Giant.Player == Glitch.Player && Glitch.MimicTimer > 0) ||
+              (Giant.Player == Hitman.Player && Hitman.MorphTimer > 0)))
             {
                 Vector3 giantScale = Giant.SizeFactor;
                 float baseRadius = Mini.defaultColliderRadius; // same reference point as Mini
                 float scaleFactor = giantScale.x / 0.7f;
                 float correctedColliderRadius = baseRadius * 0.7f / scaleFactor;
-        
+
                 if (p == Giant.Player)
                 {
                     p.transform.localScale = giantScale;
                     collider.radius = correctedColliderRadius;
                 }
                 if (Morphling.Player != null && p == Morphling.Player && Morphling.morphTarget == Giant.Player && Morphling.morphTimer > 0f) 
-                {
+                    {
                     p.transform.localScale = giantScale;
                     collider.radius = correctedColliderRadius;
                 }
@@ -1040,7 +1036,7 @@ namespace TheSushiRoles.Patches
                 var possibleTargets = new List<PlayerControl>();
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) 
                 {
-                    if (!p.Data.IsDead && !p.Data.Disconnected && p != p.Data.Role.IsImpostor && p != Spy.Player && (Romantic.beloved == BountyHunter.Player && p != Romantic.Player) && (p != Recruit.Player) && (p != Jackal.Player) && (p != Mini.Player || Mini.IsGrownUp) && (Lovers.GetPartner(BountyHunter.Player) == null || p != Lovers.GetPartner(BountyHunter.Player))) possibleTargets.Add(p);
+                    if (!p.Data.IsDead && !p.Data.Disconnected && p != p.Data.Role.IsImpostor && p != Spy.Player && (Romantic.beloved == BountyHunter.Player && p != Romantic.Player) && (p != Recruit.Player) && (p != Jackal.Player) && (Lovers.GetPartner(BountyHunter.Player) == null || p != Lovers.GetPartner(BountyHunter.Player))) possibleTargets.Add(p);
                 }
                 BountyHunter.bounty = possibleTargets[TheSushiRoles.rnd.Next(0, possibleTargets.Count)];
                 if (BountyHunter.bounty == null) return;
@@ -1062,7 +1058,8 @@ namespace TheSushiRoles.Patches
                 MapOptions.BeanIcons[BountyHunter.bounty.PlayerId].gameObject.SetActive(false);
 
             // Update Cooldown Text
-            if (BountyHunter.CooldownText != null) {
+            if (BountyHunter.CooldownText != null)
+            {
                 BountyHunter.CooldownText.text = Mathf.CeilToInt(Mathf.Clamp(BountyHunter.bountyUpdateTimer, 0, BountyHunter.bountyDuration)).ToString();
                 BountyHunter.CooldownText.gameObject.SetActive(!MeetingHud.Instance);  // Show if not in meeting
             }
@@ -1397,7 +1394,6 @@ namespace TheSushiRoles.Patches
             if (Assassin.Player == null || Assassin.Player != PlayerControl.LocalPlayer) return;
             List<PlayerControl> untargetables = new List<PlayerControl>();
             if (Spy.Player != null && !Spy.impostorsCanKillAnyone) untargetables.Add(Spy.Player);
-            if (Mini.Player != null && !Mini.IsGrownUp) untargetables.Add(Mini.Player);
             Assassin.CurrentTarget = SetTarget(onlyCrewmates: Spy.Player == null || !Spy.impostorsCanKillAnyone, untargetablePlayers: untargetables);
             SetPlayerOutline(Assassin.CurrentTarget, Assassin.Color);
         }
@@ -1420,31 +1416,6 @@ namespace TheSushiRoles.Patches
                         entry.Key.player.PlayerId);
                     }
                 }
-            }
-        }
-
-        // Mini set adapted button Cooldown for Viper, Sheriff, Jackal, Recruit, Warlock, Janitor
-        public static void MiniCooldownUpdate() 
-        {
-            if (Mini.Player != null && PlayerControl.LocalPlayer == Mini.Player) 
-            {
-                var multiplier = Mini.IsGrownUp ? 0.66f : 2f;
-                HudManagerStartPatch.sheriffKillButton.MaxTimer = Sheriff.Cooldown * multiplier;
-                HudManagerStartPatch.ViperKillButton.MaxTimer = Viper.Cooldown * multiplier;
-                HudManagerStartPatch.jackalKillButton.MaxTimer = Jackal.Cooldown * multiplier;
-                HudManagerStartPatch.PestilenceButton.MaxTimer = Pestilence.Cooldown * multiplier;
-                HudManagerStartPatch.GlitchKillButton.MaxTimer = Glitch.KillCooldown * multiplier;
-                HudManagerStartPatch.RomanticKillButton.MaxTimer = VengefulRomantic.Cooldown * multiplier;
-                HudManagerStartPatch.PredatorTerminateButton.MaxTimer = Predator.TerminateCooldown * multiplier;
-                HudManagerStartPatch.WerewolfMaulButton.MaxTimer = Werewolf.Cooldown * multiplier;
-                HudManagerStartPatch.warlockCurseButton.MaxTimer = Warlock.Cooldown * multiplier;
-                HudManagerStartPatch.JanitorCleanButton.MaxTimer = Janitor.Cooldown * multiplier;
-                HudManagerStartPatch.PredatorKillButton.MaxTimer = Predator.TerminateKillCooldown * multiplier;
-                HudManagerStartPatch.HitmanKillButton.MaxTimer = Hitman.Cooldown * multiplier;
-                HudManagerStartPatch.JuggernautKillButton.MaxTimer = Juggernaut.Cooldown * multiplier;
-                HudManagerStartPatch.WerewolfMaulButton.MaxTimer = Werewolf.Cooldown * multiplier;
-                HudManagerStartPatch.witchSpellButton.MaxTimer = (Witch.Cooldown + Witch.currentCooldownAddition) * multiplier;
-                HudManagerStartPatch.AssassinButton.MaxTimer = Assassin.Cooldown * multiplier;
             }
         }
 
@@ -1600,8 +1571,6 @@ namespace TheSushiRoles.Patches
 
                 // Bait
                 BaitUpdate();
-                // mini
-                MiniCooldownUpdate();
                 // Chameleon
                 Chameleon.Update();
             } 
@@ -1622,8 +1591,20 @@ namespace TheSushiRoles.Patches
             || correctOffset && !(Mini.Player == Glitch.Player && Glitch.MimicTimer > 0f) || correctOffset && !(Mini.Player == Hitman.Player && Hitman.MorphTimer > 0f);
             if (correctOffset) 
             {
-                float currentScaling = (Mini.GrowingProgress() + 1) * 0.5f;
-                __instance.myPlayer.Collider.offset = currentScaling * Mini.defaultColliderOffset * Vector2.down;
+                float scaleFactor = Mini.SizeFactor.x / 0.7f;
+                __instance.myPlayer.Collider.offset = Mini.defaultColliderOffset * Vector2.down / scaleFactor;
+            }
+
+            bool correctGiantOffset = Painter.PaintTimer <= 0f && !Utils.MushroomSabotageActive() && (__instance.myPlayer == Giant.Player || 
+                (Morphling.Player != null && __instance.myPlayer == Morphling.Player && Morphling.morphTarget == Giant.Player && Morphling.morphTimer > 0f) ||
+                (Glitch.Player != null && __instance.myPlayer == Glitch.Player && Glitch.MimicTarget == Giant.Player && Glitch.MimicTimer > 0f) ||
+                (Hitman.Player != null && __instance.myPlayer == Hitman.Player && Hitman.MorphTarget == Giant.Player && Hitman.MorphTimer > 0f));
+            correctGiantOffset = correctGiantOffset && !(Giant.Player == Morphling.Player && Morphling.morphTimer > 0f)
+                || correctGiantOffset && !(Giant.Player == Glitch.Player && Glitch.MimicTimer > 0f) || correctGiantOffset && !(Giant.Player == Hitman.Player && Hitman.MorphTimer > 0f);
+            if (correctGiantOffset)
+            {
+                float scaleFactor = Giant.SizeFactor.x / 0.7f;
+                __instance.myPlayer.Collider.offset = Mini.defaultColliderOffset * Vector2.down / scaleFactor;
             }
         }
     }
@@ -1813,14 +1794,6 @@ namespace TheSushiRoles.Patches
                     BountyHunter.Player.SetKillTimer(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown + BountyHunter.punishmentTime); 
             }
 
-            // Mini Set Impostor Mini kill timer (Due to mini being a modifier, all "SetKillTimers" must have happened before this!)
-            if (Mini.Player != null && __instance == Mini.Player && __instance == PlayerControl.LocalPlayer) 
-            {
-                float multiplier = 1f;
-                if (Mini.Player != null && PlayerControl.LocalPlayer == Mini.Player) multiplier = Mini.IsGrownUp ? 0.66f : 2f;
-                Mini.Player.SetKillTimer(__instance.killTimer * multiplier);
-            }
-
             // Janitor Button Sync
             if (Janitor.Player != null && PlayerControl.LocalPlayer == Janitor.Player && __instance == Janitor.Player && HudManagerStartPatch.JanitorCleanButton != null)
                 HudManagerStartPatch.JanitorCleanButton.Timer = Janitor.Player.killTimer;
@@ -1872,7 +1845,6 @@ namespace TheSushiRoles.Patches
             if (GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown <= 0f) return false;
             float multiplier = 1f;
             float addition = 0f;
-            if (Mini.Player != null && PlayerControl.LocalPlayer == Mini.Player) multiplier = Mini.IsGrownUp ? 0.66f : 2f;
             if (BountyHunter.Player != null && PlayerControl.LocalPlayer == BountyHunter.Player) addition = BountyHunter.punishmentTime;
 
             __instance.killTimer = Mathf.Clamp(time, 0f, GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown * multiplier + addition);
@@ -2001,8 +1973,10 @@ namespace TheSushiRoles.Patches
     }
 
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.AdjustLighting))]
-    public static class AdjustLight {
-        public static bool Prefix(PlayerControl __instance) {
+    public static class AdjustLight
+    {
+        public static bool Prefix(PlayerControl __instance)
+        {
             if (__instance == null || PlayerControl.LocalPlayer == null || Lighter.Player == null) return true;
 
             bool hasFlashlight = !PlayerControl.LocalPlayer.Data.IsDead && Lighter.Player.PlayerId == PlayerControl.LocalPlayer.PlayerId;

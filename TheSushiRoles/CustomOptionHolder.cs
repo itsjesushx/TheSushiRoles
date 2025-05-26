@@ -370,11 +370,11 @@ namespace TheSushiRoles
         public static CustomOption modifierDrunkQuantity;
         public static CustomOption modifierDrunkDuration;
 
-        public static CustomOption AbilityChameleon;
-        public static CustomOption AbilityChameleonQuantity;
-        public static CustomOption AbilityChameleonHoldDuration;
-        public static CustomOption AbilityChameleonFadeDuration;
-        public static CustomOption AbilityChameleonMinVisibility;
+        public static CustomOption modifierChameleon;
+        public static CustomOption modifierChameleonQuantity;
+        public static CustomOption modifierChameleonHoldDuration;
+        public static CustomOption modifierChameleonFadeDuration;
+        public static CustomOption modifierChameleonMinVisibility;
         
         public static CustomOption modifierLucky;
 
@@ -685,6 +685,11 @@ namespace TheSushiRoles
             OracleCharges = CustomOption.Create(1631, Types.Crewmate, "Initial Oracle Charges", 1f, 0f, 5f, 1f, OracleSpawnRate);
             OracleRechargeTasksNumber = CustomOption.Create(1632, Types.Crewmate, "Number Of Oracle Tasks Needed For Recharging", 2f, 1f, 10f, 1f, OracleSpawnRate);
 
+            lighterSpawnRate = CustomOption.Create(110, Types.Crewmate, ColorString(Lighter.Color, "Lighter"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            lighterModeLightsOnVision = CustomOption.Create(111, Types.Crewmate, "Vision On Lights On", 1.5f, 0.25f, 5f, 0.25f, lighterSpawnRate);
+            lighterModeLightsOffVision = CustomOption.Create(112, Types.Crewmate, "Vision On Lights Off", 0.5f, 0.25f, 5f, 0.25f, lighterSpawnRate);
+            lighterFlashlightWidth = CustomOption.Create(113, Types.Crewmate, "Flashlight Width", 0.3f, 0.1f, 1f, 0.1f, lighterSpawnRate);
+
             detectiveSpawnRate = CustomOption.Create(120, Types.Crewmate, ColorString(Detective.Color, "Detective"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             detectiveAnonymousFootprints = CustomOption.Create(121, Types.Crewmate, "Anonymous Footprints", false, detectiveSpawnRate);
             detectiveFootprintIntervall = CustomOption.Create(122, Types.Crewmate, "Footprint Intervall", 0.5f, 0.25f, 10f, 0.25f, detectiveSpawnRate, Format: "x");
@@ -808,7 +813,7 @@ namespace TheSushiRoles
             modifierBlindVision = CustomOption.Create(1052, Types.Modifier, "Vision With Blind", new string[] { "-10%", "-20%", "-30%", "-40%", "-50%" }, modifierBlind);
 
             modifierMini = CustomOption.Create(1061, Types.Modifier, ColorString(Mini.Color, "Mini"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            ModifierMiniSpeed = CustomOption.Create(1062, Types.Modifier, "Mini Speed Multiplier", 1.25f, 1.05f, 2.5f, 0.05f, modifierMini, Format: "x");
+            ModifierMiniSpeed = CustomOption.Create(1062, Types.Modifier, "Mini Speed Multiplier",  1.25f, 1.05f, 2.5f, 0.05f, modifierMini, Format: "x");
 
             ModifierGiant = CustomOption.Create(529, Types.Modifier, ColorString(Giant.Color, "Giant"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             ModifierGiantSpeed = CustomOption.Create(5304, Types.Modifier, "Giant Speed Multiplier", 0.75f, 0.25f, 1f, 0.05f, ModifierGiant, Format: "x");
@@ -825,6 +830,12 @@ namespace TheSushiRoles
             modifierDrunk = CustomOption.Create(1080, Types.Modifier, ColorString(Drunk.Color, "Drunk"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             modifierDrunkQuantity = CustomOption.Create(1081, Types.Modifier, ColorString(Drunk.Color, "Modifier Quantity"), rates, modifierDrunk);
             modifierDrunkDuration = CustomOption.Create(1082, Types.Modifier, "Number Of Meetings Being Drunk", 3f, 1f, 15f, 1f, modifierDrunk);
+
+            modifierChameleon = CustomOption.Create(1090, Types.Modifier, ColorString(Chameleon.Color, "Chameleon"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            modifierChameleonQuantity = CustomOption.Create(1091, Types.Modifier, ColorString(Chameleon.Color, "Chameleon Quantity"), rates, modifierChameleon);
+            modifierChameleonHoldDuration = CustomOption.Create(1092, Types.Modifier, "Time Until Fading Starts", 3f, 1f, 10f, 0.5f, modifierChameleon, Format: "s");
+            modifierChameleonFadeDuration = CustomOption.Create(1093, Types.Modifier, "Fade Duration", 1f, 0.25f, 10f, 0.25f, modifierChameleon, Format: "s");
+            modifierChameleonMinVisibility = CustomOption.Create(1094, Types.Modifier, "Minimum Visibility", new string[] { "0%", "10%", "20%", "30%", "40%", "50%" }, modifierChameleon);
 
             modifierLucky = CustomOption.Create(1101, Types.Modifier, ColorString(Lucky.Color, "Lucky"), 0f, 0f, 100f, 10f, null, true, Format: "%");
 
@@ -843,17 +854,6 @@ namespace TheSushiRoles
             AbilityCoward = CustomOption.Create(1029, Types.Ability, ColorString(Coward.Color, "Coward"), 0f, 0f, 100f, 10f, null, true, Format: "%");
 
             AbilityParanoid = CustomOption.Create(522, Types.Ability, ColorString(Paranoid.Color, "Paranoid"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-
-            AbilityChameleon = CustomOption.Create(1090, Types.Ability, ColorString(Chameleon.Color, "Chameleon"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            AbilityChameleonQuantity = CustomOption.Create(1091, Types.Ability, ColorString(Chameleon.Color, "Chameleon Quantity"), rates, AbilityChameleon);
-            AbilityChameleonHoldDuration = CustomOption.Create(1092, Types.Ability, "Time Until Fading Starts", 3f, 1f, 10f, 0f, AbilityChameleon, Format: "s");
-            AbilityChameleonFadeDuration = CustomOption.Create(1093, Types.Ability, "Fade Duration", 1f, 0.25f, 10f, 0.15f, AbilityChameleon, Format: "s");
-            AbilityChameleonMinVisibility = CustomOption.Create(1094, Types.Ability, "Minimum Visibility", new string[] { "0%", "10%", "20%", "30%", "40%", "50%" }, AbilityChameleon);
-
-            lighterSpawnRate = CustomOption.Create(110, Types.Ability, ColorString(Lighter.Color, "Lighter"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            lighterModeLightsOnVision = CustomOption.Create(111, Types.Ability, "Vision On Lights On", 1.5f, 0.25f, 5f, 0.25f, lighterSpawnRate);
-            lighterModeLightsOffVision = CustomOption.Create(112, Types.Ability, "Vision On Lights Off", 0.5f, 0.25f, 5f, 0.25f, lighterSpawnRate);
-            lighterFlashlightWidth = CustomOption.Create(113, Types.Ability, "Flashlight Width", 0.3f, 0.1f, 1f, 0.1f, lighterSpawnRate);
 
             // Other options
             maxNumberOfMeetings = CustomOption.Create(3, Types.General, "Number Of Meetings (excluding Mayor meeting)", 10, 0, 15, 1, null, true, Heading: "Gameplay Settings");

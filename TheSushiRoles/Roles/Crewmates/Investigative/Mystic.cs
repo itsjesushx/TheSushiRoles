@@ -74,9 +74,9 @@ namespace TheSushiRoles.Roles
                     message = "I am neither ally nor enemy — I am the anomaly, spreading decay or carving a lone path. \n\n(Plaguebearer, Pestilence, Glitch, Jackal)";
                 }
                 else if (id.In(
-                    RoleId.Lighter, RoleId.Hitman, RoleId.Tracker, RoleId.Crewmate, RoleId.Impostor))
+                    RoleId.Hitman, RoleId.Tracker, RoleId.Crewmate, RoleId.Impostor))
                 {
-                    message = "From humble light to lethal aim, I walk among you — familiar or fatal. \n\n(Lighter, Hitman, Tracker, Crewmate, Impostor)";
+                    message = "From humble light to lethal aim, I walk among you — familiar or fatal. \n\n(Hitman, Tracker, Crewmate, Impostor)";
                 }
                 else if (id.In(
                     RoleId.Gatekeeper, RoleId.Amnesiac, RoleId.Painter, RoleId.Oracle))

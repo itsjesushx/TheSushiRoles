@@ -396,7 +396,7 @@ namespace TheSushiRoles
                             targetId = Sheriff.CurrentTarget.PlayerId;
                         }
                         // then the normal sheriff
-                        else if ((Sheriff.CurrentTarget.Data.Role.IsImpostor && (Sheriff.CurrentTarget != Mini.Player || Mini.IsGrownUp))
+                        else if ((Sheriff.CurrentTarget.Data.Role.IsImpostor)
                             || Sheriff.CurrentTarget.IsNeutralKiller()
                             || (Sheriff.spyCanDieToSheriff && Spy.Player == Sheriff.CurrentTarget)
                             || (Sheriff.canKillNeutrals && Sheriff.CurrentTarget.IsPassiveNeutral()))
@@ -2648,13 +2648,15 @@ namespace TheSushiRoles
                     {
                         Witch.currentCooldownAddition += Witch.CooldownAddition;
                         witchSpellButton.MaxTimer = Witch.Cooldown + Witch.currentCooldownAddition;
-                        Patches.PlayerControlFixedUpdatePatch.MiniCooldownUpdate();  // Modifies the MaxTimer if the witch is the mini
                         witchSpellButton.Timer = witchSpellButton.MaxTimer;
-                        if (Witch.triggerBothCooldowns) {
-                            float multiplier = (Mini.Player != null && PlayerControl.LocalPlayer == Mini.Player) ? (Mini.IsGrownUp ? 0.66f : 2f) : 1f;
+                        if (Witch.triggerBothCooldowns)
+                        {
+                            float multiplier = 1f;
                             Witch.Player.killTimer = GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown * multiplier;
                         }
-                    } else {
+                    }
+                    else
+                    {
                         witchSpellButton.Timer = 0f;
                     }
                     Witch.spellCastingTarget = null;

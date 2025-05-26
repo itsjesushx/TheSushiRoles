@@ -7,6 +7,7 @@ namespace TheSushiRoles.Roles.Modifiers
     {
         public static List<PlayerControl> Players = new List<PlayerControl>();
         public static Vector3 position;
+        public static Color Color = new Color32(114, 136, 176, byte.MaxValue);
         public static void ClearAndReload() 
         {
             Players = new List<PlayerControl>();

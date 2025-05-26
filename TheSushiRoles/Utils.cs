@@ -783,12 +783,6 @@ namespace TheSushiRoles
                 return MurderAttemptResult.MirrorKill;
             }
 
-            // Block impostor not fully grown mini kill
-            else if (Mini.Player != null && target == Mini.Player && !Mini.IsGrownUp)
-            {
-                return MurderAttemptResult.SuppressKill;
-            }
-
             //Veteran with alert active
             else if (Veteran.Player != null && Veteran.AlertActive && Veteran.Player == target)
             {

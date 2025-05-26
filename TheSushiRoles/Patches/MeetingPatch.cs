@@ -278,9 +278,6 @@ namespace TheSushiRoles.Patches
                     Survivor.notAckedExiled = (Survivor.Player != null && Survivor.Player.PlayerId == exiled.PlayerId) || (Lawyer.Player != null && Lawyer.target != null && Lawyer.target.PlayerId == exiled.PlayerId && Lawyer.target != Jester.Player);
                     VengefulRomantic.notAckedExiled = (VengefulRomantic.Player != null && VengefulRomantic.Player.PlayerId == exiled.PlayerId) || (Romantic.Player != null && Romantic.beloved != null && Romantic.beloved.PlayerId == exiled.PlayerId && Romantic.beloved != Jester.Player);
                 }
-
-                // Mini
-                if (!Mini.isGrowingUpInMeeting) Mini.timeOfGrowthStart = Mini.timeOfGrowthStart.Add(DateTime.UtcNow.Subtract(Mini.timeOfMeetingStart)).AddSeconds(10);
             }
         }
 
@@ -749,9 +746,6 @@ namespace TheSushiRoles.Patches
 
                 // Psychic meeting start time
                 Psychic.meetingStartTime = DateTime.UtcNow;
-                // Mini
-                Mini.timeOfMeetingStart = DateTime.UtcNow;
-                Mini.ageOnMeetingStart = Mathf.FloorToInt(Mini.GrowingProgress() * 18);
                 // Reset Viper poisoned
                 Viper.poisoned = null;
                 // Count meetings

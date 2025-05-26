@@ -213,12 +213,6 @@ namespace TheSushiRoles.Patches
             {
                 Prosecutor.IsProsecutorWin = true;
             }
-
-            // Mini exile lose condition
-            else if (exiled != null && Mini.Player != null && Mini.Player.PlayerId == exiled.PlayerId && !Mini.IsGrownUp && !Mini.Player.Data.Role.IsImpostor && !RoleInfo.GetRoleInfoForPlayer(Mini.Player).Any(x => x.FactionId == Faction.Neutrals))
-            {
-                Mini.IsMiniLose = true;
-            }
             // Jester win condition
             else if (exiled != null && Jester.Player != null && Jester.Player.PlayerId == exiled.PlayerId)
             {
@@ -242,13 +236,6 @@ namespace TheSushiRoles.Patches
             Crusader.Fortified = false;
 
             Oracle.Investigated = false;
-
-            // Mini set adapted Cooldown
-            if (Mini.Player != null && PlayerControl.LocalPlayer == Mini.Player && Mini.Player.Data.Role.IsImpostor)
-            {
-                var multiplier = Mini.IsGrownUp ? 0.66f : 2f;
-                Mini.Player.SetKillTimer(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown * multiplier);
-            }
 
             // Mystic spawn souls
             if (Mystic.deadBodyPositions != null && Mystic.Player != null && PlayerControl.LocalPlayer == Mystic.Player && (Mystic.mode == 0 || Mystic.mode == 2))

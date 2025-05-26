@@ -5,7 +5,6 @@ namespace TheSushiRoles.Roles.Abilities
 {
     public static class Guesser 
     {
-        public static Color AbilityColor = new Color32(153, 255, 255, byte.MaxValue);
         private static Sprite targetSprite;
         public static bool hasMultipleShotsPerMeeting = false;
         public static bool killsThroughShield = true;

@@ -204,8 +204,6 @@ namespace TheSushiRoles.Patches
             {
                 SetPlayerNameColor(Spy.Player, Spy.Color);
             }
-
-            // Crewmate roles with no changes: Mini
             // Impostor roles with no changes: Morphling, Painter, Viper, Eraser, Janitor, Warlock, BountyHunter,  Witch
         }
 
@@ -334,35 +332,6 @@ namespace TheSushiRoles.Patches
                 Glitch.HackedKnows[key] -= dt;
         }
 
-        public static void MiniUpdate() 
-        {
-            if (Mini.Player == null || Painter.PaintTimer > 0f || Utils.MushroomSabotageActive() || Mini.Player == Morphling.Player && Morphling.morphTimer > 0f || Mini.Player == Glitch.Player && Glitch.MimicTimer > 0f 
-            || Mini.Player == Hitman.Player && Hitman.MorphTimer > 0f || Mini.Player == Assassin.Player && Assassin.isInvisble || Mini.Player == Wraith.Player && Wraith.IsVanished || SurveillanceMinigamePatch.nightVisionIsActive) return;
-                
-            float growingProgress = Mini.GrowingProgress();
-            float scale = growingProgress * 0.35f + 0.35f;
-            string suffix = "";
-            if (growingProgress != 1f)
-                suffix = " <color=#FAD934FF>(" + Mathf.FloorToInt(growingProgress * 18) + ")</color>"; 
-            if (!Mini.isGrowingUpInMeeting && MeetingHud.Instance != null && Mini.ageOnMeetingStart != 0 && !(Mini.ageOnMeetingStart >= 18))
-                suffix = " <color=#FAD934FF>(" + Mini.ageOnMeetingStart + ")</color>";
-
-            Mini.Player.cosmetics.nameText.text += suffix;
-            if (MeetingHud.Instance != null) 
-            {
-                foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                    if (player.NameText != null && Mini.Player.PlayerId == player.TargetPlayerId)
-                        player.NameText.text += suffix;
-            }
-
-            if (Morphling.Player != null && Morphling.morphTarget == Mini.Player && Morphling.morphTimer > 0f)
-                Morphling.Player.cosmetics.nameText.text += suffix;
-            if (Glitch.Player != null && Glitch.MimicTarget == Mini.Player && Glitch.MimicTimer > 0f)
-                Glitch.Player.cosmetics.nameText.text += suffix;
-            if (Hitman.Player != null && Hitman.MorphTarget == Mini.Player && Hitman.MorphTimer > 0f)
-                Hitman.Player.cosmetics.nameText.text += suffix;
-        }
-
         static void UpdateImpostorKillButton(HudManager __instance) 
         {
             if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor) return;
@@ -450,8 +419,6 @@ namespace TheSushiRoles.Patches
 
             // Timer updates
             TimerUpdate();
-            // Mini
-            MiniUpdate();
 
             // Glitch Sabotage, Use and Vent Button Disabling
             UpdateReportButton(__instance);
