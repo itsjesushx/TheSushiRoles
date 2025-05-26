@@ -52,7 +52,7 @@ namespace TheSushiRoles.Modules
                     handled = true;
                     var roles = new List<RoleInfo>
                     {
-                        RoleInfo.crewmate, RoleInfo.cultist, RoleInfo.lighter, RoleInfo.detective, RoleInfo.hacker, RoleInfo.tracker, RoleInfo.crusader, RoleInfo.spy, RoleInfo.vigilante, RoleInfo.mayor,
+                        RoleInfo.crewmate, RoleInfo.cultist, RoleInfo.lighter, RoleInfo.deputy, RoleInfo.detective, RoleInfo.hacker, RoleInfo.tracker, RoleInfo.crusader, RoleInfo.spy, RoleInfo.vigilante, RoleInfo.mayor,
                         RoleInfo.gatekeeper, RoleInfo.veteran, RoleInfo.engineer, RoleInfo.sheriff, RoleInfo.psychic, RoleInfo.trapper, RoleInfo.chronos, RoleInfo.medic, RoleInfo.swapper,
                         RoleInfo.oracle, RoleInfo.mystic,
                         RoleInfo.impostor, RoleInfo.morphling, RoleInfo.blackmailer, RoleInfo.painter, RoleInfo.viper, RoleInfo.eraser, RoleInfo.trickster, RoleInfo.janitor,

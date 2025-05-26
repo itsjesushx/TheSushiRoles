@@ -10,6 +10,7 @@ namespace TheSushiRoles
             Kill,
             Disconnect,
             Guess,
+            Execute,
             Maul,
             LawyerSuicide,
             LoverSuicide,

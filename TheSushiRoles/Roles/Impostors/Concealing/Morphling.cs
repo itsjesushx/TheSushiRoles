@@ -8,7 +8,7 @@ namespace TheSushiRoles.Roles
         public static Color Color = Palette.ImpostorRed;
         private static Sprite sampleSprite;
         private static Sprite morphSprite;
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static float Duration = 10f;
         public static PlayerControl sampledTarget;
         public static PlayerControl morphTarget;

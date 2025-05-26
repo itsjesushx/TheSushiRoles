@@ -76,7 +76,8 @@ namespace TheSushiRoles.Roles
         public readonly static RoleInfo mayor = new("Mayor", Mayor.Color, "Your vote counts twice", "Your vote counts twice", RoleId.Mayor, Faction.Crewmates, RoleAlignment.CrewPower, "The Mayor leads the Crewmates by having a vote that counts twice. The Mayor can always use their meeting, even if the maximum number of meetings was reached. The Mayor has a portable Meeting Button, depending on the options. The Mayor can see the vote colors after completing a configurable amount of tasks, depending on the options. The Mayor has the option to vote with only one vote instead of two (via a button in the meeting screen), depending on the settings.");
         public readonly static RoleInfo gatekeeper = new("Gatekeeper", Gatekeeper.Color, "You can create portals", "You can create portals", RoleId.Gatekeeper, Faction.Crewmates, RoleAlignment.CrewSupport, "The Gatekeeper is a Crewmate that can place two portals on the map. These two portals are connected to each other. Those portals will be visible after the next meeting and can be used by everyone. Additionally to that, the Gatekeeper gets information about who used the portals and when in the chat during each meeting, depending on the options. The Gatekeeper can teleport themself to their placed portals from anywhere if the setting is enabled.");
         public readonly static RoleInfo veteran = new("Veteran", Veteran.Color, "Alert to murder evil players who touch you", "Alert to kill the <color=#FF1919FF>Evildoers</color>", RoleId.Veteran, Faction.Crewmates, RoleAlignment.CrewPower, $"The Veteran is able to alert, Alerting makes the Veteran Unkillable and will kill anyone who interacts with them. At the start of the game the Veteran can alert a maximum of " + Veteran.Charges + " times.");
-        public readonly static RoleInfo engineer = new("Engineer",  Engineer.Color, "Maintain important systems on the ship", "Repair the ship", RoleId.Engineer, Faction.Crewmates, RoleAlignment.CrewSupport, $"The Engineer is able to vent around the map and fix sabotages. The Engineer can fix a maximum of " + Engineer.remainingFixes + " sabotages.");
+        public readonly static RoleInfo deputy = new("Deputy", Deputy.Color, "Execute players in meetings", "Execute the <color=#FF1919FF>Evildoers</color>", RoleId.Deputy, Faction.Crewmates, RoleAlignment.CrewPower, $"As The Deputy, you can execute players in meetings, if they are crewmate you will suicide, if they are a killer, they die instead. Depending on options you'll be able to shoot passive neutrals. You may only shoot once per meeting. ");
+        public readonly static RoleInfo engineer = new("Engineer", Engineer.Color, "Maintain important systems on the ship", "Repair the ship", RoleId.Engineer, Faction.Crewmates, RoleAlignment.CrewSupport, $"The Engineer is able to vent around the map and fix sabotages. The Engineer can fix a maximum of " + Engineer.remainingFixes + " sabotages.");
         public readonly static RoleInfo sheriff = new("Sheriff", Sheriff.Color, "Shoot the <color=#FF1919FF>Impostors</color>", "Shoot the Impostors", RoleId.Sheriff, Faction.Crewmates, RoleAlignment.CrewPower, "The Sheriff is able to kill players during rounds, if the player they kill is an impostor, or Neutral Killer, the Sheriff will survive. If the player they kill is a crewmate, the Sheriff will die.");
         public readonly static RoleInfo psychic = new("Psychic", Psychic.Color, "Question the souls of the dead to gain information", "Question the souls", RoleId.Psychic, Faction.Crewmates, RoleAlignment.CrewInvest, "The psychic is a crewmate who can ask the souls of dead players for information. Like the Mystic, the psychic will see the souls of the players who have died (after the next meeting) and can question them. They then gets random information about the soul or the killer in the chat. The souls only stay for one round, i.e. until the next meeting. Depending on the options, the souls can only be questioned once and then disappear.");
         public readonly static RoleInfo trapper = new("Trapper", Trapper.Color, "Place traps to find the Impostors", "Place traps", RoleId.Trapper, Faction.Crewmates, RoleAlignment.CrewInvest, "The Tracker can select one player to track. Depending on the options the Tracker can track a different person after each meeting or the Tracker tracks the same person for the whole game. An arrow points to the last tracked position of the player. The arrow updates its position every few seconds (configurable). By an option, the arrow can be replaced or combined with the Proximity Tracker from Hide N Seek. Depending on the options, the Tracker has another ability: They can track all corpses on the map for a set amount of time. They will keep tracking corpses, even if they were cleaned or eaten by the Scavenger.");
@@ -127,6 +128,7 @@ namespace TheSushiRoles.Roles
             // Crewmates
             crewmate,
             crusader,
+            deputy,
             detective,
             engineer,
             gatekeeper,
@@ -192,6 +194,7 @@ namespace TheSushiRoles.Roles
             if (player == Crusader.Player) infos.Add(crusader);
             if (player == Miner.Player) infos.Add(miner);
             if (player == Undertaker.Player) infos.Add(undertaker);
+            if (player == Deputy.Player) infos.Add(deputy);
             if (player == VengefulRomantic.Player) infos.Add(vromantic);
             if (player == Glitch.Player) infos.Add(glitch);
             if (player == Blackmailer.Player) infos.Add(blackmailer);
@@ -316,6 +319,9 @@ namespace TheSushiRoles.Roles
                             break;
                         case DeadPlayer.CustomDeathReason.Kill:
                             DeathReasonString = $" | Killed by {Utils.ColorString(killerColor, deadPlayer.GetKiller.Data.PlayerName)}";
+                            break;
+                        case DeadPlayer.CustomDeathReason.Execute:
+                            DeathReasonString = $" | Executed by {Utils.ColorString(killerColor, deadPlayer.GetKiller.Data.PlayerName)}";
                             break;
                         case DeadPlayer.CustomDeathReason.Guess:
                             if (deadPlayer.GetKiller.Data.PlayerName == player.Data.PlayerName)

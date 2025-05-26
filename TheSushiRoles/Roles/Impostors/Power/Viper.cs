@@ -9,8 +9,8 @@ namespace TheSushiRoles.Roles
         public static Color Color = Palette.ImpostorRed;
         public static HashSet<byte> BlindedPlayers = new HashSet<byte>();
         public static float delay = 3f;
-        public static float Cooldown = 30f;
-        public static float BlindCooldown = 30f;
+        public static float Cooldown = 25f;
+        public static float BlindCooldown = 25f;
         public static float BlindDuration = 6f;
 
         public static PlayerControl CurrentTarget;

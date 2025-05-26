@@ -11,7 +11,7 @@ namespace TheSushiRoles.Roles
         public static float RewindTimeDuration = 3f;
         public static float TimeRemaining = 0f;
         public static float Charges;
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static bool isRewinding = false;
         public static Dictionary<byte, float> RecentlyDied;
         private static Sprite ButtonSprite;

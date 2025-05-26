@@ -6,7 +6,7 @@ namespace TheSushiRoles.Roles
     {
         public static PlayerControl Player;
         public static PlayerControl CurrentTarget;
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static bool CanUseVents;
         public static Color Color = new Color32(140, 0, 77, byte.MaxValue);
         public static float ReducedCooldown = 5f;

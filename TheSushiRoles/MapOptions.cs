@@ -8,7 +8,6 @@ namespace TheSushiRoles
         // Set values
         public static int maxNumberOfMeetings = 10;
         public static bool blockSkippingInEmergencyMeetings = false;
-        public static float Meetingtime { get; set; } = 20f;
         public static float GameStartCooldowns = 15f;
         public static bool noVoteIsSelfVote = false;
         public static bool hidePlayerNames = false;
@@ -67,7 +66,6 @@ namespace TheSushiRoles
             EnableBetterPolus = CustomOptionHolder.EnableBetterPolus.GetBool();
 
             FirstPlayerKilled = null;
-            Meetingtime = GameOptionsManager.Instance.currentNormalGameOptions.VotingTime + GameOptionsManager.Instance.currentNormalGameOptions.DiscussionTime;
         }
 
         public static void ReloadPluginOptions() 

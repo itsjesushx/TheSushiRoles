@@ -6,7 +6,7 @@ namespace TheSushiRoles.Roles
     {
         public static PlayerControl Player;
         public static Color Color = Palette.ImpostorRed;
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static bool Active;
         public static float GrenadeDuration = 5f;
         public static float GrenadeRadius = 1f;

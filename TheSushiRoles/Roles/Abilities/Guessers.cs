@@ -7,6 +7,7 @@ namespace TheSushiRoles.Roles.Abilities
     {
         private static Sprite targetSprite;
         public static bool hasMultipleShotsPerMeeting = false;
+        public static List<GameObject> GuessButtons = new List<GameObject>();
         public static bool killsThroughShield = true;
         public static bool evilGuesserCanGuessSpy = true;
         public static int tasksToUnlock = Mathf.RoundToInt(CustomOptionHolder.CrewGuesserNumberOfTasks.GetFloat());

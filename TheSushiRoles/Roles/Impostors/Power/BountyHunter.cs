@@ -7,7 +7,7 @@ namespace TheSushiRoles.Roles
         public static PlayerControl Player;
         public static Color Color = Palette.ImpostorRed;
         public static Arrow arrow;
-        public static float bountyDuration = 30f;
+        public static float bountyDuration = 25f;
         public static bool showArrow = true;
         public static float bountyKillCooldown = 0f;
         public static float punishmentTime = 15f;

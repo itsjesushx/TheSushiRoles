@@ -9,7 +9,7 @@ namespace TheSushiRoles.Roles
         public static PlayerControl Player;
         public static PlayerControl FirstTarget;
         public static PlayerControl SecondTarget;
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static bool SwappingMenus;
         public static int Charges;
         public static int RechargeTasksNumber;

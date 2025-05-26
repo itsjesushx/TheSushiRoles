@@ -396,8 +396,7 @@ namespace TheSushiRoles
                             targetId = Sheriff.CurrentTarget.PlayerId;
                         }
                         // then the normal sheriff
-                        else if ((Sheriff.CurrentTarget.Data.Role.IsImpostor)
-                            || Sheriff.CurrentTarget.IsNeutralKiller()
+                        else if (Sheriff.CurrentTarget.IsKiller()
                             || (Sheriff.spyCanDieToSheriff && Spy.Player == Sheriff.CurrentTarget)
                             || (Sheriff.canKillNeutrals && Sheriff.CurrentTarget.IsPassiveNeutral()))
                         {
@@ -409,8 +408,8 @@ namespace TheSushiRoles
                         }
 
                         // Lucky sheriff shot doesnt kill if backfired
-                        if (targetId == Sheriff.Player.PlayerId && Utils.CheckLucky(Sheriff.Player, true, true))
-                            return;
+                        if (targetId == Sheriff.Player.PlayerId && Utils.CheckLucky(Sheriff.Player, true, true)) return;
+                        
                         Utils.SendRPC(CustomRPC.UncheckedMurderPlayer, Sheriff.Player.Data.PlayerId, targetId, byte.MaxValue);
                         RPCProcedure.UncheckedMurderPlayer(Sheriff.Player.Data.PlayerId, targetId, Byte.MaxValue);
                     }

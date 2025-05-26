@@ -10,7 +10,7 @@ namespace TheSushiRoles.Roles
         public static List<byte> alreadyErased = new List<byte>();
         public static List<PlayerControl> futureErased = new List<PlayerControl>();
         public static PlayerControl CurrentTarget;
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static bool canEraseAnyone = false;
         private static Sprite ButtonSprite;
         public static Sprite GetButtonSprite() 

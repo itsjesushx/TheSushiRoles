@@ -232,6 +232,8 @@ namespace TheSushiRoles.Patches
 
             Mystic.Investigated = false;
 
+            if (!Deputy.Player.Data.IsDead) Deputy.CanExecute = true;
+
             Crusader.FortifiedPlayer = null;
             Crusader.Fortified = false;
 

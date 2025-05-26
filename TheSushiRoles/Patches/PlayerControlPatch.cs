@@ -919,6 +919,7 @@ namespace TheSushiRoles.Patches
             {
                 if (player.Data.IsDead) roleNames = $"{gInfo}{abs}{mods}{roleNames}{dReasons}";
                 if (player == Swapper.Player) roleNames += Utils.ColorString(Swapper.Color, $" ({Swapper.Charges})");
+                if (player == Deputy.Player) roleNames += Utils.ColorString(Deputy.Color, $" ({Deputy.Charges})");
         
                 if (HudManager.Instance.TaskPanel != null) 
                 {
@@ -1300,11 +1301,22 @@ namespace TheSushiRoles.Patches
             }
         }
         
+        public static void DeputyUpdate()
+        {
+            if (Deputy.Player == null || PlayerControl.LocalPlayer != Deputy.Player || PlayerControl.LocalPlayer.Data.IsDead) return;
+            var (playerCompleted, _) = TasksHandler.TaskInfo(PlayerControl.LocalPlayer.Data);
+            if (playerCompleted == Deputy.RechargedTasks) 
+            {
+                Deputy.RechargedTasks += Deputy.RechargeTasksNumber;
+                Deputy.Charges++;
+            }
+        }
+        
         public static void LandlordUpdate()
         {
             if (Landlord.Player == null || PlayerControl.LocalPlayer != Landlord.Player || PlayerControl.LocalPlayer.Data.IsDead) return;
             var (playerCompleted, _) = TasksHandler.TaskInfo(PlayerControl.LocalPlayer.Data);
-            if (playerCompleted == Landlord.RechargedTasks) 
+            if (playerCompleted == Landlord.RechargedTasks)
             {
                 Landlord.RechargedTasks += Landlord.RechargeTasksNumber;
                 Landlord.Charges++;
@@ -1558,6 +1570,8 @@ namespace TheSushiRoles.Patches
                 SwapperUpdate();
                 // Veteran
                 VeteranUpdate();
+                // Deputy
+                DeputyUpdate();
                 // Landlord
                 LandlordUpdate();
                 LandlordUnteleportableUpdate();
@@ -1730,6 +1744,8 @@ namespace TheSushiRoles.Patches
                     }
                 }
             }
+
+            if (Deputy.Player == target) Deputy.CanExecute = false;
 
             // Cultist show kill flash
             if (Cultist.Player != null && Follower.Player != null)

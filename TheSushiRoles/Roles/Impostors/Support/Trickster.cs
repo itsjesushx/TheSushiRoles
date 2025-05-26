@@ -6,8 +6,8 @@ namespace TheSushiRoles.Roles
     {
         public static PlayerControl Player;
         public static Color Color = Palette.ImpostorRed;
-        public static float placeBoxCooldown = 30f;
-        public static float lightsOutCooldown = 30f;
+        public static float placeBoxCooldown = 25f;
+        public static float lightsOutCooldown = 25f;
         public static float lightsOutDuration = 10f;
         public static float lightsOutTimer = 0f;
         private static Sprite placeBoxButtonSprite;

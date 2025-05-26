@@ -11,7 +11,7 @@ namespace TheSushiRoles.Roles
         public static PlayerControl curseVictim;
         public static PlayerControl curseVictimTarget;
 
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static float rootTime = 5f;
 
         private static Sprite curseButtonSprite;

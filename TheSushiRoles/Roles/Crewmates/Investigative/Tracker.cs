@@ -13,7 +13,7 @@ namespace TheSushiRoles.Roles
         public static float updateIntervall = 5f;
         public static bool resetTargetAfterMeeting = false;
         public static bool canTrackCorpses = false;
-        public static float corpsesTrackingCooldown = 30f;
+        public static float corpsesTrackingCooldown = 25f;
         public static float corpsesTrackingDuration = 5f;
         public static float corpsesTrackingTimer = 0f;
         public static int trackingMode = 0;

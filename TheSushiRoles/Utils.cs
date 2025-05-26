@@ -935,7 +935,41 @@ namespace TheSushiRoles
                 return roleInfo.Alignment == RoleAlignment.NeutralKilling;
             return false;
         }
-        public static bool IsCrew(this PlayerControl player) 
+        public static bool IsNeutralEvil(this PlayerControl player) 
+        {
+            RoleInfo roleInfo = RoleInfo.GetRoleInfoForPlayer(player).FirstOrDefault();
+            if (roleInfo != null)
+                return roleInfo.Alignment == RoleAlignment.NeutralEvil;
+            return false;
+        }
+
+        public static void RemoveGuessButtons()
+        {
+            foreach (var button in Guesser.GuessButtons)
+            {
+                UnityEngine.Object.Destroy(button);
+            }
+            Guesser.GuessButtons.Clear();
+        }
+        public static void RemoveGuessButtonForPlayer(PlayerControl player)
+        {
+            if (player == null) return;
+            var button = Guesser.GuessButtons.FirstOrDefault(b => b != null && b.transform.parent == player.transform);
+            if (button != null)
+            {
+                UnityEngine.Object.Destroy(button);
+                Guesser.GuessButtons.Remove(button);
+            }
+        }
+
+        public static bool IsNeutralBenign(this PlayerControl player)
+        {
+            RoleInfo roleInfo = RoleInfo.GetRoleInfoForPlayer(player).FirstOrDefault();
+            if (roleInfo != null)
+                return roleInfo.Alignment == RoleAlignment.NeutralBenign;
+            return false;
+        }
+        public static bool IsCrew(this PlayerControl player)
         {
             RoleInfo roleInfo = RoleInfo.GetRoleInfoForPlayer(player).FirstOrDefault();
             if (roleInfo != null)

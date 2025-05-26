@@ -6,7 +6,7 @@ namespace TheSushiRoles.Roles
     public static class Monarch
     {
         public static PlayerControl Player;
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static PlayerControl CurrentTarget;
         public static List<PlayerControl> KnightedPlayers = new List<PlayerControl>();
         public static bool KnightLoseOnDeath;

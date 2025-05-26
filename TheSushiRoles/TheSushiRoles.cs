@@ -26,6 +26,7 @@ namespace TheSushiRoles
             Hacker.ClearAndReload();
             Spy.ClearAndReload();
             Psychic.ClearAndReload();
+            Deputy.ClearAndReload();
             Veteran.ClearAndReload();
             Oracle.ClearAndReload();
             Trapper.ClearAndReload();

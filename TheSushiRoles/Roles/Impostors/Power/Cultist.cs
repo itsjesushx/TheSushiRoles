@@ -7,7 +7,7 @@ namespace TheSushiRoles.Roles
     {
         public static PlayerControl Player;
         public static PlayerControl CurrentTarget;
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         private static Sprite ButtonSprite;
         public static readonly List<Arrow> LocalArrows = new();
         public static bool HasFollower = false;

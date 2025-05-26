@@ -13,7 +13,7 @@ namespace TheSushiRoles.Roles
         public static Sprite blank;
         public static bool notAckedExiled = false;
 
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static int blanksNumber = 5;
 
         public static Sprite GetTargetSprite() 

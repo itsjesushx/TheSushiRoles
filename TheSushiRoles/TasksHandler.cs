@@ -5,7 +5,6 @@ namespace TheSushiRoles
     [HarmonyPatch]
     public static class TasksHandler 
     {
-
         public static Tuple<int, int> TaskInfo(NetworkedPlayerInfo playerInfo) 
         {
             int TotalTasks = 0;
@@ -14,7 +13,8 @@ namespace TheSushiRoles
                 playerInfo.Object &&
                 playerInfo.Role && playerInfo.Role.TasksCountTowardProgress &&
                 !playerInfo.Object.HasFakeTasks() && !playerInfo.Role.IsImpostor
-                ) {
+                )
+            {
                 foreach (var playerInfoTask in playerInfo.Tasks.GetFastEnumerator())
                 {
                     if (playerInfoTask.Complete) CompletedTasks++;

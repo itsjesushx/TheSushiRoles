@@ -7,7 +7,7 @@ namespace TheSushiRoles.Roles
         public static PlayerControl Player;
         public static Color Color = Palette.ImpostorRed;
 
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
 
         private static Sprite ButtonSprite;
         public static Sprite GetButtonSprite() 

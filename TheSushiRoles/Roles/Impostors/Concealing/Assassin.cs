@@ -8,7 +8,7 @@ namespace TheSushiRoles.Roles
         public static Color Color = Palette.ImpostorRed;
         public static PlayerControl AssassinMarked;
         public static PlayerControl CurrentTarget;
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static float traceTime = 1f;
         public static bool knowsTargetLocation = false;
         public static float invisibleDuration = 5f;

@@ -157,6 +157,7 @@ namespace TheSushiRoles.Patches
             CrewSettings.Add((byte)RoleId.Gatekeeper, CustomOptionHolder.GatekeeperSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Engineer, CustomOptionHolder.engineerSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Lighter, CustomOptionHolder.lighterSpawnRate.GetSelection());
+            CrewSettings.Add((byte)RoleId.Deputy, CustomOptionHolder.DeputySpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Detective, CustomOptionHolder.detectiveSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Chronos, CustomOptionHolder.ChronosSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Monarch, CustomOptionHolder.MonarchSpawnRate.GetSelection());
@@ -612,7 +613,7 @@ namespace TheSushiRoles.Patches
             List<PlayerControl> crewPlayer = PlayerControl.AllPlayerControls.ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
             impPlayer.RemoveAll(x => !x.Data.Role.IsImpostor);
             neutralPlayer.RemoveAll(x => !x.IsNeutralKiller());
-            crewPlayer.RemoveAll(x => !x.IsCrew());
+            crewPlayer.RemoveAll(x => !x.IsCrew() && x == Deputy.Player);
             AssignGuesserToPlayers(crewPlayer, Mathf.RoundToInt(CustomOptionHolder.GuesserCrewNumber.GetFloat()));
             AssignGuesserToPlayers(neutralPlayer, Mathf.RoundToInt(CustomOptionHolder.GuesserNeutralNumber.GetFloat()));
             AssignGuesserToPlayers(impPlayer, Mathf.RoundToInt(CustomOptionHolder.GuesserImpNumber.GetFloat()));

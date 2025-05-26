@@ -11,7 +11,7 @@ namespace TheSushiRoles.Roles
         public static List<PlayerControl> futureSpelled = new List<PlayerControl>();
         public static PlayerControl CurrentTarget;
         public static PlayerControl spellCastingTarget;
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static float spellCastingDuration = 2f;
         public static float CooldownAddition = 10f;
         public static float currentCooldownAddition = 0f;

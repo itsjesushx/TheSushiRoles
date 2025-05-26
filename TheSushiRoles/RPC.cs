@@ -244,6 +244,10 @@ namespace TheSushiRoles
                             Spy.Player = player;
                             GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.spy);
                             break;
+                        case RoleId.Deputy:
+                            Deputy.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.deputy);
+                            break;
                         case RoleId.Trickster:
                             Trickster.Player = player;
                             GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.trickster);
@@ -1172,7 +1176,6 @@ namespace TheSushiRoles
         // Taken from Town of Us https://github.com/eDonnes124/Town-Of-Us-R/blob/master/source/Patches/NeutralRoles/AmnesiacMod/PerformKillButton.cs Licensed under GPLv3
         public static void BecomeImpostor(PlayerControl player)
         {
-            RPCProcedure.ErasePlayerRoles(player.PlayerId);
             player.Data.Role.TeamType = RoleTeamTypes.Impostor;
             RoleManager.Instance.SetRole(player, RoleTypes.Impostor);
             player.SetKillTimer(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown);
@@ -1191,6 +1194,7 @@ namespace TheSushiRoles
 
             if (player == null) return;
 
+            ErasePlayerRoles(player.PlayerId);
             Utils.BecomeImpostor(player);
 
             SetRole((byte)Cultist.SelectFollowerRole(), player.PlayerId);
@@ -1217,6 +1221,7 @@ namespace TheSushiRoles
             if (player == Detective.Player) Detective.ClearAndReload();
             if (player == Chronos.Player) Chronos.ClearAndReload();
             if (player == Veteran.Player) Veteran.ClearAndReload();
+            if (player == Deputy.Player) Deputy.ClearAndReload();
             if (player == Medic.Player) Medic.ClearAndReload();
             if (player == Mystic.Player) Mystic.ClearAndReload();
             if (player == Hacker.Player) Hacker.ClearAndReload();
@@ -1644,7 +1649,115 @@ namespace TheSushiRoles
                     if (playerInfo != null) playerInfo.text = "";
             }
         }
-        public static void Guesserhoot(byte killerId, byte dyingTargetId, byte guessedTargetId, byte guessedRoleId) 
+        public static void DeputyShoot(byte killerId, byte dyingTargetId) 
+        {
+            Deputy.CanExecute = false; // only once per meeting
+            foreach (var button in Deputy.ExecuteButtons)
+            {
+                UnityEngine.Object.Destroy(button);
+            }
+            Deputy.ExecuteButtons.Clear();
+            Deputy.Charges--;
+
+            PlayerControl dyingTarget = Utils.PlayerById(dyingTargetId);
+            if (dyingTarget == null ) return;
+            if (Lawyer.target != null && dyingTarget == Lawyer.target) Lawyer.targetWasGuessed = true;  // Lawyer shouldn't be exiled with the client for executes
+            PlayerControl dyingLoverPartner = Lovers.bothDie ? dyingTarget.GetPartner() : null; // Lover check
+            if (Lawyer.target != null && dyingLoverPartner == Lawyer.target) Lawyer.targetWasGuessed = true;  // Lawyer shouldn't be exiled with the client for executes
+
+            PlayerControl deputy = Utils.PlayerById(killerId);
+            if (dyingTarget.IsKiller() || dyingTarget.IsNeutralEvil() && Deputy.CanKillNeutralEvil || dyingTarget.IsNeutralBenign() && Deputy.CanKillNeutralBenign)
+            {
+                dyingTarget.Exiled();
+            }
+            else
+            {
+                deputy.Exiled();
+                dyingTarget = deputy;
+            }
+
+            GameHistory.CreateDeathReason(dyingTarget, DeadPlayer.CustomDeathReason.Execute, deputy);
+            byte partnerId = dyingLoverPartner != null ? dyingLoverPartner.PlayerId : dyingTargetId;
+
+            Guesser.RemainingShots(killerId, true);
+            if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(dyingTarget.KillSfx, false, 0.8f);
+            if (MeetingHud.Instance) 
+            {
+                PlayerVoteArea voteArea = MeetingHud.Instance.playerStates.First(x => x.TargetPlayerId == dyingTarget.PlayerId);
+                if (Blackmailer.BlackmailedPlayer != null && voteArea.TargetPlayerId == Blackmailer.BlackmailedPlayer.PlayerId)
+                {
+                    if (BlackmailMeetingUpdate.prevXMark != null && BlackmailMeetingUpdate.prevOverlay != null)
+                    {
+                        voteArea.XMark.sprite = BlackmailMeetingUpdate.prevXMark;
+                        voteArea.Overlay.sprite = BlackmailMeetingUpdate.prevOverlay;
+                        voteArea.XMark.transform.localPosition = new Vector3(
+                        voteArea.XMark.transform.localPosition.x - BlackmailMeetingUpdate.LetterXOffset,
+                        voteArea.XMark.transform.localPosition.y - BlackmailMeetingUpdate.LetterYOffset,
+                        voteArea.XMark.transform.localPosition.z);
+                    }
+                }
+                foreach (PlayerVoteArea pva in MeetingHud.Instance.playerStates) 
+                {
+                    if (pva.TargetPlayerId == dyingTargetId || pva.TargetPlayerId == partnerId) 
+                    {
+                        pva.SetDead(pva.DidReport, true);
+                        pva.Overlay.gameObject.SetActive(true);
+                        MeetingHudPatch.SwapperCheckAndReturnSwap(MeetingHud.Instance, pva.TargetPlayerId);
+                    }
+
+                    //Give players back their vote if target is shot dead
+                    if (pva.VotedFor != dyingTargetId && pva.VotedFor != partnerId) continue;
+                    pva.UnsetVote();
+                    var voteAreaPlayer = Utils.PlayerById(pva.TargetPlayerId);
+                    if (!voteAreaPlayer.AmOwner) continue;
+                    MeetingHud.Instance.ClearVote();
+
+                }
+
+                if (AmongUsClient.Instance.AmHost) 
+                    MeetingHud.Instance.CheckForEndVoting();
+            }
+            if (FastDestroyableSingleton<HudManager>.Instance != null && deputy != null)
+                if (PlayerControl.LocalPlayer == dyingTarget) 
+                {
+                    FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(deputy.Data, dyingTarget.Data);
+                    if (MeetingHudPatch.GuesserUI != null) MeetingHudPatch.GuesserUIExitButton.OnClick.Invoke();
+                }
+                else if (dyingLoverPartner != null && PlayerControl.LocalPlayer == dyingLoverPartner) 
+                {
+                    FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(dyingLoverPartner.Data, dyingLoverPartner.Data);
+                    if (MeetingHudPatch.GuesserUI != null) MeetingHudPatch.GuesserUIExitButton.OnClick.Invoke();
+                }
+
+            // remove shoot button from targets for all Guesser and close their GuesserUI
+
+            if (Guesser.IsGuesser(PlayerControl.LocalPlayer.PlayerId) && !PlayerControl.LocalPlayer.Data.IsDead && Guesser.RemainingShots(PlayerControl.LocalPlayer.PlayerId) > 0 && MeetingHud.Instance)
+            {
+                MeetingHud.Instance.playerStates.ToList().ForEach(x => { if (x.TargetPlayerId == dyingTarget.PlayerId && Guesser.GuessButtons != null) Utils.RemoveGuessButtons(); });
+                if (dyingLoverPartner != null)
+                    MeetingHud.Instance.playerStates.ToList().ForEach(x => { if (x.TargetPlayerId == dyingLoverPartner.PlayerId && Guesser.GuessButtons != null) Utils.RemoveGuessButtons(); });
+
+                if (MeetingHudPatch.GuesserUI != null && MeetingHudPatch.GuesserUIExitButton != null)
+                {
+                    if (MeetingHudPatch.guesserCurrentTarget == dyingTarget.PlayerId)
+                        MeetingHudPatch.GuesserUIExitButton.OnClick.Invoke();
+                    else if (dyingLoverPartner != null && MeetingHudPatch.guesserCurrentTarget == dyingLoverPartner.PlayerId)
+                        MeetingHudPatch.GuesserUIExitButton.OnClick.Invoke();
+                }
+            }
+
+            if (PlayerControl.LocalPlayer.Data.IsDead && dyingTarget != null && deputy != null) 
+            {
+                bool isWrong = dyingTarget.IsCrew() ? true : false;
+                string msg = isWrong? $"{deputy.Data.PlayerName} tried to execute {dyingTarget.Data.PlayerName} and failed!": $"{deputy.Data.PlayerName} executed {dyingTarget.Data.PlayerName} correctly!";
+              
+                if (AmongUsClient.Instance.AmClient && FastDestroyableSingleton<HudManager>.Instance)
+                    FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(deputy, msg);
+                if (msg.IndexOf("who", StringComparison.OrdinalIgnoreCase) >= 0)
+                    FastDestroyableSingleton<UnityTelemetry>.Instance.SendWho();
+            }
+        }
+        public static void GuesserShoot(byte killerId, byte dyingTargetId, byte guessedTargetId, byte guessedRoleId)
         {
             PlayerControl dyingTarget = Utils.PlayerById(dyingTargetId);
             if (dyingTarget == null ) return;
@@ -1696,12 +1809,12 @@ namespace TheSushiRoles
                     MeetingHud.Instance.CheckForEndVoting();
             }
             if (FastDestroyableSingleton<HudManager>.Instance != null && guesser != null)
-                if (PlayerControl.LocalPlayer == dyingTarget) 
+                if (PlayerControl.LocalPlayer == dyingTarget)
                 {
                     FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(guesser.Data, dyingTarget.Data);
                     if (MeetingHudPatch.GuesserUI != null) MeetingHudPatch.GuesserUIExitButton.OnClick.Invoke();
-                } 
-                else if (dyingLoverPartner != null && PlayerControl.LocalPlayer == dyingLoverPartner) 
+                }
+                else if (dyingLoverPartner != null && PlayerControl.LocalPlayer == dyingLoverPartner)
                 {
                     FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(dyingLoverPartner.Data, dyingLoverPartner.Data);
                     if (MeetingHudPatch.GuesserUI != null) MeetingHudPatch.GuesserUIExitButton.OnClick.Invoke();
@@ -1721,6 +1834,16 @@ namespace TheSushiRoles
                     else if (dyingLoverPartner != null && MeetingHudPatch.guesserCurrentTarget == dyingLoverPartner.PlayerId)
                         MeetingHudPatch.GuesserUIExitButton.OnClick.Invoke();
                 }
+            }
+
+            if (dyingTarget == Deputy.Player) 
+            {
+                Deputy.CanExecute = false;
+                foreach (var button in Deputy.ExecuteButtons)
+                {
+                    UnityEngine.Object.Destroy(button);
+                }
+                Deputy.ExecuteButtons.Clear();
             }
 
             PlayerControl guessedTarget = Utils.PlayerById(guessedTargetId);
@@ -1862,6 +1985,13 @@ namespace TheSushiRoles
                 case RoleId.Veteran:
                     Veteran.ClearAndReload();
                     Veteran.Player = AmnesiacPlayer;
+                    Amnesiac.ClearAndReload();
+                    Amnesiac.Player = target;
+                    break;
+
+                case RoleId.Deputy:
+                    Deputy.ClearAndReload();
+                    Deputy.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
@@ -2276,7 +2406,7 @@ namespace TheSushiRoles
         public static void SetGuesser(byte playerId)
         {
             PlayerControl target = Utils.PlayerById(playerId);
-            if (target == null) return;
+            if (target == null || target == Deputy.Player) return;
             _ = new Guesser.Guessers(target);
         }
 
@@ -2285,7 +2415,8 @@ namespace TheSushiRoles
             PlayerControl sender = Utils.PlayerById(senderId);
 
             GhostInfoTypes infoType = (GhostInfoTypes)reader.ReadByte();
-            switch (infoType) {
+            switch (infoType)
+            {
                 case GhostInfoTypes.HackNoticed:
                     Glitch.SetHackedKnows(true, senderId);
                     break;
@@ -2661,12 +2792,17 @@ namespace TheSushiRoles
                 case CustomRPC.ArsonistWin:
                     RPCProcedure.ArsonistWin();
                     break;
-                case CustomRPC.Guesserhoot:
+                case CustomRPC.GuesserShoot:
                     byte killerId = reader.ReadByte();
                     byte dyingTarget = reader.ReadByte();
                     byte guessedTarget = reader.ReadByte();
                     byte guessedRoleId = reader.ReadByte();
-                    RPCProcedure.Guesserhoot(killerId, dyingTarget, guessedTarget, guessedRoleId);
+                    RPCProcedure.GuesserShoot(killerId, dyingTarget, guessedTarget, guessedRoleId);
+                    break;
+                case CustomRPC.DeputyShoot:
+                    byte killerId1 = reader.ReadByte();
+                    byte dyingTarget1 = reader.ReadByte();
+                    RPCProcedure.DeputyShoot(killerId1, dyingTarget1);
                     break;
                 case CustomRPC.LawyerSetTarget:
                     RPCProcedure.LawyerSetTarget(reader.ReadByte()); 

@@ -34,7 +34,7 @@ Even more roles are coming soon.
 |  |[Veteran](#veteran)    |  |  |  |
 |  |[Oracle](#oracle) |  |  |  |
 |  | [Monarch](#monarch) |  |  |
-|  |  |  |  |
+|  | [Deputy](#deputy) |  |  |
 
 The [Role Assignment](#role-assignment) section explains how the roles are being distributed among the players.
 If you want to learn how the new killers work, go to [Neutral Killers guide](#neutral-killers) to see it.
@@ -488,8 +488,8 @@ They can vent while dragging bodies, the body will be visible on top of the vent
 -----------------------
 
 ## Guesser
-### **Faction: Crewmates, Neutral Killers, or Impostors**
-The Guesser can be a Crewmate or an Impostor (depending on the settings).\
+### **Applied to: Everyone**
+The Guesser can be a Crewmate, Neutral Killer or an Impostor (depending on the settings).\
 The Guesser can shoot players during the meeting, by guessing its role. If the guess is wrong, the Guesser dies instead.\
 You can select how many players can be shot per game and if multiple players can be shot during a single meeting.\
 The guesses Impostor and Crewmate are only right, if the player is part of the corresponding team and has no special role.\
@@ -503,19 +503,18 @@ Depending on the options, the Guesser can't guess the shielded player and depend
 ### Game Options
 | Name | Description |
 |----------|:-------------:|
-| Guesser Spawn Chance | -
-| Chance That The Guesser Is An Impostor | -
+| Number Of Crewmate Guessers | -
+| Number Of Impostor Guessers | -
+| Number Of Neutral Killer Guessers | -
 | Guesser Number Of Shots Per Game | -
 | Guesser Can Shoot Multiple Times Per Meeting |  -
-| Guesses Visible In Ghost Chat | -
 | Guesses Ignore The Medic Shield | -
 | Evil Guesser Can Guess The Spy | -
-| Both Guesser Spawn Rate | -
-
 -----------------------
 
 ## Jester
-### **Faction: Neutral (Evil)**
+### **Faction: Neutral**
+### **Alignment: Neutral Evil**
 The Jester does not have any tasks. They win the game as a solo, if they get voted out during a meeting.
 
 ### Game Options
@@ -524,10 +523,13 @@ The Jester does not have any tasks. They win the game as a solo, if they get vot
 | Jester Spawn Chance | -
 | Jester Can Call Emergency Meeting | Option to disable the emergency button for the Jester
 |Jester Has Impostor Vision | -
+| Jester Can Hide In Vents | -
+| Jester Can Move In Vents | -
 -----------------------
 
 ## Arsonist
-### **Faction: Neutral (Evil)**
+### **Faction: Neutral**
+### **Alignment: Neutral Evil**
 The Arsonist does not have any tasks, they have to win the game as a solo.\
 The Arsonist can douse other players by pressing the douse button and remaining next to the player for a few seconds.\
 If the player that the Arsonist douses walks out of range, the Cooldown will reset to 0.\
@@ -728,7 +730,8 @@ The Plaguebearer or Pestilence needs to be the last killer alive to win the game
 -----------------------
 
 ## Scavenger
-### **Faction: Neutral (Evil)**
+### **Faction: Neutral**
+### **Alignment: Neutral Evil**
 The Scavenger does not have any tasks, they have to win the game as a solo.\
 The Scavenger is a neutral role that must eat a specified number of corpses (depending on the options) in order to win.\
 Depending on the options, when a player dies, the Scavenger gets an arrow pointing to the corpse.\
@@ -744,11 +747,13 @@ If there is a Scavenger in the game, there can't be a Janitor.
 | Scavenger Eat Cooldown | -
 | Number Of Corpses Needed To Be Eaten | Corpes needed to be eaten to win the game
 | Scavenger Can Use Vents | -
-| Show Arrows Pointing Towards The Corpes | -
+| Scavenge Cooldown | Cooldown for the Scavenger find bodies ability
+| Scavenge Duration | -
 -----------------------
 
 ## Romantic
-### **Faction: Neutral (Benign)**
+### **Faction: Neutral**
+### **Alignment: Neutral Benign**
 The Romantic is a Neutral role which can select a player to be their beloved.\
 The romantic wins with the beloved as long as they win as well.
 
@@ -773,11 +778,11 @@ If they don't get a new role, they can win by just surviving.
 | Name | Description |
 |----------|:-------------:|
 | Amnesiac Spawn Chance | -
-
 -----------------------
 
 ## Lawyer
-### **Faction: Neutral (Benign)**
+### **Faction: Neutral**
+### **Alignment: Neutral Benign**
 The Lawyer is a neutral role that has a client.\
 The client might be an Impostor or Jackal which is no Lover.\
 Depending on the options, the client can also be a Jester.\
@@ -808,7 +813,8 @@ How the Lawyer wins:
 -----------------------
 
 ## Prosecutor
-### **Faction: Neutral (Evil)**
+### **Faction: Neutral**
+### **Alignment: Neutral Evil**
 The Prosecutor is a neutral role that resembles the Lawyer. The Prosecutor has a client who is a Crewmate.\
 The Prosecutor needs their client to be voted out in order to win the game.\
 The Prosecutor's client doesn't know that they are their client.\
@@ -822,7 +828,8 @@ If the Prosecutor's client dies, the Prosecutor changes their role and becomes t
 - If the Prosecutor dies before their client, they will lose all their tasks and will get the overview immediately.
 
 ## Survivor
-### **Faction: Neutral (Benign)**
+### **Faction: Neutral**
+### **Alignment: Neutral Benign**
 The Survivor is still a neutral role, but has a different goal to win the game; they have to be alive when the game ends and the Crew wins.\
 In order to achieve this goal, the Survivor has an ability called "Blank", where they can fill a killer's (this also includes the Sheriff) weapon with a blank. So, if the killer attempts to kill someone, the killer will miss their target, and their Cooldowns will be triggered as usual.\
 If the killer fires the "Blank", shields (e.g. Medic shield) will not be triggered.\
@@ -837,6 +844,7 @@ The Survivor has tasks (which can already be done while being a Lawyer/Prosecuto
 
 ## Mayor
 ### **Faction: Crewmates**
+### **Alignment: Crew Power**
 The Mayor leads the Crewmates by having a vote that counts twice.\
 The Mayor can always use their meeting, even if the maximum number of meetings was reached.\
 The Mayor has a portable Meeting Button, depending on the options.\
@@ -855,6 +863,7 @@ The Mayor has the option to vote with only one vote instead of two (via a button
 
 ## Veteran
 ### **Faction: Crewmates**
+### **Alignment: Crew Power**
 
 The Veteran is a Crewmate that can go on alert.\
 When the Veteran is on alert, anyone, whether crew, neutral or impostor, if they interact with the Veteran, they die.
@@ -871,6 +880,8 @@ When the Veteran is on alert, anyone, whether crew, neutral or impostor, if they
 
 ## Crusader
 ### **Faction: Crewmates**
+### **Alignment: Crew Protective**
+
 The Crusader is a Crewmate that can fortify other players.\
 Fortified players cannot be interacted with.\
 If someone tries to interact with a fortified player,\
@@ -888,6 +899,8 @@ If the Fortified person gets a kill attempt, they will kill the attemper.
 
 ## Oracle
 ### **Faction: Crewmates**
+### **Alignment: Crew Investigative**
+
 The Oracle is a Crewmate that can get another player to confess information to them.\
 The Oracle has 2 abilities, the first is that when they die, the person confessin to them will reveal their alignment.\
 The second, is that every meeting the Oracle receives a confession about who might be evil.\
@@ -904,6 +917,7 @@ The second, is that every meeting the Oracle receives a confession about who mig
 
 ## Monarch
 ### **Faction: Crewmates**
+### **Alignment: Crew Support**
 The Monarch is a Crewmate that can Knight another players.\
 Knighted players will gain an extra vote in meetings.\
 Depending on the options, if the Monarch dies, all the Knighted players are removed.\
@@ -916,8 +930,29 @@ Depending on the options, if the Monarch dies, all the Knighted players are remo
 
 -----------------------
 
+## Deputy
+### **Faction: Crewmates**
+### **Alignment: Crew Power**
+The Deputy is a Crewmate that can execute another player.\
+In meetings, they will have a target button similar to the guesser.\
+If they execute a killer, they live and the player dies, else deputy will die.
+Depending on options they may kill everyone or not.\
+
+**NOTE:**
+The Deputy cannot be a Guesser
+### Game Options
+| Name | Description
+|----------|:-------------:|
+| Deputy Spawn Chance | -
+| Initial Execute Charges | -
+| Deputy Ignores Shields | -
+| Deputy Recharge Task Number | -
+
+-----------------------
+
 ## Landlord
 ### **Faction: Crewmates**
+### **Alignment: Crew Support**
 The Landlord is a Crewmate that can change the locations of two random players at will.\
 Players who have been transported are alerted with a blue flash on their screen.\
 Additionally, the Landlord makes the players switch bodies, meaning any interaction (excluding killing) on the first player chosen to swap will be given to the second one, and vice versa.
@@ -934,6 +969,7 @@ Additionally, the Landlord makes the players switch bodies, meaning any interact
 
 ## Engineer
 ### **Faction: Crewmates**
+### **Alignment: Crew Support**
 The Engineer (if alive) can fix a certain amount of sabotages per game from anywhere on the map.\
 The Engineer can use vents.\
 If the Engineer is inside a vent, depending on the options the members of the team Jackal/Impostors will see a blue outline around all vents on the map (in order to warn them).\
@@ -952,6 +988,7 @@ If the Engineer is inside a vent, depending on the options the members of the te
 
 ## Sheriff
 ### **Faction: Crewmates**
+### **Alignment: Crew Power**
 The Sheriff has the ability to kill Impostors or Neutral roles if enabled.\
 If they try to kill a Crewmate, they die instead.\
 \
@@ -969,6 +1006,7 @@ If they try to kill a Crewmate, they die instead.\
 
 ## Detective
 ### **Faction: Crewmates**
+### **Alignment: Crew Investigative**
 The Detective can see footprints that other players leave behind.\
 The Detective's other feature shows when they report a corpse: they receive clues about the killer's identity. The type of information they get is based on the time it took them to find the corpse.
 
@@ -990,6 +1028,7 @@ The Detective's other feature shows when they report a corpse: they receive clue
 
 ## Chronos
 ### **Faction: Crewmates**
+### **Alignment: Crew Support**
 The Chronos can rewind the time, making players go back the exact steps they walked but in reverse.\
 If a player was killed within the same amount of time the rewind lasts and if the options allows it the dead players will get revived.
 
@@ -1004,6 +1043,7 @@ If a player was killed within the same amount of time the rewind lasts and if th
 
 ## Medic
 ### **Faction: Crewmates**
+### **Alignment: Crew Protective**
 The Medic can shield (highlighted by an outline around the player) one player per game, which makes the player unkillable.\ The shield is also shown in the meeting as brackets around the shielded player's name.
 The shielded player can still be voted out and might also be an Impostor.\
 If set in the options, the shielded player and/or the Medic will get a red flash on their screen if someone (Impostor, Sheriff, ...) tried to murder them.\
@@ -1027,6 +1067,7 @@ The Medic's other feature shows when they report a corpse: they will see how lon
 
 ## Swapper
 ### **Faction: Crewmates**
+### **Alignment: Crew Power**
 During meetings the Swapper can exchange votes that two people get (i.e. all votes
 that player A got will be given to player B and vice versa).\
 Because of the Swapper's strength in meetings, they might not start emergency meetings and can't fix lights and comms.\
@@ -1048,6 +1089,7 @@ The Swapper has initial swap charges and can recharge those charges after comple
 
 ## Mystic
 ### **Faction: Crewmates**
+### **Alignment: Crew Investigative**
 The Mystic has Multiple abilities (one can activate one of them or both in the options).\
 The Mystic sees the souls of players that died a round earlier, the souls slowly fade away.\
 The Mystic gets a blue flash on their screen, if a player dies somewhere on the map.\
@@ -1066,6 +1108,7 @@ The Mystic can also interact with players to investigate about their role, once 
 
 ## Hacker
 ### **Faction: Crewmates**
+### **Alignment: Crew Investigative**
 If the Hacker activates the "Hacker mode", the Hacker gets more information than others from the admin table and vitals for a set duration.\
 Otherwise they see the same information as everyone else.\
 **Admin table:** The Hacker can see the colors (or color types) of the players on the table.\
@@ -1091,6 +1134,7 @@ While accessing those mobile gadgets, the Hacker is not able to move.
 
 ## Tracker
 ### **Faction: Crewmates**
+### **Alignment: Crew Investigative**
 The Tracker can select one player to track. Depending on the options the Tracker can track a different person after each meeting or the Tracker tracks the same person for the whole game.\
 An arrow points to the last tracked position of the player.\
 The arrow updates its position every few seconds (configurable).\
@@ -1114,6 +1158,7 @@ Depending on the options, the Tracker has another ability: They can track all co
 
 ## Spy
 ### **Faction: Crewmates**
+### **Alignment: Crew Support**
 The Spy is a Crewmate, which has no special abilities.\
 The Spy looks like an additional Impostor to the Impostors, they can't tell the difference.\
 There are two possibilities (depending on the set options):
@@ -1136,6 +1181,7 @@ You can set whether the Sheriff can kill the Spy or not (in order to keep the li
 
 ## Gatekeeper
 ### **Faction: Crewmates**
+### **Alignment: Crew Support**
 The Gatekeeper is a Crewmate that can place two portals on the map.\
 These two portals are connected to each other.\
 Those portals will be visible after the next meeting and can be used by everyone.\
@@ -1162,6 +1208,7 @@ The Gatekeeper can teleport themself to their placed portals from anywhere if th
 
 ## Vigilante
 ### **Faction: Crewmates**
+### **Alignment: Crew Support**
 The Vigilante is a Crewmate that has a certain number of screws that they can use for either sealing vents or for placing new cameras.\
 Placing a new camera and sealing vents takes a configurable amount of screws. The total number of screws that a Vigilante has can also be configured.\
 The new camera will be visible after the next meeting and accessible by everyone.\
@@ -1191,6 +1238,7 @@ The vents will be sealed after the next meeting, players can't enter or exit sea
 
 ## Psychic
 ### **Faction: Crewmates**
+### **Alignment: Crew Investigative**
 The psychic is a crewmate who can ask the souls of dead players for information. Like the Mystic, the psychic will see the souls of the players who have died (after the next meeting) and can question them. They then gets random information about the soul or the killer in the chat. The souls only stay for one round, i.e. until the next meeting. Depending on the options, the souls can only be questioned once and then disappear.
 \
 **Questions:**
@@ -1230,6 +1278,7 @@ The souls will always prefer to answer with the role specific information first!
 
 ## Trapper
 ### **Faction: Crewmates**
+### **Alignment: Crew Investigative**
 The Trapper is a crewmate which can set up traps to trap player and gain information from them.\
 The traps will stuck player for x-seconds (depends on the setting) and reveal information in chat
 about their "Role", if they are a "Good/Evil Role" or their "Name".\
@@ -1296,8 +1345,7 @@ The Lazy Modifier prevents the player from getting teleported to the Meeting Tab
 A Lazy player won't be affected by transportation stuff (ex: Disperses).\
 The player will start the round where the previous one ended (Emergency Meeting Call/Body Report).\
 \
-**NOTE**
-This is a Global Modifier, meaning everyone can have it
+### **Applied to: Everyone**
 
 ### Game Options
 | Name | Description |
@@ -1310,8 +1358,7 @@ This is a Global Modifier, meaning everyone can have it
 The Lighter has a different vision than everyone else depending on the settings.\
 Their vision looks like a flashlight cone which can be moved around (known from the Hide'n'Seek mode).
 
-**NOTE**
-This is a Global Modifier, meaning everyone can have it
+### **Applied to: Everyone**
 ### Game Options
 | Name | Description |
 |----------|:-------------:|
@@ -1326,8 +1373,7 @@ This is a Global Modifier, meaning everyone can have it
 If the Voting ends in a tie, the Tie Breaker takes place and the player with the Tie Breaker Modifier gets an extra vote thats not visible to anyone.\
 Everyone will know if the Tie Breaker was involved in the Meeting or not.\
 \
-**NOTE**
-This is a Global Modifier, meaning everyone can have it
+### **Applied to: Everyone**
 - There can only be on player with this Modifier
 
 ### Game Options
@@ -1460,8 +1506,7 @@ Teams:
 
 The Drunk Modifier inverts your controls (no matter if keyboard or mouse).\
 \
-**NOTE**
-This is a Global Modifier, meaning everyone can have it
+### **Applied to: Everyone**
 
 ### Game Options
 | Name | Description

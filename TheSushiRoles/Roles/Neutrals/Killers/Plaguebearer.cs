@@ -10,7 +10,7 @@ namespace TheSushiRoles.Roles
         public static PlayerControl InfectTarget;
         public static Color Color = new Color32(200, 225, 150, byte.MaxValue);
         public static PlayerControl CurrentTarget;
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static List<PlayerControl> InfectedPlayers = new List<PlayerControl>();
         public static bool CanTransform()
         {

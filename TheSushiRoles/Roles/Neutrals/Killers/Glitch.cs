@@ -18,7 +18,7 @@ namespace TheSushiRoles.Roles
         public static float HackCooldown;
         private static Sprite SampleSprite;
         private static Sprite MimicSprite;
-        public static float MimicCooldown = 30f;
+        public static float MimicCooldown = 25f;
         public static float MimicDuration = 10f;
         public static PlayerControl sampledTarget;
         public static PlayerControl MimicTarget;

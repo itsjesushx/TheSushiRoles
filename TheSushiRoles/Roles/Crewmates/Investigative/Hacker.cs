@@ -8,7 +8,7 @@ namespace TheSushiRoles.Roles
         public static Minigame vitals = null;
         public static Minigame doorLog = null;
         public static Color Color = new Color32(117, 250, 76, byte.MaxValue);
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static float Duration = 10f;
         public static float toolsNumber = 5f;
         public static bool onlyColorType = false;

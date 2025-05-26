@@ -5,7 +5,7 @@ namespace TheSushiRoles.Roles.Abilities
     public static class Disperser
     {
         public static PlayerControl Player;
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static int Charges;
         public static int RechargeKillsCount;
         public static Sprite ButtonSprite;

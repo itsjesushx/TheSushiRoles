@@ -274,7 +274,7 @@ namespace TheSushiRoles.Patches
                 VengefulRomantic.notAckedExiled = false;
                 if (exiled != null) 
                 {
-                    Lovers.notAckedExiledIsLover = ((Lovers.Lover1 != null && Lovers.Lover1.PlayerId == exiled.PlayerId) || (Lovers.Lover2 != null && Lovers.Lover2.PlayerId == exiled.PlayerId));
+                    Lovers.notAckedExiledIsLover = (Lovers.Lover1 != null && Lovers.Lover1.PlayerId == exiled.PlayerId) || (Lovers.Lover2 != null && Lovers.Lover2.PlayerId == exiled.PlayerId);
                     Survivor.notAckedExiled = (Survivor.Player != null && Survivor.Player.PlayerId == exiled.PlayerId) || (Lawyer.Player != null && Lawyer.target != null && Lawyer.target.PlayerId == exiled.PlayerId && Lawyer.target != Jester.Player);
                     VengefulRomantic.notAckedExiled = (VengefulRomantic.Player != null && VengefulRomantic.Player.PlayerId == exiled.PlayerId) || (Romantic.Player != null && Romantic.beloved != null && Romantic.beloved.PlayerId == exiled.PlayerId && Romantic.beloved != Jester.Player);
                 }
@@ -417,6 +417,45 @@ namespace TheSushiRoles.Patches
             meetingExtraButtonLabel.text = Utils.ColorString(Mayor.Color, "Double Vote: " + (Mayor.voteTwice ? Utils.ColorString(Color.green, "On ") : Utils.ColorString(Color.red, "Off")));
         }
 
+        public static byte deputyCurrentTarget;
+        static void DeputyOnClick(int buttonTarget, MeetingHud __instance)
+        {
+            if (!(__instance.state == MeetingHud.VoteStates.Voted || __instance.state == MeetingHud.VoteStates.NotVoted) || !Deputy.CanExecute) return;
+            __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(false));
+
+            PlayerControl focusedTarget = Utils.PlayerById((byte)__instance.playerStates[buttonTarget].TargetPlayerId);
+
+            deputyCurrentTarget = __instance.playerStates[buttonTarget].TargetPlayerId;
+            if (focusedTarget != null && !PlayerControl.LocalPlayer.Data.IsDead && !focusedTarget.Data.IsDead)
+            {
+                // Check for shield/fortified
+                if (!Deputy.KillsThroughShield && focusedTarget == Medic.Shielded)
+                {
+                    __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(true));
+
+                    Utils.SendRPC(CustomRPC.ShieldedMurderAttempt);
+                    RPCProcedure.ShieldedMurderAttempt();
+                    SoundEffectsManager.Play("fail");
+                    return;
+                }
+
+                if (focusedTarget == Crusader.FortifiedPlayer)
+                {
+                    __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(true));
+                    Utils.SendRPC(CustomRPC.FortifiedMurderAttempt);
+                    RPCProcedure.FortifiedMurderAttempt();
+                    SoundEffectsManager.Play("fail");
+                    return;
+                }
+
+                // Murder the focused target
+                __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(true));
+
+                Utils.SendRPC(CustomRPC.DeputyShoot, PlayerControl.LocalPlayer.PlayerId, focusedTarget.PlayerId);
+                RPCProcedure.DeputyShoot(PlayerControl.LocalPlayer.PlayerId, focusedTarget.PlayerId);
+            }
+        }
+
         public static GameObject GuesserUI;
         public static PassiveButton GuesserUIExitButton;
         public static byte guesserCurrentTarget;
@@ -452,7 +491,7 @@ namespace TheSushiRoles.Patches
                 __instance.playerStates.ToList().ForEach(x => 
                 {
                     x.gameObject.SetActive(true);
-                    if (PlayerControl.LocalPlayer.Data.IsDead && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject);
+                    if (PlayerControl.LocalPlayer.Data.IsDead && Guesser.GuessButtons != null) Utils.RemoveGuessButtons();
                 });
                 UnityEngine.Object.Destroy(container.gameObject);
             }));
@@ -538,13 +577,15 @@ namespace TheSushiRoles.Patches
                         __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(true));
                         UnityEngine.Object.Destroy(container.gameObject);
                         if (Guesser.hasMultipleShotsPerMeeting && Guesser.RemainingShots(PlayerControl.LocalPlayer.PlayerId) > 1 && dyingTarget != PlayerControl.LocalPlayer)
-                            __instance.playerStates.ToList().ForEach(x => { if (x.TargetPlayerId == dyingTarget.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
+                        __instance.playerStates.ToList().ForEach(x => { if (x.TargetPlayerId == dyingTarget.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
                         else
-                            __instance.playerStates.ToList().ForEach(x => { if (x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
+                        {
+                            __instance.playerStates.ToList().ForEach(x => { if (Guesser.GuessButtons != null) Utils.RemoveGuessButtons(); });
+                        }
 
                         // Shoot player and send chat info if activated
-                        Utils.SendRPC(CustomRPC.Guesserhoot, PlayerControl.LocalPlayer.PlayerId, dyingTarget.PlayerId, focusedTarget.PlayerId, (byte)roleInfo.RoleId);
-                        RPCProcedure.Guesserhoot(PlayerControl.LocalPlayer.PlayerId, dyingTarget.PlayerId, focusedTarget.PlayerId, (byte)roleInfo.RoleId);
+                        Utils.SendRPC(CustomRPC.GuesserShoot, PlayerControl.LocalPlayer.PlayerId, dyingTarget.PlayerId, focusedTarget.PlayerId, (byte)roleInfo.RoleId);
+                        RPCProcedure.GuesserShoot(PlayerControl.LocalPlayer.PlayerId, dyingTarget.PlayerId, focusedTarget.PlayerId, (byte)roleInfo.RoleId);
                     }
                 }));
 
@@ -562,18 +603,18 @@ namespace TheSushiRoles.Patches
             }
         }
 
-        static void PopulateButtonsPostfix(MeetingHud __instance) 
+        static void PopulateButtonsPostfix(MeetingHud __instance)
         {
             // Add Swapper Buttons
             bool addSwapperButtons = Swapper.Player != null && PlayerControl.LocalPlayer == Swapper.Player && !Swapper.Player.Data.IsDead;
             bool addMayorButton = Mayor.Player != null && PlayerControl.LocalPlayer == Mayor.Player && !Mayor.Player.Data.IsDead && Mayor.mayorChooseSingleVote > 0;
-            if (addSwapperButtons) 
+            if (addSwapperButtons)
             {
                 selections = new bool[__instance.playerStates.Length];
                 renderers = new SpriteRenderer[__instance.playerStates.Length];
                 swapperButtonList = new PassiveButton[__instance.playerStates.Length];
 
-                for (int i = 0; i < __instance.playerStates.Length; i++) 
+                for (int i = 0; i < __instance.playerStates.Length; i++)
                 {
                     PlayerVoteArea playerVoteArea = __instance.playerStates[i];
                     if (playerVoteArea.AmDead || (playerVoteArea.TargetPlayerId == Swapper.Player.PlayerId && Swapper.canOnlySwapOthers)) continue;
@@ -594,14 +635,14 @@ namespace TheSushiRoles.Patches
                     button.OnClick.RemoveAllListeners();
                     int copiedIndex = i;
                     button.OnClick.AddListener((System.Action)(() => SwapperOnClick(copiedIndex, __instance)));
-                    
+
                     selections[i] = false;
                     renderers[i] = renderer;
                 }
             }
 
             // Add meeting extra button, i.e. Swapper Confirm Button or Mayor Toggle Double Vote Button. Swapper Button uses ExtraButtonText on the Left of the Button. (Future meeting buttons can easily be added here)
-            if (addSwapperButtons || addMayorButton) 
+            if (addSwapperButtons || addMayorButton)
             {
                 Transform meetingUI = UnityEngine.Object.FindObjectsOfType<Transform>().FirstOrDefault(x => x.name == "PhoneUI");
 
@@ -628,19 +669,19 @@ namespace TheSushiRoles.Patches
                 meetingExtraButtonParent.localScale = new Vector3(0.55f, 0.55f, 1f);
                 meetingExtraButtonLabel.alignment = TMPro.TextAlignmentOptions.Center;
                 meetingExtraButtonLabel.transform.localPosition = new Vector3(0, 0, meetingExtraButtonLabel.transform.localPosition.z);
-                if (addSwapperButtons) 
+                if (addSwapperButtons)
                 {
                     meetingExtraButtonLabel.transform.localScale *= 1.7f;
                     meetingExtraButtonLabel.text = Utils.ColorString(Color.red, "Confirm Swap");
-                } 
-                else if (addMayorButton) 
+                }
+                else if (addMayorButton)
                 {
                     meetingExtraButtonLabel.transform.localScale = new Vector3(meetingExtraButtonLabel.transform.localScale.x * 1.5f, meetingExtraButtonLabel.transform.localScale.x * 1.7f, meetingExtraButtonLabel.transform.localScale.x * 1.7f);
                     meetingExtraButtonLabel.text = Utils.ColorString(Mayor.Color, "Double Vote: " + (Mayor.voteTwice ? Utils.ColorString(Color.green, "On ") : Utils.ColorString(Color.red, "Off")));
                 }
                 PassiveButton passiveButton = meetingExtraButton.GetComponent<PassiveButton>();
                 passiveButton.OnClick.RemoveAllListeners();
-                if (!PlayerControl.LocalPlayer.Data.IsDead) 
+                if (!PlayerControl.LocalPlayer.Data.IsDead)
                 {
                     if (addSwapperButtons)
                         passiveButton.OnClick.AddListener((Action)(() => SwapperConfirm(__instance)));
@@ -648,8 +689,9 @@ namespace TheSushiRoles.Patches
                         passiveButton.OnClick.AddListener((Action)(() => MayorToggleVoteTwice(__instance)));
                 }
                 meetingExtraButton.parent.gameObject.SetActive(false);
-                __instance.StartCoroutine(Effects.Lerp(7.27f, new Action<float>((p) => { // Button appears delayed, so that its visible in the voting screen only!
-                    if (p == 1f) 
+                __instance.StartCoroutine(Effects.Lerp(7.27f, new Action<float>((p) =>
+                { // Button appears delayed, so that its visible in the voting screen only!
+                    if (p == 1f)
                     {
                         meetingExtraButton.parent.gameObject.SetActive(true);
                     }
@@ -660,11 +702,11 @@ namespace TheSushiRoles.Patches
             bool isGuesser = Guesser.IsGuesser(PlayerControl.LocalPlayer.PlayerId);
 
             // Add overlay for spelled players
-            if (Witch.Player != null && Witch.futureSpelled != null) 
+            if (Witch.Player != null && Witch.futureSpelled != null)
             {
-                foreach (PlayerVoteArea pva in __instance.playerStates) 
+                foreach (PlayerVoteArea pva in __instance.playerStates)
                 {
-                    if (Witch.futureSpelled.Any(x => x.PlayerId == pva.TargetPlayerId)) 
+                    if (Witch.futureSpelled.Any(x => x.PlayerId == pva.TargetPlayerId))
                     {
                         SpriteRenderer rend = (new GameObject()).AddComponent<SpriteRenderer>();
                         rend.transform.SetParent(pva.transform);
@@ -679,17 +721,16 @@ namespace TheSushiRoles.Patches
             int remainingShots = Guesser.RemainingShots(PlayerControl.LocalPlayer.PlayerId);
             var (playerCompleted, playerTotal) = TasksHandler.TaskInfo(PlayerControl.LocalPlayer.Data);
 
-            if (isGuesser && !PlayerControl.LocalPlayer.Data.IsDead && remainingShots > 0) 
+            if (isGuesser && !PlayerControl.LocalPlayer.Data.IsDead && remainingShots > 0)
             {
-                for (int i = 0; i < __instance.playerStates.Length; i++) 
+                for (int i = 0; i < __instance.playerStates.Length; i++)
                 {
                     PlayerVoteArea playerVoteArea = __instance.playerStates[i];
                     PlayerControl targetPlayer = GameData.Instance.GetPlayerById(playerVoteArea.TargetPlayerId)?.Object;
                     if (playerVoteArea.TargetPlayerId == PlayerControl.LocalPlayer.PlayerId || playerVoteArea.AmDead) continue;
-                    if (playerVoteArea.TargetPlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
                     if (targetPlayer != null && targetPlayer.IsImpostor() && PlayerControl.LocalPlayer.IsImpostor()) continue;
                     if (targetPlayer != null && targetPlayer.IsImpostor() && PlayerControl.LocalPlayer == Recruit.Player) continue;
-                    if (targetPlayer != null && targetPlayer == Monarch.Player) continue;
+                    if (targetPlayer != null && targetPlayer == Monarch.Player && Monarch.KnightedPlayers.Contains(PlayerControl.LocalPlayer)) continue;
                     if (PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer == Eraser.Player && Eraser.alreadyErased.Contains(playerVoteArea.TargetPlayerId)) continue;
                     if (PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer.IsCrew() && playerCompleted < Guesser.tasksToUnlock) continue;
 
@@ -702,7 +743,32 @@ namespace TheSushiRoles.Patches
                     PassiveButton button = targetBox.GetComponent<PassiveButton>();
                     button.OnClick.RemoveAllListeners();
                     int copiedIndex = i;
-                    button.OnClick.AddListener((System.Action)(() => GuesserOnClick(copiedIndex, __instance)));
+                    button.OnClick.AddListener((Action)(() => GuesserOnClick(copiedIndex, __instance)));
+                    Guesser.GuessButtons.Add(targetBox);
+                }
+            }
+            
+            if (Deputy.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Deputy.Charges > 0 && Deputy.CanExecute) 
+            {
+                for (int i = 0; i < __instance.playerStates.Length; i++)
+                {
+                    PlayerVoteArea playerVoteArea = __instance.playerStates[i];
+                    PlayerControl targetPlayer = GameData.Instance.GetPlayerById(playerVoteArea.TargetPlayerId)?.Object;
+                    if (playerVoteArea.TargetPlayerId == PlayerControl.LocalPlayer.PlayerId || playerVoteArea.AmDead) continue;
+                    if (targetPlayer != null && targetPlayer == Jackal.Player && PlayerControl.LocalPlayer == Recruit.Player) continue;
+                    if (targetPlayer != null && targetPlayer == Monarch.Player && Monarch.KnightedPlayers.Contains(PlayerControl.LocalPlayer)) continue;
+
+                    GameObject template = playerVoteArea.Buttons.transform.Find("CancelButton").gameObject;
+                    GameObject targetBox = UnityEngine.Object.Instantiate(template, playerVoteArea.transform);
+                    targetBox.name = "DeputyButton";
+                    targetBox.transform.localPosition = new Vector3(-0.5f, 0.03f, -1.3f);
+                    SpriteRenderer renderer = targetBox.GetComponent<SpriteRenderer>();
+                    renderer.sprite = Guesser.GetTargetSprite();
+                    PassiveButton button = targetBox.GetComponent<PassiveButton>();
+                    button.OnClick.RemoveAllListeners();
+                    int copiedIndex = i;
+                    button.OnClick.AddListener((Action)(() => DeputyOnClick(copiedIndex, __instance)));
+                    Deputy.ExecuteButtons.Add(targetBox);
                 }
             }
         }
@@ -752,15 +818,14 @@ namespace TheSushiRoles.Patches
                 if (meetingTarget == null) MapOptions.meetingsCount++;
                 // Save the meeting target
                 target = meetingTarget;
-                //Save meeting time
-                MapOptions.Meetingtime = GameOptionsManager.Instance.currentNormalGameOptions.DiscussionTime + GameOptionsManager.Instance.currentNormalGameOptions.VotingTime + 7f;
-
 
                 // Add Portal info into Gatekeeper Chat:
                 if (Gatekeeper.Player != null && (PlayerControl.LocalPlayer == Gatekeeper.Player || Utils.ShouldShowGhostInfo()) && !Gatekeeper.Player.Data.IsDead) {
-                    if (Portal.teleportedPlayers.Count > 0) {
+                    if (Portal.teleportedPlayers.Count > 0)
+                    {
                         string msg = "Portal Log:\n";
-                        foreach (var entry in Portal.teleportedPlayers) {
+                        foreach (var entry in Portal.teleportedPlayers)
+                        {
                             float timeBeforeMeeting = ((float)(DateTime.UtcNow - entry.time).TotalMilliseconds) / 1000;
                             msg += Gatekeeper.logShowsTime ? $"{(int)timeBeforeMeeting}s ago: " : "";
                             msg = msg + $"{entry.name} used the teleporter\n";
@@ -827,26 +892,6 @@ namespace TheSushiRoles.Patches
                     // Remove first kill Shield
                     MapOptions.FirstPlayerKilled = null;
                 }
-
-                GuesserUpdate();
-            }
-            static void GuesserUpdate()
-            {
-                if (MapOptions.Meetingtime > 10f || GameOptionsManager.Instance.currentNormalGameOptions.VotingTime == 0f)
-                    return;
-
-                MeetingHud.Instance.playerStates.ToList().ForEach(state =>
-                {
-                    Transform child = state.transform.FindChild("ShootButton");
-                    if (child != null)
-                        UnityEngine.Object.Destroy(child.gameObject);
-                });
-
-                if (GuesserUI == null) return;
-
-                UnityEngine.Object.Destroy(GuesserUI);
-                GuesserUI = null;
-                MeetingHud.Instance.playerStates.ToList().ForEach(state => state.gameObject.SetActive(true));
             }
         }
 

@@ -9,7 +9,7 @@ namespace TheSushiRoles.Roles
         public static PlayerControl Player;
         public static Color Color = new Color32(110, 57, 105, byte.MaxValue);
 
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static int maxCharges = 5;
         public static int RechargeTasksNumber = 3;
         public static int RechargedTasks = 3;

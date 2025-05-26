@@ -15,7 +15,7 @@ namespace TheSushiRoles.Roles
         public static List<Tuple<DeadPlayer, Vector3>> futureDeadBodies = new List<Tuple<DeadPlayer, Vector3>>();
         public static List<SpriteRenderer> souls = new List<SpriteRenderer>();
         public static DateTime meetingStartTime = DateTime.UtcNow;
-        public static float Cooldown = 30f;
+        public static float Cooldown = 25f;
         public static float Duration = 3f;
         public static bool oneTimeUse = false;
         public static float chanceAdditionalInfo = 0f;
