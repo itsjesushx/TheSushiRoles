@@ -12,7 +12,6 @@ namespace TheSushiRoles
             Guess,
             Maul,
             LawyerSuicide,
-            WrongRecruit,
             LoverSuicide,
             WitchExile,
             Arson,

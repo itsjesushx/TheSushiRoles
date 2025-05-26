@@ -317,9 +317,6 @@ namespace TheSushiRoles.Roles
                         case DeadPlayer.CustomDeathReason.Kill:
                             DeathReasonString = $" | Killed by {Utils.ColorString(killerColor, deadPlayer.GetKiller.Data.PlayerName)}";
                             break;
-                        case DeadPlayer.CustomDeathReason.WrongRecruit:
-                            DeathReasonString = $" | {Utils.ColorString(Jackal.Color, "Wrongly Recruited")} by {Utils.ColorString(killerColor, deadPlayer.GetKiller.Data.PlayerName)}";
-                            break;
                         case DeadPlayer.CustomDeathReason.Guess:
                             if (deadPlayer.GetKiller.Data.PlayerName == player.Data.PlayerName)
                                 DeathReasonString = $" | Misguessed";

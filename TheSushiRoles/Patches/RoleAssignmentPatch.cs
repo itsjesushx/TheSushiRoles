@@ -229,6 +229,9 @@ namespace TheSushiRoles.Patches
 
                     data.Impostors.Remove(player);
                     data.Crewmates.Add(player);
+
+                    // add another crewmate role for the player that was turned into a crewmate
+                    data.MaxCrewmateRoles++;
                 }
                 else
                 {
@@ -346,6 +349,9 @@ namespace TheSushiRoles.Patches
 
                     data.Impostors.Remove(player);
                     data.Crewmates.Add(player);
+                    
+                    // add another crewmate role for the player that was turned into a crewmate
+                    data.MaxCrewmateRoles++;
                 }
                 else
                 {

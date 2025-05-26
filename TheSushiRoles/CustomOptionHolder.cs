@@ -463,20 +463,20 @@ namespace TheSushiRoles
             presetSelection = CustomOption.Create(0, Types.General, ColorString(Color.cyan, "Preset"), presets, null, true);
 
             // Using new id's for the options to not break compatibilty with older versions
-            crewmateRolesCountMin = CustomOption.Create(300, Types.General, ColorString(Color.cyan, "Minimum Crewmate Roles"), 0f, 0f, 14f, 1f, null, true, Heading: "Minimum/Maximum Count");
-            crewmateRolesCountMax = CustomOption.Create(301, Types.General, ColorString(Color.cyan, "Maximum Crewmate Roles"), 0f, 0f, 14f, 1f);
-            MinNeutralEvilRoles = CustomOption.Create(302, Types.General, ColorString(Color.cyan, "Minimum Neutral Evil Roles"), 0f, 0f, 5f, 1f);
-            MaxNeutralEvilRoles = CustomOption.Create(303, Types.General, ColorString(Color.cyan, "Maximum Neutral Evil Roles"), 0f, 0f, 5f, 1f);
+            crewmateRolesCountMin = CustomOption.Create(300, Types.General, ColorString(Color.cyan, "Minimum Crewmate Roles"), 9f, 0f, 14f, 1f, null, true, Heading: "Minimum/Maximum Count");
+            crewmateRolesCountMax = CustomOption.Create(301, Types.General, ColorString(Color.cyan, "Maximum Crewmate Roles"), 9f, 0f, 14f, 1f);
+            MinNeutralEvilRoles = CustomOption.Create(302, Types.General, ColorString(Color.cyan, "Minimum Neutral Evil Roles"), 1f, 0f, 5f, 1f);
+            MaxNeutralEvilRoles = CustomOption.Create(303, Types.General, ColorString(Color.cyan, "Maximum Neutral Evil Roles"), 2f, 0f, 5f, 1f);
             MinNeutralBenignRoles = CustomOption.Create(525, Types.General, ColorString(Color.cyan, "Minimum Neutral Benign Roles"), 0f, 0f, 5f, 1f);
-            MaxNeutralBenignRoles = CustomOption.Create(526, Types.General, ColorString(Color.cyan, "Maximum Neutral Benign Roles"), 0f, 0f, 5f, 1f);
-            neutralKillingRolesCountMin = CustomOption.Create(527, Types.General, ColorString(Color.cyan, "Minimum Neutral Killing Roles"), 0f, 0f, 5f, 1f);
-            neutralKillingRolesCountMax = CustomOption.Create(528, Types.General, ColorString(Color.cyan, "Maximum Neutral Killing Roles"), 0f, 0f, 5f, 1f);
-            impostorRolesCountMin = CustomOption.Create(304, Types.General, ColorString(Color.cyan, "Minimum Impostor Roles"), 0f, 0f, 3f, 1f);
-            impostorRolesCountMax = CustomOption.Create(305, Types.General, ColorString(Color.cyan, "Maximum Impostor Roles"), 0f, 0f, 3f, 1f);
-            modifiersCountMin = CustomOption.Create(306, Types.General, ColorString(Color.cyan, "Minimum Modifiers"), 0f, 0f, 15f, 1f);
-            modifiersCountMax = CustomOption.Create(307, Types.General, ColorString(Color.cyan, "Maximum Modifiers"), 0f, 0f, 15f, 1f);
-            abilitiesCountMin = CustomOption.Create(308, Types.General, ColorString(Color.cyan, "Minimum Abilities"), 0f, 0f, 15f, 1f);
-            abilitiesCountMax = CustomOption.Create(309, Types.General, ColorString(Color.cyan, "Maximum Abilities"), 0f, 0f, 15f, 1f);
+            MaxNeutralBenignRoles = CustomOption.Create(526, Types.General, ColorString(Color.cyan, "Maximum Neutral Benign Roles"), 1f, 0f, 5f, 1f);
+            neutralKillingRolesCountMin = CustomOption.Create(527, Types.General, ColorString(Color.cyan, "Minimum Neutral Killing Roles"), 2f, 0f, 5f, 1f);
+            neutralKillingRolesCountMax = CustomOption.Create(528, Types.General, ColorString(Color.cyan, "Maximum Neutral Killing Roles"), 2f, 0f, 5f, 1f);
+            impostorRolesCountMin = CustomOption.Create(304, Types.General, ColorString(Color.cyan, "Minimum Impostor Roles"), 2f, 0f, 3f, 1f);
+            impostorRolesCountMax = CustomOption.Create(305, Types.General, ColorString(Color.cyan, "Maximum Impostor Roles"), 2f, 0f, 3f, 1f);
+            modifiersCountMin = CustomOption.Create(306, Types.General, ColorString(Color.cyan, "Minimum Modifiers"), 5f, 0f, 15f, 1f);
+            modifiersCountMax = CustomOption.Create(307, Types.General, ColorString(Color.cyan, "Maximum Modifiers"), 9f, 0f, 15f, 1f);
+            abilitiesCountMin = CustomOption.Create(308, Types.General, ColorString(Color.cyan, "Minimum Abilities"), 0f, 0f, 10f, 1f);
+            abilitiesCountMax = CustomOption.Create(309, Types.General, ColorString(Color.cyan, "Maximum Abilities"), 2f, 0f, 10f, 1f);
 
             CultistSpawnRate = CustomOption.Create(1, Types.Impostor, ColorString(Palette.ImpostorRed, "Cultist"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             CultistCooldown = CustomOption.Create(2, Types.Impostor, "Cultist Cooldown", 30f, 10f, 60f, 2.5f, CultistSpawnRate, Format: "s");
