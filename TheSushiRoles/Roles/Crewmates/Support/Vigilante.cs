@@ -24,7 +24,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetCloseVentButtonSprite() 
         {
             if (closeVentButtonSprite) return closeVentButtonSprite;
-            closeVentButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.CloseVentButton.png", 115f);
+            closeVentButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.CloseVentButton.png", 115f);
             return closeVentButtonSprite;
         }
 
@@ -32,7 +32,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetPlaceCameraButtonSprite() 
         {
             if (placeCameraButtonSprite) return placeCameraButtonSprite;
-            placeCameraButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.PlaceCameraButton.png", 115f);
+            placeCameraButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.PlaceCameraButton.png", 115f);
             return placeCameraButtonSprite;
         }
 
@@ -48,7 +48,7 @@ namespace TheSushiRoles.Roles
                 lastPPU = ppu;
             }
             if (animatedVentSealedSprite) return animatedVentSealedSprite;
-            animatedVentSealedSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.AnimatedVentSealed.png", ppu);
+            animatedVentSealedSprite = Utils.LoadSprite("TheSushiRoles.Resources.AnimatedVentSealed.png", ppu);
             return animatedVentSealedSprite;
         }
 
@@ -56,7 +56,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetStaticVentSealedSprite() 
         {
             if (staticVentSealedSprite) return staticVentSealedSprite;
-            staticVentSealedSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.StaticVentSealed.png", 160f);
+            staticVentSealedSprite = Utils.LoadSprite("TheSushiRoles.Resources.StaticVentSealed.png", 160f);
             return staticVentSealedSprite;
         }
 
@@ -64,7 +64,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetFungleVentSealedSprite() 
         {
             if (fungleVentSealedSprite) return fungleVentSealedSprite;
-            fungleVentSealedSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.FungleVentSealed.png", 160f);
+            fungleVentSealedSprite = Utils.LoadSprite("TheSushiRoles.Resources.FungleVentSealed.png", 160f);
             return fungleVentSealedSprite;
         }
 
@@ -73,7 +73,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetSubmergedCentralUpperSealedSprite() 
         {
             if (submergedCentralUpperVentSealedSprite) return submergedCentralUpperVentSealedSprite;
-            submergedCentralUpperVentSealedSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.CentralUpperBlocked.png", 145f);
+            submergedCentralUpperVentSealedSprite = Utils.LoadSprite("TheSushiRoles.Resources.CentralUpperBlocked.png", 145f);
             return submergedCentralUpperVentSealedSprite;
         }
 
@@ -81,7 +81,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetSubmergedCentralLowerSealedSprite() 
         {
             if (submergedCentralLowerVentSealedSprite) return submergedCentralLowerVentSealedSprite;
-            submergedCentralLowerVentSealedSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.CentralLowerBlocked.png", 145f);
+            submergedCentralLowerVentSealedSprite = Utils.LoadSprite("TheSushiRoles.Resources.CentralLowerBlocked.png", 145f);
             return submergedCentralLowerVentSealedSprite;
         }
 

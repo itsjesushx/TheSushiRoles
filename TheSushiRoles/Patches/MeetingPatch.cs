@@ -145,7 +145,7 @@ namespace TheSushiRoles.Patches
                             exiled = potentialExiled.ToArray().FirstOrDefault(v => v.PlayerId == tiebreakerVote);
                             tie = false;
 
-                            Utils.StartRPC(CustomRPC.SetTiebreak);
+                            Utils.SendRPC(CustomRPC.SetTiebreak);
                             RPCProcedure.SetTiebreak();
                         }
                     }
@@ -348,7 +348,7 @@ namespace TheSushiRoles.Patches
             }
             if (firstPlayer != null && secondPlayer != null) 
             {
-                Utils.StartRPC(CustomRPC.SwapperSwap, (byte)firstPlayer.TargetPlayerId, (byte)secondPlayer.TargetPlayerId);
+                Utils.SendRPC(CustomRPC.SwapperSwap, (byte)firstPlayer.TargetPlayerId, (byte)secondPlayer.TargetPlayerId);
                 RPCProcedure.SwapperSwap((byte)firstPlayer.TargetPlayerId, (byte)secondPlayer.TargetPlayerId);
 
                 meetingExtraButtonLabel.text = Utils.ColorString(Color.green, "Swapping!");
@@ -415,7 +415,7 @@ namespace TheSushiRoles.Patches
             }
 
             Mayor.voteTwice = !Mayor.voteTwice;
-            Utils.StartRPC(CustomRPC.MayorSetVoteTwice, Mayor.voteTwice);
+            Utils.SendRPC(CustomRPC.MayorSetVoteTwice, Mayor.voteTwice);
 
             meetingExtraButtonLabel.text = Utils.ColorString(Mayor.Color, "Double Vote: " + (Mayor.voteTwice ? Utils.ColorString(Color.green, "On ") : Utils.ColorString(Color.red, "Off")));
         }
@@ -514,7 +514,7 @@ namespace TheSushiRoles.Patches
                             __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(true)); 
                             UnityEngine.Object.Destroy(container.gameObject);
 
-                            Utils.StartRPC(CustomRPC.ShieldedMurderAttempt);
+                            Utils.SendRPC(CustomRPC.ShieldedMurderAttempt);
                             RPCProcedure.ShieldedMurderAttempt();
                             SoundEffectsManager.Play("fail");
                             return;
@@ -526,7 +526,7 @@ namespace TheSushiRoles.Patches
                             __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(true)); 
                             UnityEngine.Object.Destroy(container.gameObject);
 
-                            Utils.StartRPC(CustomRPC.FortifiedMurderAttempt);
+                            Utils.SendRPC(CustomRPC.FortifiedMurderAttempt);
                             RPCProcedure.FortifiedMurderAttempt();
                             SoundEffectsManager.Play("fail");
                             return;
@@ -546,7 +546,7 @@ namespace TheSushiRoles.Patches
                             __instance.playerStates.ToList().ForEach(x => { if (x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
 
                         // Shoot player and send chat info if activated
-                        Utils.StartRPC(CustomRPC.Guesserhoot, PlayerControl.LocalPlayer.PlayerId, dyingTarget.PlayerId, focusedTarget.PlayerId, (byte)roleInfo.RoleId);
+                        Utils.SendRPC(CustomRPC.Guesserhoot, PlayerControl.LocalPlayer.PlayerId, dyingTarget.PlayerId, focusedTarget.PlayerId, (byte)roleInfo.RoleId);
                         RPCProcedure.Guesserhoot(PlayerControl.LocalPlayer.PlayerId, dyingTarget.PlayerId, focusedTarget.PlayerId, (byte)roleInfo.RoleId);
                     }
                 }));
@@ -691,7 +691,7 @@ namespace TheSushiRoles.Patches
                     if (playerVoteArea.TargetPlayerId == PlayerControl.LocalPlayer.PlayerId || playerVoteArea.AmDead) continue;
                     if (playerVoteArea.TargetPlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
                     if (targetPlayer != null && targetPlayer.IsImpostor() && PlayerControl.LocalPlayer.IsImpostor()) continue;
-                    if (targetPlayer != null && targetPlayer.IsImpostor() && PlayerControl.LocalPlayer == Sidekick.Player) continue;
+                    if (targetPlayer != null && targetPlayer.IsImpostor() && PlayerControl.LocalPlayer == Recruit.Player) continue;
                     if (targetPlayer != null && targetPlayer == Monarch.Player) continue;
                     if (PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer == Eraser.Player && Eraser.alreadyErased.Contains(playerVoteArea.TargetPlayerId)) continue;
                     if (PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer.IsCrew() && playerCompleted < Guesser.tasksToUnlock) continue;

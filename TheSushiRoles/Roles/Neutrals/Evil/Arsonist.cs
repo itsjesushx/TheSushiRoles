@@ -21,7 +21,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetDouseSprite() 
         {
             if (douseSprite) return douseSprite;
-            douseSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.DouseButton.png", 115f);
+            douseSprite = Utils.LoadSprite("TheSushiRoles.Resources.DouseButton.png", 115f);
             return douseSprite;
         }
 
@@ -29,7 +29,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetIgniteSprite() 
         {
             if (igniteSprite) return igniteSprite;
-            igniteSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.IgniteButton.png", 115f);
+            igniteSprite = Utils.LoadSprite("TheSushiRoles.Resources.IgniteButton.png", 115f);
             return igniteSprite;
         }
 

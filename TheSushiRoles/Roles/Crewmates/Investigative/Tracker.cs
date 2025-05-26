@@ -31,7 +31,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetTrackCorpsesButtonSprite()
         {
             if (trackCorpsesButtonSprite) return trackCorpsesButtonSprite;
-            trackCorpsesButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.PathfindButton.png", 115f);
+            trackCorpsesButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.PathfindButton.png", 115f);
             return trackCorpsesButtonSprite;
         }
 
@@ -39,7 +39,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetButtonSprite() 
         {
             if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.TrackerButton.png", 115f);
+            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.TrackerButton.png", 115f);
             return ButtonSprite;
         }
 

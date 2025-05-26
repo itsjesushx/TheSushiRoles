@@ -7,7 +7,7 @@ namespace TheSushiRoles.Roles
     {
         public static PlayerControl Player;
         public static Color Color = new Color32(139, 69, 19, byte.MaxValue);
-        public static List<Arrow> localArrows = new List<Arrow>();
+        public static List<Arrow> localArrows = new();
         public static float Cooldown = 30f;
         public static int ScavengerNumberToWin = 4;
         public static List<Vector3> DeadBodyPositions = new();
@@ -21,14 +21,14 @@ namespace TheSushiRoles.Roles
         public static Sprite GetButtonSprite() 
         {
             if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.ScavengerButton.png", 115f);
+            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.ScavengerButton.png", 115f);
             return ButtonSprite;
         }
         private static Sprite ButtonSprite2;
         public static Sprite GetScavengeSprite() 
         {
             if (ButtonSprite2) return ButtonSprite2;
-            ButtonSprite2 = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.ScavengeButton.png", 115f);
+            ButtonSprite2 = Utils.LoadSprite("TheSushiRoles.Resources.ScavengeButton.png", 115f);
             return ButtonSprite2;
         }
 
@@ -43,13 +43,12 @@ namespace TheSushiRoles.Roles
             ScavengeTimer = 0f;
             ScavengeCooldown = CustomOptionHolder.ScavengerScavengeCooldown.GetFloat();
             ScavengeDuration = CustomOptionHolder.ScavengerScavengeDuration.GetFloat();
-            if (localArrows != null)
+            if (localArrows != null) 
             {
                 foreach (Arrow arrow in localArrows)
                     if (arrow?.arrow != null)
-                        UnityEngine.Object.Destroy(arrow.arrow);
+                        Object.Destroy(arrow.arrow);
             }
-            localArrows = new List<Arrow>();
             DeadBodyPositions = new List<Vector3>();
         }
     }

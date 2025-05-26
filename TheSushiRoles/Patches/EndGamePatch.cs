@@ -134,7 +134,7 @@ namespace TheSushiRoles.Patches
             bool RomanticWin = VengefulRomantic.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.VRomanticWin;
             bool JuggernautWin = Juggernaut.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.JuggernautWin;
             bool loversWin = Lovers.ExistingAndAlive() && (gameOverReason == (GameOverReason)CustomGameOverReason.LoversWin || (GameManager.Instance.DidHumansWin(gameOverReason) && !Lovers.ExistingWithKiller())); // Either they win if they are among the last 3 players, or they win if they are both Crewmates and both alive and the Crew wins (Team Imp/Jackal Lovers can only win solo wins)
-            bool teamJackalWin = gameOverReason == (GameOverReason)CustomGameOverReason.TeamJackalWin && ((Jackal.Player != null && !Jackal.Player.Data.IsDead) || (Sidekick.Player != null && !Sidekick.Player.Data.IsDead));
+            bool teamJackalWin = gameOverReason == (GameOverReason)CustomGameOverReason.TeamJackalWin && ((Jackal.Player != null && !Jackal.Player.Data.IsDead) || (Recruit.Player != null && !Recruit.Player.Data.IsDead));
             bool ScavengerWin = Scavenger.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.ScavengerWin;
             bool prosecutorWin = Prosecutor.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.ProsecutorWin;
             bool PlaguebearerWin = Plaguebearer.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.PlaguebearerWin;
@@ -307,12 +307,12 @@ namespace TheSushiRoles.Patches
                 CachedPlayerData wpd = new CachedPlayerData(Jackal.Player.Data);
                 wpd.IsImpostor = false;
                 EndGameResult.CachedWinners.Add(wpd);
-                // If there is a sidekick. The sidekick also wins
-                if (Sidekick.Player != null) 
+                // If there is a Recruit. The Recruit also wins
+                if (Recruit.Player != null) 
                 {
-                    CachedPlayerData wpdSidekick = new CachedPlayerData(Sidekick.Player.Data);
-                    wpdSidekick.IsImpostor = false;
-                    EndGameResult.CachedWinners.Add(wpdSidekick);
+                    CachedPlayerData wpdRecruit = new CachedPlayerData(Recruit.Player.Data);
+                    wpdRecruit.IsImpostor = false;
+                    EndGameResult.CachedWinners.Add(wpdRecruit);
                 }
             }
 

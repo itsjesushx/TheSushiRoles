@@ -28,7 +28,6 @@ namespace TheSushiRoles.Roles
             this.FactionId = FactionId;
             this.Alignment = Alignment;
             this.RoleDescription = RoleDescription;
-            //RoleInfoById.TryAdd(RoleId, this);
         }
 
         #region Neutral passives
@@ -60,6 +59,7 @@ namespace TheSushiRoles.Roles
         public readonly static RoleInfo assassin = new("Assassin", Assassin.Color, "Surprise and assassinate your foes", "Surprise and assassinate your foes", RoleId.Assassin, Faction.Impostors, RoleAlignment.ImpConcealing, "The Assassin is an Impostor who has the ability to kill another player all over the map. You can mark a player with your ability and by using the ability again, you jump to the position of the marked player and kill them.");
         public readonly static RoleInfo wraith = new("Wraith", Wraith.Color, "Vanish to kill your foes", "Become invisible", RoleId.Wraith, Faction.Impostors, RoleAlignment.ImpSupport, "The Wraith is an Impostor role that can go invisible for a set amount of time (settings) they can NOT vent at all, and may just kill, sabotage and go invisible.");
         public readonly static RoleInfo yoyo = new("Yo-Yo", Yoyo.Color, "Blink to a marked location and Back", "Blink to a location", RoleId.Yoyo, Faction.Impostors, RoleAlignment.ImpConcealing, "The Yo-Yo is an Impostor who has the ability mark a position and later blink (teleport) to this position. After the initial blink, the Yo-Yo has a fixed amount of time (option) to do whatever they want, before automatically blinking back to the starting point of the first blink. Each blink leaves behind a silhouette with configurable transparency. The silhouette is very hard to see.The Yo-Yo may also have access to a mobile admin table, depending on the settings.");
+        public readonly static RoleInfo cultist = new("Cultist", Palette.ImpostorRed, "Create a Follower to help you", "Create a Follower", RoleId.Cultist, Faction.Impostors, RoleAlignment.ImpPower, "The Cultist is an Impostor who can create a Follower. The Follower will be able to see the Cultist's arrows and will gain a random impostor role upon chosen. The Cultist can only have one Follower every game.");
 
         #endregion
 
@@ -90,7 +90,7 @@ namespace TheSushiRoles.Roles
         #endregion
 
         #region Neutral Killers
-        public readonly static RoleInfo jackal = new("Jackal", Jackal.Color, "Kill all Crewmates and <color=#FF1919FF>Impostors</color> to win", "Kill everyone", RoleId.Jackal, Faction.Neutrals, RoleAlignment.NeutralKilling, "The Jackal is a Neutral role with its own win condition. The Jackal can pick a Sidekick. Creating a Sidekick removes all tasks of the Sidekick and adds them to the team Jackal. The Create Sidekick Action can only be used once per Jackal or once per game. The Jackal can also promote Impostors to be their Sidekick, but depending on the options the Impostor will either really turn into the Sidekick and leave the team Impostors or they will just look like the Sidekick to the Jackal and remain as they were. Also if a Spy or Impostor gets sidekicked, they still will appear red to the Impostors.");
+        public readonly static RoleInfo jackal = new("Jackal", Jackal.Color, "Kill all Crewmates and <color=#FF1919FF>Impostors</color> to win", "Kill everyone", RoleId.Jackal, Faction.Neutrals, RoleAlignment.NeutralKilling, "The Jackal is a Neutral role with its own win condition. The Jackal can pick a Recruit. Creating a Recruit removes all tasks of the Recruit and adds them to the team Jackal. The Create Recruit Action can only be used once per Jackal or once per game. The Jackal can also promote Impostors to be their Recruit, but depending on the options the Impostor will either really turn into the Recruit and leave the team Impostors or they will just look like the Recruit to the Jackal and remain as they were. Also if a Spy or Impostor gets Recruited, they still will appear red to the Impostors.");
         public readonly static RoleInfo plaguebearer = new("Plaguebearer", Plaguebearer.Color, "Infect all players to become Pestilence", "Infect to become Pestilence", RoleId.Pestilence, Faction.Neutrals, RoleAlignment.NeutralKilling, "The Plaguebearer is a Neutral role with its own win condition, as well as an ability to transform into another role. The Plaguebearer has one ability, which allows them to infect other players. Once all players are infected, the Plaguebearer becomes Pestilence.");
         public readonly static RoleInfo pestilence = new("Pestilence", Pestilence.Color, "", "Kill with your unstoppable abilities", RoleId.Pestilence, Faction.Neutrals, RoleAlignment.NeutralKilling, "The Pestilence is a unkillable force which can only be killed by being voted out or them guessing wrong. The Pestilence needs to be the last killer alive to win the game.");
         public readonly static RoleInfo juggernaut = new("Juggernaut", Juggernaut.Color, "Kill all your <color=#FF1919FF>Enemies</color> to win", "Each kill makes you more dangerous", RoleId.Juggernaut, Faction.Neutrals, RoleAlignment.NeutralKilling, "The Juggernaut is a Neutral role with its own win condition. The Juggernaut's special ability is that their kill Cooldown reduces with each kill. This means in theory the Juggernaut can have a 0 second kill Cooldown!. The Juggernaut needs to be the last killer alive to win the game.");
@@ -109,6 +109,7 @@ namespace TheSushiRoles.Roles
             assassin,
             blackmailer,
             bountyHunter,
+            cultist,
             painter,
             eraser,
             grenadier,
@@ -184,6 +185,7 @@ namespace TheSushiRoles.Roles
             if (player == Gatekeeper.Player) infos.Add(gatekeeper);
             if (player == Engineer.Player) infos.Add(engineer);
             if (player == Monarch.Player) infos.Add(monarch);
+            if (player == Cultist.Player) infos.Add(cultist);
             if (player == Sheriff.Player) infos.Add(sheriff);
             if (player == Romantic.Player) infos.Add(romantic);
             if (player == Juggernaut.Player) infos.Add(juggernaut);
@@ -315,8 +317,8 @@ namespace TheSushiRoles.Roles
                         case DeadPlayer.CustomDeathReason.Kill:
                             DeathReasonString = $" | Killed by {Utils.ColorString(killerColor, deadPlayer.GetKiller.Data.PlayerName)}";
                             break;
-                        case DeadPlayer.CustomDeathReason.WrongSidekick:
-                            DeathReasonString = $" | {Utils.ColorString(Jackal.Color, "Wrongly Sidekicked")} by {Utils.ColorString(killerColor, deadPlayer.GetKiller.Data.PlayerName)}";
+                        case DeadPlayer.CustomDeathReason.WrongRecruit:
+                            DeathReasonString = $" | {Utils.ColorString(Jackal.Color, "Wrongly Recruited")} by {Utils.ColorString(killerColor, deadPlayer.GetKiller.Data.PlayerName)}";
                             break;
                         case DeadPlayer.CustomDeathReason.Guess:
                             if (deadPlayer.GetKiller.Data.PlayerName == player.Data.PlayerName)

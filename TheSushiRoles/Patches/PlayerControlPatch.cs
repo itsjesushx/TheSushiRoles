@@ -42,7 +42,7 @@ namespace TheSushiRoles.Patches
                     }
                 }
             }
-            return Utils.GetRedirectedTarget(result);
+            return Utils.CheckForLandlordTargets(result);
         }
 
         static void SetPlayerOutline(PlayerControl target, Color Color) 
@@ -149,13 +149,13 @@ namespace TheSushiRoles.Patches
                         if (deadPlayer.player == null) continue;
                         if (Undertaker.CurrentTarget != null)
                         {
-                            Utils.StartRPC(CustomRPC.DropBody, deadPlayer.player.Data.PlayerId);
+                            Utils.SendRPC(CustomRPC.DropBody, deadPlayer.player.Data.PlayerId);
                             RPCProcedure.DropBody(deadPlayer.player.Data.PlayerId);
                         }
 
                         if (Hitman.BodyTarget != null)
                         {
-                            Utils.StartRPC(CustomRPC.HitmanDropBody, deadPlayer.player.Data.PlayerId);
+                            Utils.SendRPC(CustomRPC.HitmanDropBody, deadPlayer.player.Data.PlayerId);
                             RPCProcedure.HitmanDropBody(deadPlayer.player.Data.PlayerId);
                         }
                         
@@ -231,7 +231,15 @@ namespace TheSushiRoles.Patches
             Morphling.CurrentTarget = SetTarget();
             SetPlayerOutline(Morphling.CurrentTarget, Morphling.Color);
         }
-        static void BlackmailerSetTarget() 
+        
+        static void CultistSetTarget() 
+        {
+            if (Cultist.Player == null || Cultist.Player != PlayerControl.LocalPlayer) return;
+            Cultist.CurrentTarget = SetTarget();
+            SetPlayerOutline(Cultist.CurrentTarget, Palette.ImpostorRed);
+        }
+
+        static void BlackmailerSetTarget()
         {
             if (Blackmailer.Player == null || Blackmailer.Player != PlayerControl.LocalPlayer) return;
             Blackmailer.CurrentTarget = SetTarget();
@@ -339,7 +347,8 @@ namespace TheSushiRoles.Patches
                 {
                     target = SetTarget(onlyCrewmates: false, targetPlayersInVents: true);
                 }
-                else {
+                else
+                {
                     target = SetTarget(onlyCrewmates: true, targetPlayersInVents: true);
                 }
             }
@@ -356,10 +365,10 @@ namespace TheSushiRoles.Patches
         {
             if (Jackal.Player == null || Jackal.Player != PlayerControl.LocalPlayer) return;
             var untargetablePlayers = new List<PlayerControl>();
-            if (Jackal.canCreateSidekickFromImpostor)
+            if (Jackal.canCreateRecruitFromImpostor)
             {
-                // Only exclude sidekick from beeing targeted if the jackal can create sidekicks from impostors
-                if (Sidekick.Player != null) untargetablePlayers.Add(Sidekick.Player);
+                // Only exclude Recruit from beeing targeted if the jackal can create Recruits from impostors
+                if (Recruit.Player != null) untargetablePlayers.Add(Recruit.Player);
             }
             if (Mini.Player != null && !Mini.IsGrownUp) untargetablePlayers.Add(Mini.Player); // Exclude Jackal from targeting the Mini unless it has grown up
             Jackal.CurrentTarget = SetTarget(targetPlayersInVents: true, untargetablePlayers: untargetablePlayers);
@@ -393,14 +402,14 @@ namespace TheSushiRoles.Patches
             SetPlayerOutline(Werewolf.CurrentTarget, Werewolf.Color);
         }
 
-        static void SidekickSetTarget() 
+        static void RecruitSetTarget() 
         {
-            if (Sidekick.Player == null || Sidekick.Player != PlayerControl.LocalPlayer) return;
+            if (Recruit.Player == null || Recruit.Player != PlayerControl.LocalPlayer) return;
             var untargetablePlayers = new List<PlayerControl>();
             if (Jackal.Player != null) untargetablePlayers.Add(Jackal.Player);
-            if (Mini.Player != null && !Mini.IsGrownUp) untargetablePlayers.Add(Mini.Player); // Exclude Sidekick from targeting the Mini unless it has grown up
-            Sidekick.CurrentTarget = SetTarget(targetPlayersInVents: true, untargetablePlayers: untargetablePlayers);
-            SetPlayerOutline(Sidekick.CurrentTarget, Sidekick.Color);
+            if (Mini.Player != null && !Mini.IsGrownUp) untargetablePlayers.Add(Mini.Player); // Exclude Recruit from targeting the Mini unless it has grown up
+            Recruit.CurrentTarget = SetTarget(targetPlayersInVents: true, untargetablePlayers: untargetablePlayers);
+            SetPlayerOutline(Recruit.CurrentTarget, Recruit.Color);
         }
 
         static void EraserSetTarget() 
@@ -424,7 +433,7 @@ namespace TheSushiRoles.Patches
                 Glitch.SetHackedKnows(false);
                 
                 // Ghost info
-                Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.HackOver);
+                Utils.SendRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.HackOver);
             }
             
         }
@@ -432,12 +441,13 @@ namespace TheSushiRoles.Patches
         static void EngineerUpdate() 
         {
             bool NKHighlight = Engineer.HighlightForNeutralKillers && PlayerControl.LocalPlayer.IsNeutralKiller();
-            bool impostorHighlight = Engineer.highlightForImpostors && PlayerControl.LocalPlayer.Data.Role.IsImpostor;
+            bool impostorHighlight = Engineer.highlightForImpostors && PlayerControl.LocalPlayer.IsImpostor();
             if ((NKHighlight || impostorHighlight) && MapUtilities.CachedShipStatus?.AllVents != null)
             {
                 foreach (Vent vent in MapUtilities.CachedShipStatus.AllVents)
                 {
-                    try {
+                    try
+                    {
                         if (vent?.myRend?.material != null)
                         {
                             if (Engineer.Player != null && Engineer.Player.inVent)
@@ -458,7 +468,9 @@ namespace TheSushiRoles.Patches
 
         static void ImpostorSetTarget() 
         {
-            if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor ||!PlayerControl.LocalPlayer.CanMove || PlayerControl.LocalPlayer.Data.IsDead) { // !isImpostor || !canMove || isDead
+            if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor ||!PlayerControl.LocalPlayer.CanMove || PlayerControl.LocalPlayer.Data.IsDead)
+            {
+                // !isImpostor || !canMove || isDead
                 FastDestroyableSingleton<HudManager>.Instance.KillButton.SetTarget(null);
                 return;
             }
@@ -475,8 +487,8 @@ namespace TheSushiRoles.Patches
                     target = SetTarget(true, true);
                 }
             }
-            // Can kill partner if they are a Sidekick
-            else if (Sidekick.Player.IsImpostor())
+            // Can kill partner if they are a Recruit
+            else if (Recruit.Player.IsImpostor())
             {
                 target = SetTarget(false, true);
             }
@@ -509,7 +521,7 @@ namespace TheSushiRoles.Patches
         {
             if (Wraith.IsVanished && Wraith.VanishTimer <= 0 && Wraith.Player == PlayerControl.LocalPlayer)
             {
-                Utils.StartRPC(CustomRPC.SetVanish, Wraith.Player.PlayerId, byte.MaxValue);
+                Utils.SendRPC(CustomRPC.SetVanish, Wraith.Player.PlayerId, byte.MaxValue);
                 RPCProcedure.SetVanish(Wraith.Player.PlayerId, byte.MaxValue);
             }
         }
@@ -518,7 +530,7 @@ namespace TheSushiRoles.Patches
         {
             if (Assassin.isInvisble && Assassin.invisibleTimer <= 0 && Assassin.Player == PlayerControl.LocalPlayer)
             {
-                Utils.StartRPC(CustomRPC.SetInvisible, Assassin.Player.PlayerId, byte.MaxValue);
+                Utils.SendRPC(CustomRPC.SetInvisible, Assassin.Player.PlayerId, byte.MaxValue);
                 RPCProcedure.SetInvisible(Assassin.Player.PlayerId, byte.MaxValue);
             }
             if (Assassin.arrow?.arrow != null)
@@ -551,30 +563,42 @@ namespace TheSushiRoles.Patches
             }
         }
 
-        static void TrackerUpdate() 
+        public static void CultistUpdate()
+        {
+            if (Cultist.Player == null || Cultist.Player != PlayerControl.LocalPlayer || Follower.Player == null) return;
+
+            Utils.TrackPlayer(Follower.Player, Cultist.LocalArrows[0], Color.red);
+        }
+        public static void FollowerUpdate()
+        {
+            if (Follower.Player == null || Follower.Player != PlayerControl.LocalPlayer || Cultist.Player == null) return;
+
+            Utils.TrackPlayer(Cultist.Player, Cultist.LocalArrows[1], Color.red);
+        }
+        static void TrackerUpdate()
         {
             // Handle player tracking
-            if (Tracker.arrow?.arrow != null) 
+            if (Tracker.arrow?.arrow != null)
             {
-                if (Tracker.Player == null || PlayerControl.LocalPlayer != Tracker.Player) 
+                if (Tracker.Player == null || PlayerControl.LocalPlayer != Tracker.Player)
                 {
                     Tracker.arrow.arrow.SetActive(false);
                     if (Tracker.DangerMeterParent) Tracker.DangerMeterParent.SetActive(false);
                     return;
                 }
 
-                if (Tracker.tracked != null && !Tracker.Player.Data.IsDead) 
+                if (Tracker.tracked != null && !Tracker.Player.Data.IsDead)
                 {
                     Tracker.timeUntilUpdate -= Time.fixedDeltaTime;
 
-                    if (Tracker.timeUntilUpdate <= 0f) 
+                    if (Tracker.timeUntilUpdate <= 0f)
                     {
                         bool trackedOnMap = !Tracker.tracked.Data.IsDead;
                         Vector3 position = Tracker.tracked.transform.position;
-                        if (!trackedOnMap) 
+                        if (!trackedOnMap)
                         { // Check for dead body
                             DeadBody body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Tracker.tracked.PlayerId);
-                            if (body != null) 
+                            if (body != null)
                             {
                                 trackedOnMap = true;
                                 position = body.transform.position;
@@ -582,19 +606,19 @@ namespace TheSushiRoles.Patches
                         }
 
                         if (Tracker.trackingMode == 1 || Tracker.trackingMode == 2) Arrow.UpdateProximity(position);
-                        if (Tracker.trackingMode == 0 || Tracker.trackingMode == 2) 
+                        if (Tracker.trackingMode == 0 || Tracker.trackingMode == 2)
                         {
                             Tracker.arrow.Update(position);
                             Tracker.arrow.arrow.SetActive(trackedOnMap);
                         }
                         Tracker.timeUntilUpdate = Tracker.updateIntervall;
-                    } 
-                    else 
+                    }
+                    else
                     {
                         if (Tracker.trackingMode == 0 || Tracker.trackingMode == 2) Tracker.arrow.Update();
                     }
-                } 
-                else if (Tracker.Player.Data.IsDead) 
+                }
+                else if (Tracker.Player.Data.IsDead)
                 {
                     Tracker.DangerMeterParent?.SetActive(false);
                     Tracker.Meter?.gameObject.SetActive(false);
@@ -602,19 +626,20 @@ namespace TheSushiRoles.Patches
             }
 
             // Handle corpses tracking
-            if (Tracker.Player != null && Tracker.Player == PlayerControl.LocalPlayer && Tracker.corpsesTrackingTimer >= 0f && !Tracker.Player.Data.IsDead) 
+            if (Tracker.Player != null && Tracker.Player == PlayerControl.LocalPlayer && Tracker.corpsesTrackingTimer >= 0f && !Tracker.Player.Data.IsDead)
             {
                 bool arrowsCountChanged = Tracker.localArrows.Count != Tracker.deadBodyPositions.Count();
                 int index = 0;
 
-                if (arrowsCountChanged) 
+                if (arrowsCountChanged)
                 {
                     foreach (Arrow arrow in Tracker.localArrows) UnityEngine.Object.Destroy(arrow.arrow);
                     Tracker.localArrows = new List<Arrow>();
                 }
-                foreach (Vector3 position in Tracker.deadBodyPositions) 
+                foreach (Vector3 position in Tracker.deadBodyPositions)
                 {
-                    if (arrowsCountChanged) {
+                    if (arrowsCountChanged)
+                    {
                         Tracker.localArrows.Add(new Arrow(Tracker.Color));
                         Tracker.localArrows[index].arrow.SetActive(true);
                     }
@@ -622,7 +647,7 @@ namespace TheSushiRoles.Patches
                     index++;
                 }
             }
-            else if (Tracker.localArrows.Count > 0) 
+            else if (Tracker.localArrows.Count > 0)
             {
                 foreach (Arrow arrow in Tracker.localArrows) UnityEngine.Object.Destroy(arrow.arrow);
                 Tracker.localArrows = new List<Arrow>();
@@ -769,7 +794,7 @@ namespace TheSushiRoles.Patches
             {
                 return true;
             }
-            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && PlayerControl.LocalPlayer == Sidekick.Player
+            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && PlayerControl.LocalPlayer == Recruit.Player
             && player.Data.Role.IsImpostor)
             {
                 return false;
@@ -1015,13 +1040,13 @@ namespace TheSushiRoles.Patches
                 var possibleTargets = new List<PlayerControl>();
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) 
                 {
-                    if (!p.Data.IsDead && !p.Data.Disconnected && p != p.Data.Role.IsImpostor && p != Spy.Player && (Romantic.beloved == BountyHunter.Player && p != Romantic.Player) && (p != Sidekick.Player) && (p != Jackal.Player) && (p != Mini.Player || Mini.IsGrownUp) && (Lovers.GetPartner(BountyHunter.Player) == null || p != Lovers.GetPartner(BountyHunter.Player))) possibleTargets.Add(p);
+                    if (!p.Data.IsDead && !p.Data.Disconnected && p != p.Data.Role.IsImpostor && p != Spy.Player && (Romantic.beloved == BountyHunter.Player && p != Romantic.Player) && (p != Recruit.Player) && (p != Jackal.Player) && (p != Mini.Player || Mini.IsGrownUp) && (Lovers.GetPartner(BountyHunter.Player) == null || p != Lovers.GetPartner(BountyHunter.Player))) possibleTargets.Add(p);
                 }
                 BountyHunter.bounty = possibleTargets[TheSushiRoles.rnd.Next(0, possibleTargets.Count)];
                 if (BountyHunter.bounty == null) return;
 
                 // Ghost Info
-                Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.BountyTarget, BountyHunter.bounty.PlayerId);
+                Utils.SendRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.BountyTarget, BountyHunter.bounty.PlayerId);
 
                 // Show poolable player
                 if (FastDestroyableSingleton<HudManager>.Instance != null && FastDestroyableSingleton<HudManager>.Instance.UseButton != null) 
@@ -1080,7 +1105,7 @@ namespace TheSushiRoles.Patches
             bool CompletedAllTasks = tasksCompleted == tasksTotal;
             if (CompletedAllTasks) 
             {
-                Utils.StartRPC(CustomRPC.AgentTurnIntoHitman);
+                Utils.SendRPC(CustomRPC.AgentTurnIntoHitman);
                 RPCProcedure.AgentTurnIntoHitman(); 
             }
         }
@@ -1226,7 +1251,7 @@ namespace TheSushiRoles.Patches
             // Promote to Survivor
             if (Lawyer.target != null && Lawyer.target.Data.Disconnected && !Lawyer.Player.Data.IsDead) 
             {
-                Utils.StartRPC(CustomRPC.LawyerChangeRole);
+                Utils.SendRPC(CustomRPC.LawyerChangeRole);
                 RPCProcedure.LawyerChangeRole();
                 return;
             }
@@ -1238,7 +1263,7 @@ namespace TheSushiRoles.Patches
 
             if (Romantic.beloved != null && Romantic.beloved.Data.Disconnected && !Romantic.Player.Data.IsDead) 
             {
-                Utils.StartRPC(CustomRPC.RomanticChangeRole);
+                Utils.SendRPC(CustomRPC.RomanticChangeRole);
                 RPCProcedure.RomanticChangeRole();
                 return;
             }
@@ -1286,6 +1311,22 @@ namespace TheSushiRoles.Patches
             {
                 Landlord.RechargedTasks += Landlord.RechargeTasksNumber;
                 Landlord.Charges++;
+            }
+        }
+        public static void LandlordUnteleportableUpdate()
+        {
+            if (Landlord.Player == null || !GameData.Instance || PlayerControl.LocalPlayer != Landlord.Player || PlayerControl.LocalPlayer.Data.IsDead) return;
+
+            foreach (var entry in Landlord.UnteleportablePlayers)
+            {
+                var player = Utils.PlayerById(entry.Key);
+                if (player == null || player.Data == null || player.Data.IsDead || player.Data.Disconnected) continue;
+
+                if (Landlord.UnteleportablePlayers.ContainsKey(player.PlayerId) && player.moveable == true &&
+                Landlord.UnteleportablePlayers.GetValueSafe(player.PlayerId).AddSeconds(0.5) < DateTime.UtcNow)
+                {
+                    Landlord.UnteleportablePlayers.Remove(player.PlayerId);
+                }
             }
         }
         
@@ -1375,14 +1416,14 @@ namespace TheSushiRoles.Patches
                     if (entry.Key.GetKiller != null && entry.Key.GetKiller.PlayerId == PlayerControl.LocalPlayer.PlayerId) {
                         Utils.HandlePoisonedOnBodyReport(); // Manually call Viper handling, since the CmdReportDeadBody Prefix won't be called
                         RPCProcedure.UncheckedCmdReportDeadBody(entry.Key.GetKiller.PlayerId, entry.Key.player.PlayerId);
-                        Utils.StartRPC(CustomRPC.UncheckedCmdReportDeadBody, entry.Key.GetKiller.PlayerId,
+                        Utils.SendRPC(CustomRPC.UncheckedCmdReportDeadBody, entry.Key.GetKiller.PlayerId,
                         entry.Key.player.PlayerId);
                     }
                 }
             }
         }
 
-        // Mini set adapted button Cooldown for Viper, Sheriff, Jackal, Sidekick, Warlock, Janitor
+        // Mini set adapted button Cooldown for Viper, Sheriff, Jackal, Recruit, Warlock, Janitor
         public static void MiniCooldownUpdate() 
         {
             if (Mini.Player != null && PlayerControl.LocalPlayer == Mini.Player) 
@@ -1448,6 +1489,8 @@ namespace TheSushiRoles.Patches
                 BendTimeUpdate();
                 // Morphling
                 MorphlingSetTarget();
+                //Cultist
+                CultistSetTarget();
                 // Blackmailer
                 BlackmailerSetTarget();
                 // Medic
@@ -1482,14 +1525,17 @@ namespace TheSushiRoles.Patches
                 EngineerUpdate();
                 // Tracker
                 TrackerUpdate();
+                // Cultist
+                FollowerUpdate();
+                CultistUpdate();
                 // Jackal
                 JackalSetTarget();
                 //Predator
                 PredatorSetTarget();
                 //Werewolf
                 WerewolfSetTarget();
-                // Sidekick
-                SidekickSetTarget();
+                // Recruit
+                RecruitSetTarget();
                 // Impostor
                 ImpostorSetTarget();
                 // Warlock
@@ -1543,6 +1589,7 @@ namespace TheSushiRoles.Patches
                 VeteranUpdate();
                 // Landlord
                 LandlordUpdate();
+                LandlordUnteleportableUpdate();
                 // Monarch
                 MonarchUpdate();
                 MonarchSetTarget();
@@ -1551,12 +1598,11 @@ namespace TheSushiRoles.Patches
                 // Trapper
                 TrapperUpdate();
 
-                // -- MODIFIER--
                 // Bait
                 BaitUpdate();
-                // mini (for the Cooldowns)
+                // mini
                 MiniCooldownUpdate();
-                // Chameleon (invis stuff, timers)
+                // Chameleon
                 Chameleon.Update();
             } 
         }
@@ -1634,7 +1680,7 @@ namespace TheSushiRoles.Patches
                             FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, msg);
 
                             // Ghost Info
-                            Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.DetectiveOrMedicInfo, msg);
+                            Utils.SendRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.DetectiveOrMedicInfo, msg);
                         }
                         if (msg.IndexOf("who", StringComparison.OrdinalIgnoreCase) >= 0)
                         {
@@ -1704,17 +1750,37 @@ namespace TheSushiRoles.Patches
                 }
             }
 
-            // Survivor promotion trigger on murder (the host sends the call such that everyone recieves the update before a possible game End)
-            if (target == Lawyer.target && AmongUsClient.Instance.AmHost && Lawyer.Player != null) 
+            // Cultist show kill flash
+            if (Cultist.Player != null && Follower.Player != null)
             {
-                Utils.StartRPC(CustomRPC.LawyerChangeRole);
+                PlayerControl player = null;
+                if (__instance == Cultist.Player) player = Follower.Player;
+                else if (__instance == Follower.Player) player = Cultist.Player;
+
+                if (player != null && !player.Data.IsDead && player == PlayerControl.LocalPlayer)
+                    Utils.ShowFlash(Palette.ImpostorRed, 1.5f);
+            }
+
+            if (PlayerControl.LocalPlayer == target)
+            {
+                try
+                {
+                    ShapeShifterMenu.Singleton.Menu.Close();
+                }
+                catch { }
+            }
+
+            // Survivor promotion trigger on murder (the host sends the call such that everyone recieves the update before a possible game End)
+            if (target == Lawyer.target && AmongUsClient.Instance.AmHost && Lawyer.Player != null)
+            {
+                Utils.SendRPC(CustomRPC.LawyerChangeRole);
                 RPCProcedure.LawyerChangeRole();
             }
 
             // Survivor promotion trigger on murder (the host sends the call such that everyone recieves the update before a possible game End)
             if (target == Romantic.beloved && AmongUsClient.Instance.AmHost && Romantic.Player != null) 
             {
-                Utils.StartRPC(CustomRPC.RomanticChangeRole);
+                Utils.SendRPC(CustomRPC.RomanticChangeRole);
                 RPCProcedure.RomanticChangeRole();
             }
 
@@ -1790,7 +1856,7 @@ namespace TheSushiRoles.Patches
                 {
                     Color = Color.white;
                     if (target.Data.Role.IsImpostor) Color = Color.red;
-                    else if (target.IsNeutral() || target.IsNeutralKiller()) Color = Color.blue;
+                    else if (target.IsNeutral()) Color = Color.blue;
                 }
                 Utils.ShowFlash(Color, 1.5f);
             }
@@ -1868,14 +1934,13 @@ namespace TheSushiRoles.Patches
                     otherLover.Exiled();
                     GameHistory.CreateDeathReason(otherLover, DeadPlayer.CustomDeathReason.LoverSuicide);
                 }
-
             }
 
-            if (Romantic.Player != null && !Romantic.Player.Data.IsDead && __instance == Romantic.beloved) 
+            if (Romantic.Player != null && !Romantic.Player.Data.IsDead && __instance == Romantic.beloved)
             {
                 if (AmongUsClient.Instance.AmHost && (Romantic.beloved != Jester.Player))
                 {
-                    Utils.StartRPC(CustomRPC.RomanticChangeRole);
+                    Utils.SendRPC(CustomRPC.RomanticChangeRole);
                     RPCProcedure.RomanticChangeRole();
                 }
             }
@@ -1886,7 +1951,7 @@ namespace TheSushiRoles.Patches
                 PlayerControl lawyer = Lawyer.Player;
                 if (AmongUsClient.Instance.AmHost && ((Lawyer.target != Jester.Player) || Lawyer.targetWasGuessed)) 
                 {
-                    Utils.StartRPC(CustomRPC.LawyerChangeRole);
+                    Utils.SendRPC(CustomRPC.LawyerChangeRole);
                     RPCProcedure.LawyerChangeRole();
                 }
 
@@ -1895,7 +1960,7 @@ namespace TheSushiRoles.Patches
                     if (Lawyer.Player != null) Lawyer.Player.Exiled();
                     if (Survivor.Player != null) Survivor.Player.Exiled();
 
-                    Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId,
+                    Utils.SendRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId,
                     (byte)GhostInfoTypes.DeathReasonAndKiller, lawyer.PlayerId, 
                     (byte)DeadPlayer.CustomDeathReason.LawyerSuicide, lawyer.PlayerId);
                     GameHistory.CreateDeathReason(lawyer, DeadPlayer.CustomDeathReason.LawyerSuicide, lawyer);  // TODO: only executed on host?!

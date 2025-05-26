@@ -13,7 +13,7 @@ namespace TheSushiRoles.Objects
         public static Sprite GetTraceSprite() 
         {
             if (TraceSprite) return TraceSprite;
-            TraceSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.AssassinTraceW.png", 225f);
+            TraceSprite = Utils.LoadSprite("TheSushiRoles.Resources.AssassinTraceW.png", 225f);
             return TraceSprite;
         }
         public AssassinTrace(Vector2 p, float Duration=1f) 

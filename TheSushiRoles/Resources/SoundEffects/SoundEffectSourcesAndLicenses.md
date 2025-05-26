@@ -18,7 +18,7 @@
 |trackerTrackCorpses |sniffing sound|[Male_Breath_Sniff_Stereo_NT4.wav](https://freesound.org/people/Nox_Sound/sounds/554905/ ) | CC0 1.0 |
 |ViperKill |combined |[Gore Rend](https://freesound.org/people/magnuswaker/sounds/563491/ ) +  [R15-53-Blood Sucking.wav](https://freesound.org/people/craigsmith/sounds/487070/ ) | CC0 1.0 both|
 |jackalKill | (already has a sound) |-|-|
-|jackalSidekick | | [Snare - Nice.wav]( https://freesound.org/people/molodiaz/sounds/593550/ )| CC0 1.0 |
+|jackalRecruit | | [Snare - Nice.wav]( https://freesound.org/people/molodiaz/sounds/593550/ )| CC0 1.0 |
 |lighterLight | |[Torch Click 2](https://freesound.org/people/BenjaminNelan/sounds/410360/ ) | CC0 1.0 |
 |eraserErase | | [Pencil Eraser Erasing](https://freesound.org/people/deleted_user_7146007/sounds/383861/ ) | CC0 1.0 |
 |tricksterPlaceBox | |[Carton_impact_5.wav](https://freesound.org/people/andresix/sounds/245617/ ) | CC0 1.0 |

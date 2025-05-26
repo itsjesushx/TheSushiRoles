@@ -19,7 +19,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetTargetSprite() 
         {
             if (blank) return blank;
-            blank = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.SurvivorButton.png", 115f);
+            blank = Utils.LoadSprite("TheSushiRoles.Resources.SurvivorButton.png", 115f);
             return blank;
         }
 

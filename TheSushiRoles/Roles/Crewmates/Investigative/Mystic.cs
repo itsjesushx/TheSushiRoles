@@ -18,7 +18,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetButtonSprite() 
         {
             if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Mystic.png", 115f);
+            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.Mystic.png", 115f);
             return ButtonSprite;
         }
         public static string GetInfo(PlayerControl target)
@@ -102,7 +102,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetSoulSprite() 
         {
             if (soulSprite) return soulSprite;
-            soulSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Soul.png", 500f);
+            soulSprite = Utils.LoadSprite("TheSushiRoles.Resources.Soul.png", 500f);
             return soulSprite;
         }
 

@@ -17,7 +17,7 @@ namespace TheSushiRoles.Objects
 
         }
         private static Sprite _footprintSprite;
-        private static Sprite FootprintSprite => _footprintSprite ??= Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Footprint.png", 600f);
+        private static Sprite FootprintSprite => _footprintSprite ??= Utils.LoadSprite("TheSushiRoles.Resources.Footprint.png", 600f);
 
         private static bool AnonymousFootprints => Detective.anonymousFootprints;
         private static float FootprintDuration => Detective.footprintDuration;

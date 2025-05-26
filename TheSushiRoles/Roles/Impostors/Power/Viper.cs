@@ -20,7 +20,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetButtonSprite() 
         {
             if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.PoisonButton.png", 115f);
+            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.PoisonButton.png", 115f);
             return ButtonSprite;
         }
 
@@ -28,7 +28,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetBlindSprite() 
         {
             if (ButtonSprite2) return ButtonSprite2;
-            ButtonSprite2 = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.BlindTrapButton.png", 115f);
+            ButtonSprite2 = Utils.LoadSprite("TheSushiRoles.Resources.BlindTrapButton.png", 115f);
             return ButtonSprite2;
         }
 

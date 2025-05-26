@@ -27,7 +27,7 @@ namespace TheSushiRoles.Roles
             PassiveLoverSuicide,
             LawyerKilledByClient,
             RomanticKilledByBeloved,
-            JackalKillsSidekick,
+            JackalKillsRecruit,
             ImpostorTeamkill,
             SubmergedO2,
             WarlockSuicide,
@@ -37,7 +37,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetSoulSprite() 
         {
             if (soulSprite) return soulSprite;
-            soulSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Soul.png", 500f);
+            soulSprite = Utils.LoadSprite("TheSushiRoles.Resources.Soul.png", 500f);
             return soulSprite;
         }
 
@@ -45,7 +45,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetQuestionSprite() 
         {
             if (question) return question;
-            question = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.PsychicButton.png", 115f);
+            question = Utils.LoadSprite("TheSushiRoles.Resources.PsychicButton.png", 115f);
             return question;
         }
 
@@ -82,7 +82,7 @@ namespace TheSushiRoles.Roles
                 if (target == Lovers.Lover1 || target == Lovers.Lover2) infos.Add(SpecialPsychicInfo.ActiveLoverDies);
                 if (target.Data.Role.IsImpostor && killer.Data.Role.IsImpostor) infos.Add(SpecialPsychicInfo.ImpostorTeamkill);
             }
-            if (target == Sidekick.Player && (killer == Jackal.Player)) infos.Add(SpecialPsychicInfo.JackalKillsSidekick);
+            if (target == Recruit.Player && (killer == Jackal.Player)) infos.Add(SpecialPsychicInfo.JackalKillsRecruit);
             if (target == Lawyer.Player && killer == Lawyer.target) infos.Add(SpecialPsychicInfo.LawyerKilledByClient);
             if (target == Romantic.Player && killer == Romantic.beloved) infos.Add(SpecialPsychicInfo.RomanticKilledByBeloved);
             if (Psychic.target.WasCleanedOrEaten) infos.Add(SpecialPsychicInfo.BodyCleaned);
@@ -110,8 +110,8 @@ namespace TheSushiRoles.Roles
                     case SpecialPsychicInfo.LawyerKilledByClient:
                         msg = "My client killed me. Do I still get paid?";
                         break;
-                    case SpecialPsychicInfo.JackalKillsSidekick:
-                        msg = "First they sidekicked me, then they killed me. At least I don't need to do tasks anymore.";
+                    case SpecialPsychicInfo.JackalKillsRecruit:
+                        msg = "First they Recruited me, then they killed me. At least I don't need to do tasks anymore.";
                         break;
                     case SpecialPsychicInfo.ImpostorTeamkill:
                         msg = "I guess they confused me for the Spy, is there even one?";

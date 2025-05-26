@@ -30,25 +30,25 @@ namespace TheSushiRoles.Roles
         public static Sprite GetButtonSprite()
         {
             if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Hack.png", 110f);
+            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.Hack.png", 110f);
             return ButtonSprite;
         }
         public static Sprite GetHackedButtonSprite()
         {
             if (HackedSprite) return HackedSprite;
-            HackedSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Hack.png", 110f);
+            HackedSprite = Utils.LoadSprite("TheSushiRoles.Resources.Hack.png", 110f);
             return HackedSprite;
         }
         public static Sprite GetSampleSprite() 
         {
             if (SampleSprite) return SampleSprite;
-            SampleSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.SampleButton.png", 115f);
+            SampleSprite = Utils.LoadSprite("TheSushiRoles.Resources.SampleButton.png", 115f);
             return SampleSprite;
         }
         public static Sprite GetMimicSprite() 
         {
             if (MimicSprite) return MimicSprite;
-            MimicSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.MimicButton.png", 115f);
+            MimicSprite = Utils.LoadSprite("TheSushiRoles.Resources.MimicButton.png", 115f);
             return MimicSprite;
         }
         // Can be used to enable / disable the Hack effect on the target's buttons
@@ -58,9 +58,9 @@ namespace TheSushiRoles.Roles
                 playerId = PlayerControl.LocalPlayer.PlayerId;
             if (active && playerId == PlayerControl.LocalPlayer.PlayerId) 
             {
-                Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.HackNoticed);
+                Utils.SendRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.HackNoticed);
             }
-            if (active) 
+            if (active)
             {
                 HackedKnows.Add(playerId, HackDuration);
                 HackedPlayers.RemoveAll(x => x == playerId);

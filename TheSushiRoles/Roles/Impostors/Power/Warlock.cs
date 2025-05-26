@@ -20,14 +20,14 @@ namespace TheSushiRoles.Roles
         public static Sprite GetCurseButtonSprite() 
         {
             if (curseButtonSprite) return curseButtonSprite;
-            curseButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.CurseButton.png", 115f);
+            curseButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.CurseButton.png", 115f);
             return curseButtonSprite;
         }
 
         public static Sprite GetCurseKillButtonSprite() 
         {
             if (curseKillButtonSprite) return curseKillButtonSprite;
-            curseKillButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.CurseKillButton.png", 85f);
+            curseKillButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.CurseKillButton.png", 85f);
             return curseKillButtonSprite;
         }
 

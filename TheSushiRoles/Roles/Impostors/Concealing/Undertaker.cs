@@ -12,14 +12,14 @@ namespace TheSushiRoles.Roles
         public static Sprite GetFirstButtonSprite()
         {
             if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Drag.png", 115f);
+            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.Drag.png", 115f);
             return ButtonSprite;
         }
         public static Sprite ButtonSprite2;
         public static Sprite GetSecondButtonSprite()
         {
             if (ButtonSprite2) return ButtonSprite2;
-            ButtonSprite2 = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Drop.png", 115f);
+            ButtonSprite2 = Utils.LoadSprite("TheSushiRoles.Resources.Drop.png", 115f);
             return ButtonSprite2;
         }
         public static void ClearAndReload()

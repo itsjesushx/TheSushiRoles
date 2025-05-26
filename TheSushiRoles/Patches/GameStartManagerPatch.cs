@@ -130,7 +130,7 @@ namespace TheSushiRoles.Patches
                     // Make starting info available to clients:
                     if (startingTimer <= 0 && __instance.startState == GameStartManager.StartingStates.Countdown) 
                     {
-                        Utils.StartRPC(CustomRPC.SetGameStarting);
+                        Utils.SendRPC(CustomRPC.SetGameStarting);
                         RPCProcedure.SetGameStarting();
                         // Activate Stop-Button
                         copiedStartButton = GameObject.Instantiate(__instance.StartButton.gameObject, __instance.StartButton.gameObject.transform.parent);
@@ -145,7 +145,7 @@ namespace TheSushiRoles.Patches
                         void StopStartFunc() 
                         {
                             __instance.ResetStartState();
-                            Utils.StartRPC(CustomRPC.StopStart, PlayerControl.LocalPlayer.PlayerId);
+                            Utils.SendRPC(CustomRPC.StopStart, PlayerControl.LocalPlayer.PlayerId);
                             copiedStartButton.Destroy();
                             startingTimer = 0;
                             SoundManager.Instance.StopSound(GameStartManager.Instance.gameStartSound);
@@ -189,9 +189,9 @@ namespace TheSushiRoles.Patches
                         }
                     }
 
-                    if (!__instance.GameStartText.text.StartsWith("Starting") || !CustomOptionHolder.anyPlayerCanStopStart.GetBool())
+                    if (!__instance.GameStartText.text.StartsWith("Starting") || !CustomOptionHolder.EveryoneCanStopStart.GetBool())
                         copiedStartButton?.Destroy();
-                    if (CustomOptionHolder.anyPlayerCanStopStart.GetBool() && copiedStartButton == null && __instance.GameStartText.text.StartsWith("Starting") && !TheSushiRolesPlugin.DebuggerLoaded) 
+                    if (CustomOptionHolder.EveryoneCanStopStart.GetBool() && copiedStartButton == null && __instance.GameStartText.text.StartsWith("Starting") && !TheSushiRolesPlugin.DebuggerLoaded) 
                     {
 
                         // Activate Stop-Button
@@ -207,7 +207,7 @@ namespace TheSushiRoles.Patches
 
                         void StopStartFunc() 
                         {
-                            Utils.StartRPC(CustomRPC.StopStart, PlayerControl.LocalPlayer.PlayerId);
+                            Utils.SendRPC(CustomRPC.StopStart, PlayerControl.LocalPlayer.PlayerId);
                             copiedStartButton.Destroy();
                             __instance.GameStartText.text = String.Empty;
                             startingTimer = 0;
@@ -269,7 +269,7 @@ namespace TheSushiRoles.Patches
                     {
                         byte mapId = 0;
                         if (mapId >= 3) mapId++;
-                        Utils.StartRPC(CustomRPC.DynamicMapOption, mapId);
+                        Utils.SendRPC(CustomRPC.DynamicMapOption, mapId);
                         RPCProcedure.DynamicMapOption(mapId);
                     }            
                     else if (CustomOptionHolder.dynamicMap.GetBool() && continueStart) 
@@ -316,12 +316,13 @@ namespace TheSushiRoles.Patches
                         }
 
                         // Translate chosen map to presets page and use that maps random map preset page
-                        if (CustomOptionHolder.dynamicMapSeparateSettings.GetBool()) {
+                        if (CustomOptionHolder.dynamicMapSeparateSettings.GetBool())
+                        {
                             CustomOptionHolder.presetSelection.UpdateSelection(chosenMapId + 2);
                         }
                         if (chosenMapId >= 3) chosenMapId++;  // Skip dlekS
                                                               
-                        Utils.StartRPC(CustomRPC.DynamicMapOption, chosenMapId);
+                        Utils.SendRPC(CustomRPC.DynamicMapOption, chosenMapId);
                         RPCProcedure.DynamicMapOption(chosenMapId);
                     }
                 }

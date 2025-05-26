@@ -14,7 +14,7 @@ namespace TheSushiRoles
 {
     public static class RPCProcedure 
     {
-        // Main Controls
+        #region Main Controls
         public static void ResetVariables() 
         {
             MapOptions.ClearAndReloadMapOptions();
@@ -49,8 +49,7 @@ namespace TheSushiRoles
             {
                 if (!player.Data.Role.IsImpostor)
                 {
-                    
-                    GameData.Instance.GetPlayerById(player.PlayerId); // player.RemoveInfected(); (was removed in 2022.12.08, no idea if we ever need that part again, replaced by these 2 lines.) 
+                    GameData.Instance.GetPlayerById(player.PlayerId);
                     player.CoSetRole(RoleTypes.Crewmate, true);
 
                     player.MurderPlayer(player);
@@ -61,13 +60,13 @@ namespace TheSushiRoles
 
         public static void StopStart(byte playerId) 
         {
-            if (!CustomOptionHolder.anyPlayerCanStopStart.GetBool()) return;
+            if (!CustomOptionHolder.EveryoneCanStopStart.GetBool()) return;
 
             SoundManager.Instance.StopSound(GameStartManager.Instance.gameStartSound);
             if (AmongUsClient.Instance.AmHost) 
             {
                 GameStartManager.Instance.ResetStartState();
-                PlayerControl.LocalPlayer.RpcSendChat($"{Utils.PlayerById(playerId).Data.PlayerName} stopped the game start!");
+                PlayerControl.LocalPlayer.RpcSendChat($"{Utils.PlayerById(playerId).Data.PlayerName} stopped the game countdown!");
             }
         }
 
@@ -152,6 +151,10 @@ namespace TheSushiRoles
                         case RoleId.Oracle:
                             Oracle.Player = player;
                             GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.oracle);
+                            break;
+                        case RoleId.Cultist:
+                            Cultist.Player = player;
+                            GameHistory.AddToRoleHistory(player.PlayerId, RoleInfo.cultist);
                             break;
                         case RoleId.Amnesiac:
                             Amnesiac.Player = player;
@@ -358,6 +361,9 @@ namespace TheSushiRoles
                 case ModifierId.Lazy:
                     Lazy.Players.Add(player);
                     break;
+                case ModifierId.Follower:
+                    Follower.Player = player;
+                    break;
                 case ModifierId.Sleuth:
                     Sleuth.Players.Add(player);
                     break;
@@ -370,8 +376,8 @@ namespace TheSushiRoles
                 case ModifierId.Mini:
                     Mini.Player = player;
                     break;
-                case ModifierId.Sidekick:
-                    Sidekick.Player = player;
+                case ModifierId.Recruit:
+                    Recruit.Player = player;
                     break;
                 case ModifierId.Giant:
                     Giant.Player = player;
@@ -400,6 +406,80 @@ namespace TheSushiRoles
                 ver = new Version(major, minor, build, revision);
             GameStartManagerPatch.playerVersions[clientId] = new GameStartManagerPatch.PlayerVersion(ver, guid);
         }
+
+        public static void UseUncheckedVent(int ventId, byte playerId, byte isEnter)
+        {
+            PlayerControl player = Utils.PlayerById(playerId);
+            if (player == null) return;
+            // Fill dummy MessageReader and call MyPhysics.HandleRpc as the corountines cannot be accessed
+            MessageReader reader = new MessageReader();
+            byte[] bytes = BitConverter.GetBytes(ventId);
+            if (!BitConverter.IsLittleEndian)
+                Array.Reverse(bytes);
+            reader.Buffer = bytes;
+            reader.Length = bytes.Length;
+
+            JackInTheBox.StartAnimation(ventId);
+            player.MyPhysics.HandleRpc(isEnter != 0 ? (byte)19 : (byte)20, reader);
+        }
+
+        public static void UncheckedMurderPlayer(byte sourceId, byte targetId, byte showAnimation) 
+        {
+            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
+            PlayerControl source = Utils.PlayerById(sourceId);
+            PlayerControl target = Utils.PlayerById(targetId);
+            if (source != null && target != null) 
+            {
+                if (showAnimation == 0) KillAnimationCoPerformKillPatch.hideNextAnimation = true;
+                source.MurderPlayer(target);
+            }
+        }
+
+        public static void UncheckedCmdReportDeadBody(byte sourceId, byte targetId) 
+        {
+            PlayerControl source = Utils.PlayerById(sourceId);
+            var t = targetId == Byte.MaxValue ? null : Utils.PlayerById(targetId).Data;
+            if (source != null) source.ReportDeadBody(t);
+        }
+
+        public static void UncheckedExilePlayer(byte targetId) 
+        {
+            PlayerControl target = Utils.PlayerById(targetId);
+            if (target != null) target.Exiled();
+        }
+
+        public static void DynamicMapOption(byte mapId) 
+        {
+           GameOptionsManager.Instance.currentNormalGameOptions.MapId = mapId;
+        }
+
+        public static void SetGameStarting() 
+        {
+            GameStartManagerPatch.GameStartManagerUpdatePatch.startingTimer = 5f;
+        }
+        
+        #endregion
+
+        #region  Role functionality
+        public static void EngineerFixLights()
+        {
+            SwitchSystem switchSystem = MapUtilities.Systems[SystemTypes.Electrical].CastFast<SwitchSystem>();
+            switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;
+        }
+
+        public static void EngineerFixSubmergedOxygen() 
+        {
+            SubmergedCompatibility.RepairOxygen();
+        }
+
+        public static void EngineerUsedRepair() 
+        {
+            Engineer.remainingFixes--;
+            if (Utils.ShouldShowGhostInfo()) 
+            {
+                Utils.ShowFlash(Engineer.Color, 0.5f, "Engineer Fix");
+            }
+        }
         public static void LandlordHandleTeleport(HudManager __instance)
         {
             Landlord.Charges--;
@@ -414,18 +494,12 @@ namespace TheSushiRoles
                 if (Landlord.FirstTarget.CheckVeteranPestilenceKill())
                 {
                     Coroutines.Start(LandlordTransportPlayers(Landlord.FirstTarget.PlayerId, Landlord.Player.PlayerId, true));
-
-                    Utils.StartRPC(CustomRPC.LandlordTeleport, Landlord.FirstTarget.PlayerId, Landlord.Player.PlayerId, true);
-
-                    HudManagerStartPatch.LandlordButton.Timer = 0f;
+                    Utils.SendRPC(CustomRPC.LandlordTeleport, Landlord.FirstTarget.PlayerId, Landlord.Player.PlayerId, true);
                     return;
                 }
 
                 Coroutines.Start(LandlordTransportPlayers(Landlord.FirstTarget.PlayerId, Landlord.SecondTarget.PlayerId, false));
-
-                Utils.StartRPC(CustomRPC.LandlordTeleport, Landlord.FirstTarget.PlayerId, Landlord.SecondTarget.PlayerId, false);
-
-                HudManagerStartPatch.LandlordButton.Timer = 0f;
+                Utils.SendRPC(CustomRPC.LandlordTeleport, Landlord.FirstTarget.PlayerId, Landlord.SecondTarget.PlayerId, false);
             }
             else
             {
@@ -533,7 +607,7 @@ namespace TheSushiRoles
                         Target1.transform.position = Target2Position;
                         Target1.NetTransform.SnapTo(Target2Position);
                     }
-                    if (die) Utils.CheckMuderAttempt(Target1, Target2, true);
+                    if (die) Utils.CheckMurderAttempt(Target1, Target2, true);
                     else
                     {
                         if (Target2 != lazy)
@@ -653,98 +727,26 @@ namespace TheSushiRoles
             Target2.NetTransform.enabled = true;
         }
 
-        public static void UseUncheckedVent(int ventId, byte playerId, byte isEnter)
+        public static void CleanBody(byte playerId, byte cleaningPlayerId)
         {
-            PlayerControl player = Utils.PlayerById(playerId);
-            if (player == null) return;
-            // Fill dummy MessageReader and call MyPhysics.HandleRpc as the corountines cannot be accessed
-            MessageReader reader = new MessageReader();
-            byte[] bytes = BitConverter.GetBytes(ventId);
-            if (!BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
-            reader.Buffer = bytes;
-            reader.Length = bytes.Length;
-
-            JackInTheBox.StartAnimation(ventId);
-            player.MyPhysics.HandleRpc(isEnter != 0 ? (byte)19 : (byte)20, reader);
-        }
-
-        public static void UncheckedMurderPlayer(byte sourceId, byte targetId, byte showAnimation) 
-        {
-            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
-            PlayerControl source = Utils.PlayerById(sourceId);
-            PlayerControl target = Utils.PlayerById(targetId);
-            if (source != null && target != null) 
-            {
-                if (showAnimation == 0) KillAnimationCoPerformKillPatch.hideNextAnimation = true;
-                source.MurderPlayer(target);
-            }
-        }
-
-        public static void UncheckedCmdReportDeadBody(byte sourceId, byte targetId) 
-        {
-            PlayerControl source = Utils.PlayerById(sourceId);
-            var t = targetId == Byte.MaxValue ? null : Utils.PlayerById(targetId).Data;
-            if (source != null) source.ReportDeadBody(t);
-        }
-
-        public static void UncheckedExilePlayer(byte targetId) 
-        {
-            PlayerControl target = Utils.PlayerById(targetId);
-            if (target != null) target.Exiled();
-        }
-
-        public static void DynamicMapOption(byte mapId) 
-        {
-           GameOptionsManager.Instance.currentNormalGameOptions.MapId = mapId;
-        }
-
-        public static void SetGameStarting() 
-        {
-            GameStartManagerPatch.GameStartManagerUpdatePatch.startingTimer = 5f;
-        }
-
-        // Role functionality
-
-        public static void EngineerFixLights() 
-        {
-            SwitchSystem switchSystem = MapUtilities.Systems[SystemTypes.Electrical].CastFast<SwitchSystem>();
-            switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;
-        }
-
-        public static void EngineerFixSubmergedOxygen() 
-        {
-            SubmergedCompatibility.RepairOxygen();
-        }
-
-        public static void EngineerUsedRepair() 
-        {
-            Engineer.remainingFixes--;
-            if (Utils.ShouldShowGhostInfo()) 
-            {
-                Utils.ShowFlash(Engineer.Color, 0.5f, "Engineer Fix");
-            }
-        }
-
-        public static void CleanBody(byte playerId, byte cleaningPlayerId) 
-        {
-            if (Psychic.futureDeadBodies != null) 
+            if (Psychic.futureDeadBodies != null)
             {
                 var deadBody = Psychic.futureDeadBodies.Find(x => x.Item1.player.PlayerId == playerId).Item1;
                 if (deadBody != null) deadBody.WasCleanedOrEaten = true;
             }
 
             DeadBody[] array = UnityEngine.Object.FindObjectsOfType<DeadBody>();
-            for (int i = 0; i < array.Length; i++) 
+            for (int i = 0; i < array.Length; i++)
             {
-                if (GameData.Instance.GetPlayerById(array[i].ParentId).PlayerId == playerId) {
+                if (GameData.Instance.GetPlayerById(array[i].ParentId).PlayerId == playerId)
+                {
                     UnityEngine.Object.Destroy(array[i].gameObject);
-                }     
+                }
             }
-            if (Scavenger.Player != null && cleaningPlayerId == Scavenger.Player.PlayerId) 
+            if (Scavenger.Player != null && cleaningPlayerId == Scavenger.Player.PlayerId)
             {
                 Scavenger.eatenBodies++;
-                if (Scavenger.eatenBodies == Scavenger.ScavengerNumberToWin) 
+                if (Scavenger.eatenBodies == Scavenger.ScavengerNumberToWin)
                 {
                     Scavenger.IsScavengerWin = true;
                 }
@@ -776,7 +778,7 @@ namespace TheSushiRoles
             if (PlayerControl.LocalPlayer == Veteran.Player)
             {
                 PlayerControl player = Utils.PlayerById(targetId);
-                Utils.CheckMuderAttempt(Veteran.Player, player);
+                Utils.CheckMurderAttempt(Veteran.Player, player);
             }
         }
         public static void PestilenceKill(byte targetId)
@@ -784,7 +786,7 @@ namespace TheSushiRoles
             if (PlayerControl.LocalPlayer == Pestilence.Player)
             {
                 PlayerControl player = Utils.PlayerById(targetId);
-                Utils.CheckMuderAttempt(Pestilence.Player, player);
+                Utils.CheckMurderAttempt(Pestilence.Player, player);
             }
         }
 
@@ -801,43 +803,27 @@ namespace TheSushiRoles
         }
         public static void WerewolfMaul()
         {
-            // stupid change to prevent werewolf from showing the kill animation more than once
-            
             var nearbyPlayers = Utils.GetClosestPlayers(Werewolf.Player.GetTruePosition(), Werewolf.Radius);
-            HashSet<PlayerControl> alreadyKilled = new HashSet<PlayerControl>();
 
             foreach (var player in nearbyPlayers)
             {
-                if (player == null || player.Data == null || alreadyKilled.Contains(player)) continue;
+                if (player == Werewolf.Player || player.Data.IsDead
+                || (player == Lucky.Player && !Lucky.ProtectionBroken)
+                || player == Medic.Shielded || player == Crusader.FortifiedPlayer
+                || player == MapOptions.FirstPlayerKilled) continue;
 
-                if (player == Werewolf.Player || 
-                    player.Data.IsDead || 
-                    (player == Lucky.Player && !Lucky.ProtectionBroken) || 
-                    player == Medic.Shielded || 
-                    player == MapOptions.FirstPlayerKilled)
-                    continue;
+                Utils.MurderPlayer(Werewolf.Player, player, false);
 
-                PlayerControl finalTarget = Utils.GetRedirectedTarget(player);
+                Utils.SendRPC(CustomRPC.ShareGhostInfo,
+                PlayerControl.LocalPlayer.PlayerId,
+                (byte)GhostInfoTypes.DeathReasonAndKiller,
+                player.PlayerId,
+                (byte)DeadPlayer.CustomDeathReason.Maul,
+                Werewolf.Player.PlayerId);
 
-                if (finalTarget == null || finalTarget.Data.IsDead || alreadyKilled.Contains(finalTarget)) continue;
-
-                var result = Utils.CheckMurderAttemptAndKill(Werewolf.Player, finalTarget, showAnimation: false);
-
-                if (result == MurderAttemptResult.PerformKill || result == MurderAttemptResult.MirrorKill)
-                {
-                    alreadyKilled.Add(finalTarget);
-                    Utils.StartRPC(CustomRPC.ShareGhostInfo,
-                    PlayerControl.LocalPlayer.PlayerId,
-                    (byte)GhostInfoTypes.DeathReasonAndKiller,
-                    finalTarget.PlayerId,
-                    (byte)DeadPlayer.CustomDeathReason.Maul,
-                    Werewolf.Player.PlayerId);
-                    GameHistory.CreateDeathReason(finalTarget, DeadPlayer.CustomDeathReason.Maul, killer: Werewolf.Player);
-                }
+                GameHistory.CreateDeathReason(player, DeadPlayer.CustomDeathReason.Maul, killer: Werewolf.Player);
             }
         }
-
-
         public static void Disperse()
         {
             Dictionary<byte, Vector2> coordinates = GenerateDisperseCoordinates();
@@ -975,10 +961,10 @@ namespace TheSushiRoles
             FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(Oracle.Player, $"{results}");
 
             // Send RPC to notify clients
-            Utils.StartRPC(CustomRPC.Confess, Oracle.Confessor.PlayerId, (int)revealedFaction);
+            Utils.SendRPC(CustomRPC.Confess, Oracle.Confessor.PlayerId, (int)revealedFaction);
 
             // Ghost Info
-            Utils.StartRPC(CustomRPC.ShareGhostInfo, Oracle.Confessor.PlayerId, (byte)GhostInfoTypes.OracleInfo, results);
+            Utils.SendRPC(CustomRPC.ShareGhostInfo, Oracle.Confessor.PlayerId, (byte)GhostInfoTypes.OracleInfo, results);
         }
 
         public static void GrenadierFlash() 
@@ -1154,7 +1140,7 @@ namespace TheSushiRoles
             Glitch.HackedPlayers.Add(targetId);
         }
 
-        public static void JackalCreatesSidekick(byte targetId) 
+        public static void JackalCreatesRecruit(byte targetId)
         {
             PlayerControl player = Utils.PlayerById(targetId);
             if (player == null) return;
@@ -1162,15 +1148,61 @@ namespace TheSushiRoles
 
             if (role.FactionId != Faction.Neutrals) role.FactionId = Faction.Neutrals;
             if (role.Alignment != RoleAlignment.NeutralKilling) role.Alignment = RoleAlignment.NeutralKilling;
-            Sidekick.Player = player;
+            Recruit.Player = player;
 
             if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) PlayerControl.LocalPlayer.moveable = true;
-            if (player == PlayerControl.LocalPlayer) SoundEffectsManager.Play("jackalSidekick");
-            if (CustomOptionHolder.SidekickIsAlwaysGuesser.GetBool() && !Guesser.IsGuesser(targetId)) SetGuesser(targetId);
-            Jackal.canCreateSidekick = false;
+            if (player == PlayerControl.LocalPlayer) SoundEffectsManager.Play("Convert");
+            if (CustomOptionHolder.RecruitIsAlwaysGuesser.GetBool() && !Guesser.IsGuesser(targetId)) SetGuesser(targetId);
+            Jackal.canCreateRecruit = false;
+            Jackal.HasRecruit = true;
         }
         
-        public static void ErasePlayerRoles(byte playerId) 
+        public static void BecomeCrewmate(PlayerControl player)
+        {
+            RPCProcedure.ErasePlayerRoles(player.PlayerId);
+            player.roleAssigned = false;
+            DestroyableSingleton<RoleManager>.Instance.SetRole(player, RoleTypes.Crewmate);
+            player.Data.Role.TeamType = RoleTeamTypes.Crewmate;
+            player.roleAssigned = true;
+            foreach (PlayerControl otherPlayer in PlayerControl.AllPlayerControls.GetFastEnumerator())
+                if (!otherPlayer.Data.Role.IsImpostor && PlayerControl.LocalPlayer.Data.Role.IsImpostor)
+                    player.cosmetics.nameText.color = Palette.White;
+        }
+        
+        // Taken from Town of Us https://github.com/eDonnes124/Town-Of-Us-R/blob/master/source/Patches/NeutralRoles/AmnesiacMod/PerformKillButton.cs Licensed under GPLv3
+        public static void BecomeImpostor(PlayerControl player)
+        {
+            RPCProcedure.ErasePlayerRoles(player.PlayerId);
+            player.Data.Role.TeamType = RoleTeamTypes.Impostor;
+            RoleManager.Instance.SetRole(player, RoleTypes.Impostor);
+            player.SetKillTimer(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown);
+            foreach (var player2 in PlayerControl.AllPlayerControls)
+            {
+                if (player2.Data.Role.IsImpostor && PlayerControl.LocalPlayer.Data.Role.IsImpostor)
+                {
+                    player.cosmetics.nameText.color = Palette.ImpostorRed;
+                }
+            }
+        }
+        
+        public static void CultistCreatesFollower(byte targetId)
+        {
+            PlayerControl player = Utils.PlayerById(targetId);
+
+            if (player == null) return;
+
+            Utils.BecomeImpostor(player);
+
+            SetRole((byte)Cultist.SelectFollowerRole(), player.PlayerId);
+            Follower.Player = player;
+
+            if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) PlayerControl.LocalPlayer.moveable = true;
+            if (player == PlayerControl.LocalPlayer) SoundEffectsManager.Play("Convert");
+            if (CustomOptionHolder.FollowerGetsGuesser.GetBool() && !Guesser.IsGuesser(targetId)) SetGuesser(targetId);
+            Cultist.HasFollower = true;
+        }
+        
+        public static void ErasePlayerRoles(byte playerId)
         {
             PlayerControl player = Utils.PlayerById(playerId);
             if (player == null || !player.IsKiller()) return;
@@ -1210,6 +1242,7 @@ namespace TheSushiRoles
             if (player == Witch.Player) Witch.ClearAndReload();
             if (player == Miner.Player) Miner.ClearAndReload();
             if (player == Assassin.Player) Assassin.ClearAndReload();
+            if (player == Cultist.Player) Cultist.ClearAndReload();
             if (player == BountyHunter.Player) BountyHunter.ClearAndReload();
             if (player == Wraith.Player) Wraith.ClearAndReload();
             if (player == Grenadier.Player) Grenadier.ClearAndReload();
@@ -1229,7 +1262,7 @@ namespace TheSushiRoles
             if (player == Juggernaut.Player) Juggernaut.ClearAndReload();
             if (player == Predator.Player) Predator.ClearAndReload();
             if (player == Jackal.Player) Jackal.ClearAndReload();
-            
+
             // Passive Neutral Roles
             if (player == Jester.Player) Jester.ClearAndReload();
             if (player == Scavenger.Player) Scavenger.ClearAndReload();
@@ -1273,8 +1306,15 @@ namespace TheSushiRoles
             Blackmailer.BlackmailedPlayer = null;
             BlackmailMeetingUpdate.shookAlready = false;
         }
+        
+        public static void RemoveMedicShield() 
+        {
+            Medic.Shielded = null;
+            Medic.futureShielded = null;
+            Medic.usedShield = false;
+        }
 
-        public static void PlaceAssassinTrace(byte[] buff) 
+        public static void PlaceAssassinTrace(byte[] buff)
         {
             Vector3 position = Vector3.zero;
             position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
@@ -1731,6 +1771,7 @@ namespace TheSushiRoles
                     break;
                 case RoleId.Impostor:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Amnesiac.ClearAndReload();
                     break;
                 case RoleId.Jester:
@@ -1749,6 +1790,7 @@ namespace TheSushiRoles
 
                 case RoleId.Miner:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Miner.ClearAndReload();
                     Miner.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -1840,6 +1882,7 @@ namespace TheSushiRoles
 
                 case RoleId.Grenadier:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Grenadier.ClearAndReload();
                     Grenadier.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -1848,6 +1891,7 @@ namespace TheSushiRoles
 
                 case RoleId.Blackmailer:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Blackmailer.ClearAndReload();
                     Blackmailer.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -1863,6 +1907,7 @@ namespace TheSushiRoles
 
                 case RoleId.Morphling:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Morphling.ClearAndReload();
                     Morphling.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -1871,6 +1916,7 @@ namespace TheSushiRoles
 
                 case RoleId.Yoyo:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Yoyo.ClearAndReload();
                     Yoyo.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -1879,6 +1925,7 @@ namespace TheSushiRoles
 
                 case RoleId.Painter:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Painter.ClearAndReload();
                     Painter.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -1908,6 +1955,7 @@ namespace TheSushiRoles
 
                 case RoleId.Viper:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Viper.ClearAndReload();
                     Viper.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -1931,6 +1979,15 @@ namespace TheSushiRoles
                 case RoleId.Juggernaut:
                     Juggernaut.ClearAndReload();
                     Juggernaut.Player = AmnesiacPlayer;
+                    Amnesiac.ClearAndReload();
+                    Amnesiac.Player = target;
+                    break;
+                
+                case RoleId.Cultist:
+                    Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
+                    Cultist.ClearAndReload();
+                    Cultist.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
@@ -1958,6 +2015,7 @@ namespace TheSushiRoles
 
                 case RoleId.Undertaker:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Undertaker.ClearAndReload();
                     Undertaker.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -1971,16 +2029,17 @@ namespace TheSushiRoles
                     Amnesiac.Player = target;
                     break;
 
-                // if its a jackal, make the amnesiac a Sidekick instead.
+                // if its a jackal, make the amnesiac a Recruit instead.
                 case RoleId.Jackal:
-                    Sidekick.ClearAndReload();
-                    Sidekick.Player = AmnesiacPlayer;
+                    Recruit.ClearAndReload();
+                    Recruit.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
                     Amnesiac.Player = target;
                     break;
 
                 case RoleId.Eraser:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Eraser.ClearAndReload();
                     Eraser.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -1996,6 +2055,7 @@ namespace TheSushiRoles
 
                 case RoleId.Trickster:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Trickster.ClearAndReload();
                     Trickster.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -2004,6 +2064,7 @@ namespace TheSushiRoles
 
                 case RoleId.Janitor:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Janitor.ClearAndReload();
                     Janitor.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -2012,6 +2073,7 @@ namespace TheSushiRoles
 
                 case RoleId.Warlock:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Warlock.ClearAndReload();
                     Warlock.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -2073,6 +2135,7 @@ namespace TheSushiRoles
 
                 case RoleId.BountyHunter:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     BountyHunter.ClearAndReload();
                     BountyHunter.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -2129,6 +2192,7 @@ namespace TheSushiRoles
 
                 case RoleId.Witch:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Witch.ClearAndReload();
                     Witch.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -2144,6 +2208,7 @@ namespace TheSushiRoles
 
                 case RoleId.Assassin:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Assassin.ClearAndReload();
                     Assassin.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -2152,6 +2217,7 @@ namespace TheSushiRoles
 
                 case RoleId.Wraith:
                     Utils.BecomeImpostor(Amnesiac.Player);
+                    Utils.BecomeCrewmate(target);
                     Wraith.ClearAndReload();
                     Wraith.Player = AmnesiacPlayer;
                     Amnesiac.ClearAndReload();
@@ -2322,6 +2388,8 @@ namespace TheSushiRoles
         }
     }
 
+    #endregion
+
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
     public static class HandleRpc
     {
@@ -2424,6 +2492,9 @@ namespace TheSushiRoles
                 case CustomRPC.RemoveBlackmail:
                     RPCProcedure.RemoveBlackmail();
                     break;
+                case CustomRPC.RemoveMedicShield:
+                    RPCProcedure.RemoveMedicShield();
+                    break;
                 case CustomRPC.EngineerUsedRepair:
                     RPCProcedure.EngineerUsedRepair();
                     break;
@@ -2461,8 +2532,8 @@ namespace TheSushiRoles
                     RPCProcedure.FortifiedMurderAttempt();
                     break;
                 case CustomRPC.LandlordTeleport:
-                        Coroutines.Start(RPCProcedure.LandlordTransportPlayers(reader.ReadByte(), reader.ReadByte(), reader.ReadBoolean()));
-                        break;
+                    Coroutines.Start(RPCProcedure.LandlordTransportPlayers(reader.ReadByte(), reader.ReadByte(), reader.ReadBoolean()));
+                    break;
                 case CustomRPC.SetUnteleportable:
                     if (PlayerControl.LocalPlayer == Landlord.Player)
                     {
@@ -2486,10 +2557,19 @@ namespace TheSushiRoles
                         Oracle.RevealedFaction = Faction.Other; // Default to Other in case of error
                     }
                     break;
+                case CustomRPC.BecomeCrewmate:
+                    RPCProcedure.BecomeCrewmate(Utils.PlayerById(reader.ReadByte()));
+                    break;
+                case CustomRPC.BecomeImpostor:
+                    RPCProcedure.BecomeImpostor(Utils.PlayerById(reader.ReadByte()));
+                    break;
                 case CustomRPC.SwapperSwap:
                     byte playerId1 = reader.ReadByte();
                     byte playerId2 = reader.ReadByte();
                     RPCProcedure.SwapperSwap(playerId1, playerId2);
+                    break;
+                case CustomRPC.FollowerPicksRole:
+                    RPCProcedure.SetRole((byte)(RoleId)reader.ReadByte(), reader.ReadByte());
                     break;
                 case CustomRPC.MayorSetVoteTwice:
                     Mayor.voteTwice = reader.ReadBoolean();
@@ -2534,8 +2614,11 @@ namespace TheSushiRoles
                 case CustomRPC.GlitchUsedHacks:
                     RPCProcedure.GlitchUsedHacks(reader.ReadByte());
                     break;
-                case CustomRPC.JackalCreatesSidekick:
-                    RPCProcedure.JackalCreatesSidekick(reader.ReadByte());
+                case CustomRPC.JackalCreatesRecruit:
+                    RPCProcedure.JackalCreatesRecruit(reader.ReadByte());
+                    break;
+                case CustomRPC.CultistCreatesFollower:
+                    RPCProcedure.CultistCreatesFollower(reader.ReadByte());
                     break;
                 case CustomRPC.BlackmailerBlackmail:
                     RPCProcedure.BlackmailerBlackmail(reader.ReadByte());

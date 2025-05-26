@@ -17,7 +17,7 @@ namespace TheSushiRoles
     public static class Utils
     {
         public static Dictionary<string, Sprite> CachedSprites = new();
-        public static Sprite LoadSpriteFromResources(string path, float pixelsPerUnit, bool cache=true) 
+        public static Sprite LoadSprite(string path, float pixelsPerUnit, bool cache=true) 
         {
             try
             {
@@ -44,7 +44,8 @@ namespace TheSushiRoles
                 _ = stream.Read(byteAudio, 0, (int)stream.Length);
                 float[] samples = new float[byteAudio.Length / 4]; // 4 bytes per sample
                 int offset;
-                for (int i = 0; i < samples.Length; i++) {
+                for (int i = 0; i < samples.Length; i++)
+                {
                     offset = i * 4;
                     samples[i] = (float)BitConverter.ToInt32(byteAudio, offset) / Int32.MaxValue;
                 }
@@ -54,50 +55,39 @@ namespace TheSushiRoles
                 audioClip.hideFlags |= HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
                 audioClip.SetData(samples, 0);
                 return audioClip;
-            } catch {
+            }
+            catch
+            {
                 System.Console.WriteLine("Error loading AudioClip from resources: " + path);
             }
             return null;
-
-            /* Usage example:
-            AudioClip exampleClip = loadAudioClipFromResources("TheSushiRoles.Resources.exampleClip.raw");
-            if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(exampleClip, false, 0.8f);
-            */
         }
 
-        // Taken from Town of Us https://github.com/eDonnes124/Town-Of-Us-R/blob/master/source/Patches/NeutralRoles/AmnesiacMod/PerformKillButton.cs Licensed under GPLv3
         public static void BecomeImpostor(PlayerControl player)
         {
-            player.Data.Role.TeamType = RoleTeamTypes.Impostor;
-            RoleManager.Instance.SetRole(player, RoleTypes.Impostor);
-            player.SetKillTimer(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown);
-            foreach (var player2 in PlayerControl.AllPlayerControls)
-            {
-                if (player2.Data.Role.IsImpostor && PlayerControl.LocalPlayer.Data.Role.IsImpostor)
-                {
-                    player.cosmetics.nameText.color = Palette.ImpostorRed;
-                }
-            }
+            SendRPC(CustomRPC.BecomeImpostor, player);
+            RPCProcedure.BecomeImpostor(player);
+        }
+        public static void BecomeCrewmate(PlayerControl player)
+        {
+            SendRPC(CustomRPC.BecomeCrewmate, player);
+            RPCProcedure.BecomeCrewmate(player);
         }
 
-        public static unsafe Texture2D LoadTextureFromResources(string path) 
+        public static unsafe Texture2D LoadTextureFromResources(string path)
         {
-            try 
+            try
             {
                 Texture2D texture = new Texture2D(2, 2, TextureFormat.ARGB32, true);
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 Stream stream = assembly.GetManifestResourceStream(path);
                 var length = stream.Length;
                 var byteTexture = new Il2CppStructArray<byte>(length);
-                stream.Read(new Span<byte>(IntPtr.Add(byteTexture.Pointer, IntPtr.Size * 4).ToPointer(), (int) length));
-                if (path.Contains("HorseHats")) 
-                {
-                    byteTexture = new Il2CppStructArray<byte>(byteTexture.Reverse().ToArray());
-                }
+                stream.Read(new Span<byte>(IntPtr.Add(byteTexture.Pointer, IntPtr.Size * 4).ToPointer(), (int)length));
                 ImageConversion.LoadImage(texture, byteTexture, false);
                 return texture;
-            } 
-            catch 
+            }
+            catch
             {
                 System.Console.WriteLine("Error loading texture from resources: " + path);
             }
@@ -158,7 +148,7 @@ namespace TheSushiRoles
             
             // Murder the poisoned player and reset poisoned (regardless whether the kill was successful or not)
             CheckMurderAttemptAndKill(Viper.Player, Viper.poisoned, true, false);
-            StartRPC(CustomRPC.ViperSetPoisoned, byte.MaxValue, byte.MaxValue);
+            SendRPC(CustomRPC.ViperSetPoisoned, byte.MaxValue, byte.MaxValue);
             RPCProcedure.ViperSetPoisoned(byte.MaxValue, byte.MaxValue);
         }
 
@@ -240,10 +230,9 @@ namespace TheSushiRoles
         {
             if (roleInfo.Name == "Jackal") 
             {
-                var getSidekickText = Jackal.canCreateSidekick ? " and recruit a Sidekick" : "";
-                return ColorString(roleInfo.Color, $"Role: <b>{roleInfo.Name}</b>\nKill everyone{getSidekickText}\nAlignment: <b>{roleInfo.AlignmentText()}</b>");  
+                var getRecruitText = Jackal.canCreateRecruit ? " and create a Recruit" : "";
+                return ColorString(roleInfo.Color, $"Role: <b>{roleInfo.Name}</b>\nKill everyone{getRecruitText}\nAlignment: <b>{roleInfo.AlignmentText()}</b>");  
             }
-            
             return ColorString(roleInfo.Color, $"Role: <b>{roleInfo.Name}</b>\n{roleInfo.ShortDescription} \nAlignment: <b>{roleInfo.AlignmentText()}</b>");
         }
         internal static string GetModifierString(ModifierInfo modInfo)
@@ -252,12 +241,10 @@ namespace TheSushiRoles
             {
                 return ColorString(modInfo.Color, $"Modifier: <b>{modInfo.Name}</b>\n{modInfo.ShortDescription} ({Drunk.meetings})");
             }
-
             return ColorString(modInfo.Color, $"Modifier: <b>{modInfo.Name}</b>\n{modInfo.ShortDescription}");
         }
         internal static string GetAbilityString(AbilityInfo abInfo)
         {
-
             return ColorString(abInfo.Color, $"Ability: <b>{abInfo.Name}</b>\n{abInfo.Description}");
         }
 
@@ -343,7 +330,6 @@ namespace TheSushiRoles
         {
             return GameOptionsManager.Instance.CurrentGameOptions.MapId == 1;
         }
-
         public static bool IsAirship() 
         {
             return GameOptionsManager.Instance.CurrentGameOptions.MapId == 4;
@@ -356,7 +342,6 @@ namespace TheSushiRoles
         {
             return GameOptionsManager.Instance.CurrentGameOptions.MapId == 2;
         }
-
         public static bool IsFungle() 
         {
             return GameOptionsManager.Instance.CurrentGameOptions.MapId == 5;
@@ -367,12 +352,6 @@ namespace TheSushiRoles
             return PlayerControl.LocalPlayer.myTasks.ToArray().Any((x) => x.TaskType == TaskTypes.MushroomMixupSabotage);
         }
 
-        public static bool SabotageActive() 
-        {
-            var sabSystem = ShipStatus.Instance.Systems[SystemTypes.Sabotage].CastFast<SabotageSystemType>();
-            return sabSystem.AnyActive;
-        }
-
         // Class from StellarRoles
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.StartMeeting))]
         class ShipStatusStartMeetingPatch
@@ -380,17 +359,16 @@ namespace TheSushiRoles
             static void Prefix()
             {
                 if (FastDestroyableSingleton<HudManager>.Instance.FullScreen == null) return;
-                var renderer = FastDestroyableSingleton<HudManager>.Instance.FullScreen;
-                renderer.gameObject.SetActive(true);
-                renderer.enabled = true;
+                FastDestroyableSingleton<HudManager>.Instance.FullScreen.gameObject.SetActive(true);
+                FastDestroyableSingleton<HudManager>.Instance.FullScreen.enabled = true;
                 var color = Color.black;
 
                 FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(0.8f, new Action<float>((p) =>
                 {
-                    renderer.color = new Color(color.r, color.g, color.b, Mathf.Clamp01(1 - p));
+                    FastDestroyableSingleton<HudManager>.Instance.FullScreen.color = new Color(color.r, color.g, color.b, Mathf.Clamp01(1 - p));
                     if (p == 1)
                     {
-                        renderer.enabled = false;
+                        FastDestroyableSingleton<HudManager>.Instance.FullScreen.enabled = false;
                     }
                 })));
             }
@@ -399,7 +377,7 @@ namespace TheSushiRoles
         {
             HudManager.Instance.StartCoroutine(CoTextToast(text, delay));
         }
-        public static void StartRPC(params object[] data)
+        public static void SendRPC(params object[] data)
         {
             if (data[0] is not CustomRPC) throw new ArgumentException($"first parameter must be a {typeof(CustomRPC).FullName}");
 
@@ -562,7 +540,7 @@ namespace TheSushiRoles
             }
             RoleInfo.RoleTexts.Clear();
         }
-        public static IList createList(Type myType)
+        public static IList CreateList(Type myType)
         {
             Type genericListType = typeof(List<>).MakeGenericType(myType);
             return (IList)Activator.CreateInstance(genericListType);
@@ -578,7 +556,7 @@ namespace TheSushiRoles
             else if (source == target) return false; // Player sees his own name
             else if (source.Data.Role.IsImpostor && (target.Data.Role.IsImpostor || target == Spy.Player)) return false; // Members of team Impostors see the names of Impostors/Spies
             else if ((source == Lovers.Lover1 || source == Lovers.Lover2) && (target == Lovers.Lover1 || target == Lovers.Lover2)) return false; // Members of team Lovers see the names of each other
-            else if ((source == Jackal.Player || source == Sidekick.Player) && (target == Jackal.Player || target == Sidekick.Player)) return false; // Members of team Jackal see the names of each other
+            else if ((source == Jackal.Player || source == Recruit.Player) && (target == Jackal.Player || target == Recruit.Player)) return false; // Members of team Jackal see the names of each other
             return true;
         }
 
@@ -650,6 +628,21 @@ namespace TheSushiRoles
             else if (role.Alignment == RoleAlignment.ImpSupport) name = "<color=#FF0000FF>Imp</color> (<color=#1D7CF2FF>Support</color>)";
 
             return name;
+        }
+        public static void TrackPlayer(PlayerControl target, Arrow arrow, Color color)
+        {
+            if (target == null) return;
+            
+            DeadBody body = null;
+            if (target.Data.IsDead)
+            {
+                body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+            }
+            if (body != null)
+                target.transform.position = body.transform.position;
+
+            arrow.Update(target.transform.position, color);
+            arrow.arrow.SetActive(!target.Data.IsDead || body != null);
         }
 
         public static void ShowFlash(Color color, float Duration = 1f, string message = "") 
@@ -733,7 +726,7 @@ namespace TheSushiRoles
             if (target != null && Lucky.Player != null && Lucky.Player == target && !Lucky.ProtectionBroken && additionalCondition) {
                 if (breakShield) 
                 {
-                    StartRPC(CustomRPC.BreakArmor);
+                    SendRPC(CustomRPC.BreakArmor);
                     RPCProcedure.BreakArmor();
                 }
                 if (showShield) 
@@ -745,7 +738,7 @@ namespace TheSushiRoles
             return false;
         }
 
-        public static MurderAttemptResult CheckMuderAttempt(PlayerControl killer, PlayerControl target, bool blockRewind = false, bool ignoreBlank = false, bool ignoreIfKillerIsDead = false, bool ignoreMedic = false) 
+        public static MurderAttemptResult CheckMurderAttempt(PlayerControl killer, PlayerControl target, bool blockRewind = false, bool ignoreBlank = false, bool ignoreIfKillerIsDead = false, bool ignoreMedic = false) 
         {
             var targetRole = RoleInfo.GetRoleInfoForPlayer(target).FirstOrDefault();
             // Modified vanilla checks
@@ -760,7 +753,7 @@ namespace TheSushiRoles
             // Handle blank shot
             if (!ignoreBlank && Survivor.blankedList.Any(x => x.PlayerId == killer.PlayerId)) 
             {
-                StartRPC(CustomRPC.SetBlanked, killer.PlayerId, (byte)0);
+                SendRPC(CustomRPC.SetBlanked, killer.PlayerId, (byte)0);
                 RPCProcedure.SetBlanked(killer.PlayerId, 0);
 
                 return MurderAttemptResult.BlankKill;
@@ -769,7 +762,7 @@ namespace TheSushiRoles
             // Block impostor Shielded kill
             if (!ignoreMedic && Medic.Shielded != null && Medic.Shielded == target) 
             {
-                StartRPC(CustomRPC.ShieldedMurderAttempt);
+                SendRPC(CustomRPC.ShieldedMurderAttempt);
                 RPCProcedure.ShieldedMurderAttempt();
                 SoundEffectsManager.Play("fail");
                 return MurderAttemptResult.SuppressKill;
@@ -782,63 +775,63 @@ namespace TheSushiRoles
             }
 
             // Murder whoever tries to kill the fortified player.
-                if (Crusader.FortifiedPlayer != null && Crusader.FortifiedPlayer == target && Crusader.Player != null && !Crusader.Player.Data.IsDead)
+            if (Crusader.FortifiedPlayer != null && Crusader.FortifiedPlayer == target && Crusader.Player != null && !Crusader.Player.Data.IsDead)
+            {
+                SendRPC(CustomRPC.FortifiedMurderAttempt);
+                RPCProcedure.FortifiedMurderAttempt();
+                SoundEffectsManager.Play("fail");
+                return MurderAttemptResult.MirrorKill;
+            }
+
+            // Block impostor not fully grown mini kill
+            else if (Mini.Player != null && target == Mini.Player && !Mini.IsGrownUp)
+            {
+                return MurderAttemptResult.SuppressKill;
+            }
+
+            //Veteran with alert active
+            else if (Veteran.Player != null && Veteran.AlertActive && Veteran.Player == target)
+            {
+                if (killer == Pestilence.Player)
                 {
-                    StartRPC(CustomRPC.FortifiedMurderAttempt);
+                    // Veteran dies to Pestilence
+                    return MurderAttemptResult.PerformKill;
+                }
+
+                if (Medic.Shielded != null && Medic.Shielded == target)
+                {
+                    SendRPC(CustomRPC.ShieldedMurderAttempt, target.PlayerId);
+                    RPCProcedure.ShieldedMurderAttempt();
+                }
+                else if (Crusader.FortifiedPlayer != null && Crusader.FortifiedPlayer == target)
+                {
+                    SendRPC(CustomRPC.FortifiedMurderAttempt, target.PlayerId);
                     RPCProcedure.FortifiedMurderAttempt();
-                    SoundEffectsManager.Play("fail");
-                    return MurderAttemptResult.MirrorKill;
                 }
+                return MurderAttemptResult.MirrorKill;
+            }
 
-                // Block impostor not fully grown mini kill
-                else if (Mini.Player != null && target == Mini.Player && !Mini.IsGrownUp)
+            // Pestilence murder attempt
+            else if (Pestilence.Player != null && Pestilence.Player == target)
+            {
+                if (Medic.Shielded != null && Medic.Shielded == target)
                 {
-                    return MurderAttemptResult.SuppressKill;
+                    SendRPC(CustomRPC.ShieldedMurderAttempt, target.PlayerId);
+                    RPCProcedure.ShieldedMurderAttempt();
                 }
-
-                //Veteran with alert active
-                else if (Veteran.Player != null && Veteran.AlertActive && Veteran.Player == target)
+                else if (Crusader.FortifiedPlayer != null && Crusader.FortifiedPlayer == target)
                 {
-                    if (killer == Pestilence.Player)
-                    {
-                        // Veteran dies to Pestilence
-                        return MurderAttemptResult.PerformKill;
-                    }
-
-                    if (Medic.Shielded != null && Medic.Shielded == target)
-                    {
-                        StartRPC(CustomRPC.ShieldedMurderAttempt, target.PlayerId);
-                        RPCProcedure.ShieldedMurderAttempt();
-                    }
-                    else if (Crusader.FortifiedPlayer != null && Crusader.FortifiedPlayer == target)
-                    {
-                        StartRPC(CustomRPC.FortifiedMurderAttempt, target.PlayerId);
-                        RPCProcedure.FortifiedMurderAttempt();
-                    }
-                    return MurderAttemptResult.MirrorKill;
+                    SendRPC(CustomRPC.FortifiedMurderAttempt, target.PlayerId);
+                    RPCProcedure.FortifiedMurderAttempt();
                 }
+                return MurderAttemptResult.MirrorKill;
+            }
 
-                // Pestilence murder attempt
-                else if (Pestilence.Player != null && Pestilence.Player == target)
-                {
-                    if (Medic.Shielded != null && Medic.Shielded == target)
-                    {
-                        StartRPC(CustomRPC.ShieldedMurderAttempt, target.PlayerId);
-                        RPCProcedure.ShieldedMurderAttempt();
-                    }
-                    else if (Crusader.FortifiedPlayer != null && Crusader.FortifiedPlayer == target)
-                    {
-                        StartRPC(CustomRPC.FortifiedMurderAttempt, target.PlayerId);
-                        RPCProcedure.FortifiedMurderAttempt();
-                    }
-                    return MurderAttemptResult.MirrorKill;
-                }
-
-                // Block Lucky with armor kill
-                else if (CheckLucky(target, true, killer == PlayerControl.LocalPlayer, Sheriff.Player == null || killer.PlayerId != Sheriff.Player.PlayerId || !target.IsCrew() && Sheriff.canKillNeutrals || IsKiller(target)))
-                {
-                    return MurderAttemptResult.BlankKill;
-                }
+            // Block Lucky with armor kill
+            else if (CheckLucky(target, true, killer == PlayerControl.LocalPlayer, Sheriff.Player == null || killer.PlayerId != Sheriff.Player.PlayerId || !target.IsCrew() && Sheriff.canKillNeutrals || IsKiller(target)))
+            {
+                return MurderAttemptResult.BlankKill;
+            }
             
             if (TransportationToolPatches.IsUsingTransportation(target) && !blockRewind && killer == Viper.Player) 
             {
@@ -849,14 +842,14 @@ namespace TheSushiRoles
         }
         public static void MurderPlayer(PlayerControl killer, PlayerControl target, bool showAnimation)
         {
-            StartRPC(CustomRPC.UncheckedMurderPlayer, killer.PlayerId, target.PlayerId, showAnimation ? Byte.MaxValue : 0);
+            SendRPC(CustomRPC.UncheckedMurderPlayer, killer.PlayerId, target.PlayerId, showAnimation ? Byte.MaxValue : 0);
             RPCProcedure.UncheckedMurderPlayer(killer.PlayerId, target.PlayerId, showAnimation ? Byte.MaxValue : (byte)0);
         }
         public static MurderAttemptResult CheckMurderAttemptAndKill(PlayerControl killer, PlayerControl target, bool isMeetingStart = false, bool showAnimation = true, bool ignoreBlank = false, bool ignoreIfKillerIsDead = false)  
         {
             // The local player checks for the validity of the kill and performs it afterwards (different to vanilla, where the host performs all the checks)
             // The kill attempt will be shared using a custom RPC, hence combining modded and unmodded versions is impossible
-            MurderAttemptResult murder = CheckMuderAttempt(killer, target, isMeetingStart, ignoreBlank, ignoreIfKillerIsDead);
+            MurderAttemptResult murder = CheckMurderAttempt(killer, target, isMeetingStart, ignoreBlank, ignoreIfKillerIsDead);
 
             if (murder == MurderAttemptResult.PerformKill)
             {
@@ -873,7 +866,7 @@ namespace TheSushiRoles
 
                     if (!TransportationToolPatches.IsUsingTransportation(target) && Viper.poisoned != null)
                     {
-                        StartRPC(CustomRPC.ViperSetPoisoned, byte.MaxValue, byte.MaxValue);
+                        SendRPC(CustomRPC.ViperSetPoisoned, byte.MaxValue, byte.MaxValue);
                         RPCProcedure.ViperSetPoisoned(byte.MaxValue, byte.MaxValue);
                         MurderPlayer(killer, target, showAnimation);
                     }
@@ -894,19 +887,6 @@ namespace TheSushiRoles
             writer.Write(Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId.ToByteArray());
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.VersionHandshake(TheSushiRolesPlugin.Version.Major, TheSushiRolesPlugin.Version.Minor, TheSushiRolesPlugin.Version.Build, TheSushiRolesPlugin.Version.Revision, Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId, AmongUsClient.Instance.ClientId);
-        }
-
-        public static List<PlayerControl> GetKillerTeamMembers(PlayerControl player) 
-        {
-            List<PlayerControl> team = new List<PlayerControl>();
-            foreach(PlayerControl p in PlayerControl.AllPlayerControls) 
-            {
-                if (player.Data.Role.IsImpostor && p.Data.Role.IsImpostor && player.PlayerId != p.PlayerId && team.All(x => x.PlayerId != p.PlayerId)) team.Add(p);
-                else if (player == Jackal.Player && p == Sidekick.Player) team.Add(p); 
-                else if (player == Sidekick.Player && p == Jackal.Player) team.Add(p);
-            }
-        
-            return team;
         }
 
         public static void Shuffle<T>(this List<T> list)
@@ -936,7 +916,7 @@ namespace TheSushiRoles
         }
         public static bool IsJackal(PlayerControl player)
         {
-            return player != null && Sidekick.Player != null && player.PlayerId == Sidekick.Player.PlayerId ||
+            return player != null && Recruit.Player != null && player.PlayerId == Recruit.Player.PlayerId ||
             player != null && Jackal.Player != null && player.PlayerId == Jackal.Player.PlayerId;
         }
 
@@ -968,7 +948,7 @@ namespace TheSushiRoles
                 return roleInfo.FactionId == Faction.Crewmates;
             return false;
         }
-        public static PlayerControl GetRedirectedTarget(PlayerControl original)
+        public static PlayerControl CheckForLandlordTargets(PlayerControl original)
         {
             if (original == null) return null;
 
@@ -1003,13 +983,13 @@ namespace TheSushiRoles
             bool CanKill = Veteran.Player == target && Veteran.AlertActive;
             if (CanKill)
             {
-                StartRPC(CustomRPC.VeteranAlertKill, PlayerControl.LocalPlayer.PlayerId);
+                SendRPC(CustomRPC.VeteranAlertKill, PlayerControl.LocalPlayer.PlayerId);
                 RPCProcedure.VeteranAlertKill(PlayerControl.LocalPlayer.PlayerId);
             }
             bool CanPestiKill = Pestilence.Player == target;
             if (CanPestiKill)
             {
-                StartRPC(CustomRPC.PestilenceKill, PlayerControl.LocalPlayer.PlayerId);
+                SendRPC(CustomRPC.PestilenceKill, PlayerControl.LocalPlayer.PlayerId);
                 RPCProcedure.PestilenceKill(PlayerControl.LocalPlayer.PlayerId);
             }
             bool CouldKill = CanKill || CanPestiKill;
@@ -1080,8 +1060,8 @@ namespace TheSushiRoles
             {
                 var rend = tzGO.transform.Find("Inactive").GetComponent<SpriteRenderer>();
                 var rendActive = tzGO.transform.Find("Active").GetComponent<SpriteRenderer>();
-                rend.sprite = zoomOutStatus ? LoadSpriteFromResources("TheSushiRoles.Resources.Plus_Button.png", 100f) : LoadSpriteFromResources("TheSushiRoles.Resources.Minus_Button.png", 100f);
-                rendActive.sprite = zoomOutStatus ? LoadSpriteFromResources("TheSushiRoles.Resources.Plus_ButtonActive.png", 100f) : LoadSpriteFromResources("TheSushiRoles.Resources.Minus_ButtonActive.png", 100f);
+                rend.sprite = zoomOutStatus ? LoadSprite("TheSushiRoles.Resources.Plus_Button.png", 100f) : LoadSprite("TheSushiRoles.Resources.Minus_Button.png", 100f);
+                rendActive.sprite = zoomOutStatus ? LoadSprite("TheSushiRoles.Resources.Plus_ButtonActive.png", 100f) : LoadSprite("TheSushiRoles.Resources.Minus_ButtonActive.png", 100f);
                 tzGO.transform.localScale = new Vector3(1.2f, 1.2f, 1f) * (zoomOutStatus ? 4 : 1);
             }
 
@@ -1104,7 +1084,7 @@ namespace TheSushiRoles
         {
             return player.Role.IsImpostor
                 || Jackal.Player != null && Jackal.Player.PlayerId == player.PlayerId
-                || (Sidekick.Player != null && Sidekick.Player.PlayerId == player.PlayerId)
+                || (Recruit.Player != null && Recruit.Player.PlayerId == player.PlayerId)
                 || (Glitch.Player != null && Glitch.Player.PlayerId == player.PlayerId)
                 || (Werewolf.Player != null && Werewolf.Player.PlayerId == player.PlayerId)
                 || (Juggernaut.Player != null && Juggernaut.Player.PlayerId == player.PlayerId)

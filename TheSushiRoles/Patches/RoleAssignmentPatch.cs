@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System;
+using Cpp2IL.Core.Extensions;
 
 namespace TheSushiRoles.Patches 
 {
@@ -45,7 +46,7 @@ namespace TheSushiRoles.Patches
         private static List<Tuple<byte, byte>> playerRoleMap = new List<Tuple<byte, byte>>();
         public static void Postfix() 
         {
-            Utils.StartRPC(CustomRPC.ResetVaribles);
+            Utils.SendRPC(CustomRPC.ResetVaribles);
             RPCProcedure.ResetVariables();
             if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return; // Don't assign Roles in Hide N Seek
             AssignRoles();
@@ -128,6 +129,8 @@ namespace TheSushiRoles.Patches
             ImpSettings.Add((byte)RoleId.Wraith, CustomOptionHolder.WraithSpawnRate.GetSelection());
             ImpSettings.Add((byte)RoleId.Undertaker, CustomOptionHolder.UndertakerSpawnRate .GetSelection());
             ImpSettings.Add((byte)RoleId.Yoyo, CustomOptionHolder.yoyoSpawnRate.GetSelection());
+            if (Impostors.Count > 1)
+                ImpSettings.Add((byte)RoleId.Cultist, CustomOptionHolder.CultistSpawnRate.GetSelection());
 
             NeutralKillingSettings.Add((byte)RoleId.Jackal, CustomOptionHolder.jackalSpawnRate.GetSelection());
             NeutralKillingSettings.Add((byte)RoleId.Plaguebearer, CustomOptionHolder.PlaguebearerSpawnRate.GetSelection());
@@ -202,37 +205,41 @@ namespace TheSushiRoles.Patches
              List<byte> ensuredNeutralBenignRoles = data.NeutralBenignSettings.Where(x => x.Value == 10).Select(x => x.Key).ToList();
             List<byte> ensuredNeutralKillingRoles = data.NeutralKillingSettings.Where(x => x.Value == 10).Select(x => x.Key).ToList();
             List<byte> ensuredImpostorRoles = data.ImpSettings.Where(x => x.Value == 10).Select(x => x.Key).ToList();
+            
+            //Assign Impostor First
+            while (data.Impostors.Count > 0 && data.maxImpostorRoles > 0 && ensuredImpostorRoles.Count > 0)
+            {
+                Dictionary<RoleFaction, List<RoleId>> ImpRolesToAssign = new();
+                if (data.Impostors.Count > 0 && data.maxImpostorRoles > 0 && ensuredImpostorRoles.Count > 0)
+                    ImpRolesToAssign.Add(RoleFaction.Impostor, ensuredImpostorRoles.Select(x => (RoleId)x).ToList());
 
-            // Assign roles until we run out of either players we can assign roles to or run out of roles we can assign to players
-            while (
-                (data.Impostors.Count > 0 && data.maxImpostorRoles > 0 && ensuredImpostorRoles.Count > 0) || 
-                (data.Crewmates.Count > 0 && (
-                    (data.MaxCrewmateRoles > 0 && ensuredCrewmateRoles.Count > 0) || 
-                    (data.MaxNeutralEvilRoles > 0 && ensuredNeutralEvilRoles.Count > 0) || 
-                    (data.MaxNeutralBenignRoles > 0 && ensuredNeutralBenignRoles.Count > 0) || 
-                    (data.MaxNeutralKillingRoles > 0 && ensuredNeutralKillingRoles.Count > 0)
-                ))) {
-                    
-                Dictionary<RoleFaction, List<byte>> rolesToAssign = new Dictionary<RoleFaction, List<byte>>();
-                if (data.Crewmates.Count > 0 && data.MaxCrewmateRoles > 0 && ensuredCrewmateRoles.Count > 0) rolesToAssign.Add(RoleFaction.Crewmate, ensuredCrewmateRoles);
-                if (data.Crewmates.Count > 0 && data.MaxNeutralEvilRoles > 0 && ensuredNeutralEvilRoles.Count > 0) rolesToAssign.Add(RoleFaction.NeutralEvil, ensuredNeutralEvilRoles);
-                if (data.Crewmates.Count > 0 && data.MaxNeutralBenignRoles > 0 && ensuredNeutralBenignRoles.Count > 0) rolesToAssign.Add(RoleFaction.NeutralBenign, ensuredNeutralBenignRoles);
-                if (data.Crewmates.Count > 0 && data.MaxNeutralKillingRoles > 0 && ensuredNeutralKillingRoles.Count > 0) rolesToAssign.Add(RoleFaction.NeutralKilling, ensuredNeutralKillingRoles);
-                if (data.Impostors.Count > 0 && data.maxImpostorRoles > 0 && ensuredImpostorRoles.Count > 0) rolesToAssign.Add(RoleFaction.Impostor, ensuredImpostorRoles);
-                
                 // Randomly select a pool of roles to assign a role from next (Crewmate role, Neutral role or Impostor role) 
                 // then select one of the roles from the selected pool to a player 
                 // and remove the role (and any potentially blocked role pairings) from the pool(s)
-                var roleType = rolesToAssign.Keys.ElementAt(rnd.Next(0, rolesToAssign.Keys.Count())); 
-                var players = roleType == RoleFaction.Impostor ? data.Impostors : data.Crewmates;
-                var index = rnd.Next(0, rolesToAssign[roleType].Count);
-                var roleId = rolesToAssign[roleType][index];
-                SetRoleToRandomPlayer(rolesToAssign[roleType][index], players);
-                rolesToAssign[roleType].RemoveAt(index);
+                RoleFaction roleType = ImpRolesToAssign.Keys.ElementAt(rnd.Next(0, ImpRolesToAssign.Keys.Count));
+                List<PlayerControl> players = data.Impostors;
+                RoleId roleId = ImpRolesToAssign[roleType].RemoveAndReturn(rnd.Next(0, ImpRolesToAssign[roleType].Count));
+                SetRoleToRandomPlayer((byte)roleId, players);
 
-                if (CustomOptionHolder.blockedRolePairings.ContainsKey(roleId)) 
+                if (roleId == RoleId.Cultist)
                 {
-                    foreach(var blockedRoleId in CustomOptionHolder.blockedRolePairings[roleId]) 
+                    PlayerControl player = data.Impostors.FirstOrDefault();
+
+                    Utils.BecomeCrewmate(player);
+
+                    data.Impostors.Remove(player);
+                    data.Crewmates.Add(player);
+                }
+                else
+                {
+                    ImpRolesToAssign[RoleFaction.Impostor].RemoveAll(x => x == RoleId.Cultist);
+                    if (data.ImpSettings.ContainsKey((byte)RoleId.Cultist))
+                        data.ImpSettings[(byte)RoleId.Cultist] = 0;
+                }
+
+                if (CustomOptionHolder.blockedRolePairings.ContainsKey((byte)roleId))
+                {
+                    foreach (var blockedRoleId in CustomOptionHolder.blockedRolePairings[(byte)roleId])
                     {
                         // Set chance for the blocked roles to 0 for chances less than 100%
                         if (data.ImpSettings.ContainsKey(blockedRoleId)) data.ImpSettings[blockedRoleId] = 0;
@@ -241,7 +248,52 @@ namespace TheSushiRoles.Patches
                         if (data.NeutralKillingSettings.ContainsKey(blockedRoleId)) data.NeutralKillingSettings[blockedRoleId] = 0;
                         if (data.CrewSettings.ContainsKey(blockedRoleId)) data.CrewSettings[blockedRoleId] = 0;
                         // Remove blocked roles even if the chance was 100%
-                        foreach(var ensuredRolesList in rolesToAssign.Values) 
+                        foreach (var ensuredRolesList in ImpRolesToAssign.Values)
+                        {
+                            ensuredRolesList.RemoveAll(x => x == (RoleId)blockedRoleId);
+                        }
+                    }
+                }
+                data.maxImpostorRoles--;
+            }
+
+            // Assign roles until we run out of either players we can assign roles to or run out of roles we can assign to players
+            while ((data.Crewmates.Count > 0 && (
+                    (data.MaxCrewmateRoles > 0 && ensuredCrewmateRoles.Count > 0) ||
+                    (data.MaxNeutralEvilRoles > 0 && ensuredNeutralEvilRoles.Count > 0) ||
+                    (data.MaxNeutralBenignRoles > 0 && ensuredNeutralBenignRoles.Count > 0) ||
+                    (data.MaxNeutralKillingRoles > 0 && ensuredNeutralKillingRoles.Count > 0)
+                )))
+            {
+
+                Dictionary<RoleFaction, List<byte>> rolesToAssign = new Dictionary<RoleFaction, List<byte>>();
+                if (data.Crewmates.Count > 0 && data.MaxCrewmateRoles > 0 && ensuredCrewmateRoles.Count > 0) rolesToAssign.Add(RoleFaction.Crewmate, ensuredCrewmateRoles);
+                if (data.Crewmates.Count > 0 && data.MaxNeutralEvilRoles > 0 && ensuredNeutralEvilRoles.Count > 0) rolesToAssign.Add(RoleFaction.NeutralEvil, ensuredNeutralEvilRoles);
+                if (data.Crewmates.Count > 0 && data.MaxNeutralBenignRoles > 0 && ensuredNeutralBenignRoles.Count > 0) rolesToAssign.Add(RoleFaction.NeutralBenign, ensuredNeutralBenignRoles);
+                if (data.Crewmates.Count > 0 && data.MaxNeutralKillingRoles > 0 && ensuredNeutralKillingRoles.Count > 0) rolesToAssign.Add(RoleFaction.NeutralKilling, ensuredNeutralKillingRoles);
+
+                // Randomly select a pool of roles to assign a role from next (Crewmate role, Neutral role or Impostor role) 
+                // then select one of the roles from the selected pool to a player 
+                // and remove the role (and any potentially blocked role pairings) from the pool(s)
+                var roleType = rolesToAssign.Keys.ElementAt(rnd.Next(0, rolesToAssign.Keys.Count()));
+                List<PlayerControl> players = data.Crewmates;
+                var index = rnd.Next(0, rolesToAssign[roleType].Count);
+                var roleId = rolesToAssign[roleType][index];
+                SetRoleToRandomPlayer(rolesToAssign[roleType][index], players);
+                rolesToAssign[roleType].RemoveAt(index);
+
+                if (CustomOptionHolder.blockedRolePairings.ContainsKey(roleId))
+                {
+                    foreach (var blockedRoleId in CustomOptionHolder.blockedRolePairings[roleId])
+                    {
+                        // Set chance for the blocked roles to 0 for chances less than 100%
+                        if (data.ImpSettings.ContainsKey(blockedRoleId)) data.ImpSettings[blockedRoleId] = 0;
+                        if (data.NeutralEvilSettings.ContainsKey(blockedRoleId)) data.NeutralEvilSettings[blockedRoleId] = 0;
+                        if (data.NeutralBenignSettings.ContainsKey(blockedRoleId)) data.NeutralBenignSettings[blockedRoleId] = 0;
+                        if (data.NeutralKillingSettings.ContainsKey(blockedRoleId)) data.NeutralKillingSettings[blockedRoleId] = 0;
+                        if (data.CrewSettings.ContainsKey(blockedRoleId)) data.CrewSettings[blockedRoleId] = 0;
+                        // Remove blocked roles even if the chance was 100%
+                        foreach (var ensuredRolesList in rolesToAssign.Values)
                         {
                             ensuredRolesList.RemoveAll(x => x == blockedRoleId);
                         }
@@ -249,17 +301,18 @@ namespace TheSushiRoles.Patches
                 }
 
                 // Adjust the role limit
-                switch (roleType) 
+                switch (roleType)
                 {
                     case RoleFaction.Crewmate: data.MaxCrewmateRoles--; crewValues -= 10; break;
                     case RoleFaction.NeutralEvil: data.MaxNeutralEvilRoles--; break;
                     case RoleFaction.NeutralBenign: data.MaxNeutralBenignRoles--; break;
                     case RoleFaction.NeutralKilling: data.MaxNeutralKillingRoles--; break;
-                    case RoleFaction.Impostor: data.maxImpostorRoles--; impValues -= 10;  break;
+                    case RoleFaction.Impostor: data.maxImpostorRoles--; impValues -= 10; break;
                 }
             }
         }
-        private static void AssignChanceRoles(RoleAssignmentData data) 
+        
+        private static void AssignChanceRoles(RoleAssignmentData data)
         {
             // Get all roles where the chance to occur is set grater than 0% but not 100% and build a ticket pool based on their weight
             List<byte> crewmateTickets = data.CrewSettings.Where(x => x.Value > 0 && x.Value < 10).Select(x => Enumerable.Repeat(x.Key, x.Value)).SelectMany(x => x).ToList();
@@ -268,38 +321,82 @@ namespace TheSushiRoles.Patches
             List<byte> neutralKTickets = data.NeutralKillingSettings.Where(x => x.Value > 0 && x.Value < 10).Select(x => Enumerable.Repeat(x.Key, x.Value)).SelectMany(x => x).ToList();
             List<byte> impostorTickets = data.ImpSettings.Where(x => x.Value > 0 && x.Value < 10).Select(x => Enumerable.Repeat(x.Key, x.Value)).SelectMany(x => x).ToList();
 
+            //Assign Impostors First
+            while (data.Impostors.Count > 0 && data.maxImpostorRoles > 0 && impostorTickets.Count > 0)
+            {
+                // Imp Roles To List
+                Dictionary<RoleFaction, List<byte>> ImpRolesToAssign = new();
+                if (data.Impostors.Count > 0 && data.maxImpostorRoles > 0 && impostorTickets.Count > 0)
+                    ImpRolesToAssign.Add(RoleFaction.Impostor, impostorTickets);
+
+                // Randomly select a pool of role tickets to assign a role from next Impostor role
+                // then select one of the roles from the selected pool to a player 
+                // and remove all tickets of this role (and any potentially blocked role pairings) from the pool(s)
+                RoleFaction roleType = ImpRolesToAssign.Keys.ElementAt(rnd.Next(0, ImpRolesToAssign.Keys.Count));
+                List<PlayerControl> players = data.Impostors;
+                byte roleId = ImpRolesToAssign[roleType][rnd.Next(0, ImpRolesToAssign[roleType].Count)];
+                SetRoleToRandomPlayer(roleId, players);
+                ImpRolesToAssign[roleType].RemoveAll(x => x == roleId);
+
+                if (roleId == (byte)RoleId.Cultist)
+                {
+                    PlayerControl player = data.Impostors.FirstOrDefault();
+
+                    Utils.BecomeCrewmate(player);
+
+                    data.Impostors.Remove(player);
+                    data.Crewmates.Add(player);
+                }
+                else
+                {
+                    ImpRolesToAssign[RoleFaction.Impostor].RemoveAll(x => x == (byte)RoleId.Cultist);
+                }
+
+                if (CustomOptionHolder.blockedRolePairings.ContainsKey(roleId))
+                {
+                    foreach (var blockedRoleId in CustomOptionHolder.blockedRolePairings[roleId])
+                    {
+                        // Remove tickets of blocked roles from all pools
+                        crewmateTickets.RemoveAll(x => x == blockedRoleId);
+                        neutralEvilTickets.RemoveAll(x => x == blockedRoleId);
+                        neutralBenignTickets.RemoveAll(x => x == blockedRoleId);
+                        neutralKTickets.RemoveAll(x => x == blockedRoleId);
+                        impostorTickets.RemoveAll(x => x == blockedRoleId);
+                    }
+                }
+                data.maxImpostorRoles--;
+            }
+
             // Assign roles until we run out of either players we can assign roles to or run out of roles we can assign to players
             while (
-                (data.Impostors.Count > 0 && data.maxImpostorRoles > 0 && impostorTickets.Count > 0) || 
-                (data.Crewmates.Count > 0 && 
+                data.Crewmates.Count > 0 &&
                 (
-                    (data.MaxCrewmateRoles > 0 && crewmateTickets.Count > 0) || 
-                    (data.MaxNeutralEvilRoles > 0 && neutralEvilTickets.Count > 0) || 
-                    (data.MaxNeutralBenignRoles > 0 && neutralBenignTickets.Count > 0) || 
+                    (data.MaxCrewmateRoles > 0 && crewmateTickets.Count > 0) ||
+                    (data.MaxNeutralEvilRoles > 0 && neutralEvilTickets.Count > 0) ||
+                    (data.MaxNeutralBenignRoles > 0 && neutralBenignTickets.Count > 0) ||
                     (data.MaxNeutralKillingRoles > 0 && neutralKTickets.Count > 0)
-                ))) 
-                {
-                
+                ))
+            {
+
                 Dictionary<RoleFaction, List<byte>> rolesToAssign = new Dictionary<RoleFaction, List<byte>>();
                 if (data.Crewmates.Count > 0 && data.MaxCrewmateRoles > 0 && crewmateTickets.Count > 0) rolesToAssign.Add(RoleFaction.Crewmate, crewmateTickets);
                 if (data.Crewmates.Count > 0 && data.MaxNeutralEvilRoles > 0 && neutralEvilTickets.Count > 0) rolesToAssign.Add(RoleFaction.NeutralEvil, neutralEvilTickets);
                 if (data.Crewmates.Count > 0 && data.MaxNeutralBenignRoles > 0 && neutralBenignTickets.Count > 0) rolesToAssign.Add(RoleFaction.NeutralBenign, neutralBenignTickets);
                 if (data.Crewmates.Count > 0 && data.MaxNeutralKillingRoles > 0 && neutralKTickets.Count > 0) rolesToAssign.Add(RoleFaction.NeutralKilling, neutralKTickets);
-                if (data.Impostors.Count > 0 && data.maxImpostorRoles > 0 && impostorTickets.Count > 0) rolesToAssign.Add(RoleFaction.Impostor, impostorTickets);
-                
+
                 // Randomly select a pool of role tickets to assign a role from next (Crewmate role, Neutral role or Impostor role) 
                 // then select one of the roles from the selected pool to a player 
                 // and remove all tickets of this role (and any potentially blocked role pairings) from the pool(s)
                 var roleType = rolesToAssign.Keys.ElementAt(rnd.Next(0, rolesToAssign.Keys.Count()));
-                var players = roleType == RoleFaction.Impostor ? data.Impostors : data.Crewmates;
+                List<PlayerControl> players = data.Crewmates;
                 var index = rnd.Next(0, rolesToAssign[roleType].Count);
                 var roleId = rolesToAssign[roleType][index];
                 SetRoleToRandomPlayer(roleId, players);
                 rolesToAssign[roleType].RemoveAll(x => x == roleId);
 
-                if (CustomOptionHolder.blockedRolePairings.ContainsKey(roleId)) 
+                if (CustomOptionHolder.blockedRolePairings.ContainsKey(roleId))
                 {
-                    foreach(var blockedRoleId in CustomOptionHolder.blockedRolePairings[roleId]) 
+                    foreach (var blockedRoleId in CustomOptionHolder.blockedRolePairings[roleId])
                     {
                         // Remove tickets of blocked roles from all pools
                         crewmateTickets.RemoveAll(x => x == blockedRoleId);
@@ -311,13 +408,12 @@ namespace TheSushiRoles.Patches
                 }
 
                 // Adjust the role limit
-                switch (roleType) 
+                switch (roleType)
                 {
                     case RoleFaction.Crewmate: data.MaxCrewmateRoles--; break;
-                    case RoleFaction.NeutralEvil: data.MaxNeutralEvilRoles--;break;
-                    case RoleFaction.NeutralBenign: data.MaxNeutralBenignRoles--;break;
-                    case RoleFaction.NeutralKilling: data.MaxNeutralKillingRoles--;break;
-                    case RoleFaction.Impostor: data.maxImpostorRoles--;break;
+                    case RoleFaction.NeutralEvil: data.MaxNeutralEvilRoles--; break;
+                    case RoleFaction.NeutralBenign: data.MaxNeutralBenignRoles--; break;
+                    case RoleFaction.NeutralKilling: data.MaxNeutralKillingRoles--; break;
                 }
             }
         }
@@ -336,13 +432,13 @@ namespace TheSushiRoles.Patches
                 
                 if (possibleTargets.Count == 0) 
                 {
-                    Utils.StartRPC(CustomRPC.LawyerChangeRole);
+                    Utils.SendRPC(CustomRPC.LawyerChangeRole);
                     RPCProcedure.LawyerChangeRole();
                 } 
                 else 
                 {
                     var target = possibleTargets[TheSushiRoles.rnd.Next(0, possibleTargets.Count)];
-                    Utils.StartRPC(CustomRPC.LawyerSetTarget, target.PlayerId);
+                    Utils.SendRPC(CustomRPC.LawyerSetTarget, target.PlayerId);
                     RPCProcedure.LawyerSetTarget(target.PlayerId);
                 }
             }
@@ -356,13 +452,13 @@ namespace TheSushiRoles.Patches
                 }
                 if (possibleTargets.Count == 0) 
                 {
-                    Utils.StartRPC(CustomRPC.ProsecutorChangeRole);
+                    Utils.SendRPC(CustomRPC.ProsecutorChangeRole);
                     RPCProcedure.ProsecutorChangeRole();
                 }
                 else 
                 {
                     var target = possibleTargets[TheSushiRoles.rnd.Next(0, possibleTargets.Count)];
-                    Utils.StartRPC(CustomRPC.ProsecutorSetTarget, target.PlayerId);
+                    Utils.SendRPC(CustomRPC.ProsecutorSetTarget, target.PlayerId);
                     RPCProcedure.ProsecutorSetTarget(target.PlayerId);
                 }
             }
@@ -523,7 +619,7 @@ namespace TheSushiRoles.Patches
                 byte playerId = playerList[index].PlayerId;
                 playerList.RemoveAt(index);
 
-                Utils.StartRPC(CustomRPC.SetGuesser, playerId);
+                Utils.SendRPC(CustomRPC.SetGuesser, playerId);
                 RPCProcedure.SetGuesser(playerId);
             }
         }
@@ -536,7 +632,7 @@ namespace TheSushiRoles.Patches
 
             playerRoleMap.Add(new Tuple<byte, byte>(playerId, roleId));
 
-            Utils.StartRPC(CustomRPC.SetRole, roleId, playerId);
+            Utils.SendRPC(CustomRPC.SetRole, roleId, playerId);
             RPCProcedure.SetRole(roleId, playerId);
             return playerId;
         }
@@ -548,7 +644,7 @@ namespace TheSushiRoles.Patches
             byte playerId = playerList[index].PlayerId;
             playerList.RemoveAt(index);
 
-            Utils.StartRPC(CustomRPC.SetModifier, modifierId, playerId, flag);
+            Utils.SendRPC(CustomRPC.SetModifier, modifierId, playerId, flag);
             RPCProcedure.SetModifier(modifierId, playerId, flag);
             return playerId;
         }
@@ -560,7 +656,7 @@ namespace TheSushiRoles.Patches
             byte playerId = playerList[index].PlayerId;
             playerList.RemoveAt(index);
 
-            Utils.StartRPC(CustomRPC.SetAbility, abilityId, playerId, flag);
+            Utils.SendRPC(CustomRPC.SetAbility, abilityId, playerId, flag);
             RPCProcedure.SetAbility(abilityId, playerId, flag);
             return playerId;
         }

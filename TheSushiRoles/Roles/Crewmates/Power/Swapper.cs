@@ -20,7 +20,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetCheckSprite() 
         {
             if (spriteCheck) return spriteCheck;
-            spriteCheck = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.SwapperCheck.png", 150f);
+            spriteCheck = Utils.LoadSprite("TheSushiRoles.Resources.SwapperCheck.png", 150f);
             return spriteCheck;
         }
 

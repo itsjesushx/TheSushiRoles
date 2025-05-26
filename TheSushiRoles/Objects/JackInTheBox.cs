@@ -16,7 +16,7 @@ namespace TheSushiRoles.Objects
             if (boxAnimationSprites == null || boxAnimationSprites.Length == 0) return null;
             index = Mathf.Clamp(index, 0, boxAnimationSprites.Length - 1);
             if (boxAnimationSprites[index] == null)
-                boxAnimationSprites[index] = (Utils.LoadSpriteFromResources($"TheSushiRoles.Resources.TricksterAnimation.trickster_box_00{(index + 1):00}.png", 175f));
+                boxAnimationSprites[index] = (Utils.LoadSprite($"TheSushiRoles.Resources.TricksterAnimation.trickster_box_00{(index + 1):00}.png", 175f));
             return boxAnimationSprites[index];
         }
         public static void StartAnimation(int ventId) 

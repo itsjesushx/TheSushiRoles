@@ -50,10 +50,11 @@ namespace TheSushiRoles
         public static CustomButton GlitchKillButton;
         public static CustomButton RomanticKillButton;
         public static CustomButton WerewolfMaulButton;
-        public static CustomButton sidekickKillButton;
+        public static CustomButton RecruitKillButton;
         public static CustomButton PlaguebearerButton;
         public static CustomButton PestilenceButton;
-        public static CustomButton jackalSidekickButton;
+        public static CustomButton jackalRecruitButton;
+        public static CustomButton CultistButton;
         private static CustomButton eraserButton;
         private static CustomButton placeJackInTheBoxButton;
         private static CustomButton DisperserButton;
@@ -155,8 +156,9 @@ namespace TheSushiRoles
             RomanticKillButton.MaxTimer = VengefulRomantic.Cooldown;
             WerewolfMaulButton.MaxTimer = Werewolf.Cooldown;
             JuggernautKillButton.MaxTimer = Juggernaut.Cooldown;
-            sidekickKillButton.MaxTimer = Sidekick.Cooldown;
-            jackalSidekickButton.MaxTimer = Jackal.createSidekickCooldown;
+            RecruitKillButton.MaxTimer = Recruit.Cooldown;
+            jackalRecruitButton.MaxTimer = Jackal.createRecruitCooldown;
+            CultistButton.MaxTimer = Cultist.Cooldown;
             eraserButton.MaxTimer = Eraser.Cooldown;
             placeJackInTheBoxButton.MaxTimer = Trickster.placeBoxCooldown;
             lightsOutButton.MaxTimer = Trickster.lightsOutCooldown;
@@ -318,14 +320,14 @@ namespace TheSushiRoles
                 () => 
                 {
                     engineerRepairButton.Timer = 0f;
-                    Utils.StartRPC(CustomRPC.EngineerUsedRepair);
+                    Utils.SendRPC(CustomRPC.EngineerUsedRepair);
                     RPCProcedure.EngineerUsedRepair();
                     SoundEffectsManager.Play("engineerRepair");
                     foreach (PlayerTask task in PlayerControl.LocalPlayer.myTasks.GetFastEnumerator()) 
                     {
                         if (task.TaskType == TaskTypes.FixLights) 
                         {
-                            Utils.StartRPC(CustomRPC.EngineerFixLights);
+                            Utils.SendRPC(CustomRPC.EngineerFixLights);
                             RPCProcedure.EngineerFixLights();
                         }
                         else if (task.TaskType == TaskTypes.RestoreOxy) 
@@ -353,7 +355,7 @@ namespace TheSushiRoles
                         } 
                         else if (SubmergedCompatibility.IsSubmerged && task.TaskType == SubmergedCompatibility.RetrieveOxygenMask) 
                         {
-                            Utils.StartRPC(CustomRPC.EngineerFixSubmergedOxygen);
+                            Utils.SendRPC(CustomRPC.EngineerFixSubmergedOxygen);
                             RPCProcedure.EngineerFixSubmergedOxygen();
                         }
 
@@ -382,22 +384,22 @@ namespace TheSushiRoles
                 {
                     if (Sheriff.CurrentTarget.CheckVeteranPestilenceKill()) return;
 
-                    MurderAttemptResult murderAttemptResult = Utils.CheckMuderAttempt(Sheriff.Player, Sheriff.CurrentTarget);
+                    MurderAttemptResult murderAttemptResult = Utils.CheckMurderAttempt(Sheriff.Player, Sheriff.CurrentTarget);
                     if (murderAttemptResult == MurderAttemptResult.SuppressKill) return;
 
                     if (murderAttemptResult == MurderAttemptResult.PerformKill) 
                     {
                         byte targetId = 0;
-                        if (Sheriff.Player == Sidekick.Player)
+                        if (Sheriff.Player == Recruit.Player)
                         {
-                            // Sidekick Sheriff can kill anyone
+                            // Recruit Sheriff can kill anyone
                             targetId = Sheriff.CurrentTarget.PlayerId;
                         }
                         // then the normal sheriff
                         else if ((Sheriff.CurrentTarget.Data.Role.IsImpostor && (Sheriff.CurrentTarget != Mini.Player || Mini.IsGrownUp))
                             || Sheriff.CurrentTarget.IsNeutralKiller()
                             || (Sheriff.spyCanDieToSheriff && Spy.Player == Sheriff.CurrentTarget)
-                            || (Sheriff.canKillNeutrals && Sheriff.CurrentTarget.IsNeutral()))
+                            || (Sheriff.canKillNeutrals && Sheriff.CurrentTarget.IsPassiveNeutral()))
                         {
                             targetId = Sheriff.CurrentTarget.PlayerId;
                         }
@@ -409,7 +411,7 @@ namespace TheSushiRoles
                         // Lucky sheriff shot doesnt kill if backfired
                         if (targetId == Sheriff.Player.PlayerId && Utils.CheckLucky(Sheriff.Player, true, true))
                             return;
-                        Utils.StartRPC(CustomRPC.UncheckedMurderPlayer, Sheriff.Player.Data.PlayerId, targetId, byte.MaxValue);
+                        Utils.SendRPC(CustomRPC.UncheckedMurderPlayer, Sheriff.Player.Data.PlayerId, targetId, byte.MaxValue);
                         RPCProcedure.UncheckedMurderPlayer(Sheriff.Player.Data.PlayerId, targetId, Byte.MaxValue);
                     }
 
@@ -445,7 +447,7 @@ namespace TheSushiRoles
                                     if (playerInfo == null) continue;
 
                                     // Drag the body
-                                    Utils.StartRPC(CustomRPC.DragBody, playerInfo.PlayerId);
+                                    Utils.SendRPC(CustomRPC.DragBody, playerInfo.PlayerId);
                                     RPCProcedure.DragBody(playerInfo.PlayerId);
                                     Undertaker.CurrentTarget = deadBody;
                                     SoundEffectsManager.Play("JanitorClean");
@@ -461,7 +463,7 @@ namespace TheSushiRoles
 
                    byte playerId = PlayerControl.LocalPlayer.PlayerId;
 
-                    Utils.StartRPC(CustomRPC.DropBody, playerId);
+                    Utils.SendRPC(CustomRPC.DropBody, playerId);
                     RPCProcedure.DropBody(playerId);
                 }
             },
@@ -521,7 +523,7 @@ namespace TheSushiRoles
                                     if (playerInfo == null) continue;
 
                                     // Drag the body
-                                    Utils.StartRPC(CustomRPC.HitmanDragBody, playerInfo.PlayerId);
+                                    Utils.SendRPC(CustomRPC.HitmanDragBody, playerInfo.PlayerId);
                                     RPCProcedure.HitmanDragBody(playerInfo.PlayerId);
                                     Hitman.BodyTarget = deadBody;
                                     SoundEffectsManager.Play("JanitorClean");
@@ -586,7 +588,7 @@ namespace TheSushiRoles
                 {
                     if (Blackmailer.CurrentTarget.CheckVeteranPestilenceKill() || Blackmailer.CurrentTarget.CheckFortifiedPlayer()) return;
 
-                    Utils.StartRPC(CustomRPC.BlackmailerBlackmail, Blackmailer.CurrentTarget.PlayerId);
+                    Utils.SendRPC(CustomRPC.BlackmailerBlackmail, Blackmailer.CurrentTarget.PlayerId);
                     RPCProcedure.BlackmailerBlackmail(Blackmailer.CurrentTarget.PlayerId);
                     Blackmailer.CurrentTarget = null;
                     BlackmailButton.Timer = BlackmailButton.MaxTimer;
@@ -613,7 +615,7 @@ namespace TheSushiRoles
                 {
                     if (Glitch.CurrentTarget.CheckVeteranPestilenceKill() || Glitch.CurrentTarget.CheckFortifiedPlayer()) return;
 
-                    Utils.StartRPC(CustomRPC.GlitchUsedHacks, Glitch.CurrentTarget.PlayerId);
+                    Utils.SendRPC(CustomRPC.GlitchUsedHacks, Glitch.CurrentTarget.PlayerId);
                     RPCProcedure.GlitchUsedHacks(Glitch.CurrentTarget.PlayerId);
                     Glitch.CurrentTarget = null;
                     GlitchHackButton.Timer = GlitchHackButton.MaxTimer;
@@ -705,7 +707,7 @@ namespace TheSushiRoles
             ChronosRewindButton = new CustomButton(
                 OnClick: () => 
                 {
-                    Utils.StartRPC(CustomRPC.ChronosRewindTime);
+                    Utils.SendRPC(CustomRPC.ChronosRewindTime);
                     RPCProcedure.ChronosRewindTime();
                     SoundEffectsManager.Play("timemasterShield");
                 },
@@ -802,7 +804,7 @@ namespace TheSushiRoles
             WraithButton = new CustomButton(
                 () => 
                 {
-                    Utils.StartRPC(CustomRPC.SetVanish, Wraith.Player.PlayerId, byte.MinValue);
+                    Utils.SendRPC(CustomRPC.SetVanish, Wraith.Player.PlayerId, byte.MinValue);
                     RPCProcedure.SetVanish(Wraith.Player.PlayerId, byte.MinValue);
                     
                     SoundEffectsManager.Play("VanillaPhantomSoundFirst");
@@ -836,7 +838,7 @@ namespace TheSushiRoles
             VeteranAlertButton = new CustomButton(
                 () => 
                 {
-                    Utils.StartRPC(CustomRPC.VeteranAlert);
+                    Utils.SendRPC(CustomRPC.VeteranAlert);
                     RPCProcedure.VeteranAlert();
                     SoundEffectsManager.Play("warlockCurse");
                 },
@@ -950,7 +952,7 @@ namespace TheSushiRoles
 
                     if (Utils.CheckMurderAttemptAndKill(Werewolf.Player, Werewolf.CurrentTarget) == MurderAttemptResult.SuppressKill) return;
                     
-                    Utils.StartRPC(CustomRPC.WerewolfMaul);
+                    Utils.SendRPC(CustomRPC.WerewolfMaul);
                     RPCProcedure.WerewolfMaul();
                     WerewolfMaulButton.Timer = WerewolfMaulButton.MaxTimer;
                     Werewolf.CurrentTarget = null;
@@ -971,7 +973,7 @@ namespace TheSushiRoles
                 {
                     if (Hitman.SampledTarget != null) 
                     {
-                        Utils.StartRPC(CustomRPC.HitmanMorph, Hitman.SampledTarget.PlayerId);
+                        Utils.SendRPC(CustomRPC.HitmanMorph, Hitman.SampledTarget.PlayerId);
                         RPCProcedure.HitmanMorph(Hitman.SampledTarget.PlayerId);
                         Hitman.SampledTarget = null;
                         HitmanMorphButton.EffectDuration = Hitman.MorphDuration;
@@ -1028,7 +1030,7 @@ namespace TheSushiRoles
                 {
                     if (Glitch.sampledTarget != null) 
                     {
-                        Utils.StartRPC(CustomRPC.GlitchMimic, Glitch.sampledTarget.PlayerId);
+                        Utils.SendRPC(CustomRPC.GlitchMimic, Glitch.sampledTarget.PlayerId);
                         RPCProcedure.GlitchMimic(Glitch.sampledTarget.PlayerId);
                         Glitch.sampledTarget = null;
                         MimicButton.EffectDuration = Glitch.MimicDuration;
@@ -1079,7 +1081,7 @@ namespace TheSushiRoles
                 {
                     medicShieldButton.Timer = 0f;
     
-                    Utils.StartRPC(Medic.setShieldAfterMeeting ? CustomRPC.SetFutureShielded : CustomRPC.MedicSetShielded, Medic.CurrentTarget.PlayerId);
+                    Utils.SendRPC(Medic.setShieldAfterMeeting ? CustomRPC.SetFutureShielded : CustomRPC.MedicSetShielded, Medic.CurrentTarget.PlayerId);
                     if (Medic.setShieldAfterMeeting)
                         RPCProcedure.SetFutureShielded(Medic.CurrentTarget.PlayerId);
                     else
@@ -1105,7 +1107,7 @@ namespace TheSushiRoles
                 {
                     RomanticSetTargetButton.Timer = 0f;
 
-                    Utils.StartRPC(CustomRPC.RomanticSetBeloved, Romantic.CurrentTarget.PlayerId);
+                    Utils.SendRPC(CustomRPC.RomanticSetBeloved, Romantic.CurrentTarget.PlayerId);
                     
                     RPCProcedure.RomanticSetBeloved(Romantic.CurrentTarget.PlayerId);
 
@@ -1128,7 +1130,7 @@ namespace TheSushiRoles
                 {
                     if (Morphling.sampledTarget != null) 
                     {
-                        Utils.StartRPC(CustomRPC.MorphlingMorph, Morphling.sampledTarget.PlayerId);
+                        Utils.SendRPC(CustomRPC.MorphlingMorph, Morphling.sampledTarget.PlayerId);
                         RPCProcedure.MorphlingMorph(Morphling.sampledTarget.PlayerId);
                         Morphling.sampledTarget = null;
                         morphlingButton.EffectDuration = Morphling.Duration;
@@ -1219,7 +1221,7 @@ namespace TheSushiRoles
                     // Now check if everyone is infected
                     if (Plaguebearer.CanTransform()) 
                     {
-                        Utils.StartRPC(CustomRPC.TurnPestilence);
+                        Utils.SendRPC(CustomRPC.TurnPestilence);
                         RPCProcedure.PlaguebearerTurnPestilence();
                     }
                 }
@@ -1246,7 +1248,7 @@ namespace TheSushiRoles
                 PlaguebearerButton.Timer = PlaguebearerButton.MaxTimer;
 
                 // Ghost Info
-                Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.PlaguebearerInfect, Plaguebearer.InfectTarget.PlayerId);
+                Utils.SendRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.PlaguebearerInfect, Plaguebearer.InfectTarget.PlayerId);
 
                 Plaguebearer.InfectTarget = null;
             }
@@ -1257,9 +1259,9 @@ namespace TheSushiRoles
                 {
                     if (Monarch.CurrentTarget.CheckVeteranPestilenceKill()) return;
 
-                    Utils.StartRPC(CustomRPC.MonarchKnight, Monarch.CurrentTarget.PlayerId);
+                    Utils.SendRPC(CustomRPC.MonarchKnight, Monarch.CurrentTarget.PlayerId);
                     RPCProcedure.MonarchKnight(Monarch.CurrentTarget.PlayerId);
-                    SoundEffectsManager.Play("jackalSidekick");
+                    SoundEffectsManager.Play("Convert");
 
                     Monarch.CurrentTarget = null;
 
@@ -1299,7 +1301,7 @@ namespace TheSushiRoles
             {
                 if (Crusader.CurrentTarget.CheckVeteranPestilenceKill()) return;
 
-                Utils.StartRPC(CustomRPC.Fortify, Crusader.CurrentTarget.PlayerId);
+                Utils.SendRPC(CustomRPC.Fortify, Crusader.CurrentTarget.PlayerId);
                 RPCProcedure.Fortify(Crusader.CurrentTarget.PlayerId);
                 SoundEffectsManager.Play("medicShield");
 
@@ -1342,7 +1344,7 @@ namespace TheSushiRoles
             {
                 if (Oracle.CurrentTarget.CheckVeteranPestilenceKill() || Oracle.CurrentTarget.CheckFortifiedPlayer()) return;
                 
-                Utils.StartRPC(CustomRPC.Confess, Oracle.CurrentTarget.PlayerId);
+                Utils.SendRPC(CustomRPC.Confess, Oracle.CurrentTarget.PlayerId);
                 RPCProcedure.Confess(Oracle.CurrentTarget.PlayerId);
 
                 Oracle.Charges--;
@@ -1434,7 +1436,7 @@ namespace TheSushiRoles
             PainterButton = new CustomButton(
                 () => 
                 {
-                    Utils.StartRPC(CustomRPC.PainterPaint);
+                    Utils.SendRPC(CustomRPC.PainterPaint);
                     RPCProcedure.PainterPaint();
                     SoundEffectsManager.Play("morphlingMorph");
                 },
@@ -1462,7 +1464,7 @@ namespace TheSushiRoles
             GrenadierButton = new CustomButton(
                 () => 
                 {
-                    Utils.StartRPC(CustomRPC.GrenadierFlash);
+                    Utils.SendRPC(CustomRPC.GrenadierFlash);
                     RPCProcedure.GrenadierFlash();
                     Grenadier.Active = true;
                     SoundEffectsManager.Play("grenadierGrenade");
@@ -1503,7 +1505,7 @@ namespace TheSushiRoles
                     hackerButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 Hacker.GetButtonSprite(),
-                CustomButton.ButtonPositions.upperRowRight,
+                CustomButton.ButtonPositions.lowerRowFarLeft,
                 __instance,
                 KeyCode.F,
                 true,
@@ -1622,7 +1624,7 @@ namespace TheSushiRoles
                 {
                     if (Tracker.CurrentTarget.CheckFortifiedPlayer()) return;
 
-                    Utils.StartRPC(CustomRPC.TrackerUsedTracker, Tracker.CurrentTarget.PlayerId);
+                    Utils.SendRPC(CustomRPC.TrackerUsedTracker, Tracker.CurrentTarget.PlayerId);
                     RPCProcedure.TrackerUsedTracker(Tracker.CurrentTarget.PlayerId);
                     SoundEffectsManager.Play("trackerTrackPlayer");
                 },
@@ -1702,7 +1704,7 @@ namespace TheSushiRoles
             DisperserButton = new CustomButton(
                OnClick: () => 
                 {
-                    Utils.StartRPC(CustomRPC.Disperse);
+                    Utils.SendRPC(CustomRPC.Disperse);
                     RPCProcedure.Disperse();
 
                     DisperserButton.Timer = DisperserButton.MaxTimer;
@@ -1737,12 +1739,12 @@ namespace TheSushiRoles
             ViperKillButton = new CustomButton(
                 () => 
                 {
-                    MurderAttemptResult murder = Utils.CheckMuderAttempt(Viper.Player, Viper.CurrentTarget);
+                    MurderAttemptResult murder = Utils.CheckMurderAttempt(Viper.Player, Viper.CurrentTarget);
                     if (murder == MurderAttemptResult.PerformKill) 
                     {
                         Viper.poisoned = Viper.CurrentTarget;
                          // Notify players about poisoned
-                        Utils.StartRPC(CustomRPC.ViperSetPoisoned, Viper.poisoned.PlayerId, (byte)0);
+                        Utils.SendRPC(CustomRPC.ViperSetPoisoned, Viper.poisoned.PlayerId, (byte)0);
                         RPCProcedure.ViperSetPoisoned(Viper.poisoned.PlayerId, 0);
 
                         byte lastTimer = (byte)Viper.delay;
@@ -1753,7 +1755,7 @@ namespace TheSushiRoles
                                 if (timer != lastTimer) 
                                 {
                                     lastTimer = timer;
-                                    Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.ViperTimer, timer);
+                                    Utils.SendRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.ViperTimer, timer);
                                 }
                             }
                             if (p == 1f) 
@@ -1762,7 +1764,7 @@ namespace TheSushiRoles
                                 var res = Utils.CheckMurderAttemptAndKill(Viper.Player, Viper.poisoned, showAnimation: false);
                                 if (res == MurderAttemptResult.PerformKill) 
                                 {
-                                    Utils.StartRPC(CustomRPC.ViperSetPoisoned, byte.MaxValue, byte.MaxValue);
+                                    Utils.SendRPC(CustomRPC.ViperSetPoisoned, byte.MaxValue, byte.MaxValue);
                                     RPCProcedure.ViperSetPoisoned(byte.MaxValue, byte.MaxValue);
                                 }
                             }
@@ -1785,7 +1787,8 @@ namespace TheSushiRoles
                 {
                     return Viper.CurrentTarget != null && PlayerControl.LocalPlayer.CanMove;
                 },
-                () => {
+                () =>
+                {
                     ViperKillButton.Timer = ViperKillButton.MaxTimer;
                     ViperKillButton.isEffectActive = false;
                     ViperKillButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
@@ -1811,7 +1814,7 @@ namespace TheSushiRoles
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                    Utils.StartRPC(CustomRPC.SetBlindTrap, buff);
+                    Utils.SendRPC(CustomRPC.SetBlindTrap, buff);
                     RPCProcedure.SetBlindTrap(buff);
 
                     SoundEffectsManager.Play("trapperTrap");
@@ -1834,7 +1837,7 @@ namespace TheSushiRoles
             );
 
             GatekeeperPlacePortalButton = new CustomButton(
-                () => 
+                () =>
                 {
                     GatekeeperPlacePortalButton.Timer = GatekeeperPlacePortalButton.MaxTimer;
 
@@ -1843,7 +1846,7 @@ namespace TheSushiRoles
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                    Utils.StartRPC(CustomRPC.PlacePortal, buff);
+                    Utils.SendRPC(CustomRPC.PlacePortal, buff);
                     RPCProcedure.PlacePortal(buff);
                     SoundEffectsManager.Play("tricksterPlaceBox");
                 },
@@ -1867,14 +1870,9 @@ namespace TheSushiRoles
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                    Utils.StartRPC(CustomRPC.PlaceMine, buff);
+                    Utils.SendRPC(CustomRPC.PlaceMine, buff);
                     RPCProcedure.PlaceMine(buff);
-                    var meetingIntroAnimation = UnityEngine.Object.FindObjectOfType<MeetingIntroAnimation>();
-                    if (meetingIntroAnimation != null)
-                    {
-                        SoundManager.Instance.PlaySound(meetingIntroAnimation.PlayerDeadSound, false, 1f, null);
-                    }
-                    //SoundEffectsManager.Play("tricksterPlaceBox");
+                    SoundEffectsManager.Play("tricksterPlaceBox");
                 },
                 () => { return Miner.Player != null && Miner.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Portal.secondPortal == null; },
                 () => { return PlayerControl.LocalPlayer.CanMove && Portal.secondPortal == null; },
@@ -1903,7 +1901,7 @@ namespace TheSushiRoles
                     if (!PlayerControl.LocalPlayer.Data.IsDead) 
                     {  
                         // Ghosts can portal too, but non-blocking and only with a local animation
-                        Utils.StartRPC(CustomRPC.UsePortal, (byte)PlayerControl.LocalPlayer.PlayerId, portalMakerSoloTeleport ? (byte)1 : (byte)0);
+                        Utils.SendRPC(CustomRPC.UsePortal, (byte)PlayerControl.LocalPlayer.PlayerId, portalMakerSoloTeleport ? (byte)1 : (byte)0);
                     }
                     RPCProcedure.UsePortal(PlayerControl.LocalPlayer.PlayerId, portalMakerSoloTeleport ? (byte)1 : (byte)0);
                     usePortalButton.Timer = usePortalButton.MaxTimer;
@@ -1946,7 +1944,7 @@ namespace TheSushiRoles
                     if (!PlayerControl.LocalPlayer.Data.IsDead) 
                     {  
                         // Ghosts can portal too, but non-blocking and only with a local animation
-                        Utils.StartRPC(CustomRPC.UsePortal, PlayerControl.LocalPlayer.PlayerId, (byte)2);
+                        Utils.SendRPC(CustomRPC.UsePortal, PlayerControl.LocalPlayer.PlayerId, (byte)2);
                     }
                     RPCProcedure.UsePortal(PlayerControl.LocalPlayer.PlayerId, 2);
                     usePortalButton.Timer = usePortalButton.MaxTimer;
@@ -1995,24 +1993,44 @@ namespace TheSushiRoles
             GatekeeperButtonText2.transform.localPosition += new Vector3(-0.05f, 0.55f, -1f);
 
 
-            // Jackal Sidekick Button
-            jackalSidekickButton = new CustomButton(
+            // Jackal Recruit Button
+            jackalRecruitButton = new CustomButton(
                 () => 
                 {
                     if (Jackal.CurrentTarget.CheckVeteranPestilenceKill() || Jackal.CurrentTarget.CheckFortifiedPlayer()) return;
 
-                    Utils.StartRPC(CustomRPC.JackalCreatesSidekick, Jackal.CurrentTarget.PlayerId);
-                    RPCProcedure.JackalCreatesSidekick(Jackal.CurrentTarget.PlayerId);
-                    SoundEffectsManager.Play("jackalSidekick");
+                    Utils.SendRPC(CustomRPC.JackalCreatesRecruit, Jackal.CurrentTarget.PlayerId);
+                    RPCProcedure.JackalCreatesRecruit(Jackal.CurrentTarget.PlayerId);
+                    SoundEffectsManager.Play("Convert");
                 },
-                () => { return Jackal.canCreateSidekick && Jackal.Player != null && Jackal.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
-                () => { return Jackal.canCreateSidekick && Jackal.CurrentTarget != null && PlayerControl.LocalPlayer.CanMove; },
-                () => { jackalSidekickButton.Timer = jackalSidekickButton.MaxTimer;},
-                Jackal.getSidekickButtonSprite(),
+                () => { return Jackal.canCreateRecruit && Jackal.Player != null && Jackal.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => { return Jackal.canCreateRecruit && Jackal.CurrentTarget != null && PlayerControl.LocalPlayer.CanMove; },
+                () => { jackalRecruitButton.Timer = jackalRecruitButton.MaxTimer;},
+                Jackal.getRecruitButtonSprite(),
                 CustomButton.ButtonPositions.lowerRowCenter,
                 __instance,
                 KeyCode.F,
-                buttonText: "SIDEKICK"
+                buttonText: "RECRUIT"
+            );
+
+            // Cultist Recruit Button
+            CultistButton = new CustomButton(
+                () => 
+                {
+                    if (Cultist.CurrentTarget.CheckVeteranPestilenceKill() || Cultist.CurrentTarget.CheckFortifiedPlayer()) return;
+
+                    Utils.SendRPC(CustomRPC.CultistCreatesFollower, Cultist.CurrentTarget.PlayerId);
+                    RPCProcedure.CultistCreatesFollower(Cultist.CurrentTarget.PlayerId);
+                    SoundEffectsManager.Play("Convert");
+                },
+                () => { return !Cultist.HasFollower && Cultist.Player != null && Cultist.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => { return !Cultist.HasFollower && Cultist.CurrentTarget != null && PlayerControl.LocalPlayer.CanMove; },
+                () => { CultistButton.Timer = CultistButton.MaxTimer;},
+                Cultist.GetButtonSprite(),
+                CustomButton.ButtonPositions.lowerRowCenter,
+                __instance,
+                KeyCode.F,
+                buttonText: "CREATE FOLLOWER"
             );
 
             // Hitman Kill
@@ -2044,7 +2062,11 @@ namespace TheSushiRoles
                     jackalKillButton.Timer = jackalKillButton.MaxTimer; 
                     Jackal.CurrentTarget = null;
                 },
-                () => { return Jackal.Player != null && Jackal.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () =>
+                {
+                    bool canKill = !Jackal.canCreateRecruit || (Jackal.canCreateRecruit && Jackal.HasRecruit);
+                    return Jackal.Player != null && Jackal.Player == PlayerControl.LocalPlayer && canKill && !PlayerControl.LocalPlayer.Data.IsDead;
+                },
                 () => { return Jackal.CurrentTarget && PlayerControl.LocalPlayer.CanMove; },
                 () => { jackalKillButton.Timer = jackalKillButton.MaxTimer;},
                 __instance.KillButton.graphic.sprite,
@@ -2053,21 +2075,23 @@ namespace TheSushiRoles
                 KeyCode.Q
             );
             
-            // Sidekick Kill
-            sidekickKillButton = new CustomButton(
+            // Recruit Kill
+            RecruitKillButton = new CustomButton(
                 () => 
                 {
-                    if (Sidekick.CurrentTarget.CheckVeteranPestilenceKill()  || Sidekick.CurrentTarget.CheckFortifiedPlayer()) return;
+                    if (Recruit.CurrentTarget.CheckVeteranPestilenceKill()  || Recruit.CurrentTarget.CheckFortifiedPlayer()) return;
 
-                    if (Utils.CheckMurderAttemptAndKill(Sidekick.Player, Sidekick.CurrentTarget) == MurderAttemptResult.SuppressKill) return;
-                    sidekickKillButton.Timer = sidekickKillButton.MaxTimer; 
-                    Sidekick.CurrentTarget = null;
+                    if (Utils.CheckMurderAttemptAndKill(Recruit.Player, Recruit.CurrentTarget) == MurderAttemptResult.SuppressKill) return;
+                    RecruitKillButton.Timer = RecruitKillButton.MaxTimer; 
+                    Recruit.CurrentTarget = null;
                 },
-                () => { return Sidekick.Player != null && Sidekick.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
-                () => { return Sidekick.CurrentTarget && PlayerControl.LocalPlayer.CanMove; },
-                () => { sidekickKillButton.Timer = sidekickKillButton.MaxTimer;},
+                () => { return Recruit.Player != null && Recruit.Player == PlayerControl.LocalPlayer
+                && !PlayerControl.LocalPlayer.Data.IsDead && !PlayerControl.LocalPlayer.IsNeutralKiller()
+                && !PlayerControl.LocalPlayer.IsImpostor() && PlayerControl.LocalPlayer != Sheriff.Player; },
+                () => { return Recruit.CurrentTarget && PlayerControl.LocalPlayer.CanMove; },
+                () => { RecruitKillButton.Timer = RecruitKillButton.MaxTimer;},
                 __instance.KillButton.graphic.sprite,
-                Utils.HasPrimaryButton() ? CustomButton.ButtonPositions.upperRowCenter : CustomButton.ButtonPositions.upperRowRight,
+                CustomButton.ButtonPositions.upperRowRight,
                 __instance,
                 KeyCode.Q
             );
@@ -2081,7 +2105,7 @@ namespace TheSushiRoles
                     eraserButton.MaxTimer += 10;
                     eraserButton.Timer = eraserButton.MaxTimer;
 
-                    Utils.StartRPC(CustomRPC.SetFutureErased, Eraser.CurrentTarget.PlayerId);
+                    Utils.SendRPC(CustomRPC.SetFutureErased, Eraser.CurrentTarget.PlayerId);
                     RPCProcedure.SetFutureErased(Eraser.CurrentTarget.PlayerId);
                     SoundEffectsManager.Play("eraserErase");
                 },
@@ -2105,7 +2129,7 @@ namespace TheSushiRoles
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0*sizeof(float), sizeof(float));
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1*sizeof(float), sizeof(float));
 
-                    Utils.StartRPC(CustomRPC.PlaceJackInTheBox, buff);
+                    Utils.SendRPC(CustomRPC.PlaceJackInTheBox, buff);
                     RPCProcedure.PlaceJackInTheBox(buff);
                     SoundEffectsManager.Play("tricksterPlaceBox");
                 },
@@ -2121,7 +2145,7 @@ namespace TheSushiRoles
             lightsOutButton = new CustomButton(
                 () => 
                 {
-                    Utils.StartRPC(CustomRPC.LightsOut);
+                    Utils.SendRPC(CustomRPC.LightsOut);
                     RPCProcedure.LightsOut();
                     SoundEffectsManager.Play("lighterLight");
                 },
@@ -2162,7 +2186,7 @@ namespace TheSushiRoles
                                 {
                                     NetworkedPlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
                                     
-                                    Utils.StartRPC(CustomRPC.CleanBody, playerInfo.PlayerId, Janitor.Player.PlayerId);
+                                    Utils.SendRPC(CustomRPC.CleanBody, playerInfo.PlayerId, Janitor.Player.PlayerId);
                                     RPCProcedure.CleanBody(playerInfo.PlayerId, Janitor.Player.PlayerId);
 
                                     Janitor.Player.killTimer = JanitorCleanButton.Timer = JanitorCleanButton.MaxTimer;
@@ -2199,7 +2223,7 @@ namespace TheSushiRoles
                         SoundEffectsManager.Play("warlockCurse");
 
                         // Ghost Info
-                        Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.WarlockTarget, Warlock.curseVictim.PlayerId);
+                        Utils.SendRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.WarlockTarget, Warlock.curseVictim.PlayerId);
 
                     } 
                     else if (Warlock.curseVictim != null && Warlock.curseVictimTarget != null) 
@@ -2225,7 +2249,7 @@ namespace TheSushiRoles
                         warlockCurseButton.buttonText = "CURSE";
                         warlockCurseButton.Sprite = Warlock.GetCurseButtonSprite();
                         Warlock.Player.killTimer = warlockCurseButton.Timer = warlockCurseButton.MaxTimer;
-                        Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.WarlockTarget, Byte.MaxValue);
+                        Utils.SendRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.WarlockTarget, Byte.MaxValue);
 
                     }
                 },
@@ -2250,7 +2274,7 @@ namespace TheSushiRoles
                 () => {
                     if (Vigilante.ventTarget != null) 
                     { // Seal vent
-                        Utils.StartRPC(CustomRPC.SealVent, Vigilante.ventTarget.Id);
+                        Utils.SendRPC(CustomRPC.SealVent, Vigilante.ventTarget.Id);
                         RPCProcedure.SealVent(Vigilante.ventTarget.Id);
                         Vigilante.ventTarget = null;
                         
@@ -2260,7 +2284,7 @@ namespace TheSushiRoles
                         Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0*sizeof(float), sizeof(float));
                         Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1*sizeof(float), sizeof(float));
 
-                        Utils.StartRPC(CustomRPC.PlaceCamera, buff);
+                        Utils.SendRPC(CustomRPC.PlaceCamera, buff);
                         RPCProcedure.PlaceCamera(buff); 
                     }
                     SoundEffectsManager.Play("VigilantePlaceCam");  // Same sound used for both types (cam or vent)!
@@ -2361,7 +2385,7 @@ namespace TheSushiRoles
                     bool dousedEveryoneAlive = Arsonist.DousedEveryoneAlive();
                     if (dousedEveryoneAlive) 
                     {
-                        Utils.StartRPC(CustomRPC.ArsonistWin);
+                        Utils.SendRPC(CustomRPC.ArsonistWin);
                         RPCProcedure.ArsonistWin();
                         arsonistButton.HasEffect = false;
                     } 
@@ -2413,7 +2437,7 @@ namespace TheSushiRoles
                     }
 
                     // Ghost Info
-                    Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.ArsonistDouse, Arsonist.douseTarget.PlayerId);
+                    Utils.SendRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.ArsonistDouse, Arsonist.douseTarget.PlayerId);
                     Arsonist.douseTarget = null;
                 }
             );
@@ -2432,7 +2456,7 @@ namespace TheSushiRoles
                                 if (Vector2.Distance(truePosition2, truePosition) <= PlayerControl.LocalPlayer.MaxReportDistance && PlayerControl.LocalPlayer.CanMove && !PhysicsHelpers.AnythingBetween(truePosition, truePosition2, Constants.ShipAndObjectsMask, false)) {
                                     NetworkedPlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
 
-                                    Utils.StartRPC(CustomRPC.CleanBody, playerInfo.PlayerId, Scavenger.Player.PlayerId);
+                                    Utils.SendRPC(CustomRPC.CleanBody, playerInfo.PlayerId, Scavenger.Player.PlayerId);
                                     RPCProcedure.CleanBody(playerInfo.PlayerId, Scavenger.Player.PlayerId);
 
                                     Scavenger.Cooldown = ScavengerEatButton.Timer = ScavengerEatButton.MaxTimer;
@@ -2497,7 +2521,7 @@ namespace TheSushiRoles
                     string msg = Psychic.GetInfo(Psychic.target.player, Psychic.target.GetKiller, Psychic.target.DeathReason);
                     FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, msg);
                     // Ghost Info
-                    Utils.StartRPC(CustomRPC.ShareGhostInfo, Psychic.target.player.PlayerId, (byte)GhostInfoTypes.PsychicInfo, msg);
+                    Utils.SendRPC(CustomRPC.ShareGhostInfo, Psychic.target.player.PlayerId, (byte)GhostInfoTypes.PsychicInfo, msg);
 
                     // Remove soul
                     if (Psychic.oneTimeUse)
@@ -2549,7 +2573,7 @@ namespace TheSushiRoles
                     {
                         if (Survivor.target.CheckVeteranPestilenceKill() || Survivor.target.CheckFortifiedPlayer()) return;
                         
-                        Utils.StartRPC(CustomRPC.SetBlanked, Survivor.target.PlayerId, Byte.MaxValue);
+                        Utils.SendRPC(CustomRPC.SetBlanked, Survivor.target.PlayerId, Byte.MaxValue);
                         RPCProcedure.SetBlanked(Survivor.target.PlayerId, Byte.MaxValue);
 
                         Survivor.target = null;
@@ -2614,10 +2638,10 @@ namespace TheSushiRoles
                 Witch.spellCastingDuration,
                 () => {
                     if (Witch.spellCastingTarget == null) return;
-                    MurderAttemptResult attempt = Utils.CheckMuderAttempt(Witch.Player, Witch.spellCastingTarget);
+                    MurderAttemptResult attempt = Utils.CheckMurderAttempt(Witch.Player, Witch.spellCastingTarget);
                     if (attempt == MurderAttemptResult.PerformKill) 
                     {
-                        Utils.StartRPC(CustomRPC.SetFutureSpelled, Witch.CurrentTarget.PlayerId);
+                        Utils.SendRPC(CustomRPC.SetFutureSpelled, Witch.CurrentTarget.PlayerId);
                         RPCProcedure.SetFutureSpelled(Witch.CurrentTarget.PlayerId);
                     }
                     if (attempt == MurderAttemptResult.BlankKill || attempt == MurderAttemptResult.PerformKill) 
@@ -2644,7 +2668,7 @@ namespace TheSushiRoles
                     if (Assassin.AssassinMarked != null) 
                     {
                         // Murder attempt with teleport
-                        MurderAttemptResult attempt = Utils.CheckMuderAttempt(Assassin.Player, Assassin.AssassinMarked);
+                        MurderAttemptResult attempt = Utils.CheckMurderAttempt(Assassin.Player, Assassin.AssassinMarked);
                         if (attempt == MurderAttemptResult.PerformKill) 
                         {
                             // Create first trace before killing
@@ -2653,15 +2677,15 @@ namespace TheSushiRoles
                             Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                             Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                            Utils.StartRPC(CustomRPC.PlaceAssassinTrace, buff);
+                            Utils.SendRPC(CustomRPC.PlaceAssassinTrace, buff);
                             RPCProcedure.PlaceAssassinTrace(buff);
 
-                            Utils.StartRPC(CustomRPC.SetInvisible, Assassin.Player.PlayerId, byte.MinValue);
+                            Utils.SendRPC(CustomRPC.SetInvisible, Assassin.Player.PlayerId, byte.MinValue);
                             RPCProcedure.SetInvisible(Assassin.Player.PlayerId, byte.MinValue);
 
                             // Perform Kill
 
-                            Utils.StartRPC(CustomRPC.UncheckedMurderPlayer, PlayerControl.LocalPlayer.PlayerId, Assassin.AssassinMarked.PlayerId, byte.MaxValue);
+                            Utils.SendRPC(CustomRPC.UncheckedMurderPlayer, PlayerControl.LocalPlayer.PlayerId, Assassin.AssassinMarked.PlayerId, byte.MaxValue);
                             if (SubmergedCompatibility.IsSubmerged) 
                             {
                                 SubmergedCompatibility.ChangeFloor(Assassin.AssassinMarked.transform.localPosition.y > -7);
@@ -2673,7 +2697,7 @@ namespace TheSushiRoles
                             Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                             Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                            Utils.StartRPC(CustomRPC.PlaceAssassinTrace, buff);
+                            Utils.SendRPC(CustomRPC.PlaceAssassinTrace, buff);
                             RPCProcedure.PlaceAssassinTrace(buff);
                         }
 
@@ -2696,7 +2720,7 @@ namespace TheSushiRoles
                         SoundEffectsManager.Play("warlockCurse");
 
                         // Ghost Info
-                        Utils.StartRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.AssassinMarked, Assassin.AssassinMarked.PlayerId);
+                        Utils.SendRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.AssassinMarked, Assassin.AssassinMarked.PlayerId);
                     }
                 },
                 () => { return Assassin.Player != null && Assassin.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
@@ -2721,7 +2745,7 @@ namespace TheSushiRoles
                    Mayor.remoteMeetingsLeft--;
                    Utils.HandlePoisonedOnBodyReport(); // Manually call Viper handling, since the CmdReportDeadBody Prefix won't be called
                    RPCProcedure.UncheckedCmdReportDeadBody(PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
-                   Utils.StartRPC(CustomRPC.UncheckedCmdReportDeadBody, PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
+                   Utils.SendRPC(CustomRPC.UncheckedCmdReportDeadBody, PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
                    mayorMeetingButton.Timer = 1f;
                },
                () => { return Mayor.Player != null && Mayor.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Mayor.meetingButton; },
@@ -2752,7 +2776,7 @@ namespace TheSushiRoles
                    PlayerControl.LocalPlayer.NetTransform.Halt(); // Stop current movement 
                    Utils.HandlePoisonedOnBodyReport(); // Manually call Viper handling, since the CmdReportDeadBody Prefix won't be called
                    RPCProcedure.UncheckedCmdReportDeadBody(PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
-                   Utils.StartRPC(CustomRPC.UncheckedCmdReportDeadBody, PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
+                   Utils.SendRPC(CustomRPC.UncheckedCmdReportDeadBody, PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
                },
                () => { return Coward.Player != null && Coward.CanUse && Coward.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                () => 
@@ -2780,7 +2804,7 @@ namespace TheSushiRoles
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                    Utils.StartRPC(CustomRPC.SetTrap, buff);
+                    Utils.SendRPC(CustomRPC.SetTrap, buff);
                     RPCProcedure.SetTrap(buff);
 
                     SoundEffectsManager.Play("trapperTrap");
@@ -2821,7 +2845,7 @@ namespace TheSushiRoles
                     
                     if (Yoyo.markedLocation == null) 
                     {
-                        Utils.StartRPC(CustomRPC.YoyoMarkLocation, buff);
+                        Utils.SendRPC(CustomRPC.YoyoMarkLocation, buff);
                         RPCProcedure.YoyoMarkLocation(buff);
                         SoundEffectsManager.Play("tricksterPlaceBox");
                         yoyoButton.Sprite = Yoyo.GetBlinkButtonSprite();
@@ -2834,7 +2858,7 @@ namespace TheSushiRoles
                         if (SubmergedCompatibility.IsSubmerged) {
                             SubmergedCompatibility.ChangeFloor(exit.y > -7);
                         }
-                        Utils.StartRPC(CustomRPC.YoyoBlink, Byte.MaxValue, buff);
+                        Utils.SendRPC(CustomRPC.YoyoBlink, Byte.MaxValue, buff);
                         RPCProcedure.YoyoBlink(true, buff);
                         yoyoButton.EffectDuration = Yoyo.blinkDuration;
                         yoyoButton.Timer = 10f;
@@ -2882,7 +2906,7 @@ namespace TheSushiRoles
                     if (SubmergedCompatibility.IsSubmerged) {
                         SubmergedCompatibility.ChangeFloor(exit.y > -7);
                     }
-                    Utils.StartRPC(CustomRPC.YoyoBlink, (byte)0, buff);
+                    Utils.SendRPC(CustomRPC.YoyoBlink, (byte)0, buff);
                     RPCProcedure.YoyoBlink(false, buff);
 
                     yoyoButton.Timer = yoyoButton.MaxTimer;

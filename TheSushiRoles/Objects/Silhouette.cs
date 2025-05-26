@@ -19,7 +19,7 @@ namespace TheSushiRoles.Objects
         public static Sprite GetSilhouetteSprite() 
         {
             if (SilhouetteSprite) return SilhouetteSprite;
-            SilhouetteSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Silhouette.png", 225f);
+            SilhouetteSprite = Utils.LoadSprite("TheSushiRoles.Resources.Silhouette.png", 225f);
             return SilhouetteSprite;
         }
 

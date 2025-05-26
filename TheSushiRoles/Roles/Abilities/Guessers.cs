@@ -16,7 +16,7 @@ namespace TheSushiRoles.Roles.Abilities
         public static Sprite GetTargetSprite() 
         {
             if (targetSprite) return targetSprite;
-            targetSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.TargetIcon.png", 150f);
+            targetSprite = Utils.LoadSprite("TheSushiRoles.Resources.TargetIcon.png", 150f);
             return targetSprite;
         }
 

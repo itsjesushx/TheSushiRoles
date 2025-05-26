@@ -20,7 +20,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetMeetingSprite()
         {
             if (emergencySprite) return emergencySprite;
-            emergencySprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.EmergencyButton.png", 550f);
+            emergencySprite = Utils.LoadSprite("TheSushiRoles.Resources.EmergencyButton.png", 550f);
             return emergencySprite;
         }
 

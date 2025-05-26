@@ -3,10 +3,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 namespace TheSushiRoles.Roles.ModifierInfo
 {
-    public class ModifierInfo 
+    public class ModifierInfo
     {
         public Color Color;
         public string Name;
@@ -22,7 +21,6 @@ namespace TheSushiRoles.Roles.ModifierInfo
             this.ModifierId = ModifierId;
         }
 
-        #region Modifiers
         public readonly static ModifierInfo lazy = new("Lazy", Color.yellow, "You don't get teleported", "You don't get teleported to meetings", ModifierId.Lazy);
         public readonly static ModifierInfo tiebreaker = new("Tiebreaker", Color.yellow, "Your vote breaks the tie", "Break the tie", ModifierId.Tiebreaker);
         public readonly static ModifierInfo bait = new("Bait", Color.yellow, "Bait your enemies", "Bait your enemies", ModifierId.Bait);
@@ -36,9 +34,8 @@ namespace TheSushiRoles.Roles.ModifierInfo
         public readonly static ModifierInfo lucky = new("Lucky", Color.yellow, "You are protected from one murder attempt", "You are protected from one murder attempt", ModifierId.Lucky);
         public readonly static ModifierInfo giant = new("Giant", Color.yellow, "You are bigger than anyone", "You are bigger than others", ModifierId.Giant);
         public readonly static ModifierInfo disperser = new("Disperser", Color.yellow, "Disperse the Crew to random vents", "Disperse the Crew", ModifierId.Disperser);
-        public readonly static ModifierInfo sidekick = new("Sidekick", Sidekick.Color, "Help your Jackal to kill everyone", "Help your Jackal to kill everyone", ModifierId.Sidekick);
-    
-        #endregion
+        public readonly static ModifierInfo recruit = new("Recruit", Recruit.Color, "", "Help your Jackal to kill everyone", ModifierId.Recruit);
+        public readonly static ModifierInfo follower = new("Follower", Palette.ImpostorRed, "", "Help the Cultist to kill everyone", ModifierId.Follower);
 
         // not used yet but might in the future
         public static List<ModifierInfo> allModifierInfos = new List<ModifierInfo>()
@@ -49,11 +46,12 @@ namespace TheSushiRoles.Roles.ModifierInfo
             lucky,
             chameleon,
             disperser,
+            follower,
             giant,
             drunk,
             lover,
             mini,
-            sidekick,
+            recruit,
             sleuth,
             tiebreaker,
             vip
@@ -77,8 +75,9 @@ namespace TheSushiRoles.Roles.ModifierInfo
                 if (Sleuth.Players.Any(x => x.PlayerId == player.PlayerId)) infos.Add(sleuth);
                 if (Blind.Players.Any(x => x.PlayerId == player.PlayerId)) infos.Add(blind);
                 if (player == Mini.Player) infos.Add(mini);
+                if (player == Follower.Player) infos.Add(follower);
                 if (player == Disperser.Player) infos.Add(disperser);
-                if (player == Sidekick.Player) infos.Add(sidekick);
+                if (player == Recruit.Player) infos.Add(recruit);
                 if (player == Giant.Player) infos.Add(giant);
                 if (Drunk.Players.Any(x => x.PlayerId == player.PlayerId)) infos.Add(drunk);
                 if (Chameleon.Players.Any(x => x.PlayerId == player.PlayerId)) infos.Add(chameleon);

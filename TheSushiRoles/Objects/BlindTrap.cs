@@ -18,7 +18,7 @@ namespace TheSushiRoles.Objects
         public static Sprite GetTrapSprite()
         {
             if (trapSprite) return trapSprite;
-            trapSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.BlindTrap.png", 300f);
+            trapSprite = Utils.LoadSprite("TheSushiRoles.Resources.BlindTrap.png", 300f);
             return trapSprite;
         }
 
@@ -121,7 +121,7 @@ namespace TheSushiRoles.Objects
 
             if (target != null && !player.Data.IsDead)
             {
-                Utils.StartRPC(CustomRPC.TriggerBlindTrap, player.PlayerId, target.instanceId);
+                Utils.SendRPC(CustomRPC.TriggerBlindTrap, player.PlayerId, target.instanceId);
                 RPCProcedure.TriggerBlindTrap(player.PlayerId, (byte)target.instanceId);
             }
 

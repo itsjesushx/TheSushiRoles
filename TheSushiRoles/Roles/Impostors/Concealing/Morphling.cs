@@ -38,14 +38,14 @@ namespace TheSushiRoles.Roles
         public static Sprite GetSampleSprite() 
         {
             if (sampleSprite) return sampleSprite;
-            sampleSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.SampleButton.png", 115f);
+            sampleSprite = Utils.LoadSprite("TheSushiRoles.Resources.SampleButton.png", 115f);
             return sampleSprite;
         }
 
         public static Sprite GetMorphSprite() 
         {
             if (morphSprite) return morphSprite;
-            morphSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.MorphButton.png", 115f);
+            morphSprite = Utils.LoadSprite("TheSushiRoles.Resources.MorphButton.png", 115f);
             return morphSprite;
         }
     }

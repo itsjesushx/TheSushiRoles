@@ -119,7 +119,7 @@ public class Debugger : MonoBehaviour
             {
                 PlayerControl.LocalPlayer.RemainingEmergencies++;
                 RPCProcedure.UncheckedCmdReportDeadBody(PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
-                Utils.StartRPC(CustomRPC.UncheckedCmdReportDeadBody, PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
+                Utils.SendRPC(CustomRPC.UncheckedCmdReportDeadBody, PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
             }
 
             if (GUILayout.Button("End Meeting") && MeetingHud.Instance)

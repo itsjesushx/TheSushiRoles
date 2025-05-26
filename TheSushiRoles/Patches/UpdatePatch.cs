@@ -173,11 +173,11 @@ namespace TheSushiRoles.Patches
             SetPlayerNameColor(localPlayer, localRole.Color);
             if (Jackal.Player != null && Jackal.Player == localPlayer) 
             {
-                // Jackal can see his sidekick
+                // Jackal can see his Recruit
                 SetPlayerNameColor(Jackal.Player, Jackal.Color);
-                if (Sidekick.Player != null) 
+                if (Recruit.Player != null) 
                 {
-                    SetPlayerNameColor(Sidekick.Player, Jackal.Color);
+                    SetPlayerNameColor(Recruit.Player, Jackal.Color);
                 }
             }
 
@@ -190,9 +190,9 @@ namespace TheSushiRoles.Patches
             }
 
             // a Lover of team Jackal needs the colors
-            if (Sidekick.Player != null && Sidekick.Player == localPlayer) 
+            if (Recruit.Player != null && Recruit.Player == localPlayer) 
             {
-                // Sidekick can see the jackal
+                // Recruit can see the jackal
                 if (Jackal.Player != null) 
                 {
                     SetPlayerNameColor(Jackal.Player, Jackal.Color);
@@ -316,11 +316,8 @@ namespace TheSushiRoles.Patches
 
             if (Medic.Shielded.Data.IsDead || Medic.Player == null || Medic.Player.Data.IsDead) 
             {
-                Medic.Shielded = null;
-            }
-            else if (Medic.Player.Data.IsDead) 
-            {
-                Medic.Shielded.ShowFailedMurder();
+                Utils.SendRPC(CustomRPC.RemoveMedicShield);
+                RPCProcedure.RemoveMedicShield();
             }
         }
 
@@ -370,6 +367,12 @@ namespace TheSushiRoles.Patches
         {
             if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor) return;
             if (MeetingHud.Instance) 
+            {
+                __instance.KillButton.Hide();
+                return;
+            }
+            // Cultist can't kill if they don't have a Follower yet
+            if (Cultist.Player != null && Cultist.Player == PlayerControl.LocalPlayer && !Cultist.HasFollower)
             {
                 __instance.KillButton.Hide();
                 return;

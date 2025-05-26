@@ -51,13 +51,13 @@ namespace TheSushiRoles
             Predator.ClearAndReload();
             Agent.ClearAndReload();
             Plaguebearer.ClearAndReload();
-
             Pestilence.ClearAndReload();
         
             // Impostor Roles
             Blackmailer.ClearAndReload();
             Janitor.ClearAndReload();
             Morphling.ClearAndReload();
+            Cultist.ClearAndReload();
             Viper.ClearAndReload();
             Painter.ClearAndReload();
             Eraser.ClearAndReload();
@@ -84,7 +84,7 @@ namespace TheSushiRoles
             Drunk.ClearAndReload();
             Chameleon.ClearAndReload();
             Lucky.ClearAndReload();
-            Sidekick.ClearAndReload();
+            Recruit.ClearAndReload();
             Lovers.ClearAndReload();
             Sleuth.ClearAndReload();
 
@@ -93,7 +93,7 @@ namespace TheSushiRoles
             Coward.ClearAndReload();
             Paranoid.ClearAndReload();
 
-            // Other Clears and Reloads
+            // Other Clears and reloads
             JackInTheBox.ClearJackInTheBoxes();
             AssassinTrace.ClearTraces();
             Silhouette.ClearSilhouettes();

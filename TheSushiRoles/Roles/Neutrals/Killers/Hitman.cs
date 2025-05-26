@@ -24,25 +24,25 @@ namespace TheSushiRoles.Roles
         public static Sprite GetDragButtonSprite()
         {
             if (DragSprite1) return DragSprite1;
-            DragSprite1 = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Drag.png", 115f);
+            DragSprite1 = Utils.LoadSprite("TheSushiRoles.Resources.Drag.png", 115f);
             return DragSprite1;
         }
         public static Sprite GetDropButtonSprite()
         {
             if (DragSprite2) return DragSprite2;
-            DragSprite2 = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Drop.png", 115f);
+            DragSprite2 = Utils.LoadSprite("TheSushiRoles.Resources.Drop.png", 115f);
             return DragSprite2;
         }
         public static Sprite GetSampleSprite() 
         {
             if (SampleSprite) return SampleSprite;
-            SampleSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.SampleButton.png", 115f);
+            SampleSprite = Utils.LoadSprite("TheSushiRoles.Resources.SampleButton.png", 115f);
             return SampleSprite;
         }
         public static Sprite GetMorphSprite() 
         {
             if (MorphSprite) return MorphSprite;
-            MorphSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.MorphButton.png", 115f);
+            MorphSprite = Utils.LoadSprite("TheSushiRoles.Resources.MorphButton.png", 115f);
             return MorphSprite;
         }
         public static void ResetMorph() 

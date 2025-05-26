@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace TheSushiRoles.Roles.Modifiers
 {
-    public static class Sidekick 
+    public static class Recruit 
     {
         public static PlayerControl Player;
         public static Color Color = new Color32(0, 180, 235, byte.MaxValue);

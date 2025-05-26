@@ -54,7 +54,7 @@ Code base by <color=#B2FEFE>Eisbison</color> & <color=#B2FEFE>TheOtherRoles Team
                 Logo.transform.localPosition = new Vector3(-0.4f, 0.5f, 5f);
                 renderer = Logo.AddComponent<SpriteRenderer>();
                 LoadSprites();
-                renderer.sprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.TheSushiRolesBanner.png", 130f);
+                renderer.sprite = Utils.LoadSprite("TheSushiRoles.Resources.TheSushiRolesBanner.png", 130f);
                 instance = __instance;
                 LoadSprites();
                 renderer.sprite = bannerSprite;
@@ -70,7 +70,7 @@ Code base by <color=#B2FEFE>Eisbison</color> & <color=#B2FEFE>TheOtherRoles Team
 
             public static void LoadSprites() 
             {
-                if (bannerSprite == null) bannerSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.TheSushiRolesBanner.png", 110f);
+                if (bannerSprite == null) bannerSprite = Utils.LoadSprite("TheSushiRoles.Resources.TheSushiRolesBanner.png", 110f);
             }
         }
     }

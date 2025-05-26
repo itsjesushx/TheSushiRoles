@@ -11,16 +11,17 @@ namespace TheSushiRoles.Roles
         public static PlayerControl CurrentTarget;
         
         public static float Cooldown;
-        public static float createSidekickCooldown;
+        public static float createRecruitCooldown;
         public static bool canUseVents = true;
-        public static bool canCreateSidekick = true;
+        public static bool canCreateRecruit = true;
         public static Sprite ButtonSprite;
-        public static bool canCreateSidekickFromImpostor = true;
+        public static bool canCreateRecruitFromImpostor = true;
+        public static bool HasRecruit;
 
-        public static Sprite getSidekickButtonSprite() 
+        public static Sprite getRecruitButtonSprite()
         {
             if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.SidekickButton.png", 115f);
+            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.RecruitButton.png", 115f);
             return ButtonSprite;
         }
 
@@ -28,10 +29,11 @@ namespace TheSushiRoles.Roles
         {
             Player = null;
             CurrentTarget = null;
+            HasRecruit = false;
             Cooldown = CustomOptionHolder.jackalKillCooldown.GetFloat();
-            createSidekickCooldown = CustomOptionHolder.jackalCreateSidekickCooldown.GetFloat();
+            createRecruitCooldown = CustomOptionHolder.jackalCreateRecruitCooldown.GetFloat();
             canUseVents = CustomOptionHolder.jackalCanUseVents.GetBool();
-            canCreateSidekick = CustomOptionHolder.jackalCanCreateSidekick.GetBool();
+            canCreateRecruit = CustomOptionHolder.jackalCanCreateRecruit.GetBool();
         }
     }
 }

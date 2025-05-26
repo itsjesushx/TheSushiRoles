@@ -88,7 +88,7 @@ Essentials - Custom game options by DorCoMaNdO:
 Before v1.6: We used the default Essentials release
 v1.6-v1.8: We slightly changed the default Essentials.
 v2.0.0 and later: As we were not using Reactor anymore, we are using our own implementation, inspired by the one from DorCoMaNdO
-Jackal and Sidekick - Original idea for the Jackal and Sidekick came from Dhalucard
+Jackal and Recruit - Original idea for the Jackal and Recruit came from Dhalucard
 Among-Us-Love-Couple-Mod - Idea for the Lovers modifier comes from Woodi-dev
 Jester - Idea for the Jester role came from Maartii
 ExtraRolesAmongUs - Idea for the Engineer and Medic role came from NotHunter101. Also some code snippets from their implementation were used.

@@ -22,14 +22,14 @@ namespace TheSushiRoles.Roles
         public static Sprite GetMarkButtonSprite() 
         {
             if (markButtonSprite) return markButtonSprite;
-            markButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.YoyoMarkButtonSprite.png", 115f);
+            markButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.YoyoMarkButtonSprite.png", 115f);
             return markButtonSprite;
         }
         private static Sprite blinkButtonSprite;
         public static Sprite GetBlinkButtonSprite() 
         {
             if (blinkButtonSprite) return blinkButtonSprite;
-            blinkButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.YoyoBlinkButtonSprite.png", 115f);
+            blinkButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.YoyoBlinkButtonSprite.png", 115f);
             return blinkButtonSprite;
         }
 

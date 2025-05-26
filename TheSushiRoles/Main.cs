@@ -184,7 +184,7 @@ namespace TheSushiRoles
             // Terminate round
             if(Input.GetKeyDown(KeyCode.L)) 
             {
-                Utils.StartRPC(CustomRPC.ForceEnd);
+                Utils.SendRPC(CustomRPC.ForceEnd);
                 RPCProcedure.ForceEnd();
             }
         }

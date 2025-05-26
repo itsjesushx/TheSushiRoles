@@ -26,13 +26,18 @@ namespace TheSushiRoles
         public static CustomOption abilitiesCountMax;
         public static CustomOption abilitiesCountMin;
 
+
+        public static CustomOption CultistSpawnRate;
+        public static CustomOption CultistCooldown;
+        public static CustomOption FollowerGetsGuesser;
+
         public static CustomOption LandlordSpawnRate;
         public static CustomOption LandlordCooldown;
         public static CustomOption LandlordCharges;
         public static CustomOption LandlordRechargeTasksNumber;
         public static CustomOption LandlordDuration;
 
-        public static CustomOption anyPlayerCanStopStart;
+        public static CustomOption EveryoneCanStopStart;
         public static CustomOption enableEventMode;
         public static CustomOption deadImpsBlockSabotage;
 
@@ -86,10 +91,10 @@ namespace TheSushiRoles
 
         public static CustomOption jackalSpawnRate;
         public static CustomOption jackalKillCooldown;
-        public static CustomOption jackalCreateSidekickCooldown;
+        public static CustomOption jackalCreateRecruitCooldown;
         public static CustomOption jackalCanUseVents;
-        public static CustomOption jackalCanCreateSidekick;
-        public static CustomOption sidekickCanUseVents;
+        public static CustomOption jackalCanCreateRecruit;
+        public static CustomOption RecruitCanUseVents;
 
         public static CustomOption bountyHunterSpawnRate;
         public static CustomOption bountyHunterBountyDuration;
@@ -436,8 +441,7 @@ namespace TheSushiRoles
         public static CustomOption GuesserKillsThroughShield;
         public static CustomOption GuesserEvilCanKillSpy;
         public static CustomOption CrewGuesserNumberOfTasks;
-        public static CustomOption SidekickIsAlwaysGuesser;
-
+        public static CustomOption RecruitIsAlwaysGuesser;
 
         internal static Dictionary<byte, byte[]> blockedRolePairings = new Dictionary<byte, byte[]>();
 
@@ -451,9 +455,8 @@ namespace TheSushiRoles
             f = Mathf.Clamp01(f);
             return (byte)(f * 255);
         }
-        public static void Load() 
+        public static void Load()
         {
-
             CustomOption.vanillaSettings = TheSushiRolesPlugin.Instance.Config.Bind("Preset0", "VanillaOptions", "");
 
             // Role Options
@@ -475,6 +478,10 @@ namespace TheSushiRoles
             abilitiesCountMin = CustomOption.Create(308, Types.General, ColorString(Color.cyan, "Minimum Abilities"), 0f, 0f, 15f, 1f);
             abilitiesCountMax = CustomOption.Create(309, Types.General, ColorString(Color.cyan, "Maximum Abilities"), 0f, 0f, 15f, 1f);
 
+            CultistSpawnRate = CustomOption.Create(1, Types.Impostor, ColorString(Palette.ImpostorRed, "Cultist"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            CultistCooldown = CustomOption.Create(2, Types.Impostor, "Cultist Cooldown", 30f, 10f, 60f, 2.5f, CultistSpawnRate, Format: "s");
+            FollowerGetsGuesser = CustomOption.Create(3, Types.Impostor, "Follower Gets Guesser", false, CultistSpawnRate);
+
             morphlingSpawnRate = CustomOption.Create(20, Types.Impostor, ColorString(Morphling.Color, "Morphling"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             morphlingCooldown = CustomOption.Create(21, Types.Impostor, "Morphling Cooldown", 30f, 10f, 60f, 2.5f, morphlingSpawnRate, Format: "s");
             morphlingDuration = CustomOption.Create(22, Types.Impostor, "Morph Duration", 10f, 1f, 20f, 0.5f, morphlingSpawnRate, Format: "s");
@@ -485,7 +492,7 @@ namespace TheSushiRoles
 
             MinerSpawnRate = CustomOption.Create(23, Types.Impostor, ColorString(Miner.Color, "Miner"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             MinerCooldown = CustomOption.Create(24, Types.Impostor, "Miner Cooldown", 30f, 10f, 60f, 2.5f, MinerSpawnRate, Format: "s");
-            MineVisible = CustomOption.Create(25, Types.Impostor, "When Are The Vents Visible", new string [] {"Instantly", "After Next Meeting", "Delayed"}, MinerSpawnRate);
+            MineVisible = CustomOption.Create(25, Types.Impostor, "When Are The Vents Visible", new string[] { "Instantly", "After Next Meeting", "Delayed" }, MinerSpawnRate);
             MineDelay = CustomOption.Create(26, Types.Impostor, "Time Until Vents Are Visible (If Set To Delayed)", 5f, 1f, 20f, 1f, MinerSpawnRate, Format: "s");
 
             PainterSpawnRate = CustomOption.Create(30, Types.Impostor, ColorString(Painter.Color, "Painter"), 0f, 0f, 100f, 10f, null, true, Format: "%");
@@ -519,7 +526,7 @@ namespace TheSushiRoles
             warlockRootTime = CustomOption.Create(272, Types.Impostor, "Warlock Root Time", 5f, 0f, 15f, 1f, warlockSpawnRate, Format: "s");
 
             bountyHunterSpawnRate = CustomOption.Create(320, Types.Impostor, ColorString(BountyHunter.Color, "Bounty Hunter"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            bountyHunterBountyDuration = CustomOption.Create(321, Types.Impostor, "Duration After Which Bounty Changes",  60f, 10f, 180f, 10f, bountyHunterSpawnRate, Format: "s");
+            bountyHunterBountyDuration = CustomOption.Create(321, Types.Impostor, "Duration After Which Bounty Changes", 60f, 10f, 180f, 10f, bountyHunterSpawnRate, Format: "s");
             bountyHunterReducedCooldown = CustomOption.Create(322, Types.Impostor, "Cooldown After Killing Bounty", 2.5f, 0f, 30f, 2.5f, bountyHunterSpawnRate, Format: "s");
             bountyHunterPunishmentTime = CustomOption.Create(323, Types.Impostor, "Additional Cooldown After Killing Others", 20f, 0f, 60f, 2.5f, bountyHunterSpawnRate, Format: "s");
             bountyHunterShowArrow = CustomOption.Create(324, Types.Impostor, "Show Arrow Pointing Towards The Bounty", true, bountyHunterSpawnRate);
@@ -588,7 +595,7 @@ namespace TheSushiRoles
             lawyerTargetCanBeJester = CustomOption.Create(351, Types.Neutral, "Lawyer Target Can Be The Jester", false, lawyerSpawnRate);
 
             ProsecutorSpawnRate = CustomOption.Create(3501, Types.Neutral, ColorString(Prosecutor.Color, "Prosecutor"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            ProsecutorBecomeEnum = CustomOption.Create(3545, Types.Neutral, "Prosecutor Role On Target Death", new string [] {"Jester", "Amnesiac", "Survivor" }, ProsecutorSpawnRate);
+            ProsecutorBecomeEnum = CustomOption.Create(3545, Types.Neutral, "Prosecutor Role On Target Death", new string[] { "Jester", "Amnesiac", "Survivor" }, ProsecutorSpawnRate);
             ProsecutorVision = CustomOption.Create(3541, Types.Neutral, "Vision", 1f, 0.25f, 3f, 0.25f, ProsecutorSpawnRate);
             ProsecutorKnowsRole = CustomOption.Create(3551, Types.Neutral, "Prosecutor Knows Target Role", true, ProsecutorSpawnRate);
             ProsecutorCanCallEmergency = CustomOption.Create(524, Types.Neutral, "Prosecutor Can Call Emergency Meeting", true, ProsecutorSpawnRate);
@@ -605,7 +612,7 @@ namespace TheSushiRoles
             GlitchHackDuration = CustomOption.Create(106, Types.Neutral, "Hack Duration", 15f, 5f, 60f, 2.5f, GlitchSpawnRate, Format: "s");
             GlitchMimicCooldown = CustomOption.Create(109, Types.Neutral, "Mimic Cooldown", 30f, 10f, 60f, 2.5f, GlitchSpawnRate, Format: "s");
             GlitchMimicDuration = CustomOption.Create(117, Types.Neutral, "Mimic Duration", 10f, 1f, 20f, 0.5f, GlitchSpawnRate, Format: "s");
-            
+
             WerewolfSpawnRate = CustomOption.Create(2923, Types.Neutral, ColorString(Werewolf.Color, "Werewolf"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             WerewolfCooldown = CustomOption.Create(2924, Types.Neutral, "Werewolf Maul Cooldown", 30f, 10f, 60f, 2.5f, WerewolfSpawnRate, Format: "s");
             WerewolfCanUseVents = CustomOption.Create(2926, Types.Neutral, "Werewolf Can Use Vents", true, WerewolfSpawnRate);
@@ -628,10 +635,10 @@ namespace TheSushiRoles
 
             jackalSpawnRate = CustomOption.Create(220, Types.Neutral, ColorString(Jackal.Color, "Jackal"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             jackalKillCooldown = CustomOption.Create(221, Types.Neutral, "Team Jackal Kill Cooldown", 30f, 10f, 60f, 2.5f, jackalSpawnRate, Format: "s");
-            jackalCreateSidekickCooldown = CustomOption.Create(222, Types.Neutral, "Jackal Create Sidekick Cooldown", 30f, 10f, 60f, 2.5f, jackalSpawnRate, Format: "s");
+            jackalCreateRecruitCooldown = CustomOption.Create(222, Types.Neutral, "Jackal Create Recruit Cooldown", 30f, 10f, 60f, 2.5f, jackalSpawnRate, Format: "s");
             jackalCanUseVents = CustomOption.Create(223, Types.Neutral, "Jackal Can Use Vents", true, jackalSpawnRate);
-            jackalCanCreateSidekick = CustomOption.Create(224, Types.Neutral, "Jackal Can Create A Sidekick", false, jackalSpawnRate);
-            sidekickCanUseVents = CustomOption.Create(227, Types.Neutral, "Sidekick Can Use Vents", true, jackalCanCreateSidekick);
+            jackalCanCreateRecruit = CustomOption.Create(224, Types.Neutral, "Jackal Can Create A Recruit", false, jackalSpawnRate);
+            RecruitCanUseVents = CustomOption.Create(227, Types.Neutral, "Recruit Can Use Vents", true, jackalCanCreateRecruit);
 
             JuggernautSpawnRate = CustomOption.Create(872, Types.Neutral, ColorString(Juggernaut.Color, "Juggernaut"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             JuggernautCooldown = CustomOption.Create(882, Types.Neutral, "Initial Juggernaut Cooldown", 25f, 10f, 60f, 2.5f, JuggernautSpawnRate, Format: "s");
@@ -685,14 +692,14 @@ namespace TheSushiRoles
             OracleRechargeTasksNumber = CustomOption.Create(1632, Types.Crewmate, "Number Of Oracle Tasks Needed For Recharging", 2f, 1f, 10f, 1f, OracleSpawnRate);
 
             detectiveSpawnRate = CustomOption.Create(120, Types.Crewmate, ColorString(Detective.Color, "Detective"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            detectiveAnonymousFootprints = CustomOption.Create(121, Types.Crewmate, "Anonymous Footprints", false, detectiveSpawnRate); 
+            detectiveAnonymousFootprints = CustomOption.Create(121, Types.Crewmate, "Anonymous Footprints", false, detectiveSpawnRate);
             detectiveFootprintIntervall = CustomOption.Create(122, Types.Crewmate, "Footprint Intervall", 0.5f, 0.25f, 10f, 0.25f, detectiveSpawnRate, Format: "x");
             detectiveFootprintDuration = CustomOption.Create(123, Types.Crewmate, "Footprint Duration", 5f, 0.25f, 10f, 0.25f, detectiveSpawnRate, Format: "s");
             detectiveReportNameDuration = CustomOption.Create(124, Types.Crewmate, "Time Where Detective Reports Will Have Name", 0, 0, 60, 2.5f, detectiveSpawnRate, Format: "s");
             detectiveReportColorDuration = CustomOption.Create(125, Types.Crewmate, "Time Where Detective Reports Will Have Color Type", 20, 0, 120, 2.5f, detectiveSpawnRate, Format: "s");
 
             medicSpawnRate = CustomOption.Create(140, Types.Crewmate, ColorString(Medic.Color, "Medic"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            medicShowShielded = CustomOption.Create(143, Types.Crewmate, "Show Shielded Player", new string[] {"Shielded + Medic", "Medic Only", "Shielded Only"}, medicSpawnRate);
+            medicShowShielded = CustomOption.Create(143, Types.Crewmate, "Show Shielded Player", new string[] { "Shielded + Medic", "Medic Only", "Shielded Only" }, medicSpawnRate);
             medicShowAttemptToShielded = CustomOption.Create(144, Types.Crewmate, "Shielded Player Sees Murder Attempt", false, medicSpawnRate);
             medicSetOrShowShieldAfterMeeting = CustomOption.Create(145, Types.Crewmate, "Shield Will Be Activated", new string[] { "Instantly", "Instantly, Visible\nAfter Meeting", "After Meeting" }, medicSpawnRate);
             medicShowAttemptToMedic = CustomOption.Create(146, Types.Crewmate, "Medic Sees Murder Attempt On Shielded Player", false, medicSpawnRate);
@@ -716,13 +723,13 @@ namespace TheSushiRoles
 
 
             MysticSpawnRate = CustomOption.Create(160, Types.Crewmate, ColorString(Mystic.Color, "Mystic"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            MysticMode = CustomOption.Create(161, Types.Crewmate, "Mystic Mode", new string[]{ "Show Death Flash + Souls", "Show Death Flash", "Show Souls"}, MysticSpawnRate);
+            MysticMode = CustomOption.Create(161, Types.Crewmate, "Mystic Mode", new string[] { "Show Death Flash + Souls", "Show Death Flash", "Show Souls" }, MysticSpawnRate);
             MysticLimitSoulDuration = CustomOption.Create(163, Types.Crewmate, "Mystic Limit Soul Duration", false, MysticSpawnRate);
             MysticSoulDuration = CustomOption.Create(162, Types.Crewmate, "Mystic Soul Duration", 15f, 0f, 120f, 5f, MysticLimitSoulDuration, Format: "s");
             MysticCooldown = CustomOption.Create(163, Types.Crewmate, "Mystic Reveal Cooldown", 30f, 10f, 120f, 2.5f, MysticSpawnRate, Format: "s");
             MysticCharges = CustomOption.Create(519, Types.Crewmate, "Initial Mystic Charges", 1f, 0f, 5f, 1f, MysticSpawnRate);
             MysticRechargeTasksNumber = CustomOption.Create(520, Types.Crewmate, "Number Of Tasks The Mystic Needs For Recharging", 2f, 1f, 10f, 1f, MysticSpawnRate);
-        
+
             hackerSpawnRate = CustomOption.Create(170, Types.Crewmate, ColorString(Hacker.Color, "Hacker"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             hackerCooldown = CustomOption.Create(171, Types.Crewmate, "Hacker Cooldown", 30f, 5f, 60f, 5f, hackerSpawnRate, Format: "s");
             hackerHackeringDuration = CustomOption.Create(172, Types.Crewmate, "Hacker Duration", 10f, 2.5f, 60f, 2.5f, hackerSpawnRate, Format: "s");
@@ -737,7 +744,7 @@ namespace TheSushiRoles
             trackerCorpsesTrackingCooldown = CustomOption.Create(204, Types.Crewmate, "Corpses Tracking Cooldown", 30f, 5f, 120f, 5f, trackerCanTrackCorpses, Format: "s");
             trackerCorpsesTrackingDuration = CustomOption.Create(205, Types.Crewmate, "Corpses Tracking Duration", 5f, 2.5f, 30f, 2.5f, trackerCanTrackCorpses, Format: "s");
             trackerTrackingMethod = CustomOption.Create(206, Types.Crewmate, "How Tracker Gets Target Location", new string[] { "Arrow Only", "Proximity Dectector Only", "Arrow + Proximity" }, trackerSpawnRate);
-                           
+
             spySpawnRate = CustomOption.Create(240, Types.Crewmate, ColorString(Spy.Color, "Spy"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             spyCanDieToSheriff = CustomOption.Create(241, Types.Crewmate, "Spy Can Die To Sheriff", false, spySpawnRate);
             spyImpostorsCanKillAnyone = CustomOption.Create(242, Types.Crewmate, "Impostors Can Kill Anyone If There Is A Spy", true, spySpawnRate);
@@ -838,7 +845,7 @@ namespace TheSushiRoles
             GuesserCrewNumber = CustomOption.Create(2001, Types.Ability, ColorString(Palette.CrewmateBlue, "Number of Crew Guesser"), 15f, 0f, 15f, 1f, null, true, Heading: "Guesser Settings");
             GuesserNeutralNumber = CustomOption.Create(2002, Types.Ability, ColorString(Color.gray, "Number of Neutral Guesser"), 15f, 0f, 15f, 1f);
             GuesserImpNumber = CustomOption.Create(2003, Types.Ability, ColorString(Palette.ImpostorRed, "Number of Impostor Guesser"), 15f, 0f, 15f, 1f);
-            SidekickIsAlwaysGuesser = CustomOption.Create(2012, Types.Ability, "Sidekick Is Always Guesser", false);
+            RecruitIsAlwaysGuesser = CustomOption.Create(2012, Types.Ability, "Recruit Is Always Guesser", false);
             GuesserHaveModifier = CustomOption.Create(2004, Types.Ability, "Guesser Can Have A Modifier", true);
             GuesserNumberOfShots = CustomOption.Create(2005, Types.Ability, "Guesser Number Of Shots", 3f, 1f, 15f, 1f);
             GuesserHasMultipleShotsPerMeeting = CustomOption.Create(2006, Types.Ability, "Guesser Can Shoot Multiple Times Per Meeting", false);
@@ -847,7 +854,7 @@ namespace TheSushiRoles
             GuesserEvilCanKillSpy = CustomOption.Create(2009, Types.Ability, "Evil Guesser Can Guess The Spy", true);
 
             AbilityCoward = CustomOption.Create(1029, Types.Ability, ColorString(Guesser.AbilityColor, "Coward"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            
+
             AbilityParanoid = CustomOption.Create(522, Types.Ability, ColorString(Guesser.AbilityColor, "Paranoid"), 0f, 0f, 100f, 10f, null, true, Format: "%");
 
             // Other options
@@ -855,7 +862,7 @@ namespace TheSushiRoles
             DisableMedbayAnimation = CustomOption.Create(3131, Types.General, "Disable Medbay Walk Animation", true);
             GameStartCooldowns = CustomOption.Create(518, Types.General, "Game Start Cooldowns", 10f, 10f, 30f, 2.5f, Format: "s");
             LimitAbilities = CustomOption.Create(1321, Types.General, "Limit Player Abilities When 2 Players Are Left Alive", true);
-            anyPlayerCanStopStart = CustomOption.Create(2, Types.General, "Any Player Can Stop The Start", false, null, false);
+            EveryoneCanStopStart = CustomOption.Create(2, Types.General, "Any Player Can Stop The Start", false, null, false);
             blockSkippingInEmergencyMeetings = CustomOption.Create(4, Types.General, "Block Skipping In Emergency Meetings", false);
             noVoteIsSelfVote = CustomOption.Create(5, Types.General, "No Vote Is Self Vote", false, blockSkippingInEmergencyMeetings);
             hidePlayerNames = CustomOption.Create(6, Types.General, "Hide Player Names", false);
@@ -883,19 +890,39 @@ namespace TheSushiRoles
             dynamicMapEnableSubmerged = CustomOption.Create(505, Types.General, "Submerged", 0f, 0f, 100f, 10f, dynamicMap, false, Format: "%");
             dynamicMapSeparateSettings = CustomOption.Create(509, Types.General, "Use Random Map Setting Presets", false, dynamicMap, false);
 
-            blockedRolePairings.Add((byte)RoleId.Viper, new [] { (byte)RoleId.Warlock});
-            blockedRolePairings.Add((byte)RoleId.Warlock, new [] { (byte)RoleId.Viper});
-            blockedRolePairings.Add((byte)RoleId.Scavenger, new [] { (byte)RoleId.Janitor});
-            blockedRolePairings.Add((byte)RoleId.Janitor, new [] { (byte)RoleId.Scavenger});
-            blockedRolePairings.Add((byte)RoleId.Amnesiac, new [] { (byte)RoleId.Prosecutor});
-            blockedRolePairings.Add((byte)RoleId.Prosecutor, new [] { (byte)RoleId.Amnesiac});
-            blockedRolePairings.Add((byte)RoleId.Jester, new [] { (byte)RoleId.Prosecutor});
-            blockedRolePairings.Add((byte)RoleId.Prosecutor, new [] { (byte)RoleId.Jester});
-            blockedRolePairings.Add((byte)RoleId.Lawyer, new [] { (byte)RoleId.Prosecutor});
-            blockedRolePairings.Add((byte)RoleId.Prosecutor, new [] { (byte)RoleId.Lawyer});
-            blockedRolePairings.Add((byte)RoleId.Painter, new [] { (byte)RoleId.Morphling});
-            blockedRolePairings.Add((byte)RoleId.Morphling, new [] { (byte)RoleId.Painter});
-            
+            blockedRolePairings.Add((byte)RoleId.Viper, new[] { (byte)RoleId.Warlock });
+            blockedRolePairings.Add((byte)RoleId.Warlock, new[] { (byte)RoleId.Viper });
+            blockedRolePairings.Add((byte)RoleId.Scavenger, new[] { (byte)RoleId.Janitor });
+            blockedRolePairings.Add((byte)RoleId.Janitor, new[] { (byte)RoleId.Scavenger });
+            blockedRolePairings.Add((byte)RoleId.Painter, new[] { (byte)RoleId.Morphling });
+            blockedRolePairings.Add((byte)RoleId.Morphling, new[] { (byte)RoleId.Painter });
+            blockedRolePairings.Add((byte)RoleId.Miner, new[] { (byte)RoleId.Trickster });
+            blockedRolePairings.Add((byte)RoleId.Trickster, new[] { (byte)RoleId.Miner });
+            blockedRolePairings.Add((byte)RoleId.Spy, new[] { (byte)RoleId.Cultist });
+            blockedRolePairings.Add((byte)RoleId.Cultist, new[] { (byte)RoleId.Spy });
+            blockedRolePairings.Add((byte)RoleId.Romantic, new[] { (byte)RoleId.Cultist });
+            blockedRolePairings.Add((byte)RoleId.Cultist, new[] { (byte)RoleId.Romantic });
+            blockedRolePairings.Add((byte)RoleId.Prosecutor, new[] { (byte)RoleId.Cultist });
+            blockedRolePairings.Add((byte)RoleId.Cultist, new[] { (byte)RoleId.Prosecutor });
+
+            if (ProsecutorBecomeEnum.GetSelection() == 1)
+            {
+                blockedRolePairings.Add((byte)RoleId.Amnesiac, new[] { (byte)RoleId.Prosecutor });
+                blockedRolePairings.Add((byte)RoleId.Prosecutor, new[] { (byte)RoleId.Amnesiac });
+            }
+            else if (ProsecutorBecomeEnum.GetSelection() == 0)
+            {
+                blockedRolePairings.Add((byte)RoleId.Prosecutor, new[] { (byte)RoleId.Jester });
+                blockedRolePairings.Add((byte)RoleId.Jester, new[] { (byte)RoleId.Prosecutor });
+            }
+            else
+            {
+                blockedRolePairings.Add((byte)RoleId.Prosecutor, new[] { (byte)RoleId.Survivor });
+                blockedRolePairings.Add((byte)RoleId.Survivor, new[] { (byte)RoleId.Prosecutor });
+
+                blockedRolePairings.Add((byte)RoleId.Prosecutor, new[] { (byte)RoleId.Lawyer });
+                blockedRolePairings.Add((byte)RoleId.Lawyer, new[] { (byte)RoleId.Prosecutor });
+            }
         }
     }
 }

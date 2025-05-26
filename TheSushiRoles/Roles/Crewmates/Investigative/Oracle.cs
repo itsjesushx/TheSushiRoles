@@ -20,7 +20,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetButtonSprite() 
         {
             if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.OracleButton.png", 115f);
+            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.OracleButton.png", 115f);
             return ButtonSprite;
         }
         public static int Charges;

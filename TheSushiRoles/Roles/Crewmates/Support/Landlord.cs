@@ -20,7 +20,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetButtonSprite()
         {
             if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.LandlordButton.png", 115f);
+            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.LandlordButton.png", 115f);
             return ButtonSprite;
         }
         public static void ClearAndReload()

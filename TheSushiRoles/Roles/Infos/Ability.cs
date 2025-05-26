@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 namespace TheSushiRoles.Roles.AbilityInfo
 {
     public class AbilityInfo 
@@ -20,10 +19,8 @@ namespace TheSushiRoles.Roles.AbilityInfo
             this.AbilityId = AbilityId;
         }
 
-        #region Ability
         public static readonly AbilityInfo coward = new("Coward", Guesser.AbilityColor, "Call a meeting from anywhere!", AbilityId.Coward);
         public readonly static AbilityInfo paranoid = new("Paranoid", Guesser.AbilityColor, "Know when someone is close to you", AbilityId.Paranoid);
-        #endregion
         
         // not used yet but might in the future
         public static List<AbilityInfo> allAbilityInfos = new List<AbilityInfo>() 

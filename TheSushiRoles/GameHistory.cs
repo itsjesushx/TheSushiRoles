@@ -5,44 +5,11 @@ using System.Linq;
 
 namespace TheSushiRoles 
 {
-    public class DeadPlayer
-    {
-        public enum CustomDeathReason 
-        {
-            Exile,
-            Kill,
-            Disconnect,
-            Guess,
-            Maul,
-            LawyerSuicide,
-            WrongSidekick,
-            LoverSuicide,
-            WitchExile,
-            Arson,
-        };
-
-        public PlayerControl player;
-        public DateTime DeathTime;
-        public CustomDeathReason DeathReason;
-        public PlayerControl GetKiller;
-        public bool WasCleanedOrEaten;
-
-        public DeadPlayer(PlayerControl player, DateTime DeathTime, CustomDeathReason DeathReason, PlayerControl GetKiller) 
-        {
-            this.player = player;
-            this.DeathTime = DeathTime;
-            this.DeathReason = DeathReason;
-            this.GetKiller = GetKiller;
-            this.WasCleanedOrEaten = false;
-        }
-    }
-
-    static class GameHistory 
+    public static class GameHistory 
     {
         public static List<Tuple<Vector3, bool>> LocalPlayerPositions = new List<Tuple<Vector3, bool>>();
         public static List<DeadPlayer> deadPlayers = new List<DeadPlayer>();
         public static readonly Dictionary<byte, List<RoleInfo>> RoleHistory = new();
-        public static DateTime KillTime { get; set; }
         public static void ClearGameHistory() 
         {
             LocalPlayerPositions = new List<Tuple<Vector3, bool>>();

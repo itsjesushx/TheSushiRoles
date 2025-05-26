@@ -36,7 +36,7 @@ public static class InstanceControlPatches
         var savedId = PlayerControl.LocalPlayer.PlayerId;
 
         //Setup new player
-        var newPlayer = PlayerById(playerId);
+        var newPlayer = Utils.PlayerById(playerId);
 
         if (newPlayer == null) return;
 
@@ -107,7 +107,7 @@ public static class InstanceControlPatches
             if (newPlayer.Data.IsDead)
                 MeetingHud.Instance.SetForegroundForDead();
             else
-                MeetingHud.Instance.SetForegroundForAlive(); //Parially works, i still need to get the darkening effect to go
+                MeetingHud.Instance.SetForegroundForAlive();
         }
     }
 
@@ -150,8 +150,7 @@ public static class InstanceControlPatches
         sampleC.Character.MyPhysics.ResetAnimState();
         sampleC.Character.MyPhysics.ResetMoveState();
 
-        if (SubmergedCompatibility.Loaded)
-            SubmergedCompatibility.ImpartSub(sampleC.Character);
+        if (SubmergedCompatibility.Loaded) SubmergedCompatibility.ImpartSub(sampleC.Character);
 
         yield return sampleC.Character.MyPhysics.CoSpawnPlayer(LobbyBehaviour.Instance);
         yield break;
@@ -161,12 +160,9 @@ public static class InstanceControlPatches
     {
         foreach (var playerId in PlayerClientIDs.Keys)
         {
-            PlayerById(playerId).SetName(name + $" {playerId}");
+            Utils.PlayerById(playerId).SetName(name + $" {playerId}");
         }
     }
-
-    public static PlayerControl PlayerById(byte id) => PlayerControl.AllPlayerControls.ToArray().ToList().Find(x => x.PlayerId == id);
-
     public static void RemovePlayer(byte id)
     {
         if (id == 0)

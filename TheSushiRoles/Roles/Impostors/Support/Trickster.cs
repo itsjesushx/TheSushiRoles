@@ -17,21 +17,21 @@ namespace TheSushiRoles.Roles
         public static Sprite GetPlaceBoxButtonSprite() 
         {
             if (placeBoxButtonSprite) return placeBoxButtonSprite;
-            placeBoxButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.PlaceJackInTheBoxButton.png", 115f);
+            placeBoxButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.PlaceJackInTheBoxButton.png", 115f);
             return placeBoxButtonSprite;
         }
 
         public static Sprite GetLightsOutButtonSprite() 
         {
             if (lightOutButtonSprite) return lightOutButtonSprite;
-            lightOutButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.LightsOutButton.png", 115f);
+            lightOutButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.LightsOutButton.png", 115f);
             return lightOutButtonSprite;
         }
 
         public static Sprite GetTricksterVentButtonSprite() 
         {
             if (tricksterVentButtonSprite) return tricksterVentButtonSprite;
-            tricksterVentButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.TricksterVentButton.png", 115f);
+            tricksterVentButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.TricksterVentButton.png", 115f);
             return tricksterVentButtonSprite;
         }
 

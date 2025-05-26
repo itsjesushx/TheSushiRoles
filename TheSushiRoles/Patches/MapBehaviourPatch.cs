@@ -25,7 +25,7 @@ namespace TheSushiRoles.Patches
 	{
 		public static Dictionary<Byte, SpriteRenderer> herePoints = new();
 
-		public static Sprite Vent = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Vent.png", 150f);
+		public static Sprite Vent = Utils.LoadSprite("TheSushiRoles.Resources.Vent.png", 150f);
 
 		public static List<List<Vent>> VentNetworks = new();
 

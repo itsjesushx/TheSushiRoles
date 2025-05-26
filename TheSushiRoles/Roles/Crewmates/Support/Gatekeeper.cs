@@ -22,14 +22,14 @@ namespace TheSushiRoles.Roles
         public static Sprite GetPlacePortalButtonSprite() 
         {
             if (placePortalButtonSprite) return placePortalButtonSprite;
-            placePortalButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.PlacePortalButton.png", 115f);
+            placePortalButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.PlacePortalButton.png", 115f);
             return placePortalButtonSprite;
         }
 
         public static Sprite getUsePortalButtonSprite() 
         {
             if (usePortalButtonSprite) return usePortalButtonSprite;
-            usePortalButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.UsePortalButton.png", 115f);
+            usePortalButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.UsePortalButton.png", 115f);
             return usePortalButtonSprite;
         }
 
@@ -38,13 +38,13 @@ namespace TheSushiRoles.Roles
             if (first) 
             {
                 if (usePortalSpecialButtonSprite1) return usePortalSpecialButtonSprite1;
-                usePortalSpecialButtonSprite1 = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.UsePortalSpecialButton1.png", 115f);
+                usePortalSpecialButtonSprite1 = Utils.LoadSprite("TheSushiRoles.Resources.UsePortalSpecialButton1.png", 115f);
                 return usePortalSpecialButtonSprite1;
             } 
             else 
             {
                 if (usePortalSpecialButtonSprite2) return usePortalSpecialButtonSprite2;
-                usePortalSpecialButtonSprite2 = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.UsePortalSpecialButton2.png", 115f);
+                usePortalSpecialButtonSprite2 = Utils.LoadSprite("TheSushiRoles.Resources.UsePortalSpecialButton2.png", 115f);
                 return usePortalSpecialButtonSprite2;
             }
         }

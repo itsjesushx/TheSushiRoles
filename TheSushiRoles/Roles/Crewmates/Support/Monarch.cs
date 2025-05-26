@@ -18,7 +18,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetButtonSprite() 
         {
             if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.KnightButton.png", 115f);
+            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.KnightButton.png", 115f);
             return ButtonSprite;
         }
         public static void ClearAndReload()

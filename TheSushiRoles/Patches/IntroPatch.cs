@@ -75,7 +75,7 @@ namespace TheSushiRoles.Patches
                 PlayerControl target = PlayerControl.AllPlayerControls.ToArray().ToList().FirstOrDefault(x => x.Data.PlayerName.Equals(MapOptions.FirstKillName));
                 if (target != null) 
                 {
-                    Utils.StartRPC(CustomRPC.SetFirstKill, target.PlayerId);
+                    Utils.SendRPC(CustomRPC.SetFirstKill, target.PlayerId);
                     RPCProcedure.SetFirstKill(target.PlayerId);
                 }
             }
@@ -111,7 +111,7 @@ namespace TheSushiRoles.Patches
         public static void SetupIntroTeamIcons(IntroCutscene __instance, ref  Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) 
         {
             // Intro solo teams
-            if (PlayerControl.LocalPlayer.IsNeutral() || PlayerControl.LocalPlayer.IsNeutralKiller()) 
+            if (PlayerControl.LocalPlayer.IsNeutral()) 
             {
                 var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
                 soloTeam.Add(PlayerControl.LocalPlayer);

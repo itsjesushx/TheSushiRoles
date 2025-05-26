@@ -17,7 +17,7 @@ Even more roles are coming soon.
 | [Grenadier](#grenadier) | [Mayor](#mayor) | [Jester](#jester) | [Sleuth](#sleuth) | [Paranoid](#paranoid) |
 | [Undertaker](#undertaker) | [Engineer](#engineer) | [Arsonist](#arsonist) | [Lazy](#lazy) | [Coward](#coward) |
 | [Yo-Yo](#yoyo) | [Sheriff](#sheriff) | [Jackal](#jackal) | [Tie Breaker](#tie-breaker) |  |
-| [Morphling](#morphling) | [Trapper](#trapper)| [Sidekick](#sidekick) | [Bait](#bait) | |
+| [Morphling](#morphling) | [Trapper](#trapper)| [Pestilence](#plaguebearer) | [Bait](#bait) | |
 | [Painter](#painter) | [Lighter](#lighter) | [Scavenger](#scavenger) | [Lovers](#lovers) | |
 | [Viper](#viper) | [Detective](#detective) | [Lawyer](#lawyer) | [Blind](#blind) | |
 | [Eraser](#eraser) | [Chronos](#chronos) | [Prosecutor](#prosecutor) | [Mini](#mini) | |
@@ -25,12 +25,12 @@ Even more roles are coming soon.
 | [Janitor](#janitor) | [Swapper](#swapper) | [Agent](#agent) | [Drunk](#drunk) | |
 | [Warlock](#warlock) | [Mystic](#mystic) | [Glitch](#glitch)    | [Chameleon](#chameleon) | |
 | [Bounty Hunter](#bounty-hunter) | [Hacker](#hacker) | [Juggernaut](#juggernaut)   | [Lucky](#lucky) |
-| [Witch](#witch) | [Tracker](#tracker) | [Predator](#predator)  |  |
+| [Witch](#witch) | [Tracker](#tracker) | [Predator](#predator)  |  [Recruit](#recruit)  |
 | [Assassin](#assassin) | [Crusader](#crusader) | [Romantic](#romantic)   |  |
-| | [Spy](#spy) | [Werewolf](#werewolf) |  | |
+| [Cultist](#cultist) | [Spy](#spy) | [Werewolf](#werewolf) |  | |
 | | [Gatekeeper](#gatekeeper) | [Amnesiac](#amnesiac) |  |  |
 | | [Vigilante](#vigilante) |  [Plaguebearer](#plaguebearer) |  |  |
-|  | [Psychic](#psychic) | [Pestilence](#plaguebearer)  |  |  |
+|  | [Psychic](#psychic) |  |  |  |
 |  |[Veteran](#veteran)    |  |  |  |
 |  |[Oracle](#oracle) |  |  |  |
 |  | [Monarch](#monarch) |  |  |
@@ -78,7 +78,7 @@ Not working? You might want to install the dependency [vc_redist](https://aka.ms
 [MyDragonBreath's AmongUs MultiClientInstancing](https://github.com/myDragonBreath/AmongUs.MultiClientInstancing) - for TheSushiRoles Debugger.
 [Reactor](https://github.com/NuclearPowered/Reactor) - The framework used.\
 [BepInEx](https://github.com/BepInEx) - Used to hook to game functions.\
-[Jackal and Sidekick](https://github.com/TheOtherRolesAU/TheOtherRoles) - Original Codebase, and idea for the Jackal and Sidekick came from **TheOtherRoles**\
+[Jackal and Recruit](https://github.com/TheOtherRolesAU/TheOtherRoles) - Original Codebase, and idea for the Jackal and Recruit came from **TheOtherRoles**\
 [Among-Us-Love-Couple-Mod](https://github.com/Woodi-dev/Among-Us-Love-Couple-Mod) - Idea for the Lovers modifier came from **Woodi-dev**\
 [Jester](https://github.com/Maartii/Jester) - Idea for the Jester role came from **Maartii**\
 [ExtraRolesAmongUs](https://github.com/NotHunter101/ExtraRolesAmongUs) - Idea for the Engineer and Medic role came from **NotHunter101**. Also some code snippets from their implementation were used.\
@@ -425,6 +425,26 @@ When performing a Assassin ability kill, the Assassin can be invisible for some 
 | Time The Assassin Is Invisible | -
 -----------------------
 
+## Cultist
+### **Faction: Impostors**
+The Cultist is an Impostor role that is focused around working with an impostor partner of the Cultist's choice.
+The Cultist starts the game with the ability 'Convert'. Convert will function properly regardless of the target's role/alignment.\
+Converting a player changes their role into a random Impostor role.\
+
+**NOTE:**
+- The Cultist and Follower have arrows pointing to each other.
+- The Cultist and Follower get a flash on their screen when the other kills.
+- They Cultist can't kill until they have gotten a Follower.
+- The Cultist won't be in the same game as a Spy, Romantic and a Prosecutor.
+
+### Game Options
+| Name | Description |
+|----------|:-------------:|
+| Cultist Spawn Chance | -
+| Cultist Create Follower Cooldown | -
+| Follower Gets Guesser Ability | -
+-----------------------
+
 ## YoYo
 ### **Faction: Impostors**
 The Yo-Yo is an Impostor who has the ability mark a position and later blink (teleport) to this position.\
@@ -538,7 +558,7 @@ The priority of each Neutral Killer win condition is the following:
 - The game will NOT end if one of these crewmate roles are alive with the last killers: Sheriff, Mayor, Veteran (with charges), Swapper or if a Crewmate Tiebreaker is alive.
 - The Neutral Killers may be killed by a Sheriff.
 - A Neutral Killer cannot target the Mini (excluding Glitch), while it's growing up. After that they can kill it or interact with them.
-- The Crew can still win, even if all of their members are dead, if they finish their tasks fast enough (That's why converting the last Crewmate with tasks left into a Sidekick results in a task win for the crew.)
+- The Crew can still win, even if all of their members are dead, if they finish their tasks fast enough (That's why converting the last Crewmate with tasks left into a Recruit results in a task win for the crew.)
 
 If Impostors and multiple Neutral Killers are in the game, the game continues even if all Crewmates are dead. Crewmates may still win in this case by completing their tasks. Each Neutral Killer and Impostor have to kill each other.
 
@@ -550,40 +570,41 @@ If Impostors and multiple Neutral Killers are in the game, the game continues ev
 ### **Alignment: Neutral Killing**
 The Jackal is part of an extra team, that tries to eliminate all the other players.\
 The Jackal has no tasks and can kill Impostors, Crewmates and Neutrals.\
-The Jackal (if allowed by the options) can select another player to be their Sidekick.
-Creating a Sidekick adds them to the team Jackal. The Sidekick keeps their current role if they are a lover, they got 3 teams where they could possibly win.
-The "Create Sidekick Action" may only be used once per game.
-If An Amnesiac remembers a Jackal, the current Jackal's Sidekick will be removed. And Amnesiac will be a Sidekick instead.
+The Jackal (if allowed by the options) can select another player to be their Recruit.
+Creating a Recruit adds them to the team Jackal. The Recruit keeps their current role if they are a lover, they got 3 teams where they could possibly win.
+The "Create Recruit Action" may only be used once per game.
+If An Amnesiac remembers a Jackal, the current Jackal's Recruit will be removed. And Amnesiac will be a Recruit instead.
+The jackal cannot kill until they create a Recruit.
 
 ### Game Options
 | Name | Description
 |----------|:-------------:|
 | Jackal Spawn Chance | -
 | Team Jackal Kill Cooldown | Kill Cooldown |
-| Jackal Create Sidekick Cooldown | Cooldown before a Sidekick can be created |
+| Jackal Create Recruit Cooldown | Cooldown before a Recruit can be created |
 | Jackal Can Use Vents | Yes/No |
-| Jackal Can Create A Sidekick | Yes/No |
-| Sidekick Can Vent | Yes/No |
+| Jackal Can Create A Recruit | Yes/No |
+| Recruit Can Vent | Yes/No |
 | Team Jackal Have Impostor Vision | -
 -----------------------
 
-## Sidekick
+## Recruit
 ### **Team: Jackal**
 ### **Faction: Neutral**
 ### **Alignment: Neutral Killing**
-Gets assigned to a player during the game by the "Create Sidekick Action" of the Jackal and joins the Jackal in their quest to eliminate all other players.\
+Gets assigned to a player during the game by the "Create Recruit Action" of the Jackal and joins the Jackal in their quest to eliminate all other players.\
 \
 **NOTE:**
 - The original faction of the player will be changed to Neutral, so they count as a Jackal.
 - The original alignment of the player will be changed to Neutral Killing, so they count as a Jackal.
-- The Sidekick may be killed by a Sheriff.
-- The Sidekick cannot target the Mini, while it's growing up.
+- The Recruit may be killed by a Sheriff.
+- The Recruit cannot target the Mini, while it's growing up.
 
 ### Game Options
 | Name | Description
 |----------|:-------------:|
 | Team Jackal Kill Cooldown | Uses the same kill Cooldown setting as the Jackal |
-| Sidekick Can Use Vents | Yes/No |
+| Recruit Can Use Vents | Yes/No |
 -----------------------
 
 ## Juggernaut
@@ -791,7 +812,7 @@ How the Lawyer wins:
 The Prosecutor is a neutral role that resembles the Lawyer. The Prosecutor has a client who is a Crewmate.\
 The Prosecutor needs their client to be voted out in order to win the game.\
 The Prosecutor's client doesn't know that they are their client.\
-If the client gets sidekicked, the Prosecutor changes their role and becomes the [Survivor](#survivor).\
+If the client gets recruited, the Prosecutor changes their role and becomes the [Survivor](#survivor).\
 If the Prosecutor's client dies, the Prosecutor changes their role and becomes the [Survivor](#survivor), which has a different goal to win the game.
 
 **NOTE:**
@@ -926,7 +947,7 @@ If the Engineer is inside a vent, depending on the options the members of the te
 | Engineer Spawn Chance | -
 | Number Of Sabotage Fixes| -
 | Impostors See Vents Highlighted | -
-| Jackal And Sidekick See Vents Highlighted | -
+| Jackal And Recruit See Vents Highlighted | -
 -----------------------
 
 ## Sheriff
@@ -1114,7 +1135,7 @@ There are two possibilities (depending on the set options):
 You can set whether the Sheriff can kill the Spy or not (in order to keep the lie alive).
 
 **NOTE:**
-- If the Spy gets sidekicked, it still will appear red to the Impostors.
+- If the Spy gets recruited, it still will appear red to the Impostors.
 
 ### Game Options
 | Name | Description
@@ -1193,7 +1214,7 @@ The souls will always prefer to answer with the role specific information first!
 - Active Lover dies: "I wanted to get out of this toxic relationship anyways."
 - Passiv Lover suicide: "The love of my life died, thus with a kiss I die."
 - Lawyer client kills Lawyer: "My client killed me. Do I still get paid?"
-- Teamkill Team Jackal: "First they sidekicked me, then they killed me... BUT WHY?"
+- Teamkill Team Jackal: "First they recruited me, then they killed me... BUT WHY?"
 - Teamkill Impostor: "I guess they confused me for the Spy, is there even one?"
 - Submerged o2-Kill: "Do I really need that mask for breathing?"
 - Warlock self kill: "MAYBE I cursed the person next to me and killed myself. Oops."
@@ -1379,7 +1400,7 @@ The vision will also be affected when lights out.
 
 **NOTE:**
 - Blind only affects Crewmates.
-- If you have the Blind Modifier and get sidekicked, you will lose the Modifier.
+- If you have the Blind Modifier and get recruited, you will lose the Modifier.
 
 ### Game Options
 | Name | Description

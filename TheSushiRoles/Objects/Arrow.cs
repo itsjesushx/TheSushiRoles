@@ -13,7 +13,7 @@ namespace TheSushiRoles.Objects
         public static Sprite GetSprite() 
         {
             if (sprite) return sprite;
-            sprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Arrow.png", 200f);
+            sprite = Utils.LoadSprite("TheSushiRoles.Resources.Arrow.png", 200f);
             return sprite;
         }
 

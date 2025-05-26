@@ -22,7 +22,7 @@ namespace TheSushiRoles.Objects
         public static Sprite GetTrapSprite() 
         {
             if (trapSprite) return trapSprite;
-            trapSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Trapper_Trap_Ingame.png", 300f);
+            trapSprite = Utils.LoadSprite("TheSushiRoles.Resources.Trapper_Trap_Ingame.png", 300f);
             return trapSprite;
         }
         public Trap(Vector2 p) 
@@ -135,7 +135,7 @@ namespace TheSushiRoles.Objects
             }
             if (target != null && player.PlayerId != Trapper.Player.PlayerId && !player.Data.IsDead) 
             {
-                Utils.StartRPC(CustomRPC.TriggerTrap, player.PlayerId, target.instanceId);
+                Utils.SendRPC(CustomRPC.TriggerTrap, player.PlayerId, target.instanceId);
                 RPCProcedure.TriggerTrap(player.PlayerId,(byte)target.instanceId);
             }
 

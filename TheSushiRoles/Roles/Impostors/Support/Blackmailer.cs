@@ -29,7 +29,7 @@ namespace TheSushiRoles.Roles
         {
             if (ButtonSprite2 == null)
             {
-                ButtonSprite2 = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.BlackmailLetter.png", 150f);
+                ButtonSprite2 = Utils.LoadSprite("TheSushiRoles.Resources.BlackmailLetter.png", 150f);
             }
             return ButtonSprite2;
         }
@@ -38,7 +38,7 @@ namespace TheSushiRoles.Roles
         {
             if (ButtonSprite3 == null)
             {
-                ButtonSprite3 = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.BlackmailOverlay.png", 100f);
+                ButtonSprite3 = Utils.LoadSprite("TheSushiRoles.Resources.BlackmailOverlay.png", 100f);
             }
             return ButtonSprite3;
         }
@@ -47,7 +47,7 @@ namespace TheSushiRoles.Roles
         {
             if (ButtonSprite == null)
             {
-                ButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.BlackmailButton.png", 115f);
+                ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.BlackmailButton.png", 115f);
             }
             return ButtonSprite;
         }

@@ -17,7 +17,7 @@ namespace TheSushiRoles.Patches
             if (Medic.Player != null && AmongUsClient.Instance.AmHost && Medic.futureShielded != null && !Medic.Player.Data.IsDead) 
             { 
                 // Need to send the RPC from the host here, to make sure that the order of setting the Shield is correct(for that reason the futureShielded are being synced)
-                Utils.StartRPC(CustomRPC.MedicSetShielded, Medic.futureShielded.PlayerId);
+                Utils.SendRPC(CustomRPC.MedicSetShielded, Medic.futureShielded.PlayerId);
                 RPCProcedure.MedicSetShielded(Medic.futureShielded.PlayerId);
             }
             if (Medic.usedShield) Medic.meetingAfterShielding = true;  // Has to be after the setting of the Shield
@@ -27,7 +27,7 @@ namespace TheSushiRoles.Patches
             {  // Need to send the RPC from the host here, to make sure that the order of erasing is correct (for that reason the futureErased are being synced)
                 foreach (PlayerControl target in Eraser.futureErased) 
                 {
-                    Utils.StartRPC(CustomRPC.ErasePlayerRoles, target.PlayerId);
+                    Utils.SendRPC(CustomRPC.ErasePlayerRoles, target.PlayerId);
                     RPCProcedure.ErasePlayerRoles(target.PlayerId);
                     if (!target.Data.Role.IsImpostor)
                     {
@@ -48,20 +48,23 @@ namespace TheSushiRoles.Patches
                 JackInTheBox.ConvertToVents();
             }
 
-            if (PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer == Amnesiac.Player && !PlayerControl.LocalPlayer.Data.IsDead && !Amnesiac.Remembered)
+            if (PlayerControl.LocalPlayer != null 
+                && PlayerControl.LocalPlayer == Amnesiac.Player 
+                && !PlayerControl.LocalPlayer.Data.IsDead 
+                && !Amnesiac.Remembered
+                && PlayerControl.AllPlayerControls.ToArray().Any(p => p != null && p.Data.IsDead && !p.Data.Disconnected))
             {
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
-                    if (player != Amnesiac.Player && !player.Data.Disconnected)
+                    if (player != Amnesiac.Player && !player.Data.Disconnected && !MapOptions.RevivedPlayers.Contains(player.PlayerId))
                     {
                         if (player.Data.IsDead) Amnesiac.PlayersToRemember.Add(player.PlayerId);
-                        //else return;
                     }
                 }
                 byte[] rememberTargets = Amnesiac.PlayersToRemember.ToArray();
                 var pk = new ShapeShifterMenu((x) =>
                 {
-                    Utils.StartRPC(CustomRPC.AmnesiacRemember, x.PlayerId);
+                    Utils.SendRPC(CustomRPC.AmnesiacRemember, x.PlayerId);
                     RPCProcedure.AmnesiacRemember(x.PlayerId);
                 }, (y) =>
                 {
@@ -82,33 +85,33 @@ namespace TheSushiRoles.Patches
                 if ((witchDiesWithExiledLover || exiledIsWitch) && Witch.witchVoteSavesTargets) Witch.futureSpelled = new List<PlayerControl>();
                 foreach (PlayerControl target in Witch.futureSpelled) 
                 {
-                    if (target != null && !target.Data.IsDead && Utils.CheckMuderAttempt(Witch.Player, target, true) == MurderAttemptResult.PerformKill)
+                    if (target != null && !target.Data.IsDead && Utils.CheckMurderAttempt(Witch.Player, target, true) == MurderAttemptResult.PerformKill)
                     {
                         if (exiled != null && Prosecutor.Player != null && (target == Prosecutor.Player || target == Lovers.OtherLover(Prosecutor.Player)) 
                         && Prosecutor.target != null && Prosecutor.target.PlayerId == exiled.PlayerId) continue;
 
                         if (target == Prosecutor.target && Prosecutor.Player != null) 
                         {
-                            Utils.StartRPC(CustomRPC.ProsecutorChangeRole);
+                            Utils.SendRPC(CustomRPC.ProsecutorChangeRole);
                             RPCProcedure.ProsecutorChangeRole();
                         }
 
                         if (target == Lawyer.target && Lawyer.Player != null) 
                         {
-                            Utils.StartRPC(CustomRPC.LawyerChangeRole);
+                            Utils.SendRPC(CustomRPC.LawyerChangeRole);
                             RPCProcedure.LawyerChangeRole();
                         }
 
                         if (target == Romantic.beloved && Romantic.Player != null) 
                         {
-                            Utils.StartRPC(CustomRPC.RomanticChangeRole);
+                            Utils.SendRPC(CustomRPC.RomanticChangeRole);
                             RPCProcedure.RomanticChangeRole();
                         }
 
-                        Utils.StartRPC(CustomRPC.UncheckedExilePlayer, target.PlayerId);
+                        Utils.SendRPC(CustomRPC.UncheckedExilePlayer, target.PlayerId);
                         RPCProcedure.UncheckedExilePlayer(target.PlayerId);
 
-                        Utils.StartRPC(CustomRPC.ShareGhostInfo, 
+                        Utils.SendRPC(CustomRPC.ShareGhostInfo, 
                         PlayerControl.LocalPlayer.PlayerId, 
                         (byte)GhostInfoTypes.DeathReasonAndKiller, 
                         target.PlayerId, 
@@ -203,7 +206,7 @@ namespace TheSushiRoles.Patches
             }
         }
 
-        static void WrapUpPostfix(PlayerControl exiled) 
+        static void WrapUpPostfix(PlayerControl exiled)
         {
             // Prosecutor win condition
             if (exiled != null && Prosecutor.Player != null && Prosecutor.target != null && Prosecutor.target.PlayerId == exiled.PlayerId && !Prosecutor.Player.Data.IsDead)
@@ -212,12 +215,12 @@ namespace TheSushiRoles.Patches
             }
 
             // Mini exile lose condition
-            else if (exiled != null && Mini.Player != null && Mini.Player.PlayerId == exiled.PlayerId && !Mini.IsGrownUp && !Mini.Player.Data.Role.IsImpostor && !RoleInfo.GetRoleInfoForPlayer(Mini.Player).Any(x => x.FactionId == Faction.Neutrals)) 
+            else if (exiled != null && Mini.Player != null && Mini.Player.PlayerId == exiled.PlayerId && !Mini.IsGrownUp && !Mini.Player.Data.Role.IsImpostor && !RoleInfo.GetRoleInfoForPlayer(Mini.Player).Any(x => x.FactionId == Faction.Neutrals))
             {
                 Mini.IsMiniLose = true;
             }
             // Jester win condition
-            else if (exiled != null && Jester.Player != null && Jester.Player.PlayerId == exiled.PlayerId) 
+            else if (exiled != null && Jester.Player != null && Jester.Player.PlayerId == exiled.PlayerId)
             {
                 Jester.IsJesterWin = true;
             }
@@ -226,9 +229,9 @@ namespace TheSushiRoles.Patches
             CustomButton.MeetingEndedUpdate();
 
             // Blackmailer remove blackmailed
-            if (Blackmailer.BlackmailedPlayer != null) 
+            if (Blackmailer.BlackmailedPlayer != null)
             {
-                Utils.StartRPC(CustomRPC.RemoveBlackmail);
+                Utils.SendRPC(CustomRPC.RemoveBlackmail);
                 RPCProcedure.RemoveBlackmail();
             }
 
@@ -241,16 +244,16 @@ namespace TheSushiRoles.Patches
             Oracle.Investigated = false;
 
             // Mini set adapted Cooldown
-            if (Mini.Player != null && PlayerControl.LocalPlayer == Mini.Player && Mini.Player.Data.Role.IsImpostor) 
+            if (Mini.Player != null && PlayerControl.LocalPlayer == Mini.Player && Mini.Player.Data.Role.IsImpostor)
             {
                 var multiplier = Mini.IsGrownUp ? 0.66f : 2f;
                 Mini.Player.SetKillTimer(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown * multiplier);
             }
 
             // Mystic spawn souls
-            if (Mystic.deadBodyPositions != null && Mystic.Player != null && PlayerControl.LocalPlayer == Mystic.Player && (Mystic.mode == 0 || Mystic.mode == 2)) 
+            if (Mystic.deadBodyPositions != null && Mystic.Player != null && PlayerControl.LocalPlayer == Mystic.Player && (Mystic.mode == 0 || Mystic.mode == 2))
             {
-                foreach (Vector3 pos in Mystic.deadBodyPositions) 
+                foreach (Vector3 pos in Mystic.deadBodyPositions)
                 {
                     GameObject soul = new GameObject();
                     //soul.transform.position = pos;
@@ -259,16 +262,16 @@ namespace TheSushiRoles.Patches
                     var rend = soul.AddComponent<SpriteRenderer>();
                     soul.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                     rend.sprite = Mystic.GetSoulSprite();
-                    
-                    if(Mystic.limitSoulDuration) 
+
+                    if (Mystic.limitSoulDuration)
                     {
                         FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Mystic.soulDuration, new Action<float>((p) => {
-                            if (rend != null) 
+                            if (rend != null)
                             {
                                 var tmp = rend.color;
                                 tmp.a = Mathf.Clamp01(1 - p);
                                 rend.color = tmp;
-                            }    
+                            }
                             if (p == 1f && rend != null && rend.gameObject != null) UnityEngine.Object.Destroy(rend.gameObject);
                         })));
                     }
@@ -277,22 +280,25 @@ namespace TheSushiRoles.Patches
             }
 
             // Tracker reset deadBodyPositions
-            Tracker.deadBodyPositions = new List<Vector3>();
+            Tracker.deadBodyPositions = new List<Vector3>(); 
+            
+            // Scavenger reset DeadBodyPositions
+            Scavenger.DeadBodyPositions = new List<Vector3>();
 
             // Arsonist deactivate dead poolable players
-            if (Arsonist.Player != null && Arsonist.Player == PlayerControl.LocalPlayer) 
+            if (Arsonist.Player != null && Arsonist.Player == PlayerControl.LocalPlayer)
             {
                 int visibleCounter = 0;
                 Vector3 newBottomLeft = IntroCutsceneOnDestroyPatch.bottomLeft;
                 var BottomLeft = newBottomLeft + new Vector3(-0.25f, -0.25f, 0);
-                foreach (PlayerControl p in PlayerControl.AllPlayerControls) 
+                foreach (PlayerControl p in PlayerControl.AllPlayerControls)
                 {
                     if (!MapOptions.BeanIcons.ContainsKey(p.PlayerId)) continue;
-                    if (p.Data.IsDead || p.Data.Disconnected) 
+                    if (p.Data.IsDead || p.Data.Disconnected)
                     {
                         MapOptions.BeanIcons[p.PlayerId].gameObject.SetActive(false);
-                    } 
-                    else 
+                    }
+                    else
                     {
                         MapOptions.BeanIcons[p.PlayerId].transform.localPosition = newBottomLeft + Vector3.right * visibleCounter * 0.35f;
                         visibleCounter++;

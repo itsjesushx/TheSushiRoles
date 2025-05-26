@@ -23,7 +23,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetButtonSprite() 
         {
             if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Infect.png", 115f);
+            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.Infect.png", 115f);
             return ButtonSprite;
         }
         public static bool IsInfected(PlayerControl target) => InfectedPlayers.Contains(target);

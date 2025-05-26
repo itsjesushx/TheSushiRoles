@@ -25,7 +25,7 @@ namespace TheSushiRoles.Roles
         public static Sprite GetButtonSprite() 
         {
             if (trapButtonSprite) return trapButtonSprite;
-            trapButtonSprite = Utils.LoadSpriteFromResources("TheSushiRoles.Resources.Trapper_Place_Button.png", 115f);
+            trapButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.Trapper_Place_Button.png", 115f);
             return trapButtonSprite;
         }
 
