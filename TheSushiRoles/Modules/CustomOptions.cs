@@ -16,7 +16,6 @@ namespace TheSushiRoles
 {
     public class CustomOption 
     {
-
         public static List<CustomOption> options = new List<CustomOption>();
         public static int preset = 0;
         public static ConfigEntry<string> vanillaSettings;
@@ -489,25 +488,6 @@ namespace TheSushiRoles
         {
 
             var relevantOptions = options.Where(x => x.type == optionType ||optionType == CustomOptionType.General).ToList();
-           
-            if ((int)optionType == 99) 
-            {
-                // Create 4 Groups with Role settings only
-                relevantOptions.Clear();
-                relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Impostor && x.isHeader));
-                relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Neutral && x.isHeader));
-                relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Crewmate && x.isHeader));
-                relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Ability && x.isHeader));
-                relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Modifier && x.isHeader));
-                foreach (var option in options) 
-                {
-                    if (option.parent != null && option.parent.GetSelection() > 0) 
-                    {
-                        if (option.id == 224) //Recruit
-                            relevantOptions.Insert(relevantOptions.IndexOf(CustomOptionHolder.jackalSpawnRate) + 1, option);
-                    }
-                }
-            }
 
             for (int j = 0; j < __instance.settingsInfo.Count; j++) 
             {
@@ -525,7 +505,7 @@ namespace TheSushiRoles
 
             foreach (var option in relevantOptions) 
             {
-                if (option.isHeader && (int)optionType != 99 || (int)optionType == 99 && curType != option.type) 
+                if (option.isHeader) 
                 {
                     curType = option.type;
                     if (i != 0) 
@@ -538,9 +518,6 @@ namespace TheSushiRoles
                     CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate<CategoryHeaderMasked>(__instance.categoryHeaderOrigin);
                     categoryHeaderMasked.SetHeader(StringNames.ImpostorsCategory, 61);
                     categoryHeaderMasked.Title.text = option.Heading != "" ? option.Heading : option.name;
-                    if ((int)optionType == 99)
-                        categoryHeaderMasked.Title.text = new Dictionary<CustomOptionType, string>() { { CustomOptionType.Impostor, "Imp Roles" }, { CustomOptionType.Neutral, "Neutral Roles" },
-                            { CustomOptionType.Crewmate, "Crew Roles" }, { CustomOptionType.Modifier, "Modifiers" }, { CustomOptionType.Ability, "Abilities" }, }[curType];
                     categoryHeaderMasked.Title.outlineColor = Color.white;
                     categoryHeaderMasked.Title.outlineWidth = 0.2f;
                     categoryHeaderMasked.transform.SetParent(__instance.settingsContainer);
@@ -551,7 +528,7 @@ namespace TheSushiRoles
                     i = 0;
                 } 
                 else if (option.parent != null && (option.parent.selection == 0 || option.parent.parent != null && option.parent.parent.selection == 0)) continue;  // Hides options, for which the parent is disabled!
-                if (option == CustomOptionHolder.crewmateRolesCountMax || option == CustomOptionHolder.MaxNeutralEvilRoles || option == CustomOptionHolder.neutralKillingRolesCountMax || option == CustomOptionHolder.impostorRolesCountMax || option == CustomOptionHolder.modifiersCountMax)
+                if (option == CustomOptionHolder.crewmateRolesCountMax || option == CustomOptionHolder.MaxNeutralEvilRoles || option == CustomOptionHolder.neutralKillingRolesCountMax || option == CustomOptionHolder.impostorRolesCountMax || option == CustomOptionHolder.modifiersCountMax || option == CustomOptionHolder.abilitiesCountMax)
                     continue;
 
                 ViewSettingsInfoPanel viewSettingsInfoPanel = UnityEngine.Object.Instantiate<ViewSettingsInfoPanel>(__instance.infoPanelOrigin);
@@ -576,16 +553,9 @@ namespace TheSushiRoles
                 var settingTuple = HandleSpecialOptionsView(option, option.name, option.selections[value].ToString());
                 viewSettingsInfoPanel.SetInfo(StringNames.ImpostorsCategory, $"{option.selections[value].ToString()}{option.Format}", 61);
                 viewSettingsInfoPanel.titleText.text = settingTuple.Item1;
-                if (option.isHeader && (int)optionType != 99 && option.Heading == "" && (option.type == CustomOptionType.Neutral || option.type == CustomOptionType.Crewmate || option.type == CustomOptionType.Impostor  || option.type == CustomOptionType.Ability || option.type == CustomOptionType.Modifier)) 
+                if (option.isHeader && option.Heading == "" && (option.type == CustomOptionType.Neutral || option.type == CustomOptionType.Crewmate || option.type == CustomOptionType.Impostor  || option.type == CustomOptionType.Ability || option.type == CustomOptionType.Modifier)) 
                 {
                     viewSettingsInfoPanel.titleText.text = "Spawn Chance";
-                }
-                if ((int)optionType == 99) 
-                {
-                    viewSettingsInfoPanel.titleText.outlineColor = Color.white;
-                    viewSettingsInfoPanel.titleText.outlineWidth = 0.2f;
-                    if (option.type == CustomOptionType.Modifier)
-                        viewSettingsInfoPanel.settingText.text = viewSettingsInfoPanel.settingText.text + GameOptionsDataPatch.BuildModifierExtras(option);
                 }
                 __instance.settingsInfo.Add(viewSettingsInfoPanel.gameObject);
 
@@ -666,8 +636,6 @@ namespace TheSushiRoles
             int next = 3;
             // create TSR settings
             createCustomButton(__instance, next++, "TSRSettings", "TSR Settings", CustomOptionType.General);
-            // create TSR settings
-            createCustomButton(__instance, next++, "RoleOverview", "Role Overview", (CustomOptionType)99);
             // Imp
             createCustomButton(__instance, next++, "ImpostorSettings", "Impostor Roles", CustomOptionType.Impostor);
 
@@ -1035,10 +1003,10 @@ namespace TheSushiRoles
         {
             var impRoles = BuildOptionsOfType(CustomOptionType.Impostor, true) + "\n";
             var neutralRoles = BuildOptionsOfType(CustomOptionType.Neutral, true) + "\n";
-            var neuts = BuildOptionsOfType(CustomOptionType.Ability, true) + "\n";
             var crewRoles = BuildOptionsOfType(CustomOptionType.Crewmate, true) + "\n";
-            var modifiers = BuildOptionsOfType(CustomOptionType.Modifier, true);
-            return impRoles + neutralRoles + neuts + crewRoles + modifiers;
+            var modifiers = BuildOptionsOfType(CustomOptionType.Modifier, true)+ "\n";
+            var abilities = BuildOptionsOfType(CustomOptionType.Ability, true);
+            return impRoles + neutralRoles + crewRoles + modifiers + abilities;
         }
         public static string BuildModifierExtras(CustomOption customOption) 
         {
@@ -1151,7 +1119,7 @@ namespace TheSushiRoles
                         var optionValue = (min == max) ? $"{max}" : $"{min} - {max}";
                         sb.AppendLine($"{optionName}: {optionValue}");
                     } 
-                    else if ((option == CustomOptionHolder.crewmateRolesCountMax) || (option == CustomOptionHolder.MaxNeutralBenignRoles) || (option == CustomOptionHolder.MaxNeutralEvilRoles) || (option == CustomOptionHolder.neutralKillingRolesCountMax) || (option == CustomOptionHolder.impostorRolesCountMax) || option == CustomOptionHolder.modifiersCountMax|| option == CustomOptionHolder.modifiersCountMax || option == CustomOptionHolder.abilitiesCountMax)
+                    else if ((option == CustomOptionHolder.crewmateRolesCountMax) || (option == CustomOptionHolder.MaxNeutralBenignRoles) || (option == CustomOptionHolder.MaxNeutralEvilRoles) || (option == CustomOptionHolder.neutralKillingRolesCountMax) || (option == CustomOptionHolder.impostorRolesCountMax) || option == CustomOptionHolder.modifiersCountMax || option == CustomOptionHolder.abilitiesCountMax)
                     {
                         continue;
                     }

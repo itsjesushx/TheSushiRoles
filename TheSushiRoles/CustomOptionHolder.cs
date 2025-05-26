@@ -354,8 +354,7 @@ namespace TheSushiRoles
         public static CustomOption AmnesiacSpawnRate;
         
         public static CustomOption modifierMini;
-        public static CustomOption modifierMiniGrowingUpDuration;
-        public static CustomOption modifierMiniGrowingUpInMeeting;
+        public static CustomOption ModifierMiniSpeed;
 
         public static CustomOption ModifierGiant;
         public static CustomOption ModifierGiantSpeed;
@@ -371,11 +370,11 @@ namespace TheSushiRoles
         public static CustomOption modifierDrunkQuantity;
         public static CustomOption modifierDrunkDuration;
 
-        public static CustomOption modifierChameleon;
-        public static CustomOption modifierChameleonQuantity;
-        public static CustomOption modifierChameleonHoldDuration;
-        public static CustomOption modifierChameleonFadeDuration;
-        public static CustomOption modifierChameleonMinVisibility;
+        public static CustomOption AbilityChameleon;
+        public static CustomOption AbilityChameleonQuantity;
+        public static CustomOption AbilityChameleonHoldDuration;
+        public static CustomOption AbilityChameleonFadeDuration;
+        public static CustomOption AbilityChameleonMinVisibility;
         
         public static CustomOption modifierLucky;
 
@@ -673,11 +672,6 @@ namespace TheSushiRoles
             sheriffCooldown = CustomOption.Create(101, Types.Crewmate, "Sheriff Cooldown", 30f, 10f, 60f, 2.5f, sheriffSpawnRate, Format: "s");
             sheriffCanKillNeutrals = CustomOption.Create(102, Types.Crewmate, "Sheriff Can Kill Passive Neutrals", false, sheriffSpawnRate);
 
-            lighterSpawnRate = CustomOption.Create(110, Types.Crewmate, ColorString(Lighter.Color, "Lighter"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            lighterModeLightsOnVision = CustomOption.Create(111, Types.Crewmate, "Vision On Lights On", 1.5f, 0.25f, 5f, 0.25f, lighterSpawnRate);
-            lighterModeLightsOffVision = CustomOption.Create(112, Types.Crewmate, "Vision On Lights Off", 0.5f, 0.25f, 5f, 0.25f, lighterSpawnRate);
-            lighterFlashlightWidth = CustomOption.Create(113, Types.Crewmate, "Flashlight Width", 0.3f, 0.1f, 1f, 0.1f, lighterSpawnRate);
-
             CrusaderSpawnRate = CustomOption.Create(1201, Types.Crewmate, ColorString(Crusader.Color, "Crusader"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             CrusaderCooldown = CustomOption.Create(1211, Types.Crewmate, "Crusader Cooldown", 30f, 10f, 60f, 2.5f, CrusaderSpawnRate, Format: "s");
             CrusaderCharges = CustomOption.Create(1212, Types.Crewmate, "Initial Fortify Charges", 1f, 0f, 5f, 1f, CrusaderSpawnRate);
@@ -791,55 +785,48 @@ namespace TheSushiRoles
             // Modifier (1000 - 1999)
             modifiersAreHidden = CustomOption.Create(1009, Types.Modifier, ColorString(Color.yellow, "VIP & Bait Are Hidden"), true, null, true, Heading: ColorString(Color.yellow, "Hide After Death Modifiers"));
 
-            modifierLazy = CustomOption.Create(1010, Types.Modifier, ColorString(Color.yellow, "Lazy"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            modifierLazyQuantity = CustomOption.Create(1011, Types.Modifier, ColorString(Color.yellow, "Lazy Quantity"), rates, modifierLazy);
+            modifierLazy = CustomOption.Create(1010, Types.Modifier, ColorString(Lazy.Color, "Lazy"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            modifierLazyQuantity = CustomOption.Create(1011, Types.Modifier, ColorString(Lazy.Color, "Lazy Quantity"), rates, modifierLazy);
 
-            ModifierSleuth = CustomOption.Create(1005, Types.Modifier, ColorString(Color.yellow, "Sleuth"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            ModifierSleuthQuantity = CustomOption.Create(1006, Types.Modifier, ColorString(Color.yellow, "Sleuth Quantity"), rates, ModifierSleuth);
+            ModifierSleuth = CustomOption.Create(1005, Types.Modifier, ColorString(Sleuth.Color, "Sleuth"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            ModifierSleuthQuantity = CustomOption.Create(1006, Types.Modifier, ColorString(Sleuth.Color, "Sleuth Quantity"), rates, ModifierSleuth);
 
-            modifierTieBreaker = CustomOption.Create(1020, Types.Modifier, ColorString(Color.yellow, "Tie Breaker"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            modifierTieBreaker = CustomOption.Create(1020, Types.Modifier, ColorString(Tiebreaker.Color, "Tie Breaker"), 0f, 0f, 100f, 10f, null, true, Format: "%");
 
-            modifierBait = CustomOption.Create(1030, Types.Modifier, ColorString(Color.yellow, "Bait"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            modifierBaitQuantity = CustomOption.Create(1031, Types.Modifier, ColorString(Color.yellow, "Bait Quantity"), rates, modifierBait);
+            modifierBait = CustomOption.Create(1030, Types.Modifier, ColorString(Bait.Color, "Bait"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            modifierBaitQuantity = CustomOption.Create(1031, Types.Modifier, ColorString(Bait.Color, "Bait Quantity"), rates, modifierBait);
             modifierBaitReportDelayMin = CustomOption.Create(1032, Types.Modifier, "Bait Report Delay Min", 0f, 0f, 10f, 1f, modifierBait, Format: "s");
             modifierBaitReportDelayMax = CustomOption.Create(1033, Types.Modifier, "Bait Report Delay Max", 0f, 0f, 10f, 1f, modifierBait, Format: "s");
             modifierBaitShowKillFlash = CustomOption.Create(1034, Types.Modifier, "Warn The Killer With A Flash", true, modifierBait);
 
-            modifierLover = CustomOption.Create(1040, Types.Modifier, ColorString(Color.yellow, "Lovers"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            modifierLoverImpLoverRate = CustomOption.Create(1041, Types.Modifier, "Chance That One Lover Is A Killer", 0f, 0f, 100f, 10f, modifierLover, Format: "%");
+            modifierLover = CustomOption.Create(1040, Types.Modifier, ColorString(Lovers.Color, "Lovers"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            modifierLoverImpLoverRate = CustomOption.Create(1041, Types.Modifier, "Evil Lover Chance", 0f, 0f, 100f, 10f, modifierLover, Format: "%");
             modifierLoverBothDie = CustomOption.Create(1042, Types.Modifier, "Lovers Die Together", true, modifierLover);
 
-            modifierBlind = CustomOption.Create(1050, Types.Modifier, ColorString(Color.yellow, "Blind"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            modifierBlindQuantity = CustomOption.Create(1051, Types.Modifier, ColorString(Color.yellow, "Blind Quantity"), rates, modifierBlind);
+            modifierBlind = CustomOption.Create(1050, Types.Modifier, ColorString(Blind.Color, "Blind"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            modifierBlindQuantity = CustomOption.Create(1051, Types.Modifier, ColorString(Blind.Color, "Blind Quantity"), rates, modifierBlind);
             modifierBlindVision = CustomOption.Create(1052, Types.Modifier, "Vision With Blind", new string[] { "-10%", "-20%", "-30%", "-40%", "-50%" }, modifierBlind);
 
-            modifierMini = CustomOption.Create(1061, Types.Modifier, ColorString(Color.yellow, "Mini"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            modifierMiniGrowingUpDuration = CustomOption.Create(1062, Types.Modifier, "Mini Growing Up Duration", 400f, 100f, 1500f, 100f, modifierMini);
-            modifierMiniGrowingUpInMeeting = CustomOption.Create(1063, Types.Modifier, "Mini Grows Up In Meeting", true, modifierMini);
+            modifierMini = CustomOption.Create(1061, Types.Modifier, ColorString(Mini.Color, "Mini"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            ModifierMiniSpeed = CustomOption.Create(1062, Types.Modifier, "Mini Speed Multiplier", 1.25f, 1.05f, 2.5f, 0.05f, modifierMini, Format: "x");
 
-            ModifierGiant = CustomOption.Create(529, Types.Modifier, ColorString(Color.yellow, "Giant"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            ModifierGiant = CustomOption.Create(529, Types.Modifier, ColorString(Giant.Color, "Giant"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             ModifierGiantSpeed = CustomOption.Create(5304, Types.Modifier, "Giant Speed Multiplier", 0.75f, 0.25f, 1f, 0.05f, ModifierGiant, Format: "x");
 
-            modifierVip = CustomOption.Create(1070, Types.Modifier, ColorString(Color.yellow, "VIP"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            modifierVipQuantity = CustomOption.Create(1071, Types.Modifier, ColorString(Color.yellow, "VIP Quantity"), rates, modifierVip);
+            modifierVip = CustomOption.Create(1070, Types.Modifier, ColorString(Vip.Color, "VIP"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            modifierVipQuantity = CustomOption.Create(1071, Types.Modifier, ColorString(Vip.Color, "VIP Quantity"), rates, modifierVip);
             modifierVipShowColor = CustomOption.Create(1072, Types.Modifier, "Show Team Color", true, modifierVip);
 
-            ModifierDisperser = CustomOption.Create(1021, Types.Modifier, ColorString(Color.yellow, "Disperser"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            ModifierDisperser = CustomOption.Create(1021, Types.Modifier, ColorString(Palette.ImpostorRed, "Disperser"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             ModifierDisperserCooldown = CustomOption.Create(1022, Types.Modifier, "Disperser Cooldown", 30f, 10f, 120f, 5f, ModifierDisperser, Format: "s");
             ModifierDisperserCharges = CustomOption.Create(1023, Types.Modifier, "Initial Disperser Charges", 1f, 0f, 5f, 1f, ModifierDisperser);
             ModifierDisperserKillCharges = CustomOption.Create(1024, Types.Modifier, "Disperse Charges per Kill", 1f, 0f, 5f, 1f, ModifierDisperser);
 
-            modifierDrunk = CustomOption.Create(1080, Types.Modifier, ColorString(Color.yellow, "Drunk"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            modifierDrunkQuantity = CustomOption.Create(1081, Types.Modifier, ColorString(Color.yellow, "Modifier Quantity"), rates, modifierDrunk);
+            modifierDrunk = CustomOption.Create(1080, Types.Modifier, ColorString(Drunk.Color, "Drunk"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            modifierDrunkQuantity = CustomOption.Create(1081, Types.Modifier, ColorString(Drunk.Color, "Modifier Quantity"), rates, modifierDrunk);
             modifierDrunkDuration = CustomOption.Create(1082, Types.Modifier, "Number Of Meetings Being Drunk", 3f, 1f, 15f, 1f, modifierDrunk);
 
-            modifierChameleon = CustomOption.Create(1090, Types.Modifier, ColorString(Color.yellow, "Chameleon"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            modifierChameleonQuantity = CustomOption.Create(1091, Types.Modifier, ColorString(Color.yellow, "Chameleon Quantity"), rates, modifierChameleon);
-            modifierChameleonHoldDuration = CustomOption.Create(1092, Types.Modifier, "Time Until Fading Starts", 3f, 1f, 10f, 0.5f, modifierChameleon, Format: "s");
-            modifierChameleonFadeDuration = CustomOption.Create(1093, Types.Modifier, "Fade Duration", 1f, 0.25f, 10f, 0.25f, modifierChameleon, Format: "s");
-            modifierChameleonMinVisibility = CustomOption.Create(1094, Types.Modifier, "Minimum Visibility", new string[] { "0%", "10%", "20%", "30%", "40%", "50%" }, modifierChameleon);
-
-            modifierLucky = CustomOption.Create(1101, Types.Modifier, ColorString(Color.yellow, "Lucky"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            modifierLucky = CustomOption.Create(1101, Types.Modifier, ColorString(Lucky.Color, "Lucky"), 0f, 0f, 100f, 10f, null, true, Format: "%");
 
             // Guesser Gamemode (2000 - 2999)
             GuesserCrewNumber = CustomOption.Create(2001, Types.Ability, ColorString(Palette.CrewmateBlue, "Number of Crew Guesser"), 15f, 0f, 15f, 1f, null, true, Heading: "Guesser Settings");
@@ -853,9 +840,20 @@ namespace TheSushiRoles
             GuesserKillsThroughShield = CustomOption.Create(2008, Types.Ability, "Guesses Ignore The Medic Shield", true);
             GuesserEvilCanKillSpy = CustomOption.Create(2009, Types.Ability, "Evil Guesser Can Guess The Spy", true);
 
-            AbilityCoward = CustomOption.Create(1029, Types.Ability, ColorString(Guesser.AbilityColor, "Coward"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            AbilityCoward = CustomOption.Create(1029, Types.Ability, ColorString(Coward.Color, "Coward"), 0f, 0f, 100f, 10f, null, true, Format: "%");
 
-            AbilityParanoid = CustomOption.Create(522, Types.Ability, ColorString(Guesser.AbilityColor, "Paranoid"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            AbilityParanoid = CustomOption.Create(522, Types.Ability, ColorString(Paranoid.Color, "Paranoid"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+
+            AbilityChameleon = CustomOption.Create(1090, Types.Ability, ColorString(Chameleon.Color, "Chameleon"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            AbilityChameleonQuantity = CustomOption.Create(1091, Types.Ability, ColorString(Chameleon.Color, "Chameleon Quantity"), rates, AbilityChameleon);
+            AbilityChameleonHoldDuration = CustomOption.Create(1092, Types.Ability, "Time Until Fading Starts", 3f, 1f, 10f, 0f, AbilityChameleon, Format: "s");
+            AbilityChameleonFadeDuration = CustomOption.Create(1093, Types.Ability, "Fade Duration", 1f, 0.25f, 10f, 0.15f, AbilityChameleon, Format: "s");
+            AbilityChameleonMinVisibility = CustomOption.Create(1094, Types.Ability, "Minimum Visibility", new string[] { "0%", "10%", "20%", "30%", "40%", "50%" }, AbilityChameleon);
+
+            lighterSpawnRate = CustomOption.Create(110, Types.Ability, ColorString(Lighter.Color, "Lighter"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            lighterModeLightsOnVision = CustomOption.Create(111, Types.Ability, "Vision On Lights On", 1.5f, 0.25f, 5f, 0.25f, lighterSpawnRate);
+            lighterModeLightsOffVision = CustomOption.Create(112, Types.Ability, "Vision On Lights Off", 0.5f, 0.25f, 5f, 0.25f, lighterSpawnRate);
+            lighterFlashlightWidth = CustomOption.Create(113, Types.Ability, "Flashlight Width", 0.3f, 0.1f, 1f, 0.1f, lighterSpawnRate);
 
             // Other options
             maxNumberOfMeetings = CustomOption.Create(3, Types.General, "Number Of Meetings (excluding Mayor meeting)", 10, 0, 15, 1, null, true, Heading: "Gameplay Settings");
