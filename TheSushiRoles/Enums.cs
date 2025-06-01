@@ -20,7 +20,8 @@ namespace TheSushiRoles
     public enum AbilityId
     {
         Coward,
-        Paranoid
+        Paranoid,
+        Lighter,
     }
     public enum ModifierId
     {
@@ -70,8 +71,8 @@ namespace TheSushiRoles
         Deputy,
         Juggernaut,
         Glitch,
-        Lighter,
         Agent,
+        Snitch,
         Hitman,
         Veteran,
         Detective,
@@ -118,14 +119,18 @@ namespace TheSushiRoles
         Crewmate,
         Impostor,
     }
-
+    public enum SkipButtonOptions
+    {
+        No,
+        Emergency,
+        Always
+    }
     public enum CustomRPC
     {
         // Main Controls
 
         ResetVaribles = 100,
         ShareOptions,
-        ForceEnd,
         WorkaroundSetRoles,
         SetRole,
         SetModifier,
@@ -133,7 +138,6 @@ namespace TheSushiRoles
         VersionHandshake,
         UseUncheckedVent,
         SetPostRoles,
-        UncheckedMurderPlayer,
         UncheckedCmdReportDeadBody,
         SetUnteleportable,
         RemoveAllBodies,
@@ -146,11 +150,11 @@ namespace TheSushiRoles
 
         EngineerFixLights = 120,
         EngineerFixSubmergedOxygen,
+        DisableVanillaRoles,
         EngineerUsedRepair,
         CleanBody,
+        SnitchFindKiller,
         FollowerPicksRole,
-        CreateHook,
-        UpdateHook,
         MedicSetShielded,
         WerewolfMaul,
         StopFortifiedInteraction,
@@ -165,6 +169,8 @@ namespace TheSushiRoles
         HitmanDragBody,
         HitmanDropBody,
         PestilenceKill,
+        BypassMultiKill,
+        BypassKill,
         DropBody,
         DragBody,
         Disperse,
@@ -223,12 +229,19 @@ namespace TheSushiRoles
         MayorSetVoteTwice,
         YoyoMarkLocation,
         YoyoBlink,
-        BreakArmor,
+        LuckyBecomeUnlucky,
         SetGuesser,
 
         // Other functionality
         ShareTimer,
         ShareGhostInfo,
+        CheckMurder,
+    }
+    public enum ProsecutorOnTargetDeath
+    {
+        Jester,
+        Amnesiac,
+        Survivor
     }
     public enum Faction
     {
@@ -243,6 +256,7 @@ namespace TheSushiRoles
         HackOver,
         ArsonistDouse,
         BountyTarget,
+        SnitchInfo,
         AssassinMarked,
         OracleInfo,
         PlaguebearerInfect,
@@ -254,7 +268,7 @@ namespace TheSushiRoles
         ViperTimer,
         DeathReasonAndKiller,
     }
-    enum CustomGameOverReason 
+    enum CustomGameOverReason
     {
         LoversWin = 10,
         TeamJackalWin = 11,
@@ -272,9 +286,10 @@ namespace TheSushiRoles
         PlaguebearerWin = 23,
         AgentWin = 24,
         HitmanWin = 25,
+        HostEndedGame = 26,
     }
 
-    enum WinCondition 
+    enum WinCondition
     {
         Default,
         LoversTeamWin,
@@ -299,5 +314,6 @@ namespace TheSushiRoles
         PlaguebearerWin,
         AgentWin,
         HitmanWin,
+        HostEndedGame
     }
 }

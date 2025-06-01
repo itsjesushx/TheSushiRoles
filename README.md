@@ -1,7 +1,6 @@
 ![banner](./Images/TheSushiRolesBanner.png)
 <p align="center"><a href="https://github.com/itsjesushx/TheSushiRoles/releases/"></a></p>
 
-
 This mod is not affiliated with Among Us or Innersloth LLC, and the content contained therein is not endorsed or otherwise sponsored by Innersloth LLC. Portions of the materials contained herein are property of Innersloth LLC. © Innersloth LLC.</p>
 <p align="center">
   To other mod devs: for usage of the code, please read and respect the <a href="#license">license</a></p>
@@ -63,10 +62,6 @@ Not working? You might want to install the dependency [vc_redist](https://aka.ms
 3. Now unzip and drag or extract the files from the .zip into the original Epic Among Us game folder.
 4. Run the game by starting the game in your Epic Games launcher (the first launch might take a while).
 
-Not working? You might want to install the dependency [vc_redist](https://aka.ms/vs/16/release/vc_redist.x86.exe)
-
-![Install](https://i.imgur.com/pvBAyZN.png)
-
 ## Linux Installation
 1. Install Among Us via Steam
 2. Download newest [release](https://github.com/itsjesushx/TheSushiRoles/releases/latest) and extract it to ~/.steam/steam/steamapps/common/Among Us
@@ -93,12 +88,12 @@ Not working? You might want to install the dependency [vc_redist](https://aka.ms
 [Brybry16](https://github.com/Brybry16/BetterPolus) - For the Better Polus Implementation.\
 [Town of Us-R](https://github.com/eDonnes124/Town-Of-Us-R) - Idea for the Veteran, Undertaker, Juggernaut, Plaguebearer & Pestilence, Glitch, Oracle, Predator and a similar Amnesiac role came from **eDonnes124**\
 
-# Settings
+# Mod Features
 The mod adds a few new settings to Among Us (in addition to the role settings) mostly Quality of Life:
 - **Any Player Can Stop The Start:** If turned off, only the host can stop the game start. If on, all players can do it. Non-hosts stopping the start will send a chat message indicating who stopped it.
 - **Number of Crewmates:** The number of Crewmate roles can be set inside a lobby.
 - **Number of Neutral Benigns:** The number of Neutral Benign roles can be set inside a lobby.
-- **Number of Neutral Evil:** The number of Neutral Evil roles can be set inside a lobby.
+- **Number of Neutral Evils:** The number of Neutral Evil roles can be set inside a lobby.
 - **Number of Neutral Killers:** The number of Neutral Killing roles can be set inside a lobby.
 - **Number of Impostors:** The number of Impostor roles can be set inside a lobby.
 - **Number of Modifiers:** The number of Modifiers can be set inside a lobby.
@@ -130,6 +125,7 @@ The mod adds a few new settings to Among Us (in addition to the role settings) m
 - **Enable Random Player Spawns** 
 - **Disable Medbay Scan Walk**  If enabled players won't have the walk animation when doing the scan task in medbay.
 - **Show The Settings In-Game** You can use the button located under the map button or the F1-key to open or close the display of the lobby settings
+- **Pets are hidden once you die** When you are killed, your pets are automatically destroyed. This is to prevent players from knowing if a body was cleaned/eaten or dragged.
 
 ### Task Count Limits per map
 You can configure:
@@ -769,10 +765,8 @@ The romantic wins with the beloved as long as they win as well.
 ### **Team: Neutral (Benign)**
 The Amnesiac is a Neutral role with no win condition.
 They have zero tasks and are essentially roleless.
-However, they can remember a role by finding a dead player.
 Once they remember their role, they go on to try win with their new win condition.
 They can remember a role by picking a player after the meeting ends. By clicking the player name.
-If they don't get a new role, they can win by just surviving.
 
 ### Game Options
 | Name | Description |
@@ -1085,6 +1079,22 @@ The Swapper has initial swap charges and can recharge those charges after comple
 | Swapper Can Only Swap Others | Sets whether the Swapper can swap themself or not
 | Initial Swap Charges | -
 | Number Of Tasks Needed For Recharging | -
+-----------------------
+
+## Snitch
+### **Faction: Crewmates**
+### **Alignment: Crew Investigative**
+The Snitch is a Crewmate role that has to finish tasks in order to get a special ability.\
+When they finish tasks, once per round, they get a button to track the killer, they will get an arrow pointing to them and the Snitch.\
+But there's a twist, the Snitch has a chance of finding the wrong killer.\
+\
+
+### Game Options
+| Name | Description
+|----------|:-------------:|
+| Snitch Spawn Chance | -
+| Snitch Can See Colored Names in meetings | -
+| Snitch Ability Cooldown | -
 -----------------------
 
 ## Mystic

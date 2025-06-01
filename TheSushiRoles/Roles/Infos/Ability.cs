@@ -21,11 +21,13 @@ namespace TheSushiRoles.Roles.AbilityInfo
 
         public static readonly AbilityInfo coward = new("Coward", Coward.Color, "Call a meeting from anywhere!", AbilityId.Coward);
         public readonly static AbilityInfo paranoid = new("Paranoid", Paranoid.Color, "Know when someone is close to you", AbilityId.Paranoid);
+        public readonly static AbilityInfo flashlight = new("FlashLight", FlashLight.Color, "Hide N' Seek Vision!", AbilityId.Lighter);
         
         // not used yet but might in the future
-        public static List<AbilityInfo> allAbilityInfos = new List<AbilityInfo>() 
+        public static List<AbilityInfo> allAbilityInfos = new List<AbilityInfo>()
         {
             coward,
+            flashlight,
             paranoid
         };
         public static List<AbilityInfo> GetAbilityInfoForPlayer(PlayerControl player)
@@ -35,6 +37,7 @@ namespace TheSushiRoles.Roles.AbilityInfo
 
             if (player == Coward.Player) infos.Add(coward);
             if (player == Paranoid.Player) infos.Add(paranoid);
+            if (player == FlashLight.Player) infos.Add(flashlight);
 
             return infos;
         }

@@ -65,7 +65,6 @@ namespace TheSushiRoles.Roles
 
         #region Crewmates
         public readonly static RoleInfo crewmate = new("Crewmate", Palette.CrewmateBlue, "Find the Impostors", "Find the Impostors", RoleId.Crewmate, Faction.Crewmates, RoleAlignment.CrewSpecial, "Just a regular Crewmate.");
-        public readonly static RoleInfo lighter = new("Lighter", Lighter.Color, "Your light never goes out", "Your light never goes out", RoleId.Lighter, Faction.Crewmates, RoleAlignment.CrewSupport, "As the lighter, you have the ability to temporarly enhance your vision.");
         public readonly static RoleInfo detective = new("Detective", Detective.Color, "Find the <color=#FF1919FF>Impostors</color> by examining footprints", "Examine footprints", RoleId.Detective, Faction.Crewmates,  RoleAlignment.CrewInvest, "The Detective can see footprints that other players leave behind. The Detective's other feature shows when they report a corpse: they receive clues about the killer's identity. The type of information they get is based on the time it took them to find the corpse.");
         public readonly static RoleInfo hacker = new("Hacker", Hacker.Color, "Hack systems to find the <color=#FF1919FF>Impostors</color>", "Hack to find the Impostors", RoleId.Hacker, Faction.Crewmates, RoleAlignment.CrewInvest, "If the Hacker activates the Hacker mode, the Hacker gets more information than others from the admin table and vitals for a set Duration. Otherwise they see the same information as everyone else. The Hacker can see the colors (or Color types) of the players on the table. They can also see how long dead players have been dead for. The Hacker can access his mobile gadgets (vitals & admin table), with a maximum of Charges (uses) and a configurable amount of tasks needed to recharge.");
         public readonly static RoleInfo tracker = new("Tracker", Tracker.Color, "Track the <color=#FF1919FF>Impostors</color> down", "Track the Impostors down", RoleId.Tracker, Faction.Crewmates, RoleAlignment.CrewInvest, $"The Tracker is able to track the movements of other players. The Arrow's Color will be the tracked players Color. The arrow will update the position of the player every {Tracker.updateIntervall} seconds. The Arrows will reset depending on settings after each meeting. They can track dead bodies depending on settings as well.");
@@ -79,6 +78,7 @@ namespace TheSushiRoles.Roles
         public readonly static RoleInfo deputy = new("Deputy", Deputy.Color, "Execute players in meetings", "Execute the <color=#FF1919FF>Evildoers</color>", RoleId.Deputy, Faction.Crewmates, RoleAlignment.CrewPower, $"As The Deputy, you can execute players in meetings, if they are crewmate you will suicide, if they are a killer, they die instead. Depending on options you'll be able to shoot passive neutrals. You may only shoot once per meeting. ");
         public readonly static RoleInfo engineer = new("Engineer", Engineer.Color, "Maintain important systems on the ship", "Repair the ship", RoleId.Engineer, Faction.Crewmates, RoleAlignment.CrewSupport, $"The Engineer is able to vent around the map and fix sabotages. The Engineer can fix a maximum of " + Engineer.remainingFixes + " sabotages.");
         public readonly static RoleInfo sheriff = new("Sheriff", Sheriff.Color, "Shoot the <color=#FF1919FF>Impostors</color>", "Shoot the Impostors", RoleId.Sheriff, Faction.Crewmates, RoleAlignment.CrewPower, "The Sheriff is able to kill players during rounds, if the player they kill is an impostor, or Neutral Killer, the Sheriff will survive. If the player they kill is a crewmate, the Sheriff will die.");
+        public readonly static RoleInfo snitch = new("Snitch", Snitch.Color, "Finish your tasks to find the <color=#FF1919FF>Impostors</color>", "Finish your tasks", RoleId.Snitch, Faction.Crewmates, RoleAlignment.CrewInvest, "The Snitch has to finish tasks at all costs. When the Snitch finishes tasks, they get a cooldown ability to track evil players, the twist is, there's a chance the player is a crewmate or not a killer, the killer won't get alerted that the snitch is alive until the snitch sees them");
         public readonly static RoleInfo psychic = new("Psychic", Psychic.Color, "Question the souls of the dead to gain information", "Question the souls", RoleId.Psychic, Faction.Crewmates, RoleAlignment.CrewInvest, "The psychic is a crewmate who can ask the souls of dead players for information. Like the Mystic, the psychic will see the souls of the players who have died (after the next meeting) and can question them. They then gets random information about the soul or the killer in the chat. The souls only stay for one round, i.e. until the next meeting. Depending on the options, the souls can only be questioned once and then disappear.");
         public readonly static RoleInfo trapper = new("Trapper", Trapper.Color, "Place traps to find the Impostors", "Place traps", RoleId.Trapper, Faction.Crewmates, RoleAlignment.CrewInvest, "The Tracker can select one player to track. Depending on the options the Tracker can track a different person after each meeting or the Tracker tracks the same person for the whole game. An arrow points to the last tracked position of the player. The arrow updates its position every few seconds (configurable). By an option, the arrow can be replaced or combined with the Proximity Tracker from Hide N Seek. Depending on the options, the Tracker has another ability: They can track all corpses on the map for a set amount of time. They will keep tracking corpses, even if they were cleaned or eaten by the Scavenger.");
         public readonly static RoleInfo chronos = new("Chronos", Chronos.Color, "Rewind Time To Screw the Killers", "Rewind Time", RoleId.Chronos, Faction.Crewmates, RoleAlignment.CrewSupport, "The Chronos can rewind the time, making players go back the exact steps they walked but in reverse, if a player was killed within the same amount of time the rewind lasts and if the options allows it, the dead players will get revived.");
@@ -134,7 +134,6 @@ namespace TheSushiRoles.Roles
             gatekeeper,
             hacker,
             landlord,
-            lighter,
             mayor,
             medic,
             psychic,
@@ -142,6 +141,7 @@ namespace TheSushiRoles.Roles
             mystic,
             oracle,
             sheriff,
+            snitch,
             spy,
             swapper,
             chronos,
@@ -202,13 +202,13 @@ namespace TheSushiRoles.Roles
             if (player == Oracle.Player) infos.Add(oracle);
             if (player == Werewolf.Player) infos.Add(werewolf);
             if (player == Veteran.Player) infos.Add(veteran);
-            if (player == Lighter.Player) infos.Add(lighter);
             if (player == Morphling.Player) infos.Add(morphling);
             if (player == Painter.Player) infos.Add(painter);
             if (player == Viper.Player) infos.Add(viper);
             if (player == Eraser.Player) infos.Add(eraser);
             if (player == Trickster.Player) infos.Add(trickster);
             if (player == Grenadier.Player) infos.Add(grenadier);
+            if (player == Snitch.Player) infos.Add(snitch);
             if (player == Janitor.Player) infos.Add(janitor);
             if (player == Warlock.Player) infos.Add(warlock);
             if (player == Witch.Player) infos.Add(witch);
@@ -256,7 +256,7 @@ namespace TheSushiRoles.Roles
         public static String GetGhostInfoString(PlayerControl player)
         {
             string msg = "";
-            if (player == Scavenger.Player && (PlayerControl.LocalPlayer == Scavenger.Player || Utils.ShouldShowGhostInfo()))
+            if (player == Scavenger.Player && (PlayerControl.LocalPlayer == Scavenger.Player || Utils.ShouldShowGhostInfo()) && !Scavenger.IsScavengerWin)
                 msg += Utils.ColorString(Scavenger.Color, $" ({Scavenger.ScavengerNumberToWin - Scavenger.eatenBodies} left) ");
             
             if (Utils.ShouldShowGhostInfo())
@@ -277,6 +277,8 @@ namespace TheSushiRoles.Roles
                     msg += Utils.ColorString(Assassin.Color, " (Marked)");
                 if (player == Medic.Shielded)
                     msg += Utils.ColorString(Medic.Color, " (<b>+</b>)");
+                if (player == Lawyer.target)
+                    msg += Utils.ColorString(Medic.Color, " [★]");
                 if (player == Crusader.FortifiedPlayer)
                     msg += Utils.ColorString(Crusader.Color, " (Fortified)");
                 if (Survivor.blankedList.Contains(player) && !player.Data.IsDead)
@@ -316,6 +318,9 @@ namespace TheSushiRoles.Roles
                             break;
                         case DeadPlayer.CustomDeathReason.Exile:
                                 DeathReasonString = " | Voted out";
+                            break;
+                        case DeadPlayer.CustomDeathReason.HostSuicide:
+                                DeathReasonString = " | Host Suicide";
                             break;
                         case DeadPlayer.CustomDeathReason.Kill:
                             DeathReasonString = $" | Killed by {Utils.ColorString(killerColor, deadPlayer.GetKiller.Data.PlayerName)}";

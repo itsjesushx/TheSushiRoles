@@ -69,6 +69,11 @@ namespace TheSushiRoles
         public static CustomOption eraserCooldown;
         public static CustomOption eraserCanEraseAnyone;
 
+        public static CustomOption SnitchSpawnRate;
+        public static CustomOption SnitchCooldown;
+        public static CustomOption SnitchAccuracy;
+        public static CustomOption SnitchSeesInMeetings;
+
         public static CustomOption jesterSpawnRate;
         public static CustomOption jesterCanCallEmergency;
         public static CustomOption jesterHasImpostorVision;
@@ -165,10 +170,10 @@ namespace TheSushiRoles
         public static CustomOption GlitchMimicDuration;
         public static CustomOption GlitchHackDuration;
 
-        public static CustomOption lighterSpawnRate;
-        public static CustomOption lighterModeLightsOnVision;
-        public static CustomOption lighterModeLightsOffVision;
-        public static CustomOption lighterFlashlightWidth;
+        public static CustomOption AbilityFlashlightSpawnRate;
+        public static CustomOption AbilityFlashlightModeLightsOnVision;
+        public static CustomOption AbilityFlashlightModeLightsOffVision;
+        public static CustomOption AbilityFlashlightFlashlightWidth;
 
         public static CustomOption detectiveSpawnRate;
         public static CustomOption detectiveAnonymousFootprints;
@@ -379,7 +384,7 @@ namespace TheSushiRoles
         public static CustomOption modifierLucky;
 
         public static CustomOption maxNumberOfMeetings;
-        public static CustomOption blockSkippingInEmergencyMeetings;
+        public static CustomOption SkipButtonDisable;
         public static CustomOption noVoteIsSelfVote;
         public static CustomOption hidePlayerNames;
         public static CustomOption allowParallelMedBayScans;
@@ -504,7 +509,7 @@ namespace TheSushiRoles
 
             PainterSpawnRate = CustomOption.Create(30, Types.Impostor, ColorString(Painter.Color, "Painter"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             PainterCooldown = CustomOption.Create(31, Types.Impostor, "Painter Cooldown", 25f, 10f, 60f, 2.5f, PainterSpawnRate, Format: "s");
-            PainterDuration = CustomOption.Create(32, Types.Impostor, "Camo Duration", 10f, 1f, 20f, 0.5f, PainterSpawnRate, Format: "s");
+            PainterDuration = CustomOption.Create(32, Types.Impostor, "Painting Duration", 10f, 1f, 20f, 0.5f, PainterSpawnRate, Format: "s");
 
             ViperSpawnRate = CustomOption.Create(40, Types.Impostor, ColorString(Viper.Color, "Viper"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             ViperKillDelay = CustomOption.Create(41, Types.Impostor, "Viper Kill Delay", 3f, 1f, 20f, 1f, ViperSpawnRate, Format: "s");
@@ -700,10 +705,10 @@ namespace TheSushiRoles
             OracleCharges = CustomOption.Create(1631, Types.Crewmate, "Initial Oracle Charges", 1f, 0f, 5f, 1f, OracleSpawnRate);
             OracleRechargeTasksNumber = CustomOption.Create(1632, Types.Crewmate, "Number Of Oracle Tasks Needed For Recharging", 2f, 1f, 10f, 1f, OracleSpawnRate);
 
-            lighterSpawnRate = CustomOption.Create(110, Types.Crewmate, ColorString(Lighter.Color, "Lighter"), 0f, 0f, 100f, 10f, null, true, Format: "%");
-            lighterModeLightsOnVision = CustomOption.Create(111, Types.Crewmate, "Vision On Lights On", 1.5f, 0.25f, 5f, 0.25f, lighterSpawnRate);
-            lighterModeLightsOffVision = CustomOption.Create(112, Types.Crewmate, "Vision On Lights Off", 0.5f, 0.25f, 5f, 0.25f, lighterSpawnRate);
-            lighterFlashlightWidth = CustomOption.Create(113, Types.Crewmate, "Flashlight Width", 0.3f, 0.1f, 1f, 0.1f, lighterSpawnRate);
+            SnitchSpawnRate = CustomOption.Create(557, Types.Crewmate, ColorString(Snitch.Color, "Snitch"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            SnitchCooldown = CustomOption.Create(558, Types.Crewmate, "Snitch Find Cooldown", 25f, 10f, 60f, 2.5f, SnitchSpawnRate, Format: "s");
+            SnitchAccuracy = CustomOption.Create(559, Types.Crewmate, "Snitch Revealing Accuracy", 10f, 10f, 70f, 10f, SnitchSpawnRate, Format: "%");
+            SnitchSeesInMeetings = CustomOption.Create(560, Types.Crewmate, "Snitch Sees Coloured Names In Meetings", false, SnitchSpawnRate);
 
             detectiveSpawnRate = CustomOption.Create(120, Types.Crewmate, ColorString(Detective.Color, "Detective"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             detectiveAnonymousFootprints = CustomOption.Create(121, Types.Crewmate, "Anonymous Footprints", false, detectiveSpawnRate);
@@ -716,7 +721,7 @@ namespace TheSushiRoles
             medicShowShielded = CustomOption.Create(143, Types.Crewmate, "Show Shielded Player", new string[] { "Shielded + Medic", "Medic Only", "Shielded Only" }, medicSpawnRate);
             medicShowAttemptToShielded = CustomOption.Create(144, Types.Crewmate, "Shielded Player Sees Murder Attempt", false, medicSpawnRate);
             medicSetOrShowShieldAfterMeeting = CustomOption.Create(145, Types.Crewmate, "Shield Will Be Activated", new string[] { "Instantly", "Instantly, Visible\nAfter Meeting", "After Meeting" }, medicSpawnRate);
-            medicShowAttemptToMedic = CustomOption.Create(146, Types.Crewmate, "Medic Sees Murder Attempt On Shielded Player", false, medicSpawnRate);
+            medicShowAttemptToMedic = CustomOption.Create(146, Types.Crewmate, "Show Murder Attempt On Shielded Player", new string[] { "Medic", "Shielded ", "Nobody" }, medicSpawnRate);
 
             VeteranSpawnRate = CustomOption.Create(15011, Types.Crewmate, ColorString(Veteran.Color, "Veteran"), 0f, 0f, 100f, 10f, null, true, Format: "%");
             VeteranCooldown = CustomOption.Create(151, Types.Crewmate, "Alert Cooldown", 30f, 10f, 120f, 2.5f, VeteranSpawnRate, Format: "s");
@@ -870,14 +875,20 @@ namespace TheSushiRoles
 
             AbilityParanoid = CustomOption.Create(522, Types.Ability, ColorString(Paranoid.Color, "Paranoid"), 0f, 0f, 100f, 10f, null, true, Format: "%");
 
+            AbilityFlashlightSpawnRate = CustomOption.Create(110, Types.Ability, ColorString(FlashLight.Color, "Flashlight"), 0f, 0f, 100f, 10f, null, true, Format: "%");
+            AbilityFlashlightModeLightsOnVision = CustomOption.Create(111, Types.Ability, "Vision On Lights On", 1.5f, 0.25f, 5f, 0.25f, AbilityFlashlightSpawnRate);
+            AbilityFlashlightModeLightsOffVision = CustomOption.Create(112, Types.Ability, "Vision On Lights Off", 0.5f, 0.25f, 5f, 0.25f, AbilityFlashlightSpawnRate);
+            AbilityFlashlightFlashlightWidth = CustomOption.Create(113, Types.Ability, "Flashlight Width", 0.3f, 0.1f, 1f, 0.1f, AbilityFlashlightSpawnRate);
+
             // Other options
             maxNumberOfMeetings = CustomOption.Create(3, Types.General, "Number Of Meetings (excluding Mayor meeting)", 10, 0, 15, 1, null, true, Heading: "Gameplay Settings");
             DisableMedbayAnimation = CustomOption.Create(3131, Types.General, "Disable Medbay Walk Animation", true);
-            GameStartCooldowns = CustomOption.Create(518, Types.General, "Game Start Cooldowns", 10f, 10f, 30f, 2.5f, Format: "s");
+            GameStartCooldowns = CustomOption.Create(518, Types.General, "Abilities Cooldown On Game Start", 10f, 10f, 30f, 2.5f, Format: "s");
             LimitAbilities = CustomOption.Create(1321, Types.General, "Limit Player Abilities When 2 Players Are Left Alive", true);
             EveryoneCanStopStart = CustomOption.Create(2, Types.General, "Any Player Can Stop The Start", false, null, false);
-            blockSkippingInEmergencyMeetings = CustomOption.Create(4, Types.General, "Block Skipping In Emergency Meetings", false);
-            noVoteIsSelfVote = CustomOption.Create(5, Types.General, "No Vote Is Self Vote", false, blockSkippingInEmergencyMeetings);
+            SkipButtonDisable = CustomOption.Create(4, Types.General, "Block Skipping", new string[] { "No", "Emergency", "Always" });
+            // Visible if Emergency (1) or Always (2)
+            noVoteIsSelfVote = CustomOption.Create(5,Types.General,"No Vote Is Self Vote",false, SkipButtonDisable, SkipButtonDisable.GetSelection() >= 1);
             hidePlayerNames = CustomOption.Create(6, Types.General, "Hide Player Names", false);
             RandomSpawns = CustomOption.Create(13213, Types.General, "Enable Random Player Spawns", false);
             allowParallelMedBayScans = CustomOption.Create(7, Types.General, "Allow Parallel MedBay Scans", false);
@@ -895,12 +906,12 @@ namespace TheSushiRoles
             BPWifiChartCourseSwap = CustomOption.Create(3317, Types.General, "Reboot Wifi And Chart Course Swapped", false, EnableBetterPolus);
 
             dynamicMap = CustomOption.Create(500, Types.General, "Play On A Random Map", false, null, true, Heading: "Random Maps");
-            dynamicMapEnableSkeld = CustomOption.Create(501, Types.General, "Skeld", 0f, 0f, 100f, 10f, dynamicMap, false, Format: "%");
-            dynamicMapEnableMira = CustomOption.Create(502, Types.General, "Mira", 0f, 0f, 100f, 10f, dynamicMap, false, Format: "%");
-            dynamicMapEnablePolus = CustomOption.Create(503, Types.General, "Polus", 0f, 0f, 100f, 10f, dynamicMap, false, Format: "%");
-            dynamicMapEnableAirShip = CustomOption.Create(504, Types.General, "Airship", 0f, 0f, 100f, 10f, dynamicMap, false, Format: "%");
-            dynamicMapEnableFungle = CustomOption.Create(506, Types.General, "Fungle", 0f, 0f, 100f, 10f, dynamicMap, false, Format: "%");
-            dynamicMapEnableSubmerged = CustomOption.Create(505, Types.General, "Submerged", 0f, 0f, 100f, 10f, dynamicMap, false, Format: "%");
+            dynamicMapEnableSkeld = CustomOption.Create(501, Types.General, "Skeld Chance", 0f, 0f, 100f, 10f, dynamicMap, false, Format: "%");
+            dynamicMapEnableMira = CustomOption.Create(502, Types.General, "Mira Chance", 0f, 0f, 100f, 10f, dynamicMap, false, Format: "%");
+            dynamicMapEnablePolus = CustomOption.Create(503, Types.General, "Polus Chance", 0f, 0f, 100f, 10f, dynamicMap, false, Format: "%");
+            dynamicMapEnableAirShip = CustomOption.Create(504, Types.General, "Airship Chance", 0f, 0f, 100f, 10f, dynamicMap, false, Format: "%");
+            dynamicMapEnableFungle = CustomOption.Create(506, Types.General, "Fungle Chance", 0f, 0f, 100f, 10f, dynamicMap, false, Format: "%");
+            dynamicMapEnableSubmerged = CustomOption.Create(505, Types.General, "Submerged Chance", 0f, 0f, 100f, 10f, dynamicMap, false, Format: "%");
             dynamicMapSeparateSettings = CustomOption.Create(509, Types.General, "Use Random Map Setting Presets", false, dynamicMap, false);
 
             blockedRolePairings.Add((byte)RoleId.Viper, new[] { (byte)RoleId.Warlock });
@@ -918,12 +929,12 @@ namespace TheSushiRoles
             blockedRolePairings.Add((byte)RoleId.Prosecutor, new[] { (byte)RoleId.Cultist });
             blockedRolePairings.Add((byte)RoleId.Cultist, new[] { (byte)RoleId.Prosecutor });
 
-            if (ProsecutorBecomeEnum.GetSelection() == 1)
+            if ((ProsecutorOnTargetDeath)ProsecutorBecomeEnum.GetSelection() == ProsecutorOnTargetDeath.Amnesiac)
             {
                 blockedRolePairings.Add((byte)RoleId.Amnesiac, new[] { (byte)RoleId.Prosecutor });
                 blockedRolePairings.Add((byte)RoleId.Prosecutor, new[] { (byte)RoleId.Amnesiac });
             }
-            else if (ProsecutorBecomeEnum.GetSelection() == 0)
+            else if ((ProsecutorOnTargetDeath)ProsecutorBecomeEnum.GetSelection() == ProsecutorOnTargetDeath.Jester)
             {
                 blockedRolePairings.Add((byte)RoleId.Prosecutor, new[] { (byte)RoleId.Jester });
                 blockedRolePairings.Add((byte)RoleId.Jester, new[] { (byte)RoleId.Prosecutor });

@@ -89,7 +89,7 @@ namespace TheSushiRoles.Roles
             
             if (infos.Count > 0) 
             {
-                var selectedInfo = infos[rnd.Next(infos.Count)];
+                var selectedInfo = infos[TheSushiRolesPlugin.rnd.Next(infos.Count)];
                 switch (selectedInfo) 
                 {
                     case SpecialPsychicInfo.SheriffSuicide:
@@ -123,7 +123,7 @@ namespace TheSushiRoles.Roles
             }
             else
             {
-                int randomNumber = rnd.Next(4);
+                int randomNumber = TheSushiRolesPlugin.rnd.Next(4);
                 string typeOfColor = Utils.IsLighterColor(Psychic.target.GetKiller) ? "lighter" : "darker";
                 float timeSinceDeath = (float)(Psychic.meetingStartTime - Psychic.target.DeathTime).TotalMilliseconds;
                 var roleString = RoleInfo.GetRolesString(Psychic.target.player, false);
@@ -139,12 +139,12 @@ namespace TheSushiRoles.Roles
                 else msg = "It seems like my killer is the " + RoleInfo.GetRolesString(Psychic.target.GetKiller, false) + ".";
             }
 
-            if (rnd.NextDouble() < chanceAdditionalInfo) 
+            if (TheSushiRolesPlugin.rnd.NextDouble() < chanceAdditionalInfo) 
             {
                 int count = 0;
                 string condition = "";
                 var alivePlayersList = PlayerControl.AllPlayerControls.ToArray().Where(pc => !pc.Data.IsDead);
-                switch (rnd.Next(3)) 
+                switch (TheSushiRolesPlugin.rnd.Next(3)) 
                 {
                     case 0:
                         count = alivePlayersList.Where(pc => pc.Data.Role.IsImpostor || pc.IsNeutralKiller() || new List<RoleInfo>() { RoleInfo.sheriff, RoleInfo.veteran}.Contains(RoleInfo.GetRoleInfoForPlayer(pc).FirstOrDefault())).Count();
