@@ -14,8 +14,8 @@ namespace TheSushiRoles.Roles
         public static float RechargeTasksNumber;
         public static float RechargedTasks;
  
-        public static byte playerId1 = Byte.MaxValue;
-        public static byte playerId2 = Byte.MaxValue;
+        public static byte Swap1 = Byte.MaxValue;
+        public static byte Swap2 = Byte.MaxValue;
 
         public static Sprite GetCheckSprite() 
         {
@@ -27,8 +27,8 @@ namespace TheSushiRoles.Roles
         public static void ClearAndReload() 
         {
             Player = null;
-            playerId1 = Byte.MaxValue;
-            playerId2 = Byte.MaxValue;
+            Swap1 = Byte.MaxValue;
+            Swap2 = Byte.MaxValue;
             canCallEmergency = CustomOptionHolder.swapperCanCallEmergency.GetBool();
             canOnlySwapOthers = CustomOptionHolder.swapperCanOnlySwapOthers.GetBool();
             Charges = Mathf.RoundToInt(CustomOptionHolder.swapperSwapsNumber.GetFloat());

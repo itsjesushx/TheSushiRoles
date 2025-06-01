@@ -51,8 +51,8 @@ namespace TheSushiRoles.Objects
             boxRenderer.color = boxRenderer.color.SetAlpha(0.5f);
 
             // Create the vent
-            var referenceVent = UnityEngine.Object.FindObjectOfType<Vent>();
-            vent = UnityEngine.Object.Instantiate<Vent>(referenceVent);
+            var referenceVent = UObject.FindObjectOfType<Vent>();
+            vent = UObject.Instantiate<Vent>(referenceVent);
             vent.gameObject.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
             vent.transform.position = gameObject.transform.position;
             vent.Left = null;

@@ -72,7 +72,7 @@ namespace TheSushiRoles.Objects
             originalHotkey = hotkey;
             Timer = 16.2f;
             buttons.Add(this);
-            actionButton = UnityEngine.Object.Instantiate(hudManager.KillButton, hudManager.KillButton.transform.parent);
+            actionButton = UObject.Instantiate(hudManager.KillButton, hudManager.KillButton.transform.parent);
             actionButtonGameObject = actionButton.gameObject;
             actionButtonRenderer = actionButton.graphic;
             actionButtonMat = actionButtonRenderer.material;
@@ -315,7 +315,6 @@ namespace TheSushiRoles.Objects
             {
                 buttons.Timer = MapOptions.GameStartCooldowns;
             }
-            PlayerControl.LocalPlayer.SetKillTimer(MapOptions.GameStartCooldowns);
         }
     }
 }

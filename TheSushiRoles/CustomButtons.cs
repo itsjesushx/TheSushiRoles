@@ -66,6 +66,7 @@ namespace TheSushiRoles
         public static CustomButton VigilanteButton;
         public static CustomButton VigilanteCamButton;
         public static CustomButton arsonistButton;
+        public static CustomButton SnitchButton;
         public static CustomButton ScavengerEatButton;
         public static CustomButton PsychicButton;
         public static CustomButton SurvivorButton;
@@ -120,6 +121,7 @@ namespace TheSushiRoles
             GlitchHackButton.MaxTimer = Glitch.HackCooldown;
             ChronosRewindButton.MaxTimer = Chronos.Cooldown;
             WraithButton.MaxTimer = Wraith.Cooldown;
+            SnitchButton.MaxTimer = Snitch.Cooldown;
             PlaguebearerButton.MaxTimer = Plaguebearer.Cooldown;
             medicShieldButton.MaxTimer = 0f;
             OracleButton.MaxTimer = Oracle.Cooldown;
@@ -191,6 +193,7 @@ namespace TheSushiRoles
             morphlingButton.EffectDuration = Morphling.Duration;
             MimicButton.EffectDuration = Glitch.MimicDuration;
             HitmanMorphButton.EffectDuration = Hitman.MorphDuration;
+            SnitchButton.EffectDuration = Snitch.Duration;
             lightsOutButton.EffectDuration = Trickster.lightsOutDuration;
             arsonistButton.EffectDuration = Arsonist.Duration;
             PsychicButton.EffectDuration = Psychic.Duration;
@@ -286,7 +289,7 @@ namespace TheSushiRoles
             }
             // Add poolable player to the button so that the target outfit is shown
             button.actionButton.cooldownTimerText.transform.localPosition = new Vector3(0, 0, -1f);  // Before the poolable player
-            targetDisplay = UnityEngine.Object.Instantiate<PoolablePlayer>(Patches.IntroCutsceneOnDestroyPatch.playerPrefab, button.actionButton.transform);
+            targetDisplay = UObject.Instantiate<PoolablePlayer>(Patches.IntroCutsceneOnDestroyPatch.playerPrefab, button.actionButton.transform);
             NetworkedPlayerInfo data = target.Data;
             target.SetPlayerMaterialColors(targetDisplay.cosmetics.currentBodySprite.BodySprite);
             targetDisplay.SetSkin(data.DefaultOutfit.SkinId, data.DefaultOutfit.ColorId);
@@ -410,8 +413,7 @@ namespace TheSushiRoles
                         // Lucky sheriff shot doesnt kill if backfired
                         if (targetId == Sheriff.Player.PlayerId && Utils.CheckLucky(Sheriff.Player, true, true)) return;
                         
-                        Utils.SendRPC(CustomRPC.UncheckedMurderPlayer, Sheriff.Player.Data.PlayerId, targetId, byte.MaxValue);
-                        RPCProcedure.UncheckedMurderPlayer(Sheriff.Player.Data.PlayerId, targetId, Byte.MaxValue);
+                        Utils.RpcMurderPlayer(Sheriff.Player, Utils.GetPlayerById(targetId), true);
                     }
 
                     sheriffKillButton.Timer = sheriffKillButton.MaxTimer;
@@ -476,7 +478,11 @@ namespace TheSushiRoles
                 },
             CouldUse: () =>
             {
-                if (Undertaker.CurrentTarget != null) UndertakerButton.actionButton.graphic.sprite = Undertaker.GetSecondButtonSprite();
+                if (Undertaker.CurrentTarget != null)
+                {
+                    UndertakerButton.actionButton.graphic.sprite = Undertaker.GetSecondButtonSprite();
+                    UndertakerButton.buttonText = "DROP";
+                }
                 if (Undertaker.CurrentTarget != null) return true;
                 else
                 {
@@ -499,7 +505,8 @@ namespace TheSushiRoles
             Sprite: Undertaker.GetFirstButtonSprite(),
             PositionOffset: CustomButton.ButtonPositions.upperRowLeft,
             hudManager: __instance,
-            hotkey: KeyCode.F
+            hotkey: KeyCode.F,
+            buttonText: "DRAG"
         );
 
             HitmanDragButton = new CustomButton(
@@ -661,7 +668,7 @@ namespace TheSushiRoles
                                 if (!player.Data.IsDead) transportTargets.Add(player.PlayerId);
                                 else
                                 {
-                                    foreach (var body in UnityEngine.Object.FindObjectsOfType<DeadBody>())
+                                    foreach (var body in UObject.FindObjectsOfType<DeadBody>())
                                     {
                                         if (body.ParentId == player.PlayerId) transportTargets.Add(player.PlayerId);
                                     }
@@ -1456,7 +1463,7 @@ namespace TheSushiRoles
                     PainterButton.Timer = PainterButton.MaxTimer;
                     SoundEffectsManager.Play("morphlingMorph");
                 },
-                buttonText: "Paint"
+                buttonText: "PAINT"
             );
 
             // Grenadier Grenade
@@ -1489,6 +1496,35 @@ namespace TheSushiRoles
                 buttonText: "GRENADE"
             );
 
+            // Snitch button
+            SnitchButton = new CustomButton(
+                () =>
+                {
+                    Snitch.ShouldSee = true;
+                    Snitch.ShouldHaveButton = false;
+                    SoundEffectsManager.Play("hackerHack");
+                },
+                () => { return Snitch.Player != null && Snitch.Player == PlayerControl.LocalPlayer && Snitch.ShouldHaveButton && Snitch.Active && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => { return Snitch.Active && Snitch.ShouldHaveButton; },
+                () =>
+                {
+                    SnitchButton.Timer = SnitchButton.MaxTimer;
+                    SnitchButton.isEffectActive = false;
+                    SnitchButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
+                },
+                Snitch.GetButtonSprite(),
+                CustomButton.ButtonPositions.lowerRowRight,
+                __instance,
+                KeyCode.F,
+                true,
+                0f,
+                () =>
+                {
+                    SnitchButton.Timer = SnitchButton.MaxTimer;
+                },
+                buttonText: "FIND KILLER"
+            );
+
             // Hacker button
             hackerButton = new CustomButton(
                 () =>
@@ -1504,7 +1540,7 @@ namespace TheSushiRoles
                     hackerButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 Hacker.GetButtonSprite(),
-                CustomButton.ButtonPositions.lowerRowFarLeft,
+                CustomButton.ButtonPositions.lowerRowLeft,
                 __instance,
                 KeyCode.F,
                 true,
@@ -1557,20 +1593,22 @@ namespace TheSushiRoles
 
             hackerVitalsButton = new CustomButton(
                () => {
-                   if (GameOptionsManager.Instance.currentNormalGameOptions.MapId != 1) {
-                       if (Hacker.vitals == null) {
-                           var e = UnityEngine.Object.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("panel_vitals") || x.gameObject.name.Contains("Vitals"));
+                   if (GameOptionsManager.Instance.currentNormalGameOptions.MapId != 1)
+                   {
+                       if (Hacker.vitals == null)
+                       {
+                           var e = UObject.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("panel_vitals") || x.gameObject.name.Contains("Vitals"));
                            if (e == null || Camera.main == null) return;
-                           Hacker.vitals = UnityEngine.Object.Instantiate(e.MinigamePrefab, Camera.main.transform, false);
+                           Hacker.vitals = UObject.Instantiate(e.MinigamePrefab, Camera.main.transform, false);
                        }
                        Hacker.vitals.transform.SetParent(Camera.main.transform, false);
                        Hacker.vitals.transform.localPosition = new Vector3(0.0f, 0.0f, -50f);
                        Hacker.vitals.Begin(null);
                    } else {
                        if (Hacker.doorLog == null) {
-                           var e = UnityEngine.Object.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("SurvLogConsole"));
+                           var e = UObject.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("SurvLogConsole"));
                            if (e == null || Camera.main == null) return;
-                           Hacker.doorLog = UnityEngine.Object.Instantiate(e.MinigamePrefab, Camera.main.transform, false);
+                           Hacker.doorLog = UObject.Instantiate(e.MinigamePrefab, Camera.main.transform, false);
                        }
                        Hacker.doorLog.transform.SetParent(Camera.main.transform, false);
                        Hacker.doorLog.transform.localPosition = new Vector3(0.0f, 0.0f, -50f);
@@ -1675,7 +1713,7 @@ namespace TheSushiRoles
             ScavengerScavengeButton = new CustomButton(
                 () => 
                 {
-                    ScavengerScavengeButton.Timer = ScavengerScavengeButton.MaxTimer;
+                    Scavenger.ScavengeTimer = Scavenger.ScavengeDuration;
                     SoundEffectsManager.Play("trackerTrackCorpses");
                 },
                 () => { return Scavenger.Player != null && Scavenger.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
@@ -1689,9 +1727,9 @@ namespace TheSushiRoles
                 Scavenger.GetScavengeSprite(),
                 CustomButton.ButtonPositions.lowerRowCenter,
                 __instance,
-                KeyCode.F,
+                KeyCode.G,
                 true,
-                0f,
+                Scavenger.ScavengeDuration,
                 () => 
                 {
                     ScavengerScavengeButton.Timer = ScavengerScavengeButton.MaxTimer;
@@ -2138,7 +2176,8 @@ namespace TheSushiRoles
                 Trickster.GetPlaceBoxButtonSprite(),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
-                KeyCode.F
+                KeyCode.F,
+                buttonText: "PLACE BOX"
             );
             
             lightsOutButton = new CustomButton(
@@ -2188,7 +2227,8 @@ namespace TheSushiRoles
                                     Utils.SendRPC(CustomRPC.CleanBody, playerInfo.PlayerId, Janitor.Player.PlayerId);
                                     RPCProcedure.CleanBody(playerInfo.PlayerId, Janitor.Player.PlayerId);
 
-                                    Janitor.Player.killTimer = JanitorCleanButton.Timer = JanitorCleanButton.MaxTimer;
+                                    Janitor.Player.killTimer = GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown;
+                                    JanitorCleanButton.Timer = JanitorCleanButton.MaxTimer;
                                     SoundEffectsManager.Play("JanitorClean");
                                     break;
                                 }
@@ -2317,20 +2357,20 @@ namespace TheSushiRoles
                     if (!Utils.IsMira()) {
                         if (Vigilante.minigame == null) {
                             byte mapId = GameOptionsManager.Instance.currentNormalGameOptions.MapId;
-                            var e = UnityEngine.Object.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("Surv_Panel") || x.name.Contains("Cam") || x.name.Contains("BinocularsSecurityConsole"));
-                            if (Utils.IsSkeld() || mapId == 3) e = UnityEngine.Object.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("SurvConsole"));
-                            else if (Utils.IsAirship()) e = UnityEngine.Object.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("task_cams"));
+                            var e = UObject.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("Surv_Panel") || x.name.Contains("Cam") || x.name.Contains("BinocularsSecurityConsole"));
+                            if (Utils.IsSkeld() || mapId == 3) e = UObject.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("SurvConsole"));
+                            else if (Utils.IsAirship()) e = UObject.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("task_cams"));
                             if (e == null || Camera.main == null) return;
-                            Vigilante.minigame = UnityEngine.Object.Instantiate(e.MinigamePrefab, Camera.main.transform, false);
+                            Vigilante.minigame = UObject.Instantiate(e.MinigamePrefab, Camera.main.transform, false);
                         }
                         Vigilante.minigame.transform.SetParent(Camera.main.transform, false);
                         Vigilante.minigame.transform.localPosition = new Vector3(0.0f, 0.0f, -50f);
                         Vigilante.minigame.Begin(null);
                     } else {
                         if (Vigilante.minigame == null) {
-                            var e = UnityEngine.Object.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("SurvLogConsole"));
+                            var e = UObject.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("SurvLogConsole"));
                             if (e == null || Camera.main == null) return;
-                            Vigilante.minigame = UnityEngine.Object.Instantiate(e.MinigamePrefab, Camera.main.transform, false);
+                            Vigilante.minigame = UObject.Instantiate(e.MinigamePrefab, Camera.main.transform, false);
                         }
                         Vigilante.minigame.transform.SetParent(Camera.main.transform, false);
                         Vigilante.minigame.transform.localPosition = new Vector3(0.0f, 0.0f, -50f);
@@ -2555,7 +2595,7 @@ namespace TheSushiRoles
                                 tmp.a = Mathf.Clamp01(1 - p);
                                 target.color = tmp;
                             }
-                            if (p == 1f && target != null && target.gameObject != null) UnityEngine.Object.Destroy(target.gameObject);
+                            if (p == 1f && target != null && target.gameObject != null) UObject.Destroy(target.gameObject);
                         })));
 
                         Psychic.souls.Remove(target);
@@ -2593,7 +2633,8 @@ namespace TheSushiRoles
                 Survivor.GetTargetSprite(),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
-                KeyCode.F
+                KeyCode.F,
+                buttonText: "BLANK"
             );
 
             // Survivor button blanks left
@@ -2659,7 +2700,8 @@ namespace TheSushiRoles
                         witchSpellButton.Timer = 0f;
                     }
                     Witch.spellCastingTarget = null;
-                }
+                },
+                buttonText: "SPELL"
             );
 
             // Assassin mark and assassinate button 
@@ -2685,13 +2727,11 @@ namespace TheSushiRoles
                             RPCProcedure.SetInvisible(Assassin.Player.PlayerId, byte.MinValue);
 
                             // Perform Kill
-
-                            Utils.SendRPC(CustomRPC.UncheckedMurderPlayer, PlayerControl.LocalPlayer.PlayerId, Assassin.AssassinMarked.PlayerId, byte.MaxValue);
+                            Utils.RpcMurderPlayer(PlayerControl.LocalPlayer, Assassin.AssassinMarked, true);
                             if (SubmergedCompatibility.IsSubmerged) 
                             {
                                 SubmergedCompatibility.ChangeFloor(Assassin.AssassinMarked.transform.localPosition.y > -7);
                             }
-                                RPCProcedure.UncheckedMurderPlayer(PlayerControl.LocalPlayer.PlayerId, Assassin.AssassinMarked.PlayerId, byte.MaxValue);
                             // Create Second trace after killing
                             pos = Assassin.AssassinMarked.transform.position;
                             buff = new byte[sizeof(float) * 2];

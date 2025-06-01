@@ -68,4 +68,12 @@ namespace TheSushiRoles.Roles
             return impostorRoles[randomIndex];
         }
     }
+    public static class Follower
+    {
+        public static PlayerControl Player;
+        public static void ClearAndReload()
+        {
+            Player = null;
+        }
+    }
 }

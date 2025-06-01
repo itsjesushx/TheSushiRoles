@@ -44,7 +44,7 @@ namespace TheSushiRoles.Roles
         public static void ResetCurse() 
         {
             HudManagerStartPatch.warlockCurseButton.Timer = HudManagerStartPatch.warlockCurseButton.MaxTimer;
-            HudManagerStartPatch.warlockCurseButton.Sprite = Warlock.GetCurseButtonSprite();
+            HudManagerStartPatch.warlockCurseButton.Sprite = GetCurseButtonSprite();
             HudManagerStartPatch.warlockCurseButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
             CurrentTarget = null;
             curseVictim = null;

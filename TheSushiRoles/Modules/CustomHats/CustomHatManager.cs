@@ -9,7 +9,7 @@ namespace TheSushiRoles.Modules.CustomHats;
 
 public static class CustomHatManager
 {
-    public const string ResourcesDirectory = "Mod Hats";
+    public const string ResourcesDirectory = "./TheSushiRoles-DATA/Hats";
     public const string InnerslothPackageName = "Innersloth Hats";
     public const string DeveloperPackageName = "Developer Hats";    
     internal static readonly Tuple<string, string> Repository = new("itsjesushx", "SushiAssets");

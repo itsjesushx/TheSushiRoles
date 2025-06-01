@@ -15,7 +15,6 @@ namespace TheSushiRoles.Roles
         public static bool canUseVents = true;
         public static bool canCreateRecruit = true;
         public static Sprite ButtonSprite;
-        public static bool canCreateRecruitFromImpostor = true;
         public static bool HasRecruit;
 
         public static Sprite getRecruitButtonSprite()

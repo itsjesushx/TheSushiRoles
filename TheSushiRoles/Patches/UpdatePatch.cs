@@ -8,45 +8,11 @@ namespace TheSushiRoles.Patches
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     class HudManagerUpdatePatch
     {
-        public static class BlindTrapEffectUI
-        {
-            public static GameObject screen;
-
-            public static void Init()
-            {
-                if (screen != null) return;
-
-                screen = new GameObject("BlindTrap");
-                screen.transform.SetParent(HudManager.Instance.transform, false);
-
-                var rectTransform = screen.AddComponent<RectTransform>();
-                rectTransform.anchorMin = Vector2.zero;
-                rectTransform.anchorMax = Vector2.one;
-                rectTransform.offsetMin = Vector2.zero;
-                rectTransform.offsetMax = Vector2.zero;
-
-                var image = screen.AddComponent<UnityEngine.UI.Image>();
-                image.color = new Color(0f, 0f, 0f, 1f);
-                screen.SetActive(false);
-            }
-
-            public static void Show(float duration)
-            {
-                Init();
-                screen.SetActive(true);
-                FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(duration, new Action<float>((p) =>
-                {
-                    if (p == 1f)
-                        screen.SetActive(false);
-                })));
-            }
-        }
         private static Dictionary<byte, (string name, Color color)> TagColorDict = new();
         static void ResetNameTagsAndColors() 
         {
             var localPlayer = PlayerControl.LocalPlayer;
-            var myData = PlayerControl.LocalPlayer.Data;
-            var amImpostor = myData.Role.IsImpostor;
+            var amImpostor = PlayerControl.LocalPlayer.Data.Role.IsImpostor;
             var morphTimerNotUp = Morphling.morphTimer > 0f;
             var morphTargetNotNull = Morphling.morphTarget != null;
 
@@ -165,24 +131,43 @@ namespace TheSushiRoles.Patches
                 }
             }
         }
+        static void SnitchMeetingUpdate(MeetingHud __instance)
+        {
+            if (__instance)
+            {
+                if (Snitch.Player != null && Snitch.Player == PlayerControl.LocalPlayer && Snitch.SeesInMeetings)
+                {
+                    SetPlayerNameColor(Snitch.Target, Palette.ImpostorRed);
+                        
+                }
+                else if (Snitch.Player != null && Snitch.Target == PlayerControl.LocalPlayer && Snitch.SeesInMeetings && Snitch.KnowsRealKiller)
+                {
+                    // If local player is a killer, color the Snitch's name for them
+                    if (Snitch.Player != null)
+                    {
+                        SetPlayerNameColor(Snitch.Player, Snitch.Color);
+                    }
+                }
+            }
+        }
 
-        static void SetNameColors() 
+        static void SetNameColors()
         {
             var localPlayer = PlayerControl.LocalPlayer;
             var localRole = RoleInfo.GetRoleInfoForPlayer(localPlayer).FirstOrDefault();
             SetPlayerNameColor(localPlayer, localRole.Color);
-            if (Jackal.Player != null && Jackal.Player == localPlayer) 
+            if (Jackal.Player != null && Jackal.Player == localPlayer)
             {
                 // Jackal can see his Recruit
                 SetPlayerNameColor(Jackal.Player, Jackal.Color);
-                if (Recruit.Player != null) 
+                if (Recruit.Player != null)
                 {
                     SetPlayerNameColor(Recruit.Player, Jackal.Color);
                 }
             }
 
             // Show flashed players
-            if (Grenadier.Player != null && (Grenadier.Player == PlayerControl.LocalPlayer || Utils.ShouldShowGhostInfo())) 
+            if (Grenadier.Player != null && (Grenadier.Player == PlayerControl.LocalPlayer || Utils.ShouldShowGhostInfo()))
             {
                 foreach (PlayerControl player in Grenadier.FlashedPlayers)
                     if (!player.Data.Role.IsImpostor && !player.Data.IsDead)
@@ -190,20 +175,21 @@ namespace TheSushiRoles.Patches
             }
 
             // a Lover of team Jackal needs the colors
-            if (Recruit.Player != null && Recruit.Player == localPlayer) 
+            if (Recruit.Player != null && Recruit.Player == localPlayer)
             {
                 // Recruit can see the jackal
-                if (Jackal.Player != null) 
+                if (Jackal.Player != null)
                 {
                     SetPlayerNameColor(Jackal.Player, Jackal.Color);
                 }
             }
 
             // No else if here, as the Impostors need the Spy name to be colored
-            if (Spy.Player != null && localPlayer.Data.Role.IsImpostor) 
+            if (Spy.Player != null && localPlayer.Data.Role.IsImpostor)
             {
                 SetPlayerNameColor(Spy.Player, Spy.Color);
             }
+
             // Impostor roles with no changes: Morphling, Painter, Viper, Eraser, Janitor, Warlock, BountyHunter,  Witch
         }
 
@@ -227,7 +213,7 @@ namespace TheSushiRoles.Patches
             {
                 if (Monarch.Player != null && (knighted == PlayerControl.LocalPlayer || Monarch.Player == PlayerControl.LocalPlayer))
                 {
-                    string suffix = Utils.ColorString(Monarch.Color, " [★]");
+                    string suffix = Utils.ColorString(Monarch.Color, " (★)");
                     if (knighted == PlayerControl.LocalPlayer) knighted.cosmetics.nameText.text += suffix;
 
                     if (MeetingHud.Instance != null)
@@ -266,7 +252,7 @@ namespace TheSushiRoles.Patches
             {
                 Color color = Lawyer.Color;
                 PlayerControl target = Lawyer.target;
-                string suffix = Utils.ColorString(color, " [§]");
+                string suffix = Utils.ColorString(color, " [★]");
                 target.cosmetics.nameText.text += suffix;
 
                 if (MeetingHud.Instance != null)
@@ -292,7 +278,7 @@ namespace TheSushiRoles.Patches
             if (PlayerControl.LocalPlayer != null && MeetingHud.Instance != null && MapOptions.showLighterDarker) 
             {
                 foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates) {
-                    var target = Utils.PlayerById(player.TargetPlayerId);
+                    var target = Utils.GetPlayerById(player.TargetPlayerId);
                     if (target != null)  player.NameText.text += $" ({(Utils.IsLighterColor(target) ? "L" : "D")})";
                 }
             }
@@ -332,7 +318,7 @@ namespace TheSushiRoles.Patches
                 Glitch.HackedKnows[key] -= dt;
         }
 
-        static void UpdateImpostorKillButton(HudManager __instance) 
+        static void ImpostorKillButtonUpdate(HudManager __instance) 
         {
             if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor) return;
             if (MeetingHud.Instance) 
@@ -340,13 +326,9 @@ namespace TheSushiRoles.Patches
                 __instance.KillButton.Hide();
                 return;
             }
-            // Cultist can't kill if they don't have a Follower yet
-            if (Cultist.Player != null && Cultist.Player == PlayerControl.LocalPlayer && !Cultist.HasFollower)
-            {
-                __instance.KillButton.Hide();
-                return;
-            }
             bool enabled = true;
+            // Cultist can't kill if they don't have a Follower yet
+            if (Cultist.Player != null && Cultist.Player == PlayerControl.LocalPlayer && !Cultist.HasFollower) enabled = false;
             if (Viper.Player != null && Viper.Player == PlayerControl.LocalPlayer) enabled = false;
             
             if (enabled) __instance.KillButton.Show();
@@ -413,9 +395,11 @@ namespace TheSushiRoles.Patches
             SetNameTags();
 
             // Impostors
-            UpdateImpostorKillButton(__instance);
+            ImpostorKillButtonUpdate(__instance);
 
             if (Oracle.Player != null && Oracle.Player.Data.IsDead && Oracle.Confessor != null) UpdateOracle(MeetingHud.Instance);
+
+            SnitchMeetingUpdate(MeetingHud.Instance);
 
             // Timer updates
             TimerUpdate();

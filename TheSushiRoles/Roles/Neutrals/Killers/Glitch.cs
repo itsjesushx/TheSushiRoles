@@ -26,7 +26,6 @@ namespace TheSushiRoles.Roles
         public static Dictionary<byte, float> HackedKnows = new Dictionary<byte, float>();
         private static Sprite ButtonSprite;
         private static Sprite HackedSprite;
-        
         public static Sprite GetButtonSprite()
         {
             if (ButtonSprite) return ButtonSprite;

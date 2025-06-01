@@ -201,12 +201,12 @@ namespace TheSushiRoles.Modules
         public IEnumerator CoShowAnnouncement(string announcement, bool show = true, string shortTitle = "TSR Update", string title = "", string date = "") 
         {
             var mgr = FindObjectOfType<MainMenuManager>(true);
-            var popUpTemplate = UnityEngine.Object.FindObjectOfType<AnnouncementPopUp>(true);
+            var popUpTemplate = UObject.FindObjectOfType<AnnouncementPopUp>(true);
             if (popUpTemplate == null) {
                 TheSushiRolesPlugin.Logger.LogError("couldnt show credits, popUp is null");
                 yield return null;
             }
-            var popUp = UnityEngine.Object.Instantiate(popUpTemplate);
+            var popUp = UObject.Instantiate(popUpTemplate);
 
             popUp.gameObject.SetActive(true);
 

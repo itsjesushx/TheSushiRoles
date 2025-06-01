@@ -52,6 +52,5 @@ namespace TheSushiRoles
                 return false;
             }
         }
-        
     }
 }

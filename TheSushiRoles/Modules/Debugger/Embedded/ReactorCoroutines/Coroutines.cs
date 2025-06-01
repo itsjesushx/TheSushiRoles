@@ -43,7 +43,7 @@ public static class Coroutines
         {
             var coroutine = new GameObject("CoroutineHost");
             coroutine.AddComponent<Component>();
-            UnityEngine.Object.DontDestroyOnLoad(coroutine);
+            UObject.DontDestroyOnLoad(coroutine);
         }
     }*/
 

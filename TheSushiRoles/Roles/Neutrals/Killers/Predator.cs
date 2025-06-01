@@ -14,11 +14,11 @@ namespace TheSushiRoles.Roles
         public static bool CanUseVents;
         public static bool Terminating;
         private static Sprite ButtonSprite;
-        public static Sprite GetButtonSprite() 
+        public static Sprite GetButtonSprite()
         {
-        if (ButtonSprite) return ButtonSprite;
+            if (ButtonSprite) return ButtonSprite;
             ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.Terminate.png", 115f);
-        return ButtonSprite;
+            return ButtonSprite;
         }            
         public static void ClearAndReload()
         {

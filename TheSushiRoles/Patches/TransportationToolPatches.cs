@@ -108,7 +108,7 @@ namespace TheSushiRoles.Patches
         public static void Prefix(PlayerPhysics __instance, [HarmonyArgument(0)] Ladder source, [HarmonyArgument(1)] byte climbLadderSid)
         {
             if (PlayerControl.LocalPlayer == Landlord.Player)
-                Landlord.UnteleportablePlayers.Add(__instance.myPlayer.PlayerId, DateTime.UtcNow);
+                Landlord.UnteleportablePlayers.Add(__instance.myPlayer.PlayerId, DateTime.UtcNow);                
         }
     }
 

@@ -41,7 +41,7 @@ namespace TheSushiRoles.Roles
             invisibleDuration = CustomOptionHolder.AssassinInvisibleDuration.GetFloat();
             invisibleTimer = 0f;
             isInvisble = false;
-            if (arrow?.arrow != null) UnityEngine.Object.Destroy(arrow.arrow);
+            if (arrow?.arrow != null) UObject.Destroy(arrow.arrow);
             arrow = new Arrow(Color.black);
             if (arrow.arrow != null) arrow.arrow.SetActive(false);
         }

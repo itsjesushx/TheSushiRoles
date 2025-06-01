@@ -11,9 +11,20 @@ namespace TheSushiRoles.Roles
         public static Color Color = new Color32(126, 251, 194, byte.MaxValue);
         public static bool usedShield;
 
-        public static int showShielded = 0;
-        public static bool showAttemptToShielded = false;
-        public static bool showAttemptToMedic = false;
+        public static ShieldOptions showShielded;
+        public static NotificationOptions ShowMurderAttempt;
+        public enum ShieldOptions
+        {
+            ShieldedAndMedic = 0,
+            Medic = 1,
+            Shielded = 2
+        }
+        public enum NotificationOptions
+        {
+            Medic = 0,
+            Shielded = 1,
+            Nobody = 2
+        }
         public static bool setShieldAfterMeeting = false;
         public static bool showShieldAfterMeeting = false;
         public static bool meetingAfterShielding = false;
@@ -38,9 +49,9 @@ namespace TheSushiRoles.Roles
             if (Medic.Shielded != null && ((target == Medic.Shielded && !isMorphedMorphling) || (target == Medic.Shielded && !isMimicGlitch) || (isMorphedMorphling && Morphling.morphTarget == Medic.Shielded) || (isMimicGlitch && Glitch.MimicTarget == Medic.Shielded))) 
             {
                 hasVisibleShield =  Utils.ShouldShowGhostInfo() // Ghost info
-                    || (Medic.showShielded == 0 && (PlayerControl.LocalPlayer == Medic.Shielded || PlayerControl.LocalPlayer == Medic.Player)) // Shielded + Medic
-                    || (Medic.showShielded == 1 && PlayerControl.LocalPlayer == Medic.Player) // Medic only
-                    || (Medic.showShielded == 2 && PlayerControl.LocalPlayer == Medic.Shielded); // Shielded only
+                    || (Medic.showShielded == ShieldOptions.ShieldedAndMedic && (PlayerControl.LocalPlayer == Medic.Shielded || PlayerControl.LocalPlayer == Medic.Player)) // Shielded + Medic
+                    || (Medic.showShielded == ShieldOptions.Medic && PlayerControl.LocalPlayer == Medic.Player) // Medic only
+                    || (Medic.showShielded == ShieldOptions.Shielded && PlayerControl.LocalPlayer == Medic.Shielded); // Shielded only
                 // Make Shield invisible till after the next meeting if the option is set (the medic can already see the Shield)
                 hasVisibleShield = hasVisibleShield && (Medic.meetingAfterShielding || !Medic.showShieldAfterMeeting || PlayerControl.LocalPlayer == Medic.Player || Utils.ShouldShowGhostInfo());
             }
@@ -54,9 +65,8 @@ namespace TheSushiRoles.Roles
             futureShielded = null;
             CurrentTarget = null;
             usedShield = false;
-            showShielded = CustomOptionHolder.medicShowShielded.GetSelection();
-            showAttemptToShielded = CustomOptionHolder.medicShowAttemptToShielded.GetBool();
-            showAttemptToMedic = CustomOptionHolder.medicShowAttemptToMedic.GetBool();
+            showShielded = (ShieldOptions)CustomOptionHolder.medicShowShielded.GetSelection();
+            ShowMurderAttempt = (NotificationOptions)CustomOptionHolder.medicShowAttemptToMedic.GetSelection();
             setShieldAfterMeeting = CustomOptionHolder.medicSetOrShowShieldAfterMeeting.GetSelection() == 2;
             showShieldAfterMeeting = CustomOptionHolder.medicSetOrShowShieldAfterMeeting.GetSelection() == 1;
             meetingAfterShielding = false;

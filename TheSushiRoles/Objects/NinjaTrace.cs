@@ -68,7 +68,7 @@ namespace TheSushiRoles.Objects
                 if (traceCurrent.timeRemaining < 0)
                 {
                     traceCurrent.trace.SetActive(false);
-                    UnityEngine.Object.Destroy(traceCurrent.trace);
+                    UObject.Destroy(traceCurrent.trace);
                     traces.Remove(traceCurrent);
                 }
             }

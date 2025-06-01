@@ -7,15 +7,6 @@ using Cpp2IL.Core.Extensions;
 
 namespace TheSushiRoles.Patches 
 {
-    [HarmonyPatch(typeof(RoleOptionsCollectionV08), nameof(RoleOptionsCollectionV08.GetNumPerGame))]
-    class RoleOptionsDataGetNumPerGamePatch
-    {
-        public static void Postfix(ref int __result) 
-        {
-            if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.Normal) __result = 0; // Deactivate Vanilla Roles if the mod roles are active
-        }
-    }
-
     [HarmonyPatch(typeof(IGameOptionsExtensions), nameof(IGameOptionsExtensions.GetAdjustedNumImpostors))]
     class GameOptionsDataGetAdjustedNumImpostorsPatch 
     {
@@ -42,7 +33,6 @@ namespace TheSushiRoles.Patches
     class RoleManagerSelectRolesPatch 
     {
         private static int crewValues;
-        private static int impValues;
         private static List<Tuple<byte, byte>> playerRoleMap = new List<Tuple<byte, byte>>();
         public static void Postfix() 
         {
@@ -54,7 +44,7 @@ namespace TheSushiRoles.Patches
 
         private static void AssignRoles() 
         {
-            var data = getRoleAssignmentData();
+            var data = GetRoleAssignmentData();
             AssignEnsuredRoles(data); // Assign roles that should always be in the game next
             AssignChanceRoles(data); // Assign roles that may or may not be in the game last
             AssignRoleTargets(data); // Assign targets for Lawyer & Prosecutor
@@ -63,7 +53,7 @@ namespace TheSushiRoles.Patches
             AssignAbilties();
         }
 
-        public static RoleAssignmentData getRoleAssignmentData() 
+        public static RoleAssignmentData GetRoleAssignmentData() 
         {
             // Get the players that we want to assign the roles to. Crewmate and Neutral roles are assigned to natural Crewmates. Impostor roles to Impostors.
             List<PlayerControl> Crewmates = PlayerControl.AllPlayerControls.ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
@@ -94,11 +84,11 @@ namespace TheSushiRoles.Patches
             if (impostorMin > impostorMax) impostorMin = impostorMax;
            
             // Get the maximum allowed count of each role type based on the minimum and maximum option
-            int crewCountSettings = rnd.Next(crewmateMin, crewmateMax + 1);
-            int neutralEvilCountSettings = rnd.Next(neutralEvilMin, neutralEvilMax + 1);
-            int neutralBenignCountSettings = rnd.Next(neutralBenignMin, neutralBenignMax + 1);
-            int neutralKCountSettings = rnd.Next(neutralKMin, neutralKMax + 1);
-            int impCountSettings = rnd.Next(impostorMin, impostorMax + 1);
+            int crewCountSettings = TheSushiRolesPlugin.rnd.Next(crewmateMin, crewmateMax + 1);
+            int neutralEvilCountSettings = TheSushiRolesPlugin.rnd.Next(neutralEvilMin, neutralEvilMax + 1);
+            int neutralBenignCountSettings = TheSushiRolesPlugin.rnd.Next(neutralBenignMin, neutralBenignMax + 1);
+            int neutralKCountSettings = TheSushiRolesPlugin.rnd.Next(neutralKMin, neutralKMax + 1);
+            int impCountSettings = TheSushiRolesPlugin.rnd.Next(impostorMin, impostorMax + 1);
 
             // Potentially lower the actual maximum to the assignable players
             int MaxCrewmateRoles = Mathf.Min(Crewmates.Count, crewCountSettings);
@@ -156,7 +146,7 @@ namespace TheSushiRoles.Patches
             CrewSettings.Add((byte)RoleId.Sheriff, CustomOptionHolder.sheriffSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Gatekeeper, CustomOptionHolder.GatekeeperSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Engineer, CustomOptionHolder.engineerSpawnRate.GetSelection());
-            CrewSettings.Add((byte)RoleId.Lighter, CustomOptionHolder.lighterSpawnRate.GetSelection());
+            CrewSettings.Add((byte)RoleId.Snitch, CustomOptionHolder.SnitchSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Deputy, CustomOptionHolder.DeputySpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Detective, CustomOptionHolder.detectiveSpawnRate.GetSelection());
             CrewSettings.Add((byte)RoleId.Chronos, CustomOptionHolder.ChronosSpawnRate.GetSelection());
@@ -218,9 +208,9 @@ namespace TheSushiRoles.Patches
                 // Randomly select a pool of roles to assign a role from next (Crewmate role, Neutral role or Impostor role) 
                 // then select one of the roles from the selected pool to a player 
                 // and remove the role (and any potentially blocked role pairings) from the pool(s)
-                RoleFaction roleType = ImpRolesToAssign.Keys.ElementAt(rnd.Next(0, ImpRolesToAssign.Keys.Count));
+                RoleFaction roleType = ImpRolesToAssign.Keys.ElementAt(TheSushiRolesPlugin.rnd.Next(0, ImpRolesToAssign.Keys.Count));
                 List<PlayerControl> players = data.Impostors;
-                RoleId roleId = ImpRolesToAssign[roleType].RemoveAndReturn(rnd.Next(0, ImpRolesToAssign[roleType].Count));
+                RoleId roleId = ImpRolesToAssign[roleType].RemoveAndReturn(TheSushiRolesPlugin.rnd.Next(0, ImpRolesToAssign[roleType].Count));
                 SetRoleToRandomPlayer((byte)roleId, players);
 
                 if (roleId == RoleId.Cultist)
@@ -263,12 +253,12 @@ namespace TheSushiRoles.Patches
             }
 
             // Assign roles until we run out of either players we can assign roles to or run out of roles we can assign to players
-            while ((data.Crewmates.Count > 0 && (
+            while (data.Crewmates.Count > 0 && (
                     (data.MaxCrewmateRoles > 0 && ensuredCrewmateRoles.Count > 0) ||
                     (data.MaxNeutralEvilRoles > 0 && ensuredNeutralEvilRoles.Count > 0) ||
                     (data.MaxNeutralBenignRoles > 0 && ensuredNeutralBenignRoles.Count > 0) ||
                     (data.MaxNeutralKillingRoles > 0 && ensuredNeutralKillingRoles.Count > 0)
-                )))
+                ))
             {
 
                 Dictionary<RoleFaction, List<byte>> rolesToAssign = new Dictionary<RoleFaction, List<byte>>();
@@ -280,9 +270,9 @@ namespace TheSushiRoles.Patches
                 // Randomly select a pool of roles to assign a role from next (Crewmate role, Neutral role or Impostor role) 
                 // then select one of the roles from the selected pool to a player 
                 // and remove the role (and any potentially blocked role pairings) from the pool(s)
-                var roleType = rolesToAssign.Keys.ElementAt(rnd.Next(0, rolesToAssign.Keys.Count()));
+                var roleType = rolesToAssign.Keys.ElementAt(TheSushiRolesPlugin.rnd.Next(0, rolesToAssign.Keys.Count()));
                 List<PlayerControl> players = data.Crewmates;
-                var index = rnd.Next(0, rolesToAssign[roleType].Count);
+                var index = TheSushiRolesPlugin.rnd.Next(0, rolesToAssign[roleType].Count);
                 var roleId = rolesToAssign[roleType][index];
                 SetRoleToRandomPlayer(rolesToAssign[roleType][index], players);
                 rolesToAssign[roleType].RemoveAt(index);
@@ -312,7 +302,6 @@ namespace TheSushiRoles.Patches
                     case RoleFaction.NeutralEvil: data.MaxNeutralEvilRoles--; break;
                     case RoleFaction.NeutralBenign: data.MaxNeutralBenignRoles--; break;
                     case RoleFaction.NeutralKilling: data.MaxNeutralKillingRoles--; break;
-                    case RoleFaction.Impostor: data.maxImpostorRoles--; impValues -= 10; break;
                 }
             }
         }
@@ -337,9 +326,9 @@ namespace TheSushiRoles.Patches
                 // Randomly select a pool of role tickets to assign a role from next Impostor role
                 // then select one of the roles from the selected pool to a player 
                 // and remove all tickets of this role (and any potentially blocked role pairings) from the pool(s)
-                RoleFaction roleType = ImpRolesToAssign.Keys.ElementAt(rnd.Next(0, ImpRolesToAssign.Keys.Count));
+                RoleFaction roleType = ImpRolesToAssign.Keys.ElementAt(TheSushiRolesPlugin.rnd.Next(0, ImpRolesToAssign.Keys.Count));
                 List<PlayerControl> players = data.Impostors;
-                byte roleId = ImpRolesToAssign[roleType][rnd.Next(0, ImpRolesToAssign[roleType].Count)];
+                byte roleId = ImpRolesToAssign[roleType][TheSushiRolesPlugin.rnd.Next(0, ImpRolesToAssign[roleType].Count)];
                 SetRoleToRandomPlayer(roleId, players);
                 ImpRolesToAssign[roleType].RemoveAll(x => x == roleId);
 
@@ -395,9 +384,9 @@ namespace TheSushiRoles.Patches
                 // Randomly select a pool of role tickets to assign a role from next (Crewmate role, Neutral role or Impostor role) 
                 // then select one of the roles from the selected pool to a player 
                 // and remove all tickets of this role (and any potentially blocked role pairings) from the pool(s)
-                var roleType = rolesToAssign.Keys.ElementAt(rnd.Next(0, rolesToAssign.Keys.Count()));
+                var roleType = rolesToAssign.Keys.ElementAt(TheSushiRolesPlugin.rnd.Next(0, rolesToAssign.Keys.Count()));
                 List<PlayerControl> players = data.Crewmates;
-                var index = rnd.Next(0, rolesToAssign[roleType].Count);
+                var index = TheSushiRolesPlugin.rnd.Next(0, rolesToAssign[roleType].Count);
                 var roleId = rolesToAssign[roleType][index];
                 SetRoleToRandomPlayer(roleId, players);
                 rolesToAssign[roleType].RemoveAll(x => x == roleId);
@@ -445,7 +434,7 @@ namespace TheSushiRoles.Patches
                 } 
                 else 
                 {
-                    var target = possibleTargets[TheSushiRoles.rnd.Next(0, possibleTargets.Count)];
+                    var target = possibleTargets[TheSushiRolesPlugin.rnd.Next(0, possibleTargets.Count)];
                     Utils.SendRPC(CustomRPC.LawyerSetTarget, target.PlayerId);
                     RPCProcedure.LawyerSetTarget(target.PlayerId);
                 }
@@ -465,7 +454,7 @@ namespace TheSushiRoles.Patches
                 }
                 else 
                 {
-                    var target = possibleTargets[TheSushiRoles.rnd.Next(0, possibleTargets.Count)];
+                    var target = possibleTargets[TheSushiRolesPlugin.rnd.Next(0, possibleTargets.Count)];
                     Utils.SendRPC(CustomRPC.ProsecutorSetTarget, target.PlayerId);
                     RPCProcedure.ProsecutorSetTarget(target.PlayerId);
                 }
@@ -477,7 +466,7 @@ namespace TheSushiRoles.Patches
             var modifierMin = CustomOptionHolder.abilitiesCountMin.GetSelection();
             var modifierMax = CustomOptionHolder.abilitiesCountMax.GetSelection();
             if (modifierMin > modifierMax) modifierMin = modifierMax;
-            int modifierCountSettings = rnd.Next(modifierMin, modifierMax + 1);
+            int modifierCountSettings = TheSushiRolesPlugin.rnd.Next(modifierMin, modifierMax + 1);
             List<PlayerControl> players = PlayerControl.AllPlayerControls.ToArray().ToList();
             int modifierCount = Mathf.Min(players.Count, modifierCountSettings);
 
@@ -486,10 +475,11 @@ namespace TheSushiRoles.Patches
             List<AbilityId> allAbilities = new List<AbilityId>();
             List<AbilityId> ensuredAbilities = new List<AbilityId>();
             List<AbilityId> chanceAbilities = new List<AbilityId>();
-            allAbilities.AddRange(new List<AbilityId> 
+            allAbilities.AddRange(new List<AbilityId>
             {
                 AbilityId.Coward,
-                AbilityId.Paranoid
+                AbilityId.Paranoid,
+                AbilityId.Lighter
             });
 
             foreach (AbilityId m in allAbilities) 
@@ -506,7 +496,7 @@ namespace TheSushiRoles.Patches
             List<AbilityId> chanceAbilityToAssign = new List<AbilityId>();
             while (chanceModifierCount > 0 && chanceAbilities.Count > 0)
             {
-                var index = rnd.Next(0, chanceAbilities.Count);
+                var index = TheSushiRolesPlugin.rnd.Next(0, chanceAbilities.Count);
                 AbilityId AbilityId = chanceAbilities[index];
                 chanceAbilityToAssign.Add(AbilityId);
 
@@ -527,7 +517,7 @@ namespace TheSushiRoles.Patches
             var modifierMin = CustomOptionHolder.modifiersCountMin.GetSelection();
             var modifierMax = CustomOptionHolder.modifiersCountMax.GetSelection();
             if (modifierMin > modifierMax) modifierMin = modifierMax;
-            int modifierCountSettings = rnd.Next(modifierMin, modifierMax + 1);
+            int modifierCountSettings = TheSushiRolesPlugin.rnd.Next(modifierMin, modifierMax + 1);
             List<PlayerControl> players = PlayerControl.AllPlayerControls.ToArray().ToList();
             if (!CustomOptionHolder.GuesserHaveModifier.GetBool())
                 players.RemoveAll(x => Guesser.IsGuesser(x.PlayerId));
@@ -538,7 +528,7 @@ namespace TheSushiRoles.Patches
             List<ModifierId> allModifiers = new List<ModifierId>();
             List<ModifierId> ensuredModifiers = new List<ModifierId>();
             List<ModifierId> chanceModifiers = new List<ModifierId>();
-            allModifiers.AddRange(new List<ModifierId> 
+            allModifiers.AddRange(new List<ModifierId>
             {
                 ModifierId.Tiebreaker,
                 ModifierId.Mini,
@@ -554,10 +544,10 @@ namespace TheSushiRoles.Patches
                 ModifierId.Lucky
             });
 
-            if (rnd.Next(1, 101) <= CustomOptionHolder.modifierLover.GetSelection() * 10) 
+            if (TheSushiRolesPlugin.rnd.Next(1, 101) <= CustomOptionHolder.modifierLover.GetSelection() * 10) 
             { 
                 // Assign lover
-                bool isEvilLover = rnd.Next(1, 101) <= CustomOptionHolder.modifierLoverImpLoverRate.GetSelection() * 10;
+                bool isEvilLover = TheSushiRolesPlugin.rnd.Next(1, 101) <= CustomOptionHolder.modifierLoverImpLoverRate.GetSelection() * 10;
                 byte firstLoverId;
                 List<PlayerControl> evilPlayer = new List<PlayerControl>(players);
                 List<PlayerControl> crewPlayer = new List<PlayerControl>(players);
@@ -590,7 +580,7 @@ namespace TheSushiRoles.Patches
             List<ModifierId> chanceModifierToAssign = new List<ModifierId>();
             while (chanceModifierCount > 0 && chanceModifiers.Count > 0) 
             {
-                var index = rnd.Next(0, chanceModifiers.Count);
+                var index = TheSushiRolesPlugin.rnd.Next(0, chanceModifiers.Count);
                 ModifierId modifierId = chanceModifiers[index];
                 chanceModifierToAssign.Add(modifierId);
 
@@ -623,7 +613,7 @@ namespace TheSushiRoles.Patches
         {
             for (int i = 0; i < count && playerList.Count > 0; i++) 
             {
-                var index = rnd.Next(0, playerList.Count);
+                var index = TheSushiRolesPlugin.rnd.Next(0, playerList.Count);
                 byte playerId = playerList[index].PlayerId;
                 playerList.RemoveAt(index);
 
@@ -634,7 +624,7 @@ namespace TheSushiRoles.Patches
 
         private static byte SetRoleToRandomPlayer(byte roleId, List<PlayerControl> playerList, bool removePlayer = true) 
         {
-            var index = rnd.Next(0, playerList.Count);
+            var index = TheSushiRolesPlugin.rnd.Next(0, playerList.Count);
             byte playerId = playerList[index].PlayerId;
             if (removePlayer) playerList.RemoveAt(index);
 
@@ -648,7 +638,7 @@ namespace TheSushiRoles.Patches
         private static byte SetModifierToRandomPlayer(byte modifierId, List<PlayerControl> playerList, byte flag = 0) 
         {
             if (playerList.Count == 0) return Byte.MaxValue;
-            var index = rnd.Next(0, playerList.Count);
+            var index = TheSushiRolesPlugin.rnd.Next(0, playerList.Count);
             byte playerId = playerList[index].PlayerId;
             playerList.RemoveAt(index);
 
@@ -660,7 +650,7 @@ namespace TheSushiRoles.Patches
         private static byte SetAbilityToRandomPlayer(byte abilityId, List<PlayerControl> playerList, byte flag = 0) 
         {
             if (playerList.Count == 0) return Byte.MaxValue;
-            var index = rnd.Next(0, playerList.Count);
+            var index = TheSushiRolesPlugin.rnd.Next(0, playerList.Count);
             byte playerId = playerList[index].PlayerId;
             playerList.RemoveAt(index);
 
@@ -670,11 +660,11 @@ namespace TheSushiRoles.Patches
         }
         private static void AssignAbilitiesToPlayers(List<AbilityId> abilities, List<PlayerControl> playerList, int abilityCount) 
         {
-            abilities = abilities.OrderBy(x => rnd.Next()).ToList(); // randomize list
+            abilities = abilities.OrderBy(x => TheSushiRolesPlugin.rnd.Next()).ToList(); // randomize list
 
             while (abilityCount < abilities.Count) 
             {
-                var index = rnd.Next(0, abilities.Count);
+                var index = TheSushiRolesPlugin.rnd.Next(0, abilities.Count);
                 abilities.RemoveAt(index);
             }
 
@@ -710,11 +700,11 @@ namespace TheSushiRoles.Patches
 
         private static void AssignModifiersToPlayers(List<ModifierId> modifiers, List<PlayerControl> playerList, int modifierCount) 
         {
-            modifiers = modifiers.OrderBy(x => rnd.Next()).ToList(); // randomize list
+            modifiers = modifiers.OrderBy(x => TheSushiRolesPlugin.rnd.Next()).ToList(); // randomize list
 
             while (modifierCount < modifiers.Count) 
             {
-                var index = rnd.Next(0, modifiers.Count);
+                var index = TheSushiRolesPlugin.rnd.Next(0, modifiers.Count);
                 modifiers.RemoveAt(index);
             }
 
@@ -806,7 +796,7 @@ namespace TheSushiRoles.Patches
         private static int GetSelectionForAbilityId(AbilityId AbilityId, bool multiplyQuantity = false) 
         {
             int selection = 0;
-            switch (AbilityId) 
+            switch (AbilityId)
             {
                 case AbilityId.Coward:
                     selection = CustomOptionHolder.AbilityCoward.GetSelection();
@@ -814,28 +804,12 @@ namespace TheSushiRoles.Patches
                 case AbilityId.Paranoid:
                     selection = CustomOptionHolder.AbilityParanoid.GetSelection();
                     break;
+                case AbilityId.Lighter:
+                    selection = CustomOptionHolder.AbilityFlashlightSpawnRate.GetSelection();
+                    break;
             }
                  
             return selection;
-        }
-
-        private static void SetRolesAgain()
-        {
-
-            while (playerRoleMap.Any())
-            {
-                byte amount = (byte)Math.Min(playerRoleMap.Count, 20);
-                var writer = AmongUsClient.Instance!.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.WorkaroundSetRoles, SendOption.Reliable, -1);
-                writer.Write(amount);
-                for (int i = 0; i < amount; i++)
-                {
-                    var option = playerRoleMap[0];
-                    playerRoleMap.RemoveAt(0);
-                    writer.WritePacked((uint)option.Item1);
-                    writer.WritePacked((uint)option.Item2);
-                }
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-            }
         }
 
         public class RoleAssignmentData 

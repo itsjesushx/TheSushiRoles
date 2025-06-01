@@ -25,9 +25,9 @@ namespace TheSushiRoles.Roles
             bounty = null;
             arrowUpdateTimer = 0f;
             bountyUpdateTimer = 0f;
-            if (arrow != null && arrow.arrow != null) UnityEngine.Object.Destroy(arrow.arrow);
+            if (arrow != null && arrow.arrow != null) UObject.Destroy(arrow.arrow);
             arrow = null;
-            if (CooldownText != null && CooldownText.gameObject != null) UnityEngine.Object.Destroy(CooldownText.gameObject);
+            if (CooldownText != null && CooldownText.gameObject != null) UObject.Destroy(CooldownText.gameObject);
             CooldownText = null;
             foreach (PoolablePlayer p in MapOptions.BeanIcons.Values) 
             {

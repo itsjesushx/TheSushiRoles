@@ -44,7 +44,7 @@ namespace TheSushiRoles.Objects
             isTeleporting = true;
             
             // Generate log info
-            PlayerControl playerControl = Utils.PlayerById(playerId);
+            PlayerControl playerControl = Utils.GetPlayerById(playerId);
             bool flip = playerControl.cosmetics.currentBodySprite.BodySprite.flipX; // use the original player control here, not the morhpTarget.
             firstPortal.animationFgRenderer.flipX = flip;
             secondPortal.animationFgRenderer.flipX = flip;

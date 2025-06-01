@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
 using AmongUs.Data;
 using Assets.InnerNet;
 
@@ -16,6 +15,8 @@ namespace TheSushiRoles.Modules
         {
             // Force Reload of SoundEffectHolder
             SoundEffectsManager.Load();
+
+            //Application.targetFrameRate = 165;
             
             var template = GameObject.Find("ExitGameButton");
             var template2 = GameObject.Find("CreditsButton");
@@ -32,7 +33,7 @@ namespace TheSushiRoles.Modules
 
 
 
-            var buttonGithub = UnityEngine.Object.Instantiate(template, template.transform.parent);
+            var buttonGithub = UObject.Instantiate(template, template.transform.parent);
             buttonGithub.transform.localScale = new Vector3(0.42f, 0.84f, 0.84f);
             buttonGithub.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.542f, 0.5f);
 
@@ -49,7 +50,7 @@ namespace TheSushiRoles.Modules
             
             // TSR credits button
             if (template == null) return;
-            var creditsButton = Object.Instantiate(template, template.transform.parent);
+            var creditsButton = UObject.Instantiate(template, template.transform.parent);
 
             creditsButton.transform.localScale = new Vector3(0.42f, 0.84f, 0.84f);
             creditsButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.462f, 0.5f);
@@ -64,14 +65,14 @@ namespace TheSushiRoles.Modules
 
             passiveCreditsButton.OnClick.AddListener((System.Action)delegate {
                 // do stuff
-                if (popUp != null) Object.Destroy(popUp);
-                var popUpTemplate = Object.FindObjectOfType<AnnouncementPopUp>(true);
+                if (popUp != null) UObject.Destroy(popUp);
+                var popUpTemplate = UObject.FindObjectOfType<AnnouncementPopUp>(true);
                 if (popUpTemplate == null) 
                 {
                     TheSushiRolesPlugin.Logger.LogError("couldnt show credits, popUp is null");
                     return;
                 }
-                popUp = Object.Instantiate(popUpTemplate);
+                popUp = UObject.Instantiate(popUpTemplate);
 
                 popUp.gameObject.SetActive(true);
                 string creditsString = @$"<align=""center"">Special Thanks:

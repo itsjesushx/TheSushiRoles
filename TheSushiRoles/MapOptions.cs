@@ -7,7 +7,7 @@ namespace TheSushiRoles
     {
         // Set values
         public static int maxNumberOfMeetings = 10;
-        public static bool blockSkippingInEmergencyMeetings = false;
+        public static SkipButtonOptions SkipButtonDisable;
         public static float GameStartCooldowns = 15f;
         public static bool noVoteIsSelfVote = false;
         public static bool hidePlayerNames = false;
@@ -15,11 +15,9 @@ namespace TheSushiRoles
         public static bool DisableLobbyMusic = true;        
         public static bool ghostsSeeInformation = true;
         public static bool ghostsSeeVotes = true;
-        public static bool RoleSummaryVisible = true;
         public static bool allowParallelMedBayScans = false;
         public static bool showLighterDarker = true;
         public static bool enableSoundEffects = true;
-        public static bool enableHorseMode = false;
         public static bool ShieldFirstKill = false;
         public static bool ShowVentsOnMap = true;
         public static bool ShowChatNotifications = true;
@@ -40,6 +38,7 @@ namespace TheSushiRoles
         public static Dictionary<byte, PoolablePlayer> BeanIcons = new Dictionary<byte, PoolablePlayer>();
         public static string FirstKillName;
         public static PlayerControl FirstPlayerKilled;
+        public static bool IsFirstRound { get; set; } = true;
 
         public static void ClearAndReloadMapOptions() 
         {
@@ -48,9 +47,10 @@ namespace TheSushiRoles
             VentsToSeal = new List<Vent>();
             BeanIcons = new Dictionary<byte, PoolablePlayer>();
             RevivedPlayers = new List<byte>();
+            IsFirstRound = true;
 
             maxNumberOfMeetings = Mathf.RoundToInt(CustomOptionHolder.maxNumberOfMeetings.GetSelection());
-            blockSkippingInEmergencyMeetings = CustomOptionHolder.blockSkippingInEmergencyMeetings.GetBool();
+            SkipButtonDisable = (SkipButtonOptions)CustomOptionHolder.SkipButtonDisable.GetSelection();
             noVoteIsSelfVote = CustomOptionHolder.noVoteIsSelfVote.GetBool();
             hidePlayerNames = CustomOptionHolder.hidePlayerNames.GetBool();
             allowParallelMedBayScans = CustomOptionHolder.allowParallelMedBayScans.GetBool();
@@ -73,11 +73,9 @@ namespace TheSushiRoles
             GhostsSeeEverything = TheSushiRolesPlugin.GhostsSeeEverything.Value;
             ghostsSeeInformation = TheSushiRolesPlugin.GhostsSeeInformation.Value;
             ghostsSeeVotes = TheSushiRolesPlugin.GhostsSeeVotes.Value;
-            RoleSummaryVisible = TheSushiRolesPlugin.RoleSummaryVisible.Value;
             DisableLobbyMusic = TheSushiRolesPlugin.DisableLobbyMusic.Value;
             showLighterDarker = TheSushiRolesPlugin.ShowLighterDarker.Value;
             enableSoundEffects = TheSushiRolesPlugin.EnableSoundEffects.Value;
-            enableHorseMode = TheSushiRolesPlugin.EnableHorseMode.Value;
             ShowVentsOnMap = TheSushiRolesPlugin.ShowVentsOnMap.Value;
             ShowChatNotifications = TheSushiRolesPlugin.ShowChatNotifications.Value;
         }

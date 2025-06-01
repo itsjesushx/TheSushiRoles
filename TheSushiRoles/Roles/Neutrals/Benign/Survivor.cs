@@ -7,16 +7,14 @@ namespace TheSushiRoles.Roles
     {        
         public static PlayerControl Player;
         public static PlayerControl target;
-        public static Color Color = Lawyer.Color;
+        public static Color Color = new Color32(255, 227, 105, byte.MaxValue);
         public static List<PlayerControl> blankedList = new List<PlayerControl>();
         public static int blanks = 0;
         public static Sprite blank;
-        public static bool notAckedExiled = false;
-
         public static float Cooldown = 25f;
         public static int blanksNumber = 5;
-
-        public static Sprite GetTargetSprite() 
+        public static bool IsAdditionalAliveSurvivorWin = false;
+        public static Sprite GetTargetSprite()
         {
             if (blank) return blank;
             blank = Utils.LoadSprite("TheSushiRoles.Resources.SurvivorButton.png", 115f);
@@ -29,9 +27,8 @@ namespace TheSushiRoles.Roles
             target = null;
             blankedList = new List<PlayerControl>();
             blanks = 0;
-            notAckedExiled = false;
-
             Cooldown = CustomOptionHolder.SurvivorCooldown.GetFloat();
+            IsAdditionalAliveSurvivorWin = false;
             blanksNumber = Mathf.RoundToInt(CustomOptionHolder.SurvivorBlanksNumber.GetFloat());
         }
     }

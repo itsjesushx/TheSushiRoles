@@ -59,7 +59,7 @@ public class Debugger : MonoBehaviour
                 Keyboard_Joystick.Switch(false);
 
             if (GUILayout.Button("End Game"))
-                GameManager.Instance.RpcEndGame(GameOverReason.CrewmatesByTask, false);
+                Utils.EndGame();
 
             if (GUILayout.Button("Turn Impostor"))
             {

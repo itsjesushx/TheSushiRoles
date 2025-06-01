@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace TheSushiRoles.Patches 
 {
-
     [HarmonyPatch(typeof(ShipStatus))]
     public class ShipStatusPatch 
     {
@@ -22,17 +21,16 @@ namespace TheSushiRoles.Patches
             // If player is a role which has Impostor vision
             if (Utils.HasImpVision(player)) 
             {
-                //__result = __instance.MaxLightRadius * GameOptionsManager.Instance.currentNormalGameOptions.ImpostorLightMod;
                 __result = GetNeutralLightRadius(__instance, true);
                 return false;
             }
             float lerpValue = 1f;
 
             // If player is Lighter with ability active
-            if (Lighter.Player != null && Lighter.Player.PlayerId == player.PlayerId) 
+            if (FlashLight.Player != null && FlashLight.Player.PlayerId == player.PlayerId) 
             {
                 float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
-                __result = Mathf.Lerp(__instance.MaxLightRadius * Lighter.lighterModeLightsOffVision, __instance.MaxLightRadius * Lighter.lighterModeLightsOnVision, unlerped);
+                __result = Mathf.Lerp(__instance.MaxLightRadius * FlashLight.AbilityFlashlightModeLightsOffVision, __instance.MaxLightRadius * FlashLight.AbilityFlashlightModeLightsOnVision, unlerped);
             }
 
             // If there is a Trickster with their ability active
@@ -77,17 +75,21 @@ namespace TheSushiRoles.Patches
             return false;
         }
 
-        public static float GetNeutralLightRadius(ShipStatus shipStatus, bool isImpostor) {
-            if (SubmergedCompatibility.IsSubmerged) {
+        public static float GetNeutralLightRadius(ShipStatus shipStatus, bool isImpostor)
+        {
+            if (SubmergedCompatibility.IsSubmerged)
+            {
                 return SubmergedCompatibility.GetSubmergedNeutralLightRadius(isImpostor);
             }
 
             if (isImpostor) return shipStatus.MaxLightRadius * GameOptionsManager.Instance.currentNormalGameOptions.ImpostorLightMod;
             float lerpValue = 1.0f;
-            try {
+            try
+            {
                 SwitchSystem switchSystem = MapUtilities.Systems[SystemTypes.Electrical].CastFast<SwitchSystem>();
                 lerpValue = switchSystem.Value / 255f;
-            } catch { }
+            }
+            catch { }
 
             return Mathf.Lerp(shipStatus.MinLightRadius, shipStatus.MaxLightRadius, lerpValue) * GameOptionsManager.Instance.currentNormalGameOptions.CrewLightMod;
         }
@@ -137,7 +139,8 @@ namespace TheSushiRoles.Patches
             GameOptionsManager.Instance.currentNormalGameOptions.NumLongTasks = originalNumLongTasksOption;
         }
 
-        public static void resetVanillaSettings() {
+        public static void ResetVanillaSettings()
+        {
             GameOptionsManager.Instance.currentNormalGameOptions.ImpostorLightMod = originalNumImpVisionOption;
             GameOptionsManager.Instance.currentNormalGameOptions.CrewLightMod = originalNumCrewVisionOption;
             GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown = originalNumKillCooldownOption;

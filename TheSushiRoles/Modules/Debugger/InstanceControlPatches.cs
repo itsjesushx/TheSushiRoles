@@ -26,7 +26,7 @@ public static class InstanceControlPatches
     public static void SwitchTo(byte playerId)
     {
         var savedPlayerId = PlayerControl.LocalPlayer.PlayerId;
-        PlayerControl savedPlayer = Utils.PlayerById(savedPlayerId);
+        PlayerControl savedPlayer = Utils.GetPlayerById(savedPlayerId);
         var savedPosition = savedPlayer.transform.position;
 
         PlayerControl.LocalPlayer.NetTransform.RpcSnapTo(PlayerControl.LocalPlayer.transform.position);
@@ -36,7 +36,7 @@ public static class InstanceControlPatches
         var savedId = PlayerControl.LocalPlayer.PlayerId;
 
         //Setup new player
-        var newPlayer = Utils.PlayerById(playerId);
+        var newPlayer = Utils.GetPlayerById(playerId);
 
         if (newPlayer == null) return;
 
@@ -160,7 +160,7 @@ public static class InstanceControlPatches
     {
         foreach (var playerId in PlayerClientIDs.Keys)
         {
-            Utils.PlayerById(playerId).SetName(name + $" {playerId}");
+            Utils.GetPlayerById(playerId).SetName(name + $" {playerId}");
         }
     }
     public static void RemovePlayer(byte id)

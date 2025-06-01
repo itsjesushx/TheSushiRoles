@@ -16,8 +16,8 @@ namespace TheSushiRoles.Objects
             GameObject = new GameObject("MinerVentLocation") { layer = 11 };
             Vector3 position = new(p.x, p.y, p.y / 1000 + 0.0008f); // just behind player
             Vector2 offset = PlayerControl.LocalPlayer.Collider.offset * .7f;
-            var ventPrefab = UnityEngine.Object.FindObjectOfType<Vent>();
-            var vents = UnityEngine.Object.Instantiate(ventPrefab, ventPrefab.transform.parent);
+            var ventPrefab = UObject.FindObjectOfType<Vent>();
+            var vents = UObject.Instantiate(ventPrefab, ventPrefab.transform.parent);
             position += new Vector3(offset.x, offset.y, 0); // Add collider offset that DoMove moves the player up at a valid position
 
             // Create the marker
@@ -28,7 +28,7 @@ namespace TheSushiRoles.Objects
 
             // Create the vent
             Vent referenceVent = ShipStatus.Instance.AllVents.FirstOrDefault();
-            vent = UnityEngine.Object.Instantiate(referenceVent, referenceVent.transform.parent);
+            vent = UObject.Instantiate(referenceVent, referenceVent.transform.parent);
             vent.transform.position = GameObject.transform.position;
             vent.Left = null;
             vent.Right = null;
@@ -83,8 +83,8 @@ namespace TheSushiRoles.Objects
             if (GameObject.active) GameObject.SetActive(false);
             if (!vent.gameObject.active)
             {
-                var ventPrefab = UnityEngine.Object.FindObjectOfType<Vent>();
-                var vents = UnityEngine.Object.Instantiate(ventPrefab, ventPrefab.transform.parent);
+                var ventPrefab = UObject.FindObjectOfType<Vent>();
+                var vents = UObject.Instantiate(ventPrefab, ventPrefab.transform.parent);
                 vent.gameObject.SetActive(true);
                 vent.myRend.sprite = vents.myRend.sprite;
             }
@@ -120,8 +120,8 @@ namespace TheSushiRoles.Objects
             foreach (MinerVent vent in AllMinerVents)
             {
                 vent.GameObject.SetActive(false);
-                UnityEngine.Object.Destroy(vent.GameObject);
-                UnityEngine.Object.Destroy(vent.vent.gameObject);
+                UObject.Destroy(vent.GameObject);
+                UObject.Destroy(vent.vent.gameObject);
             }
             AllMinerVents.Clear();
         }

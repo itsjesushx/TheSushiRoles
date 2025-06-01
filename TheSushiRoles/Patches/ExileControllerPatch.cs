@@ -85,7 +85,7 @@ namespace TheSushiRoles.Patches
                 if ((witchDiesWithExiledLover || exiledIsWitch) && Witch.witchVoteSavesTargets) Witch.futureSpelled = new List<PlayerControl>();
                 foreach (PlayerControl target in Witch.futureSpelled) 
                 {
-                    if (target != null && !target.Data.IsDead && Utils.CheckMurderAttempt(Witch.Player, target, true) == MurderAttemptResult.PerformKill)
+                    if (target != null && !target.Data.IsDead)
                     {
                         if (exiled != null && Prosecutor.Player != null && (target == Prosecutor.Player || target == Lovers.OtherLover(Prosecutor.Player)) 
                         && Prosecutor.target != null && Prosecutor.target.PlayerId == exiled.PlayerId) continue;
@@ -238,9 +238,14 @@ namespace TheSushiRoles.Patches
             Crusader.Fortified = false;
 
             Oracle.Investigated = false;
+            
+            // Clear the list again.
+            Snitch.Target = null;
+            Snitch.ShouldSee = false;
+            Snitch.ShouldHaveButton = true;
 
             // Mystic spawn souls
-            if (Mystic.deadBodyPositions != null && Mystic.Player != null && PlayerControl.LocalPlayer == Mystic.Player && (Mystic.mode == 0 || Mystic.mode == 2))
+            if (Mystic.deadBodyPositions != null && Mystic.Player != null && PlayerControl.LocalPlayer == Mystic.Player && (Mystic.mode == Mystic.Mode.Souls || Mystic.mode == Mystic.Mode.DeathAndSouls))
             {
                 foreach (Vector3 pos in Mystic.deadBodyPositions)
                 {
@@ -254,7 +259,8 @@ namespace TheSushiRoles.Patches
 
                     if (Mystic.limitSoulDuration)
                     {
-                        FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Mystic.soulDuration, new Action<float>((p) => {
+                        FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Mystic.soulDuration, new Action<float>((p) =>
+                        {
                             if (rend != null)
                             {
                                 var tmp = rend.color;
@@ -342,6 +348,12 @@ namespace TheSushiRoles.Patches
             if (p == 1f) foreach (Trap trap in Trap.traps) trap.triggerable = true;
             })));
 
+            foreach (BlindTrap Btrap in BlindTrap.traps) Btrap.triggerable = false;
+            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown / 2 + 2, new Action<float>((p) => 
+            {
+            if (p == 1f) foreach (BlindTrap Btrap in BlindTrap.traps) Btrap.triggerable = true;
+            })));
+
             if (!Yoyo.markStaysOverMeeting)
                 Silhouette.ClearSilhouettes();
         }
@@ -380,7 +392,7 @@ namespace TheSushiRoles.Patches
                     if (Tiebreaker.isTiebreak) __result += " (Tiebreaker Vote)";
                     Tiebreaker.isTiebreak = false;
                 }
-            } 
+            }
             catch 
             {
                 // pass - Hopefully prevent leaving while exiling to softlock game

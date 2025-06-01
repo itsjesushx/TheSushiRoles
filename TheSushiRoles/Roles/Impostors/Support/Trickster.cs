@@ -34,7 +34,6 @@ namespace TheSushiRoles.Roles
             tricksterVentButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.TricksterVentButton.png", 115f);
             return tricksterVentButtonSprite;
         }
-
         public static void ClearAndReload() 
         {
             Player = null;

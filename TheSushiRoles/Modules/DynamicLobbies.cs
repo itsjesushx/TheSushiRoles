@@ -2,7 +2,6 @@ using System;
 using AmongUs.Data;
 using Hazel;
 using InnerNet;
-using Reactor.Utilities.Extensions;
 
 namespace TheSushiRoles.Modules 
 {
@@ -19,31 +18,32 @@ namespace TheSushiRoles.Modules
                 bool handled = false;
                 if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) 
                 {
-                    if (text.ToLower().StartsWith("/size ")) 
+                    if (text.ToLower().StartsWith("/size "))
                     { // Unfortunately server holds this - need to do more trickery
-                            if (AmongUsClient.Instance.AmHost && AmongUsClient.Instance.CanBan()) 
-                            { // checking both just cause
-                                handled = true;
-                                if (!Int32.TryParse(text.Substring(6), out LobbyLimit)) 
+                        if (AmongUsClient.Instance.AmHost && AmongUsClient.Instance.CanBan())
+                        { // checking both just cause
+                            handled = true;
+                            if (!Int32.TryParse(text.Substring(6), out LobbyLimit))
+                            {
+                                __instance.AddChat(PlayerControl.LocalPlayer, "Invalid Size\nUsage: /size {amount}");
+                            }
+                            else
+                            {
+                                LobbyLimit = Math.Clamp(LobbyLimit, 4, 15);
+                                if (LobbyLimit != GameOptionsManager.Instance.currentNormalGameOptions.MaxPlayers)
                                 {
-                                    __instance.AddChat(PlayerControl.LocalPlayer, "Invalid Size\nUsage: /size {amount}");
-                                } 
-                                else {
-                                    LobbyLimit = Math.Clamp(LobbyLimit, 4, 15);
-                                    if (LobbyLimit != GameOptionsManager.Instance.currentNormalGameOptions.MaxPlayers) 
-                                    {
-                                        GameOptionsManager.Instance.currentNormalGameOptions.MaxPlayers = LobbyLimit;
-                                        FastDestroyableSingleton<GameStartManager>.Instance.LastPlayerCount = LobbyLimit;
-                                        PlayerControl.LocalPlayer.RpcSyncSettings(GameOptionsManager.Instance.gameOptionsFactory.ToBytes(GameOptionsManager.Instance.currentGameOptions, false));  // TODO Maybe simpler?? 
-                                        __instance.AddChat(PlayerControl.LocalPlayer, $"Lobby Size changed to {LobbyLimit} players");
-                                    } 
-                                    else 
-                                    {
-                                        __instance.AddChat(PlayerControl.LocalPlayer, $"Lobby Size is already {LobbyLimit}");
-                                    }
+                                    GameOptionsManager.Instance.currentNormalGameOptions.MaxPlayers = LobbyLimit;
+                                    FastDestroyableSingleton<GameStartManager>.Instance.LastPlayerCount = LobbyLimit;
+                                    PlayerControl.LocalPlayer.RpcSyncSettings(GameOptionsManager.Instance.gameOptionsFactory.ToBytes(GameOptionsManager.Instance.currentGameOptions, false));  // TODO Maybe simpler?? 
+                                    __instance.AddChat(PlayerControl.LocalPlayer, $"Lobby Size changed to {LobbyLimit} players");
+                                }
+                                else
+                                {
+                                    __instance.AddChat(PlayerControl.LocalPlayer, $"Lobby Size is already {LobbyLimit}");
                                 }
                             }
                         }
+                    }
                 }
                 if (handled) 
                 {

@@ -6,6 +6,12 @@ namespace TheSushiRoles.Roles
     public static class Mystic 
     {
         public static bool Investigated;
+        public enum Mode
+        {
+            DeathAndSouls = 0,
+            DeathFlash = 1,
+            Souls = 2
+        }
         public static PlayerControl Player;
         public static Color Color = new Color32(77, 154, 230, byte.MaxValue);
         public static List<Vector3> deadBodyPositions = new List<Vector3>();
@@ -13,7 +19,7 @@ namespace TheSushiRoles.Roles
         public static float Cooldown;
         public static float soulDuration = 15f;
         public static bool limitSoulDuration = false;
-        public static int mode = 0;
+        public static Mode mode = 0;
         private static Sprite ButtonSprite;
         public static Sprite GetButtonSprite() 
         {
@@ -52,9 +58,9 @@ namespace TheSushiRoles.Roles
                 }
                 else if (id.In(
                     RoleId.Engineer, RoleId.Miner, RoleId.Janitor, RoleId.Scavenger,
-                    RoleId.Undertaker, RoleId.Trapper, RoleId.Grenadier, RoleId.Sheriff))
+                    RoleId.Undertaker, RoleId.Trapper, RoleId.Grenadier, RoleId.Sheriff, RoleId.Deputy))
                 {
-                    message = "I wield tools of war and work, cleaning, building, burying, or blasting. \n\n(Engineer, Miner, Janitor, Scavenger, Undertaker, Trapper, Grenadier, Sheriff)";
+                    message = "I wield tools of war and work, cleaning, building, burying, or blasting. \n\n(Engineer, Miner, Janitor, Scavenger, Deputy, Undertaker, Trapper, Grenadier, Sheriff)";
                 }
                 else if (id.In(
                     RoleId.Veteran, RoleId.BountyHunter, RoleId.Juggernaut, RoleId.Arsonist,
@@ -115,7 +121,7 @@ namespace TheSushiRoles.Roles
             Cooldown = CustomOptionHolder.MysticCooldown.GetFloat();
             limitSoulDuration = CustomOptionHolder.MysticLimitSoulDuration.GetBool();
             soulDuration = CustomOptionHolder.MysticSoulDuration.GetFloat();
-            mode = CustomOptionHolder.MysticMode.GetSelection();
+            mode = (Mode)CustomOptionHolder.MysticMode.GetSelection();
             Charges = Mathf.RoundToInt(CustomOptionHolder.MysticCharges.GetFloat());
             RechargeTasksNumber = Mathf.RoundToInt(CustomOptionHolder.MysticRechargeTasksNumber.GetFloat());
             RechargedTasks = Mathf.RoundToInt(CustomOptionHolder.MysticRechargeTasksNumber.GetFloat());

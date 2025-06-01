@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.Events;
 using static UnityEngine.UI.Button;
-using Object = UnityEngine.Object;
 
 namespace TheSushiRoles.Patches 
 {
@@ -16,7 +15,6 @@ namespace TheSushiRoles.Patches
             new("Ghosts See Tasks & Other Info", () => MapOptions.ghostsSeeInformation = TheSushiRolesPlugin.GhostsSeeInformation.Value = !TheSushiRolesPlugin.GhostsSeeInformation.Value, TheSushiRolesPlugin.GhostsSeeInformation.Value),
             new("Ghosts Can See Votes", () => MapOptions.ghostsSeeVotes = TheSushiRolesPlugin.GhostsSeeVotes.Value = !TheSushiRolesPlugin.GhostsSeeVotes.Value, TheSushiRolesPlugin.GhostsSeeVotes.Value),
             new("Ghosts Can See Roles/Modifiers/Abilities", () => MapOptions.GhostsSeeEverything = TheSushiRolesPlugin.GhostsSeeEverything.Value = !TheSushiRolesPlugin.GhostsSeeEverything.Value, TheSushiRolesPlugin.GhostsSeeEverything.Value),
-            new("Show Role Summary", () => MapOptions.RoleSummaryVisible = TheSushiRolesPlugin.RoleSummaryVisible.Value = !TheSushiRolesPlugin.RoleSummaryVisible.Value, TheSushiRolesPlugin.RoleSummaryVisible.Value),
             new("Show Lighter / Darker", () => MapOptions.showLighterDarker = TheSushiRolesPlugin.ShowLighterDarker.Value = !TheSushiRolesPlugin.ShowLighterDarker.Value, TheSushiRolesPlugin.ShowLighterDarker.Value),
             new("Enable Sound Effects", () => MapOptions.enableSoundEffects = TheSushiRolesPlugin.EnableSoundEffects.Value = !TheSushiRolesPlugin.EnableSoundEffects.Value, TheSushiRolesPlugin.EnableSoundEffects.Value),
             new("Show Vents On Map", () => MapOptions.ShowVentsOnMap = TheSushiRolesPlugin.ShowVentsOnMap.Value = !TheSushiRolesPlugin.ShowVentsOnMap.Value, TheSushiRolesPlugin.ShowVentsOnMap.Value),
@@ -39,9 +37,9 @@ namespace TheSushiRoles.Patches
             tmp.fontSize = 4;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.transform.localPosition += Vector3.left * 0.2f;
-            titleText = Object.Instantiate(tmp);
+            titleText = UObject.Instantiate(tmp);
             titleText.gameObject.SetActive(false);
-            Object.DontDestroyOnLoad(titleText);
+            UObject.DontDestroyOnLoad(titleText);
         }
 
         [HarmonyPostfix]
@@ -56,8 +54,8 @@ namespace TheSushiRoles.Patches
             }
             if (!buttonPrefab)
             {
-                buttonPrefab = Object.Instantiate(__instance.CensorChatButton);
-                Object.DontDestroyOnLoad(buttonPrefab);
+                buttonPrefab = UObject.Instantiate(__instance.CensorChatButton);
+                UObject.DontDestroyOnLoad(buttonPrefab);
                 buttonPrefab.name = "CensorChatPrefab";
                 buttonPrefab.gameObject.SetActive(false);
             }
@@ -67,18 +65,18 @@ namespace TheSushiRoles.Patches
 
         private static void CreateCustom(OptionsMenuBehaviour prefab)
         {
-            popUp = Object.Instantiate(prefab.gameObject);
-            Object.DontDestroyOnLoad(popUp);
+            popUp = UObject.Instantiate(prefab.gameObject);
+            UObject.DontDestroyOnLoad(popUp);
             var transform = popUp.transform;
             var pos = transform.localPosition;
             pos.z = -810f; 
             transform.localPosition = pos;
 
-            Object.Destroy(popUp.GetComponent<OptionsMenuBehaviour>());
+            UObject.Destroy(popUp.GetComponent<OptionsMenuBehaviour>());
             foreach (var gObj in popUp.gameObject.GetAllChilds())
             {
                 if (gObj.name != "Background" && gObj.name != "CloseButton")
-                    Object.Destroy(gObj);
+                    UObject.Destroy(gObj);
             }
             
             popUp.SetActive(false);
@@ -86,7 +84,7 @@ namespace TheSushiRoles.Patches
 
         private static void InitializeMoreButton(OptionsMenuBehaviour __instance)
         {
-            var moreOptions = Object.Instantiate(buttonPrefab, __instance.CensorChatButton.transform.parent);
+            var moreOptions = UObject.Instantiate(buttonPrefab, __instance.CensorChatButton.transform.parent);
             var transform = __instance.CensorChatButton.transform;
             __instance.CensorChatButton.Text.transform.localScale = new Vector3(1 / 0.66f, 1, 1);
             _origin ??= transform.localPosition;
@@ -119,7 +117,7 @@ namespace TheSushiRoles.Patches
                 else
                 {
                     popUp.transform.SetParent(null);
-                    Object.DontDestroyOnLoad(popUp);
+                    UObject.DontDestroyOnLoad(popUp);
                 }
                 
                 CheckSetTitle();
@@ -140,7 +138,7 @@ namespace TheSushiRoles.Patches
         {
             if (!popUp || popUp.GetComponentInChildren<TextMeshPro>() || !titleText) return;
             
-            var title = Object.Instantiate(titleText, popUp.transform);
+            var title = UObject.Instantiate(titleText, popUp.transform);
             title.GetComponent<RectTransform>().localPosition = Vector3.up * 2.3f;
             title.gameObject.SetActive(true);
             title.text = "More Options...";
@@ -155,7 +153,7 @@ namespace TheSushiRoles.Patches
             {
                 var info = AllOptions[i];
                 
-                var button = Object.Instantiate(buttonPrefab, popUp.transform);
+                var button = UObject.Instantiate(buttonPrefab, popUp.transform);
                 var pos = new Vector3(i % 2 == 0 ? -1.17f : 1.17f, 1.3f - i / 2 * 0.8f, -.5f);
 
                 var transform = button.transform;
@@ -166,7 +164,7 @@ namespace TheSushiRoles.Patches
                 
                 button.Text.text = info.Title;
                 button.Text.fontSizeMin = button.Text.fontSizeMax = 1.8f;
-                button.Text.font = Object.Instantiate(titleText.font);
+                button.Text.font = UObject.Instantiate(titleText.font);
                 button.Text.GetComponent<RectTransform>().sizeDelta = new Vector2(2, 2);
 
                 button.name = info.Title.Replace(" ", "") + "Toggle";

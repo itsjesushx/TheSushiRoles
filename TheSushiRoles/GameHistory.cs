@@ -24,7 +24,6 @@ namespace TheSushiRoles
             if (!RoleHistory[playerId].Contains(role))
                 RoleHistory[playerId].Add(role);
         }
-
         public static void CreateDeathReason(PlayerControl player, DeadPlayer.CustomDeathReason DeathReason, PlayerControl killer = null) 
         {
             var target = deadPlayers.FirstOrDefault(x => x.player.PlayerId == player.PlayerId);

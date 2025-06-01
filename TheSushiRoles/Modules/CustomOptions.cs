@@ -474,7 +474,8 @@ namespace TheSushiRoles
         {
             GameObject.Find("RolesTabs")?.Destroy();
             var overview = GameObject.Find("OverviewTab");
-            if (!gameModeChangedFlag) {
+            if (!gameModeChangedFlag)
+            {
                 overview.transform.localScale = new Vector3(0.5f * overview.transform.localScale.x, overview.transform.localScale.y, overview.transform.localScale.z);
                 overview.transform.localPosition += new Vector3(-1.2f, 0f, 0f);
                 
@@ -486,7 +487,6 @@ namespace TheSushiRoles
 
         public static void DrawTab(LobbyViewSettingsPane __instance, CustomOptionType optionType) 
         {
-
             var relevantOptions = options.Where(x => x.type == optionType ||optionType == CustomOptionType.General).ToList();
 
             for (int j = 0; j < __instance.settingsInfo.Count; j++) 
@@ -515,7 +515,7 @@ namespace TheSushiRoles
                     }
                     if (i % 2 != 0) singles++;
                     headers++; // for header
-                    CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate<CategoryHeaderMasked>(__instance.categoryHeaderOrigin);
+                    CategoryHeaderMasked categoryHeaderMasked = UObject.Instantiate<CategoryHeaderMasked>(__instance.categoryHeaderOrigin);
                     categoryHeaderMasked.SetHeader(StringNames.ImpostorsCategory, 61);
                     categoryHeaderMasked.Title.text = option.Heading != "" ? option.Heading : option.name;
                     categoryHeaderMasked.Title.outlineColor = Color.white;
@@ -531,7 +531,7 @@ namespace TheSushiRoles
                 if (option == CustomOptionHolder.crewmateRolesCountMax || option == CustomOptionHolder.MaxNeutralEvilRoles || option == CustomOptionHolder.neutralKillingRolesCountMax || option == CustomOptionHolder.impostorRolesCountMax || option == CustomOptionHolder.modifiersCountMax || option == CustomOptionHolder.abilitiesCountMax)
                     continue;
 
-                ViewSettingsInfoPanel viewSettingsInfoPanel = UnityEngine.Object.Instantiate<ViewSettingsInfoPanel>(__instance.infoPanelOrigin);
+                ViewSettingsInfoPanel viewSettingsInfoPanel = UObject.Instantiate<ViewSettingsInfoPanel>(__instance.infoPanelOrigin);
                 viewSettingsInfoPanel.transform.SetParent(__instance.settingsContainer);
                 viewSettingsInfoPanel.transform.localScale = Vector3.one;
                 float num2;
@@ -760,7 +760,7 @@ namespace TheSushiRoles
             {
                 if (option.isHeader) 
                 {
-                    CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate<CategoryHeaderMasked>(menu.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, menu.settingsContainer);
+                    CategoryHeaderMasked categoryHeaderMasked = UObject.Instantiate<CategoryHeaderMasked>(menu.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, menu.settingsContainer);
                     categoryHeaderMasked.SetHeader(StringNames.ImpostorsCategory, 20);
                     categoryHeaderMasked.Title.text = option.Heading != "" ? option.Heading : option.name;
                     categoryHeaderMasked.Title.outlineColor = Color.white;
@@ -771,7 +771,7 @@ namespace TheSushiRoles
                 } 
                 else if (option.parent != null && (option.parent.selection == 0 && !option.invertedParent || option.parent.parent != null && option.parent.parent.selection == 0 && !option.parent.invertedParent)) continue;  // Hides options, for which the parent is disabled!
                 else if (option.parent != null && option.parent.selection != 0 && option.invertedParent) continue;
-                OptionBehaviour optionBehaviour = UnityEngine.Object.Instantiate<StringOption>(menu.stringOptionOrigin, Vector3.zero, Quaternion.identity, menu.settingsContainer);
+                OptionBehaviour optionBehaviour = UObject.Instantiate<StringOption>(menu.stringOptionOrigin, Vector3.zero, Quaternion.identity, menu.settingsContainer);
                 optionBehaviour.transform.localPosition = new Vector3(0.952f, num, -2f);
                 optionBehaviour.SetClickMask(menu.ButtonClickMask);
 
@@ -842,7 +842,8 @@ namespace TheSushiRoles
                 __instance.StartCoroutine(Effects.Lerp(2f, new Action<float>(p => { torSettingsButton.transform.FindChild("FontPlacer").GetComponentInChildren<TextMeshPro>().text = buttonText; })));
                 var torSettingsPassiveButton = torSettingsButton.GetComponent<PassiveButton>();
                 torSettingsPassiveButton.OnClick.RemoveAllListeners();
-                torSettingsPassiveButton.OnClick.AddListener((System.Action)(() => {
+                torSettingsPassiveButton.OnClick.AddListener((System.Action)(() =>
+                {
                     __instance.ChangeTab(targetMenu, false);
                 }));
                 torSettingsPassiveButton.OnMouseOut.RemoveAllListeners();
@@ -1486,7 +1487,8 @@ namespace TheSushiRoles
             else OpenSettings(__instance);
         }
         [HarmonyPrefix]
-        public static void Prefix3(HudManager __instance) {
+        public static void Prefix3(HudManager __instance)
+        {
             if (!summaryTMP) return;
             summaryTMP.text = Utils.PreviousEndGameSummary;
 

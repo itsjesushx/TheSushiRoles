@@ -6,16 +6,14 @@ namespace TheSushiRoles.Roles
     {
         public static PlayerControl Player;
         public static Color Color = Palette.ImpostorRed;
-    
         public static float Cooldown = 25f;
         public static float Duration = 10f;
         public static float PaintTimer = 0f;
-
         private static Sprite ButtonSprite;
         public static Sprite GetButtonSprite() 
         {
             if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.CamoButton.png", 115f);
+            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.PaintButton.png", 115f);
             return ButtonSprite;
         }
 
@@ -29,7 +27,6 @@ namespace TheSushiRoles.Roles
                 p.SetDefaultLook();
             }
         }
-
         public static void ClearAndReload() 
         {
             ResetPaint();

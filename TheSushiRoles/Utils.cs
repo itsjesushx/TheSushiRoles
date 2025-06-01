@@ -11,6 +11,7 @@ using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils;
 using Reactor.Networking;
 using Reactor.Networking.Extensions;
+using TMPro;
 
 namespace TheSushiRoles 
 {
@@ -34,10 +35,117 @@ namespace TheSushiRoles
             }
             return null;
         }
-        public static AudioClip LoadAudioClipFromResources(string path, string clipName = "UNNAMED_TSR_AUDIO_CLIP") 
+        public static void GlobalClearAndReload()
+        {
+            // Crew Roles
+            Mayor.ClearAndReload();
+            Engineer.ClearAndReload();
+            Sheriff.ClearAndReload();
+            Detective.ClearAndReload();
+            Landlord.ClearAndReload();
+            Monarch.ClearAndReload();
+            Chronos.ClearAndReload();
+            Medic.ClearAndReload();
+            Gatekeeper.ClearAndReload();
+            Swapper.ClearAndReload();
+            Tracker.ClearAndReload();
+            Mystic.ClearAndReload();
+            Hacker.ClearAndReload();
+            Spy.ClearAndReload();
+            Psychic.ClearAndReload();
+            Deputy.ClearAndReload();
+            Veteran.ClearAndReload();
+            Snitch.ClearAndReload();
+            Oracle.ClearAndReload();
+            Trapper.ClearAndReload();
+            Crusader.ClearAndReload();
+
+            // Neutral Roles
+            Jester.ClearAndReload();
+            Amnesiac.ClearAndReload();
+            Scavenger.ClearAndReload();
+            Romantic.ClearAndReload();
+            Arsonist.ClearAndReload();
+            Lawyer.ClearAndReload();
+            Prosecutor.ClearAndReload();
+            Survivor.ClearAndReload();
+
+            // Neutral Killers
+            Glitch.ClearAndReload();
+            Juggernaut.ClearAndReload();
+            VengefulRomantic.ClearAndReload();
+            Jackal.ClearAndReload();
+            Werewolf.ClearAndReload();
+            Hitman.ClearAndReload();
+            Predator.ClearAndReload();
+            Agent.ClearAndReload();
+            Plaguebearer.ClearAndReload();
+            Pestilence.ClearAndReload();
+
+            // Impostor Roles
+            Blackmailer.ClearAndReload();
+            Janitor.ClearAndReload();
+            Morphling.ClearAndReload();
+            Cultist.ClearAndReload();
+            Viper.ClearAndReload();
+            Painter.ClearAndReload();
+            Eraser.ClearAndReload();
+            Grenadier.ClearAndReload();
+            Trickster.ClearAndReload();
+            Miner.ClearAndReload();
+            Undertaker.ClearAndReload();
+            Warlock.ClearAndReload();
+            Wraith.ClearAndReload();
+            Witch.ClearAndReload();
+            BountyHunter.ClearAndReload();
+            Assassin.ClearAndReload();
+            Yoyo.ClearAndReload();
+
+            // Modifier
+            Bait.ClearAndReload();
+            Lazy.ClearAndReload();
+            Tiebreaker.ClearAndReload();
+            Blind.ClearAndReload();
+            Mini.ClearAndReload();
+            Disperser.ClearAndReload();
+            Vip.ClearAndReload();
+            Giant.ClearAndReload();
+            Drunk.ClearAndReload();
+            Chameleon.ClearAndReload();
+            Lucky.ClearAndReload();
+            Recruit.ClearAndReload();
+            Follower.ClearAndReload();
+            Lovers.ClearAndReload();
+            Sleuth.ClearAndReload();
+
+            // Abilities
+            Guesser.ClearAndReload();
+            Coward.ClearAndReload();
+            Paranoid.ClearAndReload();
+            FlashLight.ClearAndReload();
+
+            // Other Clears and reloads
+            JackInTheBox.ClearJackInTheBoxes();
+            AssassinTrace.ClearTraces();
+            Silhouette.ClearSilhouettes();
+            Portal.ClearPortals();
+            Trap.ClearTraps();
+            BlindTrap.ClearTraps();
+            MinerVent.ClearMinerVents();
+            Utils.ToggleZoom(reset: true);
+            GameStartManagerPatch.GameStartManagerUpdatePatch.startingTimer = 0;
+            SurveillanceMinigamePatch.nightVisionOverlays = null;
+            MapBehaviourPatch.ClearAndReload();
+            //RoleInfo.RoleTexts.Clear();
+            Modules.BetterMaps.BetterPolus.ClearAndReload();
+            TheSushiRolesPlugin.startTime = DateTime.UtcNow;
+            DevPatches.HostEndedGame = false;
+        }
+        public static AudioClip LoadAudioClipFromResources(string path, string clipName = "UNNAMED_TSR_AUDIO_CLIP")
         {
             // must be "raw (headerless) 2-channel signed 32 bit pcm (le)" (can e.g. use Audacity® to export)
-            try {
+            try
+            {
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 Stream stream = assembly.GetManifestResourceStream(path);
                 var byteAudio = new byte[stream.Length];
@@ -124,7 +232,7 @@ namespace TheSushiRoles
         {
             GameManager.Instance.RpcEndGame(reason, showAds);
         }
-        public static PlayerControl PlayerById(byte id)
+        public static PlayerControl GetPlayerById(byte id)
         {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                 if (player.PlayerId == id)
@@ -156,15 +264,10 @@ namespace TheSushiRoles
         {
             if (player == null || player.myTasks == null) return;
 
-            // Retrieve role and modifier information
-            var roleInfos = RoleInfo.GetRoleInfoForPlayer(player);
-            var modifierInfos = ModifierInfo.GetModifierInfoForPlayer(player);
-            var abilityInfos = AbilityInfo.GetAbilityInfoForPlayer(player);
-
-            // Prepare task texts for roles and modifiers
-            var roleTaskTexts = roleInfos.Select(GetRoleString).ToList();
-            var modifierTaskTexts = modifierInfos.Select(GetModifierString).ToList();
-            var abilityTaskTexts = abilityInfos.Select(GetAbilityString).ToList();
+            // task texts for roles and modifiers
+            var roleTaskTexts = RoleInfo.GetRoleInfoForPlayer(player).Select(GetRoleString).ToList();
+            var modifierTaskTexts = ModifierInfo.GetModifierInfoForPlayer(player).Select(GetModifierString).ToList();
+            var abilityTaskTexts = AbilityInfo.GetAbilityInfoForPlayer(player).Select(GetAbilityString).ToList();
 
             // Collect tasks to remove
             var tasksToRemove = new List<PlayerTask>();
@@ -195,7 +298,7 @@ namespace TheSushiRoles
             {
                 task.OnRemove();
                 player.myTasks.Remove(task);
-                UnityEngine.Object.Destroy(task.gameObject);
+                UObject.Destroy(task.gameObject);
             }
 
             // Add new tasks for modifiers
@@ -308,19 +411,231 @@ namespace TheSushiRoles
             foreach (var playerTask in player.myTasks.GetFastEnumerator())
             {
                 playerTask.OnRemove();
-                UnityEngine.Object.Destroy(playerTask.gameObject);
+                UObject.Destroy(playerTask.gameObject);
             }
             player.myTasks.Clear();
             
             if (player.Data != null && player.Data.Tasks != null)
                 player.Data.Tasks.Clear();
         }
-
-        public static void MurderPlayer(this PlayerControl player, PlayerControl target)
+        public static void MurderPlayer(PlayerControl killer, PlayerControl target, bool lounge = false)
         {
-            player.MurderPlayer(target, MurderResultFlags.Succeeded);
-        }
+            var data = target.Data;
+            if (data != null && !data.IsDead)
+            {
+                // First kill (set before lover suicide)
+                if (MapOptions.FirstKillName == "") MapOptions.FirstKillName = target.Data.PlayerName;
 
+                if (Snitch.Player != null && Snitch.Player == target) Snitch.ResetArrows();
+
+                if (Monarch.Player != null && Monarch.Player == target && Monarch.KnightLoseOnDeath) Monarch.KnightedPlayers.Clear();
+
+                if (PlayerControl.LocalPlayer.AmOwner)
+                {
+                    if (PlayerControl.LocalPlayer == Disperser.Player)
+                    {
+                        for (int i = 0; i < Disperser.RechargeKillsCount; i++)
+                        {
+                            Disperser.Charges++;
+                        }
+                    }
+                }
+
+                if (Deputy.Player == target) Deputy.CanExecute = false;
+
+                // Cultist show kill flash
+                if (Cultist.Player != null && Follower.Player != null)
+                {
+                    PlayerControl player = null;
+                    if (PlayerControl.LocalPlayer == Cultist.Player) player = Follower.Player;
+                    else if (PlayerControl.LocalPlayer == Follower.Player) player = Cultist.Player;
+
+                    if (player != null && !player.Data.IsDead && player == PlayerControl.LocalPlayer)
+                        ShowFlash(Palette.ImpostorRed, 1.5f);
+                }
+
+                // Survivor promotion trigger on murder (the host sends the call such that everyone recieves the update before a possible game End)
+                if (target == Lawyer.target && AmongUsClient.Instance.AmHost && Lawyer.Player != null)
+                {
+                    SendRPC(CustomRPC.LawyerChangeRole);
+                    RPCProcedure.LawyerChangeRole();
+                }
+
+                // Romantic promotion trigger on murder (the host sends the call such that everyone recieves the update before a possible game End)
+                if (target == Romantic.beloved && AmongUsClient.Instance.AmHost && Romantic.Player != null)
+                {
+                    Utils.SendRPC(CustomRPC.RomanticChangeRole);
+                    RPCProcedure.RomanticChangeRole();
+                }
+
+                DeadPlayer deadPlayer = new DeadPlayer(target, DateTime.UtcNow, DeadPlayer.CustomDeathReason.Kill, killer);
+                GameHistory.deadPlayers.Add(deadPlayer);
+
+                // Psychic add body
+                if (Psychic.deadBodies != null)
+                {
+                    Psychic.futureDeadBodies.Add(new Tuple<DeadPlayer, Vector3>(deadPlayer, target.transform.position));
+                }
+
+                if (target == Mini.Player)
+                {
+                    target.transform.localPosition += new Vector3(0f, 0.2233912f * 0.75f, 0f);
+                }
+                else if (killer == Mini.Player)
+                {
+                    target.transform.localPosition -= new Vector3(0f, 0.2233912f * 0.75f, 0f);
+                }
+
+                if (PlayerControl.LocalPlayer == target)
+                {
+                    try
+                    {
+                        ShapeShifterMenu.Singleton.Menu.Close();
+                    }
+                    catch { }
+                }
+
+                int currentOutfitType = 0;
+                if (PlayerControl.LocalPlayer == target)
+                {
+                    target.SetOutfit(target.CurrentOutfit, target.CurrentOutfitType);
+                    currentOutfitType = (int)killer.CurrentOutfitType;
+                    killer.CurrentOutfitType = PlayerOutfitType.Default;
+                }
+
+                if (killer == PlayerControl.LocalPlayer) SoundManager.Instance.PlaySound(PlayerControl.LocalPlayer.KillSfx, false, 0.8f);
+
+                target.gameObject.layer = LayerMask.NameToLayer("Ghost");
+                target.Visible = false;
+
+                // Mystic show flash and add dead player position
+                if (Mystic.Player != null && (PlayerControl.LocalPlayer == Mystic.Player || ShouldShowGhostInfo()) && !Mystic.Player.Data.IsDead && Mystic.Player != target && Mystic.mode != Mystic.Mode.Souls)
+                {
+                    Utils.ShowFlash(new Color(42f / 255f, 187f / 255f, 245f / 255f));
+                    SoundEffectsManager.Play("DeadSound");
+                }
+
+                if (Mystic.deadBodyPositions != null) Mystic.deadBodyPositions.Add(target.transform.position);
+
+                // Tracker store body positions
+                if (Tracker.deadBodyPositions != null) Tracker.deadBodyPositions.Add(target.transform.position);
+
+                // Scavenger store body positions
+                if (Scavenger.DeadBodyPositions != null) Scavenger.DeadBodyPositions.Add(target.transform.position);
+
+                if (target.AmOwner)
+                {
+                    try
+                    {
+                        if (Minigame.Instance)
+                        {
+                            Minigame.Instance.Close();
+                            Minigame.Instance.Close();
+                        }
+
+                        if (MapBehaviour.Instance)
+                        {
+                            MapBehaviour.Instance.Close();
+                            MapBehaviour.Instance.Close();
+                        }
+                    }
+                    catch
+                    { }
+
+                    HudManager.Instance.KillOverlay.ShowKillAnimation(killer.Data, data);
+                    HudManager.Instance.ShadowQuad.gameObject.SetActive(false);
+                    target.cosmetics.nameText.GetComponent<MeshRenderer>().material.SetInt("_Mask", 0);
+                    target.RpcSetScanner(false);
+                    var importantTextTask = new GameObject("_Player").AddComponent<ImportantTextTask>();
+                    importantTextTask.transform.SetParent(AmongUsClient.Instance.transform, false);
+                    if (!GameOptionsManager.Instance.currentNormalGameOptions.GhostsDoTasks)
+                    {
+                        for (var i = 0; i < target.myTasks.Count; i++)
+                        {
+                            var playerTask = target.myTasks.ToArray()[i];
+                            playerTask.OnRemove();
+                            UObject.Destroy(playerTask.gameObject);
+                        }
+
+                        target.myTasks.Clear();
+                        importantTextTask.Text = TranslationController.Instance.GetString(
+                            StringNames.GhostIgnoreTasks,
+                            new Il2CppReferenceArray<Il2CppSystem.Object>(0));
+                    }
+                    else
+                    {
+                        importantTextTask.Text = TranslationController.Instance.GetString(
+                            StringNames.GhostDoTasks,
+                            new Il2CppReferenceArray<Il2CppSystem.Object>(0));
+                    }
+
+                    target.myTasks.Insert(0, importantTextTask);
+                }
+
+                if (lounge)
+                {
+                    killer.MyPhysics.StartCoroutine(killer.KillAnimations.Random().CoPerformKill(killer, target));
+                }
+                else killer.MyPhysics.StartCoroutine(killer.KillAnimations.Random().CoPerformKill(target, target));
+
+                if (PlayerControl.LocalPlayer == target) killer.CurrentOutfitType = (PlayerOutfitType)currentOutfitType;
+
+                if (MeetingHud.Instance) target.Exiled();
+
+                if (!killer.AmOwner) return;
+
+                if (!lounge) return;
+
+                if (killer.IsImpostor() && GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.HideNSeek)
+                {
+                    killer.SetKillTimer(GameOptionsManager.Instance.currentHideNSeekGameOptions.KillCooldown);
+                    return;
+                }
+
+                // Bait
+                if (Bait.Players.FindAll(x => x.PlayerId == target.PlayerId).Count > 0)
+                {
+                    float reportDelay = (float)TheSushiRolesPlugin.rnd.Next((int)Bait.reportDelayMin, (int)Bait.reportDelayMax + 1);
+                    Bait.active.Add(deadPlayer, reportDelay);
+
+                    if (Bait.showKillFlash && target == PlayerControl.LocalPlayer)
+                    {
+                        Utils.ShowFlash(new Color(204f / 255f, 102f / 255f, 0f / 255f));
+                        SendMessage(ColorString(Bait.Color, "You will be forced to self report a Bait kill!"));
+                    }
+                }
+
+                // VIP Modifier
+                if (Vip.Players.FindAll(x => x.PlayerId == target.PlayerId).Count > 0)
+                {
+                    Color Color = Color.yellow;
+                    if (Vip.showColor)
+                    {
+                        Color = Color.white;
+                        if (target.Data.Role.IsImpostor) Color = Color.red;
+                        else if (target.IsNeutral()) Color = Color.blue;
+                    }
+                    ShowFlash(Color, 1.5f);
+                    SoundEffectsManager.Play("DeadSound");
+                }
+
+                if (killer.Data.Role.IsImpostor)
+                {
+                    killer.SetKillTimer(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown);
+                    return;
+                }
+            }
+        }
+        public static void RpcMurderPlayer(PlayerControl killer, PlayerControl target, bool lounge)
+        {
+            MurderPlayer(killer, target, lounge: lounge? true : false);
+            SendRPC(CustomRPC.BypassKill, killer.PlayerId, target.PlayerId);
+        }
+        public static void RpcMultiMurderPlayer(PlayerControl killer, PlayerControl target)
+        {
+            MurderPlayer(killer, target, false);
+            SendRPC(CustomRPC.BypassMultiKill, killer.PlayerId, target.PlayerId);
+        }
         public static void RpcRepairSystem(this ShipStatus shipStatus, SystemTypes systemType, byte amount)
         {
             shipStatus.RpcUpdateSystem(systemType, amount);
@@ -392,7 +707,6 @@ namespace TheSushiRoles
 
             foreach (var item in data[1..])
             {
-
                 if (item is bool boolean)
                 {
                     writer.Write(boolean);
@@ -451,7 +765,7 @@ namespace TheSushiRoles
             ClearAllRoleTexts();
             PlayerControlFixedUpdatePatch.UpdatePlayerInfoText(player);
 
-            var body = UnityEngine.Object.FindObjectsOfType<DeadBody>()
+            var body = UObject.FindObjectsOfType<DeadBody>()
                 .FirstOrDefault(b => b.ParentId == player.PlayerId);
             var position = body.TruePosition;
 
@@ -462,11 +776,15 @@ namespace TheSushiRoles
                 SubmergedCompatibility.ChangeFloor(player.transform.position.y > -7);
             }
 
-            if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+            if (body != null) UObject.Destroy(body.gameObject);
+        }
+        public static void SendMessage(string text)
+        {
+            if (DestroyableSingleton<HudManager>._instance) DestroyableSingleton<HudManager>.Instance.Notifier.AddDisconnectMessage(text);
         }
         public static IEnumerator CoTextToast(string text, float delay)
         {
-            GameObject taskOverlay = UnityEngine.Object.Instantiate(HudManager.Instance.TaskCompleteOverlay.gameObject, HudManager.Instance.transform);
+            GameObject taskOverlay = UObject.Instantiate(HudManager.Instance.TaskCompleteOverlay.gameObject, HudManager.Instance.transform);
             taskOverlay.SetActive(true);
             taskOverlay.GetComponentInChildren<TextTranslatorTMP>().DestroyImmediate();
             taskOverlay.GetComponentInChildren<TMPro.TextMeshPro>().text = text;
@@ -536,7 +854,7 @@ namespace TheSushiRoles
             foreach (var text in RoleInfo.RoleTexts.Values)
             {
                 if (text != null)
-                    UnityEngine.Object.Destroy(text.gameObject);
+                    UObject.Destroy(text.gameObject);
             }
             RoleInfo.RoleTexts.Clear();
         }
@@ -636,7 +954,7 @@ namespace TheSushiRoles
             DeadBody body = null;
             if (target.Data.IsDead)
             {
-                body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                body = UObject.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
             }
             if (body != null)
                 target.transform.position = body.transform.position;
@@ -645,7 +963,7 @@ namespace TheSushiRoles
             arrow.arrow.SetActive(!target.Data.IsDead || body != null);
         }
 
-        public static void ShowFlash(Color color, float Duration = 1f, string message = "") 
+        public static void ShowFlash(Color color, float Duration = 0.7f, string message = "", bool PlaySound = false) 
         {
             if (Grenadier.Active || FastDestroyableSingleton<HudManager>.Instance == null || FastDestroyableSingleton<HudManager>.Instance.FullScreen == null) return;
             FastDestroyableSingleton<HudManager>.Instance.FullScreen.gameObject.SetActive(true);
@@ -658,14 +976,15 @@ namespace TheSushiRoles
             messageText.transform.localPosition += new Vector3(0f, 2f, -69f);
             messageText.gameObject.SetActive(true);
             FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Duration, new Action<float>((p) => {
-                var renderer = FastDestroyableSingleton<HudManager>.Instance.FullScreen;
+            var renderer = FastDestroyableSingleton<HudManager>.Instance.FullScreen;
+             if (PlaySound) SoundManager.Instance.PlaySound(ShipStatus.Instance.SabotageSound, false, 1f);
 
                 if (p < 0.5)
                 {
                     if (renderer != null)
                         renderer.color = new Color(color.r, color.g, color.b, Mathf.Clamp01(p * 2 * 0.75f));
                 }
-                else 
+                else
                 {
                     if (renderer != null)
                         renderer.color = new Color(color.r, color.g, color.b, Mathf.Clamp01((1 - p) * 2 * 0.75f));
@@ -673,15 +992,6 @@ namespace TheSushiRoles
                 if (p == 1f && renderer != null) renderer.enabled = false;
                 if (p == 1f) messageText.gameObject.Destroy();
             })));
-        }
-        public static bool HasPrimaryButton()
-        {
-            foreach (var button in CustomButton.buttons)
-            {
-                if (button != null && button.PositionOffset == CustomButton.ButtonPositions.upperRowRight)
-                    return true;
-            }
-            return false;
         }
         public static bool IsVenter(this PlayerControl player)
         {
@@ -723,11 +1033,11 @@ namespace TheSushiRoles
 
         public static bool CheckLucky(PlayerControl target, bool breakShield, bool showShield, bool additionalCondition = true)
         {
-            if (target != null && Lucky.Player != null && Lucky.Player == target && !Lucky.ProtectionBroken && additionalCondition) {
+            if (target != null && Lucky.Player != null && Lucky.Player == target && !Lucky.IsUnlucky && additionalCondition) {
                 if (breakShield) 
                 {
-                    SendRPC(CustomRPC.BreakArmor);
-                    RPCProcedure.BreakArmor();
+                    SendRPC(CustomRPC.LuckyBecomeUnlucky);
+                    RPCProcedure.LuckyBecomeUnlucky();
                 }
                 if (showShield) 
                 {
@@ -737,8 +1047,63 @@ namespace TheSushiRoles
             }
             return false;
         }
+        public static void HostSuicide(PlayerControl player)
+        {
+            if (player == null) return;
 
-        public static MurderAttemptResult CheckMurderAttempt(PlayerControl killer, PlayerControl target, bool blockRewind = false, bool ignoreBlank = false, bool ignoreIfKillerIsDead = false, bool ignoreMedic = false) 
+            if (Deputy.ExecuteButtons != null && player == Deputy.Player)
+            {
+                foreach (var button in Deputy.ExecuteButtons)
+                {
+                    UObject.Destroy(button);
+                }
+                Deputy.ExecuteButtons.Clear();
+            }
+            if (Guesser.IsGuesser(player.PlayerId)) RemoveGuessButtonForPlayer(player);
+            player.Exiled();
+
+            GameHistory.CreateDeathReason(player, DeadPlayer.CustomDeathReason.HostSuicide, player);
+
+            SoundEffectsManager.Play("DeadSound");
+
+            if (FastDestroyableSingleton<HudManager>.Instance != null && PlayerControl.LocalPlayer == player)
+            {
+                FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(player.Data, player.Data);
+                if (MeetingHudPatch.GuesserUI != null) MeetingHudPatch.GuesserUIExitButton.OnClick.Invoke();
+            }
+
+            if (MeetingHud.Instance)
+            {
+                var voteArea = MeetingHud.Instance.playerStates.FirstOrDefault(x => x.TargetPlayerId == player.PlayerId);
+                if (voteArea != null)
+                {
+                    voteArea.SetDead(voteArea.DidReport, true);
+                    voteArea.Overlay.gameObject.SetActive(true);
+                    MeetingHudPatch.SwapperCheckAndReturnSwap(MeetingHud.Instance, voteArea.TargetPlayerId);
+                }
+                foreach (PlayerVoteArea pva in MeetingHud.Instance.playerStates)
+                {
+                    if (pva.VotedFor == player.PlayerId)
+                    {
+                        pva.UnsetVote();
+                        var voteAreaPlayer = GetPlayerById(pva.TargetPlayerId);
+                        if (voteAreaPlayer != null && voteAreaPlayer.AmOwner)
+                            MeetingHud.Instance.ClearVote();
+                    }
+                }
+                if (AmongUsClient.Instance.AmHost) MeetingHud.Instance.CheckForEndVoting();
+            }
+
+            if (player != null)
+            {
+                string msg = $"{player.Data.PlayerName}, (Lobby Host) has committed suicide!";
+                if (AmongUsClient.Instance.AmClient && FastDestroyableSingleton<HudManager>.Instance)
+                    FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(player, msg);
+            }
+        }
+        public static bool IsHideNSeek => GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek;
+
+        public static MurderAttemptResult CheckMurderAttempt(PlayerControl killer, PlayerControl target, bool blockRewind = false, bool ignoreBlank = false, bool ignoreIfKillerIsDead = false, bool ignoreMedic = false)
         {
             var targetRole = RoleInfo.GetRoleInfoForPlayer(target).FirstOrDefault();
             // Modified vanilla checks
@@ -751,7 +1116,7 @@ namespace TheSushiRoles
             if (MapOptions.ShieldFirstKill && MapOptions.FirstPlayerKilled == target) return MurderAttemptResult.SuppressKill;
 
             // Handle blank shot
-            if (!ignoreBlank && Survivor.blankedList.Any(x => x.PlayerId == killer.PlayerId)) 
+            if (!ignoreBlank && Survivor.blankedList.Any(x => x.PlayerId == killer.PlayerId))
             {
                 SendRPC(CustomRPC.SetBlanked, killer.PlayerId, (byte)0);
                 RPCProcedure.SetBlanked(killer.PlayerId, 0);
@@ -760,7 +1125,7 @@ namespace TheSushiRoles
             }
 
             // Block impostor Shielded kill
-            if (!ignoreMedic && Medic.Shielded != null && Medic.Shielded == target) 
+            if (!ignoreMedic && Medic.Shielded != null && Medic.Shielded == target)
             {
                 SendRPC(CustomRPC.ShieldedMurderAttempt);
                 RPCProcedure.ShieldedMurderAttempt();
@@ -826,18 +1191,13 @@ namespace TheSushiRoles
             {
                 return MurderAttemptResult.BlankKill;
             }
-            
-            if (TransportationToolPatches.IsUsingTransportation(target) && !blockRewind && killer == Viper.Player) 
+
+            if (TransportationToolPatches.IsUsingTransportation(target) && !blockRewind && killer == Viper.Player)
             {
                 return MurderAttemptResult.DelayViperKill;
             }
             else if (TransportationToolPatches.IsUsingTransportation(target)) return MurderAttemptResult.SuppressKill;
             return MurderAttemptResult.PerformKill;
-        }
-        public static void MurderPlayer(PlayerControl killer, PlayerControl target, bool showAnimation)
-        {
-            SendRPC(CustomRPC.UncheckedMurderPlayer, killer.PlayerId, target.PlayerId, showAnimation ? Byte.MaxValue : 0);
-            RPCProcedure.UncheckedMurderPlayer(killer.PlayerId, target.PlayerId, showAnimation ? Byte.MaxValue : (byte)0);
         }
         public static MurderAttemptResult CheckMurderAttemptAndKill(PlayerControl killer, PlayerControl target, bool isMeetingStart = false, bool showAnimation = true, bool ignoreBlank = false, bool ignoreIfKillerIsDead = false)  
         {
@@ -847,11 +1207,11 @@ namespace TheSushiRoles
 
             if (murder == MurderAttemptResult.PerformKill)
             {
-                MurderPlayer(killer, target, showAnimation);
+                RpcMurderPlayer(killer, target, showAnimation);
             }
             else if (murder == MurderAttemptResult.MirrorKill)
             {
-                MurderPlayer(target, killer, showAnimation);
+                RpcMurderPlayer(target, killer, showAnimation);
             }
             else if (murder == MurderAttemptResult.DelayViperKill)
             {
@@ -862,7 +1222,7 @@ namespace TheSushiRoles
                     {
                         SendRPC(CustomRPC.ViperSetPoisoned, byte.MaxValue, byte.MaxValue);
                         RPCProcedure.ViperSetPoisoned(byte.MaxValue, byte.MaxValue);
-                        MurderPlayer(killer, target, showAnimation);
+                        RpcMurderPlayer(killer, target, showAnimation);
                     }
                 })));
             }
@@ -947,7 +1307,7 @@ namespace TheSushiRoles
         {
             foreach (var button in Guesser.GuessButtons)
             {
-                UnityEngine.Object.Destroy(button);
+                UObject.Destroy(button);
             }
             Guesser.GuessButtons.Clear();
         }
@@ -957,8 +1317,8 @@ namespace TheSushiRoles
             var button = Guesser.GuessButtons.FirstOrDefault(b => b != null && b.transform.parent == player.transform);
             if (button != null)
             {
-                UnityEngine.Object.Destroy(button);
-                Guesser.GuessButtons.Remove(button);
+            UObject.Destroy(button);
+            Guesser.GuessButtons.Remove(button);
             }
         }
 

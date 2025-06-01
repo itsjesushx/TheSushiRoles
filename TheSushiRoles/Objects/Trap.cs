@@ -53,9 +53,10 @@ namespace TheSushiRoles.Objects
 
         public static void ClearTraps() 
         {
-            foreach (Trap t in traps) {
-                UnityEngine.Object.Destroy(t.arrow.arrow);
-                UnityEngine.Object.Destroy(t.trap); 
+            foreach (Trap t in traps) 
+            {
+                UObject.Destroy(t.arrow.arrow);
+                UObject.Destroy(t.trap); 
             }
             traps = new List<Trap>();
             trapPlayerIdMap = new Dictionary<byte, Trap>();
@@ -69,14 +70,14 @@ namespace TheSushiRoles.Objects
             foreach (Trap t in trapsToClear) 
             {
                 traps.Remove(t);
-                UnityEngine.Object.Destroy(t.trap);
+                UObject.Destroy(t.trap);
             }
         }
 
         public static void TriggerTrap(byte playerId, byte trapId) 
         {
             Trap t = traps.FirstOrDefault(x => x.instanceId == (int)trapId);
-            PlayerControl player = Utils.PlayerById(playerId);
+            PlayerControl player = Utils.GetPlayerById(playerId);
             if (Trapper.Player == null || t == null || player == null) return;
             bool localIsTrapper = PlayerControl.LocalPlayer.PlayerId == Trapper.Player.PlayerId;
             if (!trapPlayerIdMap.ContainsKey(playerId)) trapPlayerIdMap.Add(playerId, t);

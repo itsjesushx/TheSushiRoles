@@ -220,7 +220,8 @@ namespace TheSushiRoles.Patches
                     }
                 }
                 // Start Timer
-                if (startingTimer > 0) {
+                if (startingTimer > 0)
+                {
                     startingTimer -= Time.deltaTime;
                 }
                 // Lobby timer
@@ -302,14 +303,17 @@ namespace TheSushiRoles.Patches
 
                         float sum = probabilities.Sum();
                         if (sum == 0) return continueStart;  // All maps set to 0, why are you doing this???
-                        for (int i = 0; i < probabilities.Count; i++) {  // Normalize to [0,1]
+                        for (int i = 0; i < probabilities.Count; i++)
+                        {  // Normalize to [0,1]
                             probabilities[i] /= sum;
                         }
-                        float selection = (float)TheSushiRoles.rnd.NextDouble();
+                        float selection = (float)TheSushiRolesPlugin.rnd.NextDouble();
                         float cumsum = 0;
-                        for (byte i = 0; i < probabilities.Count; i++) {
+                        for (byte i = 0; i < probabilities.Count; i++)
+                        {
                             cumsum += probabilities[i];
-                            if (cumsum > selection) {
+                            if (cumsum > selection)
+                            {
                                 chosenMapId = i;
                                 break;
                             }

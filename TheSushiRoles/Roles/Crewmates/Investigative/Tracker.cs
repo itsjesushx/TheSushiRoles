@@ -9,7 +9,6 @@ namespace TheSushiRoles.Roles
         public static PlayerControl Player;
         public static Color Color = new Color32(100, 58, 220, byte.MaxValue);
         public static List<Arrow> localArrows = new();
-
         public static float updateIntervall = 5f;
         public static bool resetTargetAfterMeeting = false;
         public static bool canTrackCorpses = false;
@@ -47,7 +46,7 @@ namespace TheSushiRoles.Roles
         {
             CurrentTarget = tracked = null;
             usedTracker = false;
-            if (arrow?.arrow != null) UnityEngine.Object.Destroy(arrow.arrow);
+            if (arrow?.arrow != null) UObject.Destroy(arrow.arrow);
             arrow = new Arrow(Color.blue);
             if (arrow.arrow != null) arrow.arrow.SetActive(false);
         }

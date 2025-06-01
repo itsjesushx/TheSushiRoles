@@ -74,7 +74,7 @@ namespace TheSushiRoles.Objects
                 if (current.timeRemaining < 0 && !current.permanent) 
                 {
                     current.gameObject.SetActive(false);
-                    UnityEngine.Object.Destroy(current.gameObject);
+                    UObject.Destroy(current.gameObject);
                     silhouettes.Remove(current);
                 }
             }

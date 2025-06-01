@@ -14,7 +14,7 @@ namespace TheSushiRoles.Patches
         static PlayerControl SetTarget(bool onlyCrewmates = false, bool targetPlayersInVents = false, List<PlayerControl> untargetablePlayers = null, PlayerControl targetingPlayer = null) 
         {
             PlayerControl result = null;
-            float num = AmongUs.GameOptions.NormalGameOptionsV07.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentNormalGameOptions.KillDistance, 0, 2)];
+            float num = NormalGameOptionsV07.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentNormalGameOptions.KillDistance, 0, 2)];
             if (!MapUtilities.CachedShipStatus) return result;
             if (targetingPlayer == null) targetingPlayer = PlayerControl.LocalPlayer;
             if (targetingPlayer.Data.IsDead) return result;
@@ -80,7 +80,7 @@ namespace TheSushiRoles.Patches
                     Color = Color.blue;
                 }
 
-                if (PlayerControl.LocalPlayer.Data.IsDead && Lucky.Player != null && target == Lucky.Player && !Lucky.ProtectionBroken && !hasVisibleShield) 
+                if (PlayerControl.LocalPlayer.Data.IsDead && Lucky.Player != null && target == Lucky.Player && !Lucky.IsUnlucky && !hasVisibleShield) 
                 {
                     hasVisibleShield = true;
                     Color = Color.yellow;
@@ -365,11 +365,7 @@ namespace TheSushiRoles.Patches
         {
             if (Jackal.Player == null || Jackal.Player != PlayerControl.LocalPlayer) return;
             var untargetablePlayers = new List<PlayerControl>();
-            if (Jackal.canCreateRecruitFromImpostor)
-            {
-                // Only exclude Recruit from beeing targeted if the jackal can create Recruits from impostors
-                if (Recruit.Player != null) untargetablePlayers.Add(Recruit.Player);
-            }
+            if (Recruit.Player != null) untargetablePlayers.Add(Recruit.Player);
             Jackal.CurrentTarget = SetTarget(targetPlayersInVents: true, untargetablePlayers: untargetablePlayers);
             SetPlayerOutline(Jackal.CurrentTarget, Jackal.Color);
         }
@@ -461,7 +457,7 @@ namespace TheSushiRoles.Patches
             }
         }
 
-        static void ImpostorSetTarget() 
+        static void ImpostorKillTargetUpdate() 
         {
             if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor ||!PlayerControl.LocalPlayer.CanMove || PlayerControl.LocalPlayer.Data.IsDead)
             {
@@ -482,7 +478,6 @@ namespace TheSushiRoles.Patches
                     target = SetTarget(true, true);
                 }
             }
-            // Can kill partner if they are a Recruit
             else if (Recruit.Player.IsImpostor())
             {
                 target = SetTarget(false, true);
@@ -498,11 +493,13 @@ namespace TheSushiRoles.Patches
         static void WarlockSetTarget() 
         {
             if (Warlock.Player == null || Warlock.Player != PlayerControl.LocalPlayer) return;
-            if (Warlock.curseVictim != null && (Warlock.curseVictim.Data.Disconnected || Warlock.curseVictim.Data.IsDead)) {
+            if (Warlock.curseVictim != null && (Warlock.curseVictim.Data.Disconnected || Warlock.curseVictim.Data.IsDead))
+            {
                 // If the cursed victim is disconnected or dead reset the curse so a new curse can be applied
                 Warlock.ResetCurse();
             }
-            if (Warlock.curseVictim == null) {
+            if (Warlock.curseVictim == null)
+            {
                 Warlock.CurrentTarget = SetTarget();
                 SetPlayerOutline(Warlock.CurrentTarget, Warlock.Color);
             }
@@ -541,7 +538,7 @@ namespace TheSushiRoles.Patches
                     Vector3 position = Assassin.AssassinMarked.transform.position;
                     if (!trackedOnMap)
                     { // Check for dead body
-                        DeadBody body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Assassin.AssassinMarked.PlayerId);
+                        DeadBody body = UObject.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Assassin.AssassinMarked.PlayerId);
                         if (body != null)
                         {
                             trackedOnMap = true;
@@ -557,6 +554,76 @@ namespace TheSushiRoles.Patches
                 }
             }
         }
+        public static void SnitchUpdate()
+        {
+            if (Snitch.Player == null || Snitch.Player != PlayerControl.LocalPlayer || !Snitch.Active) return;
+            if (Snitch.ShouldSee)
+            {
+                List<PlayerControl> possibleKillers = PlayerControl.AllPlayerControls.ToArray().Where(x => !x.Data.IsDead && x.Data != null && x.IsKiller() && x != Snitch.Target).ToList();
+                List<PlayerControl> possibleNonKillers = PlayerControl.AllPlayerControls.ToArray().Where(x => !x.Data.IsDead && x.Data != null && !x.IsKiller() && x != Snitch.Target).ToList();
+
+                if (Snitch.Target == null)
+                {
+                    bool showCorrectKiller = UnityEngine.Random.RandomRangeInt(1, 101) <= Snitch.Accuracy;
+                    PlayerControl revealedKiller;
+
+                    if (showCorrectKiller)
+                    {
+                        if (possibleKillers.Count == 0) return;
+                        possibleNonKillers.Shuffle();
+                        revealedKiller = possibleKillers[UnityEngine.Random.RandomRangeInt(0, possibleKillers.Count)];
+                    }
+                    else
+                    {
+                        if (possibleNonKillers.Count == 0) return;
+                        possibleNonKillers.Shuffle();
+
+                        revealedKiller = possibleNonKillers[UnityEngine.Random.RandomRangeInt(0, possibleNonKillers.Count)];
+                    }
+
+                    if (revealedKiller != null)
+                    {
+                        Snitch.Target = revealedKiller;
+
+                        if (Snitch.Player == PlayerControl.LocalPlayer)
+                        {
+                            Utils.TrackPlayer(revealedKiller, Snitch.LocalArrows[0], Color.red);
+                        }
+                        if (Utils.IsKiller(revealedKiller))
+                        {
+                            Snitch.KnowsRealKiller = true;
+                            if (revealedKiller == PlayerControl.LocalPlayer)
+                            {
+                                Utils.TrackPlayer(Snitch.Player, Snitch.LocalArrows[1], Color.red);
+                            }
+                        }
+
+                        if (Utils.ShouldShowGhostInfo())
+                        {
+                            string msg = Utils.IsKiller(revealedKiller)
+                                ? $"{Snitch.Player.Data.PlayerName} (Snitch) found a killer: {revealedKiller.Data.PlayerName}"
+                                : $"{Snitch.Player.Data.PlayerName} (Snitch) found a suspicious player: {revealedKiller.Data.PlayerName}";
+                            FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(Snitch.Player, msg);
+                            Utils.SendRPC(CustomRPC.ShareGhostInfo, Snitch.Player.PlayerId, (byte)GhostInfoTypes.SnitchInfo, msg);
+                        }
+                    }
+                }
+
+                // Track every frame
+                if (Snitch.Target == null || Snitch.Target.Data == null) return;
+                Utils.TrackPlayer(Snitch.Target, Snitch.LocalArrows[0], Color.red);
+
+                if (Snitch.Target == PlayerControl.LocalPlayer && Snitch.KnowsRealKiller)
+                {
+                    Utils.TrackPlayer(Snitch.Player, Snitch.LocalArrows[1], Color.red);
+                }
+            }
+            else
+            {
+                Snitch.ResetArrows();
+            }
+        }
+
 
         public static void CultistUpdate()
         {
@@ -592,7 +659,7 @@ namespace TheSushiRoles.Patches
                         Vector3 position = Tracker.tracked.transform.position;
                         if (!trackedOnMap)
                         { // Check for dead body
-                            DeadBody body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Tracker.tracked.PlayerId);
+                            DeadBody body = UObject.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Tracker.tracked.PlayerId);
                             if (body != null)
                             {
                                 trackedOnMap = true;
@@ -628,7 +695,7 @@ namespace TheSushiRoles.Patches
 
                 if (arrowsCountChanged)
                 {
-                    foreach (Arrow arrow in Tracker.localArrows) UnityEngine.Object.Destroy(arrow.arrow);
+                    foreach (Arrow arrow in Tracker.localArrows) UObject.Destroy(arrow.arrow);
                     Tracker.localArrows = new List<Arrow>();
                 }
                 foreach (Vector3 position in Tracker.deadBodyPositions)
@@ -644,7 +711,7 @@ namespace TheSushiRoles.Patches
             }
             else if (Tracker.localArrows.Count > 0)
             {
-                foreach (Arrow arrow in Tracker.localArrows) UnityEngine.Object.Destroy(arrow.arrow);
+                foreach (Arrow arrow in Tracker.localArrows) UObject.Destroy(arrow.arrow);
                 Tracker.localArrows = new List<Arrow>();
             }
         }
@@ -692,8 +759,7 @@ namespace TheSushiRoles.Patches
             }
         
             // Handle Giant (scaling up)
-            if (Giant.Player != null && 
-            !(Painter.PaintTimer > 0f || Utils.MushroomSabotageActive() || 
+            if (Giant.Player != null && !(Painter.PaintTimer > 0f || Utils.MushroomSabotageActive() || 
               (Giant.Player == Morphling.Player && Morphling.morphTimer > 0) ||
               (Giant.Player == Glitch.Player && Glitch.MimicTimer > 0) ||
               (Giant.Player == Hitman.Player && Hitman.MorphTimer > 0)))
@@ -773,37 +839,35 @@ namespace TheSushiRoles.Patches
 
         public static bool ShouldSeePlayerInfo(PlayerControl player)
         {
-            if (player == null) return false;
+            if (player == null || player.Data == null)
+                return false;
+
+            var local = PlayerControl.LocalPlayer;
+            if (local == null || local.Data == null) return false;
 
             // Prevent showing if player just died and Chronos could use rewind
-            if (Chronos.RecentlyDied.TryGetValue(player.PlayerId, out float deathTime) && Chronos.Player != null)
+            if (Chronos.RecentlyDied != null && Chronos.RecentlyDied.TryGetValue(player.PlayerId, out float deathTime) && Chronos.Player != null)
             {
                 float rewindBuffer = Chronos.RewindTimeDuration + 2f;
                 if (Time.time - deathTime <= rewindBuffer)
                     return false;
             }
 
-            // impostors can see the roles of each other as long as there's no Spy, otherwise Spy is useless.
-            // also: if one impostor is lover they cant see their partners role, but the partner can see their role.
-            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && player.Data.Role.IsImpostor 
-            && Spy.Player == null && !Lovers.IsLover(PlayerControl.LocalPlayer))
+            if (local.Data.Role.IsImpostor && player.Data.Role.IsImpostor && Spy.Player == null && !Lovers.IsLover(local))
             {
                 return true;
             }
-            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && PlayerControl.LocalPlayer == Recruit.Player
-            && player.Data.Role.IsImpostor)
-            {
-                return false;
-            }
 
             return
-                    (Lawyer.lawyerKnowsRole && PlayerControl.LocalPlayer == Lawyer.Player && player == Lawyer.target) ||
-                    (Romantic.RomanticKnowsRole && PlayerControl.LocalPlayer == Romantic.Player && player == Romantic.beloved) ||
-                    (Romantic.RomanticKnowsRole && PlayerControl.LocalPlayer == Romantic.beloved && player == Romantic.Player) ||
-                    player == PlayerControl.LocalPlayer || Monarch.KnightedPlayers.Contains(PlayerControl.LocalPlayer) && player == Monarch.Player ||
-                    (Sleuth.Players.Any(x => x.PlayerId == PlayerControl.LocalPlayer.PlayerId) && Sleuth.Reported.Contains(player.PlayerId)) ||
-                    (PlayerControl.LocalPlayer.Data.IsDead && !MapOptions.RevivedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId));
+                (Lawyer.lawyerKnowsRole && local == Lawyer.Player && player == Lawyer.target) ||
+                (Romantic.RomanticKnowsRole && local == Romantic.Player && player == Romantic.beloved) ||
+                (Romantic.RomanticKnowsRole && local == Romantic.beloved && player == Romantic.Player) ||
+                player == local ||
+                (Monarch.KnightedPlayers.Contains(local) && player == Monarch.Player) ||
+                (Sleuth.Players.Any(x => x.PlayerId == local.PlayerId) && Sleuth.Reported.Contains(player.PlayerId)) ||
+                (local.Data.IsDead && !MapOptions.RevivedPlayers.Contains(local.PlayerId));
         }
+
 
         public static void UpdatePlayerInfoText(PlayerControl player)
         {
@@ -814,7 +878,7 @@ namespace TheSushiRoles.Patches
             if (!ShouldSeePlayerInfo(player))
             {
                 if (infoTransform != null)
-                    UnityEngine.Object.Destroy(infoTransform.gameObject);
+                    UObject.Destroy(infoTransform.gameObject);
         
                 if (RoleInfo.RoleTexts.ContainsKey(player.PlayerId))
                     RoleInfo.RoleTexts.Remove(player.PlayerId);
@@ -826,7 +890,7 @@ namespace TheSushiRoles.Patches
             TMPro.TextMeshPro infoText;
             if (infoTransform == null)
             {
-                infoText = UnityEngine.Object.Instantiate(player.cosmetics.nameText, nameTransform);
+                infoText = UObject.Instantiate(player.cosmetics.nameText, nameTransform);
                 infoText.transform.localPosition += Vector3.up * 0.225f;
                 infoText.fontSize *= 0.75f;
                 infoText.name = "Info";
@@ -860,7 +924,7 @@ namespace TheSushiRoles.Patches
 
             if (meetingInfo == null) 
             {
-                meetingInfo = UnityEngine.Object.Instantiate(playerVoteArea.NameText, playerVoteArea.NameText.transform.parent);
+                meetingInfo = UObject.Instantiate(playerVoteArea.NameText, playerVoteArea.NameText.transform.parent);
                 meetingInfo.transform.localPosition += Vector3.down * 0.2f;
                 meetingInfo.fontSize *= 0.60f;
                 meetingInfo.gameObject.name = "Info";
@@ -871,7 +935,7 @@ namespace TheSushiRoles.Patches
 
         private static TMPro.TextMeshPro CreatePlayerInfoText(PlayerControl player) 
         {
-            TMPro.TextMeshPro playerInfo = UnityEngine.Object.Instantiate(player.cosmetics.nameText, player.cosmetics.nameText.transform.parent);
+            TMPro.TextMeshPro playerInfo = UObject.Instantiate(player.cosmetics.nameText, player.cosmetics.nameText.transform.parent);
             playerInfo.transform.localPosition += Vector3.up * 0.225f;
             playerInfo.fontSize *= 0.75f;
             playerInfo.gameObject.name = "Info";
@@ -1013,9 +1077,9 @@ namespace TheSushiRoles.Patches
 
             if (BountyHunter.Player.Data.IsDead) 
             {
-                if (BountyHunter.arrow != null || BountyHunter.arrow.arrow != null) UnityEngine.Object.Destroy(BountyHunter.arrow.arrow);
+                if (BountyHunter.arrow != null || BountyHunter.arrow.arrow != null) UObject.Destroy(BountyHunter.arrow.arrow);
                 BountyHunter.arrow = null;
-                if (BountyHunter.CooldownText != null && BountyHunter.CooldownText.gameObject != null) UnityEngine.Object.Destroy(BountyHunter.CooldownText.gameObject);
+                if (BountyHunter.CooldownText != null && BountyHunter.CooldownText.gameObject != null) UObject.Destroy(BountyHunter.CooldownText.gameObject);
                 BountyHunter.CooldownText = null;
                 BountyHunter.bounty = null;
                 foreach (PoolablePlayer p in MapOptions.BeanIcons.Values) 
@@ -1039,7 +1103,7 @@ namespace TheSushiRoles.Patches
                 {
                     if (!p.Data.IsDead && !p.Data.Disconnected && p != p.Data.Role.IsImpostor && p != Spy.Player && (Romantic.beloved == BountyHunter.Player && p != Romantic.Player) && (p != Recruit.Player) && (p != Jackal.Player) && (Lovers.GetPartner(BountyHunter.Player) == null || p != Lovers.GetPartner(BountyHunter.Player))) possibleTargets.Add(p);
                 }
-                BountyHunter.bounty = possibleTargets[TheSushiRoles.rnd.Next(0, possibleTargets.Count)];
+                BountyHunter.bounty = possibleTargets[TheSushiRolesPlugin.rnd.Next(0, possibleTargets.Count)];
                 if (BountyHunter.bounty == null) return;
 
                 // Ghost Info
@@ -1110,16 +1174,15 @@ namespace TheSushiRoles.Patches
 
         static void ScavengerUpdate() 
         {
-            if (Scavenger.Player == null || PlayerControl.LocalPlayer != Scavenger.Player || Scavenger.localArrows == null) return;
-            int index = 0;
             // Handle corpses tracking
             if (Scavenger.Player != null && Scavenger.Player == PlayerControl.LocalPlayer && Scavenger.ScavengeTimer >= 0f && !Scavenger.Player.Data.IsDead)
             {
                 bool arrowsCountChanged = Scavenger.localArrows.Count != Scavenger.DeadBodyPositions.Count();
+                int index = 0;
 
                 if (arrowsCountChanged)
                 {
-                    foreach (Arrow arrow in Scavenger.localArrows) UnityEngine.Object.Destroy(arrow.arrow);
+                    foreach (Arrow arrow in Scavenger.localArrows) UObject.Destroy(arrow.arrow);
                     Scavenger.localArrows = new List<Arrow>();
                 }
                 foreach (Vector3 position in Scavenger.DeadBodyPositions)
@@ -1135,7 +1198,7 @@ namespace TheSushiRoles.Patches
             }
             else if (Scavenger.localArrows.Count > 0)
             {
-                foreach (Arrow arrow in Scavenger.localArrows) UnityEngine.Object.Destroy(arrow.arrow);
+                foreach (Arrow arrow in Scavenger.localArrows) UObject.Destroy(arrow.arrow);
                 Scavenger.localArrows = new List<Arrow>();
             }
         }
@@ -1148,16 +1211,43 @@ namespace TheSushiRoles.Patches
             Vector2 truePosition = PlayerControl.LocalPlayer.GetTruePosition();
             float closestDistance = float.MaxValue;
             float usableDistance = MapUtilities.CachedShipStatus.AllVents.FirstOrDefault().UsableDistance;
-            foreach ((DeadPlayer dp, Vector3 ps) in Psychic.deadBodies) {
+            foreach ((DeadPlayer dp, Vector3 ps) in Psychic.deadBodies)
+            {
                 float distance = Vector2.Distance(ps, truePosition);
-                if (distance <= usableDistance && distance < closestDistance) {
+                if (distance <= usableDistance && distance < closestDistance)
+                {
                     closestDistance = distance;
                     target = dp;
                 }
             }
             Psychic.target = target;
         }
+        static void PetsUpdate()
+        {
+            if (MeetingHud.Instance) return;
 
+            foreach (var data in GameData.Instance.AllPlayers.GetFastEnumerator())
+            {
+            if (data == null || data.Disconnected) continue;
+            var player = data.Object;
+            if (player == null || player.AmOwner) continue;
+            PetBehaviour pet = player.GetPet();
+
+            // Remove pet from ground if player is dead
+            if (player.Data.IsDead && pet != null)
+            {
+                UObject.Destroy(pet.gameObject);
+                continue;
+            }
+
+            bool cantsee = PlayerControl.LocalPlayer.Data.IsDead
+                && !player.petting
+                && (player.Data.IsDead || player.inVent);
+
+            if (pet != null)
+                pet.Visible = !cantsee;
+            }
+        }
         static bool mushroomSaboWasActive = false;
         static void MorphlingAndPainterUpdate() 
         {
@@ -1290,6 +1380,18 @@ namespace TheSushiRoles.Patches
             }
         }
 
+        public static void SnitchTaskUpdate()
+        {
+            if (Snitch.Player == null || Snitch.Player.Data.IsDead || PlayerControl.LocalPlayer != Snitch.Player) return;
+            var (playerCompleted, playerTotal) = TasksHandler.TaskInfo(Snitch.Player.Data);
+            int numberOfTasks = playerTotal - playerCompleted;
+            if (numberOfTasks == 0)
+            {
+                Snitch.Active = true;
+                Snitch.ShouldHaveButton = true;
+            }
+        }
+
         public static void VeteranUpdate()
         {
             if (Veteran.Player == null || PlayerControl.LocalPlayer != Veteran.Player || PlayerControl.LocalPlayer.Data.IsDead) return;
@@ -1328,7 +1430,7 @@ namespace TheSushiRoles.Patches
 
             foreach (var entry in Landlord.UnteleportablePlayers)
             {
-                var player = Utils.PlayerById(entry.Key);
+                var player = Utils.GetPlayerById(entry.Key);
                 if (player == null || player.Data == null || player.Data.IsDead || player.Data.Disconnected) continue;
 
                 if (Landlord.UnteleportablePlayers.ContainsKey(player.PlayerId) && player.moveable == true &&
@@ -1511,16 +1613,19 @@ namespace TheSushiRoles.Patches
                 // Cultist
                 FollowerUpdate();
                 CultistUpdate();
+                SnitchUpdate();
                 // Jackal
                 JackalSetTarget();
                 //Predator
                 PredatorSetTarget();
+                // Snitch
+                SnitchTaskUpdate();
                 //Werewolf
                 WerewolfSetTarget();
                 // Recruit
                 RecruitSetTarget();
                 // Impostor
-                ImpostorSetTarget();
+                ImpostorKillTargetUpdate();
                 // Warlock
                 WarlockSetTarget();
                 // Vigilante
@@ -1565,6 +1670,9 @@ namespace TheSushiRoles.Patches
                 WraithUpdate();
                 // yoyo
                 Silhouette.UpdateAll();
+
+                // Pets
+                PetsUpdate();
 
                 HackerUpdate();
                 SwapperUpdate();
@@ -1636,7 +1744,7 @@ namespace TheSushiRoles.Patches
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.LocalPlayer.CmdReportDeadBody))]
     class BodyReportPatch
     {
-        static void Postfix(PlayerControl __instance, [HarmonyArgument(0)]NetworkedPlayerInfo target)
+        static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
         {
             // Medic or Detective report
             bool isMedicReport = Medic.Player != null && Medic.Player == PlayerControl.LocalPlayer && __instance.PlayerId == Medic.Player.PlayerId;
@@ -1646,30 +1754,34 @@ namespace TheSushiRoles.Patches
             DeadPlayer deadPlayer = GameHistory.deadPlayers?.Where(x => x.player?.PlayerId == target?.PlayerId)?.FirstOrDefault();
             if (isMedicReport || isDetectiveReport)
             {
-                if (deadPlayer != null && deadPlayer.GetKiller != null) {
+                if (deadPlayer != null && deadPlayer.GetKiller != null)
+                {
                     float timeSinceDeath = ((float)(DateTime.UtcNow - deadPlayer.DeathTime).TotalMilliseconds);
                     string msg = "";
 
-                    if (isMedicReport) 
+                    if (isMedicReport)
                     {
                         msg = $"Body Report: Killed {Math.Round(timeSinceDeath / 1000)}s ago!";
-                    } else if (isDetectiveReport) 
+                    }
+                    else if (isDetectiveReport)
                     {
-                        if (timeSinceDeath < Detective.reportNameDuration * 1000) 
+                        if (timeSinceDeath < Detective.reportNameDuration * 1000)
                         {
-                            msg =  $"Body Report: The killer appears to be {deadPlayer.GetKiller.Data.PlayerName}!";
-                        } 
-                        else if (timeSinceDeath < Detective.reportColorDuration * 1000) 
+                            msg = $"Body Report: The killer appears to be {deadPlayer.GetKiller.Data.PlayerName}!";
+                        }
+                        else if (timeSinceDeath < Detective.reportColorDuration * 1000)
                         {
                             var typeOfColor = Utils.IsLighterColor(deadPlayer.GetKiller) ? "lighter" : "darker";
-                            msg =  $"Body Report: The killer appears to be a {typeOfColor} Color!";
-                        } else {
+                            msg = $"Body Report: The killer appears to be a {typeOfColor} Color!";
+                        }
+                        else
+                        {
                             msg = $"Body Report: The corpse is too old to gain information from!";
                         }
                     }
 
                     if (!string.IsNullOrWhiteSpace(msg))
-                    {   
+                    {
                         if (AmongUsClient.Instance.AmClient && FastDestroyableSingleton<HudManager>.Instance)
                         {
                             FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, msg);
@@ -1691,167 +1803,6 @@ namespace TheSushiRoles.Patches
         }
     }
 
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer))]
-    public static class MurderPlayerPatch
-    {
-        public static bool resetToCrewmate = false;
-        public static bool resetToDead = false;
-
-        public static void Prefix(PlayerControl __instance, [HarmonyArgument(0)]PlayerControl target)
-        {
-            // Allow everyone to murder players
-            resetToCrewmate = !__instance.Data.Role.IsImpostor;
-            resetToDead = __instance.Data.IsDead;
-            __instance.Data.Role.TeamType = RoleTeamTypes.Impostor;
-            __instance.Data.IsDead = false;
-        }
-
-        public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)]PlayerControl target)
-        {
-            // Collect dead player info
-            DeadPlayer deadPlayer = new DeadPlayer(target, DateTime.UtcNow, DeadPlayer.CustomDeathReason.Kill, __instance);
-            GameHistory.deadPlayers.Add(deadPlayer);
-
-            // Reset killer to crewmate if resetToCrewmate
-            if (resetToCrewmate) __instance.Data.Role.TeamType = RoleTeamTypes.Crewmate;
-            if (resetToDead) __instance.Data.IsDead = true;
-
-            // Remove fake tasks when player dies
-            if (target.HasFakeTasks() || target == Lawyer.Player || target == Survivor.Player)
-                target.ClearAllTasks();
-
-            if (Monarch.Player != null && Monarch.Player == target && Monarch.KnightLoseOnDeath) Monarch.KnightedPlayers.Clear();
-
-            // First kill (set before lover suicide)
-            if (MapOptions.FirstKillName == "") MapOptions.FirstKillName = target.Data.PlayerName;
-
-            // Lover suicide trigger on murder
-            if ((Lovers.Lover1 != null && target == Lovers.Lover1) || (Lovers.Lover2 != null && target == Lovers.Lover2)) {
-                PlayerControl otherLover = target == Lovers.Lover1 ? Lovers.Lover2 : Lovers.Lover1;
-                if (otherLover != null && !otherLover.Data.IsDead && Lovers.bothDie) {
-                    otherLover.MurderPlayer(otherLover);
-                    GameHistory.CreateDeathReason(otherLover, DeadPlayer.CustomDeathReason.LoverSuicide);
-                }
-            }
-
-            if (__instance.AmOwner)
-            {
-                if (PlayerControl.LocalPlayer == Disperser.Player)
-                {
-                    for (int i = 0; i < Disperser.RechargeKillsCount; i++)
-                    {
-                        Disperser.Charges++;
-                    }
-                }
-            }
-
-            if (Deputy.Player == target) Deputy.CanExecute = false;
-
-            // Cultist show kill flash
-            if (Cultist.Player != null && Follower.Player != null)
-            {
-                PlayerControl player = null;
-                if (__instance == Cultist.Player) player = Follower.Player;
-                else if (__instance == Follower.Player) player = Cultist.Player;
-
-                if (player != null && !player.Data.IsDead && player == PlayerControl.LocalPlayer)
-                    Utils.ShowFlash(Palette.ImpostorRed, 1.5f);
-            }
-
-            if (PlayerControl.LocalPlayer == target)
-            {
-                try
-                {
-                    ShapeShifterMenu.Singleton.Menu.Close();
-                }
-                catch { }
-            }
-
-            // Survivor promotion trigger on murder (the host sends the call such that everyone recieves the update before a possible game End)
-            if (target == Lawyer.target && AmongUsClient.Instance.AmHost && Lawyer.Player != null)
-            {
-                Utils.SendRPC(CustomRPC.LawyerChangeRole);
-                RPCProcedure.LawyerChangeRole();
-            }
-
-            // Survivor promotion trigger on murder (the host sends the call such that everyone recieves the update before a possible game End)
-            if (target == Romantic.beloved && AmongUsClient.Instance.AmHost && Romantic.Player != null) 
-            {
-                Utils.SendRPC(CustomRPC.RomanticChangeRole);
-                RPCProcedure.RomanticChangeRole();
-            }
-
-            // Mystic show flash and add dead player position
-            if (Mystic.Player != null && (PlayerControl.LocalPlayer == Mystic.Player || Utils.ShouldShowGhostInfo()) && !Mystic.Player.Data.IsDead && Mystic.Player != target && Mystic.mode <= 1) 
-            {
-                Utils.ShowFlash(new Color(42f / 255f, 187f / 255f, 245f / 255f), message : "Mystic Info: Someone Died");
-                SoundEffectsManager.Play("DeadSound");
-            }
-
-            if (Mystic.deadBodyPositions != null) Mystic.deadBodyPositions.Add(target.transform.position);
-
-            // Tracker store body positions
-            if (Tracker.deadBodyPositions != null) Tracker.deadBodyPositions.Add(target.transform.position);
-
-            // Psychic add body
-            if (Psychic.deadBodies != null)
-            {
-                Psychic.futureDeadBodies.Add(new Tuple<DeadPlayer, Vector3>(deadPlayer, target.transform.position));
-            }
-
-            // Set bountyHunter Cooldown
-            if (BountyHunter.Player != null && PlayerControl.LocalPlayer == BountyHunter.Player && __instance == BountyHunter.Player) {
-                if (target == BountyHunter.bounty) 
-                {
-                    BountyHunter.Player.SetKillTimer(BountyHunter.bountyKillCooldown);
-                    BountyHunter.bountyUpdateTimer = 0f; // Force bounty update
-                }
-                else
-                    BountyHunter.Player.SetKillTimer(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown + BountyHunter.punishmentTime); 
-            }
-
-            // Janitor Button Sync
-            if (Janitor.Player != null && PlayerControl.LocalPlayer == Janitor.Player && __instance == Janitor.Player && HudManagerStartPatch.JanitorCleanButton != null)
-                HudManagerStartPatch.JanitorCleanButton.Timer = Janitor.Player.killTimer;
-
-            // Witch Button Sync
-            if (Witch.triggerBothCooldowns && Witch.Player != null && PlayerControl.LocalPlayer == Witch.Player && __instance == Witch.Player && HudManagerStartPatch.witchSpellButton != null)
-                HudManagerStartPatch.witchSpellButton.Timer = HudManagerStartPatch.witchSpellButton.MaxTimer;
-
-            // Warlock Button Sync
-            if (Warlock.Player != null && PlayerControl.LocalPlayer == Warlock.Player && __instance == Warlock.Player && HudManagerStartPatch.warlockCurseButton != null) {
-                if (Warlock.Player.killTimer > HudManagerStartPatch.warlockCurseButton.Timer) {
-                    HudManagerStartPatch.warlockCurseButton.Timer = Warlock.Player.killTimer;
-                }
-            }
-            // Assassin Button Sync
-            if (Assassin.Player != null && PlayerControl.LocalPlayer == Assassin.Player && __instance == Assassin.Player && HudManagerStartPatch.AssassinButton != null)
-                HudManagerStartPatch.AssassinButton.Timer = HudManagerStartPatch.AssassinButton.MaxTimer;
-
-            // Bait
-            if (Bait.Players.FindAll(x => x.PlayerId == target.PlayerId).Count > 0) 
-            {
-                float reportDelay = (float) rnd.Next((int)Bait.reportDelayMin, (int)Bait.reportDelayMax + 1);
-                Bait.active.Add(deadPlayer, reportDelay);
-
-                if (Bait.showKillFlash && __instance == PlayerControl.LocalPlayer) Utils.ShowFlash(new Color(204f / 255f, 102f / 255f, 0f / 255f));
-            }
-
-            // VIP Modifier
-            if (Vip.Players.FindAll(x => x.PlayerId == target.PlayerId).Count > 0) 
-            {
-                Color Color = Color.yellow;
-                if (Vip.showColor) 
-                {
-                    Color = Color.white;
-                    if (target.Data.Role.IsImpostor) Color = Color.red;
-                    else if (target.IsNeutral()) Color = Color.blue;
-                }
-                Utils.ShowFlash(Color, 1.5f);
-            }
-        }
-    }
-
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.SetKillTimer))]
     class PlayerControlSetCoolDownPatch 
     {
@@ -1869,35 +1820,46 @@ namespace TheSushiRoles.Patches
         }
     }
 
-    [HarmonyPatch(typeof(KillAnimation), nameof(KillAnimation.CoPerformKill))]
-    class KillAnimationCoPerformKillPatch 
-    {
-        public static bool hideNextAnimation = false;
-        public static void Prefix(KillAnimation __instance, [HarmonyArgument(0)]ref PlayerControl source, [HarmonyArgument(1)]ref PlayerControl target) 
-        {
-            if (hideNextAnimation)
-                source = target;
-            hideNextAnimation = false;
-        }
-    }
-
     [HarmonyPatch(typeof(KillAnimation), nameof(KillAnimation.SetMovement))]
-    class KillAnimationSetMovementPatch {
+    class KillAnimationSetMovementPatch
+    {
         private static int? colorId = null;
         public static void Prefix(PlayerControl source, bool canMove) 
         {
             Color Color = source.cosmetics.currentBodySprite.BodySprite.material.GetColor("_BodyColor");
-            if ((Morphling.Player != null && source.Data.PlayerId == Morphling.Player.PlayerId) || 
-            (Glitch.Player != null && source.Data.PlayerId == Glitch.Player.PlayerId)) 
+            if ((Morphling.Player != null && source.Data.PlayerId == Morphling.Player.PlayerId) ||
+            (Glitch.Player != null && source.Data.PlayerId == Glitch.Player.PlayerId)||
+            (Hitman.Player != null && source.Data.PlayerId == Hitman.Player.PlayerId))
             {
-            var index = Palette.PlayerColors.IndexOf(Color);
-            if (index != -1) colorId = index;
+                var index = Palette.PlayerColors.IndexOf(Color);
+                if (index != -1) colorId = index;
             }
         }
 
-        public static void Postfix(PlayerControl source, bool canMove) {
+        public static void Postfix(PlayerControl source, bool canMove) 
+        {
             if (colorId.HasValue) source.RawSetColor(colorId.Value);
             colorId = null;
+        }
+    }
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Die))]
+    public class LoversDiePatch
+    {
+        public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] DeathReason reason)
+        {
+            __instance.Data.IsDead = true;
+            var flag = __instance.IsLover() && Lovers.bothDie;
+            if (!flag) return false;
+
+            PlayerControl otherLover = __instance == Lovers.Lover1 ? Lovers.Lover2 : Lovers.Lover1;
+
+            if (otherLover.Data.IsDead) return true;
+            else if (otherLover != Pestilence.Player)
+            {
+                Utils.MurderPlayer(otherLover, otherLover);
+                GameHistory.CreateDeathReason(otherLover, DeadPlayer.CustomDeathReason.LoverSuicide);
+            }
+            return true;
         }
     }
 
@@ -1912,13 +1874,14 @@ namespace TheSushiRoles.Patches
 
 
             // Remove fake tasks when player dies
-            if (__instance.HasFakeTasks() || __instance == Lawyer.Player || __instance == Survivor.Player)
-                __instance.ClearAllTasks();
+            if (__instance.HasFakeTasks() || __instance == Lawyer.Player || __instance == Survivor.Player) __instance.ClearAllTasks();
 
             // Lover suicide trigger on exile
-            if ((Lovers.Lover1 != null && __instance == Lovers.Lover1) || (Lovers.Lover2 != null && __instance == Lovers.Lover2)) {
+            if ((Lovers.Lover1 != null && __instance == Lovers.Lover1) || (Lovers.Lover2 != null && __instance == Lovers.Lover2))
+            {
                 PlayerControl otherLover = __instance == Lovers.Lover1 ? Lovers.Lover2 : Lovers.Lover1;
-                if (otherLover != null && !otherLover.Data.IsDead && Lovers.bothDie) {
+                if (otherLover != null && !otherLover.Data.IsDead && Lovers.bothDie && otherLover != Pestilence.Player)
+                {
                     otherLover.Exiled();
                     GameHistory.CreateDeathReason(otherLover, DeadPlayer.CustomDeathReason.LoverSuicide);
                 }
@@ -1946,14 +1909,21 @@ namespace TheSushiRoles.Patches
                 if (!Lawyer.targetWasGuessed) 
                 {
                     if (Lawyer.Player != null) Lawyer.Player.Exiled();
-                    if (Survivor.Player != null) Survivor.Player.Exiled();
-
                     Utils.SendRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId,
                     (byte)GhostInfoTypes.DeathReasonAndKiller, lawyer.PlayerId, 
                     (byte)DeadPlayer.CustomDeathReason.LawyerSuicide, lawyer.PlayerId);
-                    GameHistory.CreateDeathReason(lawyer, DeadPlayer.CustomDeathReason.LawyerSuicide, lawyer);  // TODO: only executed on host?!
+                    GameHistory.CreateDeathReason(lawyer, DeadPlayer.CustomDeathReason.LawyerSuicide, lawyer);
                 }
             }
+        }
+    }
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckName))]
+    class PlayerControlCheckNamePatch
+    {
+        public static void Postfix(PlayerControl __instance, ref string playerName)
+        {
+            if (!AmongUsClient.Instance.AmHost || !LobbyBehaviour.Instance) return;
+            playerName = __instance.Data.PlayerName ?? playerName;
         }
     }
 
@@ -1975,12 +1945,14 @@ namespace TheSushiRoles.Patches
     }
 
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.IsFlashlightEnabled))]
-    public static class IsFlashlightEnabledPatch {
-        public static bool Prefix(ref bool __result) {
+    public static class IsFlashlightEnabledPatch
+    {
+        public static bool Prefix(ref bool __result)
+        {
             if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek)
                 return true;
             __result = false;
-            if (!PlayerControl.LocalPlayer.Data.IsDead && Lighter.Player != null && Lighter.Player.PlayerId == PlayerControl.LocalPlayer.PlayerId) {
+            if (!PlayerControl.LocalPlayer.Data.IsDead && FlashLight.Player != null && FlashLight.Player.PlayerId == PlayerControl.LocalPlayer.PlayerId) {
                 __result = true;
             }
 
@@ -1993,11 +1965,11 @@ namespace TheSushiRoles.Patches
     {
         public static bool Prefix(PlayerControl __instance)
         {
-            if (__instance == null || PlayerControl.LocalPlayer == null || Lighter.Player == null) return true;
+            if (__instance == null || PlayerControl.LocalPlayer == null || FlashLight.Player == null) return true;
 
-            bool hasFlashlight = !PlayerControl.LocalPlayer.Data.IsDead && Lighter.Player.PlayerId == PlayerControl.LocalPlayer.PlayerId;
+            bool hasFlashlight = !PlayerControl.LocalPlayer.Data.IsDead && FlashLight.Player.PlayerId == PlayerControl.LocalPlayer.PlayerId;
             __instance.SetFlashlightInputMethod();
-            __instance.lightSource.SetupLightingForGameplay(hasFlashlight, Lighter.flashlightWidth, __instance.TargetFlashlight.transform);
+            __instance.lightSource.SetupLightingForGameplay(hasFlashlight, FlashLight.flashlightWidth, __instance.TargetFlashlight.transform);
 
             return false;
         }

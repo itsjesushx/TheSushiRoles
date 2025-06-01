@@ -37,7 +37,8 @@ namespace TheSushiRoles.Patches
                     __result = float.MaxValue;
                     return canUse = couldUse = false;
                 }                
-                switch (__instance.Id) {
+                switch (__instance.Id)
+                {
                     case 9:  // Cannot enter vent 9 (Engine Room Exit Only Vent)!
                         if (PlayerControl.LocalPlayer.inVent) break;
                         __result = float.MaxValue;
@@ -46,7 +47,8 @@ namespace TheSushiRoles.Patches
                         __result = float.MaxValue;
                         couldUse = roleCouldUse && !pc.IsDead && (@object.CanMove || @object.inVent);
                         canUse = couldUse;
-                        if (canUse) {
+                        if (canUse)
+                        {
                             Vector3 center = @object.Collider.bounds.center;
                             Vector3 position = __instance.transform.position;
                             __result = Vector2.Distance(center, position);
@@ -57,16 +59,20 @@ namespace TheSushiRoles.Patches
             }
 
             var usableDistance = __instance.UsableDistance;
-            if (__instance.name.StartsWith("JackInTheBoxVent_")) {
-                if(Trickster.Player != PlayerControl.LocalPlayer) {
+            if (__instance.name.StartsWith("JackInTheBoxVent_"))
+            {
+                if(Trickster.Player != PlayerControl.LocalPlayer)
+                {
                     // Only the Trickster can use the Jack-In-The-Boxes!
                     canUse = false;
                     couldUse = false;
                     __result = num;
                     return false; 
-                } else {
+                }
+                else
+                {
                     // Reduce the usable distance to reduce the risk of gettings stuck while trying to jump into the box if it's placed near objects
-                    usableDistance = 0.4f; 
+                    usableDistance = 0.4f;
                 }
             }
 
@@ -133,7 +139,8 @@ namespace TheSushiRoles.Patches
                 return false;
             }
 
-            if(isEnter) {
+            if(isEnter)
+            {
                 PlayerControl.LocalPlayer.MyPhysics.RpcEnterVent(__instance.Id);
             } else {
                 PlayerControl.LocalPlayer.MyPhysics.RpcExitVent(__instance.Id);
@@ -175,42 +182,106 @@ namespace TheSushiRoles.Patches
             {
                 if (defaultVentSprite == null) defaultVentSprite = __instance.graphic.sprite;
                 bool isSpecialVent = __instance.currentTarget != null && __instance.currentTarget.gameObject != null && __instance.currentTarget.gameObject.name.StartsWith("JackInTheBoxVent_");
-                __instance.graphic.sprite = isSpecialVent ?  Trickster.GetTricksterVentButtonSprite() : defaultVentSprite;
-                __instance.buttonLabelText.enabled = !isSpecialVent;
+
+                if (isSpecialVent)
+                {
+                    __instance.graphic.sprite = Trickster.GetTricksterVentButtonSprite();
+                    __instance.buttonLabelText.text = "USE BOX";
+                }
+                else
+                {
+                    __instance.graphic.sprite = defaultVentSprite;
+                    __instance.buttonLabelText.text = "VENT";
+                }
+                __instance.buttonLabelText.enabled = true;
             }
         }
     }
-
-    [HarmonyPatch(typeof(KillButton), nameof(KillButton.DoClick))]
-    class KillButtonDoClickPatch {
-        public static bool Prefix(KillButton __instance) 
+    [HarmonyPatch]
+    public class MurderPlayer
+    {
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer))]
+        public class MurderPlayerPatch
         {
-            if (__instance.isActiveAndEnabled && __instance.currentTarget && !__instance.isCoolingDown && !PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.CanMove) 
+            public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
             {
-                // Glitch Hack update.
-                if (Glitch.HackedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId)) {
-                    Glitch.SetHackedKnows();
-                    return false;
-                }
-                
-                // Use an unchecked kill command, to allow shorter kill Cooldowns etc. without getting kicked
-                MurderAttemptResult res = Utils.CheckMurderAttemptAndKill(PlayerControl.LocalPlayer, __instance.currentTarget);
-                // Handle blank kill
-                if (res == MurderAttemptResult.BlankKill) 
+                Utils.MurderPlayer(__instance, target, true);
+                // Set bountyHunter cooldown
+                if (BountyHunter.Player != null && PlayerControl.LocalPlayer == BountyHunter.Player && __instance == BountyHunter.Player)
                 {
-                    PlayerControl.LocalPlayer.killTimer = GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown;
-                    if (PlayerControl.LocalPlayer == Janitor.Player)
-                        Janitor.Player.killTimer = HudManagerStartPatch.JanitorCleanButton.Timer = HudManagerStartPatch.JanitorCleanButton.MaxTimer;
-                    else if (PlayerControl.LocalPlayer == Warlock.Player)
-                        Warlock.Player.killTimer = HudManagerStartPatch.warlockCurseButton.Timer = HudManagerStartPatch.warlockCurseButton.MaxTimer;
-                    else if (PlayerControl.LocalPlayer == Witch.Player)
-                        Witch.Player.killTimer = HudManagerStartPatch.witchSpellButton.Timer = HudManagerStartPatch.witchSpellButton.MaxTimer;
-                    else if (PlayerControl.LocalPlayer == Assassin.Player)
-                        Assassin.Player.killTimer = HudManagerStartPatch.AssassinButton.Timer = HudManagerStartPatch.AssassinButton.MaxTimer;
+                    if (target == BountyHunter.bounty)
+                    {
+                        BountyHunter.Player.SetKillTimer(BountyHunter.bountyKillCooldown);
+                        BountyHunter.bountyUpdateTimer = 0f; // Force bounty update
+                    }
+                    else
+                        BountyHunter.Player.SetKillTimer(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown + BountyHunter.punishmentTime);
                 }
-                __instance.SetTarget(null);
+
+                // Cleaner Button Sync
+                if (Janitor.Player != null && PlayerControl.LocalPlayer == Janitor.Player && __instance == Janitor.Player && HudManagerStartPatch.JanitorCleanButton != null)
+                    HudManagerStartPatch.JanitorCleanButton.Timer = Janitor.Player.killTimer;
+
+                // Witch Button Sync
+                if (Witch.triggerBothCooldowns && Witch.Player != null && PlayerControl.LocalPlayer == Witch.Player && __instance == Witch.Player && HudManagerStartPatch.witchSpellButton != null)
+                    HudManagerStartPatch.witchSpellButton.Timer = HudManagerStartPatch.witchSpellButton.MaxTimer;
+
+                // Warlock Button Sync
+                if (Warlock.Player != null && PlayerControl.LocalPlayer == Warlock.Player && __instance == Warlock.Player && HudManagerStartPatch.warlockCurseButton != null)
+                {
+                    if (Warlock.Player.killTimer > HudManagerStartPatch.warlockCurseButton.Timer)
+                    {
+                        HudManagerStartPatch.warlockCurseButton.Timer = Warlock.Player.killTimer;
+                    }
+                }
+                // Assassin Button Sync
+                if (Assassin.Player != null && PlayerControl.LocalPlayer == Assassin.Player && __instance == Assassin.Player && HudManagerStartPatch.AssassinButton != null)
+                    HudManagerStartPatch.AssassinButton.Timer = HudManagerStartPatch.AssassinButton.MaxTimer;
+                return false;
             }
-            return false;
+        }
+        [HarmonyPatch(typeof(KillButton), nameof(KillButton.DoClick))]
+        [HarmonyPriority(Priority.Last)]
+        public class KillButtonDoClickPatch
+        {
+            public static bool Prefix(KillButton __instance, ref bool __runOriginal)
+            {
+                if (!__runOriginal) return false;
+                if (__instance.isActiveAndEnabled && __instance.currentTarget && !__instance.isCoolingDown && !PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.CanMove)
+                {
+                    // Glitch Hack update.
+                    if (Glitch.HackedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId))
+                    {
+                        Glitch.SetHackedKnows();
+                        return false;
+                    }
+                    if (AmongUsClient.Instance.AmHost)
+                    {
+                        PlayerControl.LocalPlayer.CheckMurder(__instance.currentTarget);
+                    }
+                    else
+                    {
+                        Utils.SendRPC(CustomRPC.CheckMurder, PlayerControl.LocalPlayer.PlayerId, __instance.currentTarget.PlayerId);
+
+                        MurderAttemptResult res = Utils.CheckMurderAttemptAndKill(PlayerControl.LocalPlayer, __instance.currentTarget);
+                        // Handle blank kill
+                        if (res == MurderAttemptResult.BlankKill)
+                        {
+                            PlayerControl.LocalPlayer.killTimer = GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown;
+                            if (PlayerControl.LocalPlayer == Janitor.Player)
+                                Janitor.Player.killTimer = HudManagerStartPatch.JanitorCleanButton.Timer = HudManagerStartPatch.JanitorCleanButton.MaxTimer;
+                            else if (PlayerControl.LocalPlayer == Warlock.Player)
+                                Warlock.Player.killTimer = HudManagerStartPatch.warlockCurseButton.Timer = HudManagerStartPatch.warlockCurseButton.MaxTimer;
+                            else if (PlayerControl.LocalPlayer == Witch.Player)
+                                Witch.Player.killTimer = HudManagerStartPatch.witchSpellButton.Timer = HudManagerStartPatch.witchSpellButton.MaxTimer;
+                            else if (PlayerControl.LocalPlayer == Assassin.Player)
+                                Assassin.Player.killTimer = HudManagerStartPatch.AssassinButton.Timer = HudManagerStartPatch.AssassinButton.MaxTimer;
+                        }
+                    }
+                    __instance.SetTarget(null);
+                }
+                return false;
+            }
         }
     }
 
@@ -252,7 +323,7 @@ namespace TheSushiRoles.Patches
                 statusText = "You are hacked. You can't start a meeting.";
             }
 
-            // Deactivate emergency button for Swapper
+            // Deactivate emergency button for blinded players
             if (Viper.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId)) 
             {
                 CanCallEmergency = false;
@@ -355,7 +426,7 @@ namespace TheSushiRoles.Patches
     {
         static void Postfix(SwitchMinigame __instance) 
         {
-            // Block Swapper from fixing lights. One could also just delete the PlayerTask, but I wanted to do it the same way as with coms for now.
+            // Block Swapper from fixing lights
             if (Swapper.Player != null && Swapper.Player == PlayerControl.LocalPlayer) 
             {
                 __instance.Close();
@@ -376,10 +447,11 @@ namespace TheSushiRoles.Patches
                 if (Hacker.Player != null && PlayerControl.LocalPlayer == Hacker.Player) 
                 {
                     hackerTexts = new List<TMPro.TextMeshPro>();
-                    foreach (VitalsPanel panel in __instance.vitals) {
-                        TMPro.TextMeshPro text = UnityEngine.Object.Instantiate(__instance.SabText, panel.transform);
+                    foreach (VitalsPanel panel in __instance.vitals)
+                    {
+                        TMPro.TextMeshPro text = UObject.Instantiate(__instance.SabText, panel.transform);
                         hackerTexts.Add(text);
-                        UnityEngine.Object.DestroyImmediate(text.GetComponent<AlphaBlink>());
+                        UObject.DestroyImmediate(text.GetComponent<AlphaBlink>());
                         text.gameObject.SetActive(false);
                         text.transform.localScale = Vector3.one * 0.75f;
                         text.transform.localPosition = new Vector3(-0.75f, -0.23f, 0f);
@@ -390,7 +462,8 @@ namespace TheSushiRoles.Patches
                 //Fix Visor in Vitals
                 foreach (VitalsPanel panel in __instance.vitals) 
                 {
-                    if (panel.PlayerIcon != null && panel.PlayerIcon.cosmetics.skin != null) {
+                    if (panel.PlayerIcon != null && panel.PlayerIcon.cosmetics.skin != null)
+                    {
                          panel.PlayerIcon.cosmetics.skin.transform.position = new Vector3(0, 0, 0f);
                     }
                 }
@@ -400,13 +473,14 @@ namespace TheSushiRoles.Patches
         [HarmonyPatch(typeof(VitalsMinigame), nameof(VitalsMinigame.Update))]
         class VitalsMinigameUpdatePatch
         {
-
             static void Postfix(VitalsMinigame __instance) 
             {
                 // Hacker show time since death
                 
-                if (Hacker.Player != null && Hacker.Player == PlayerControl.LocalPlayer && Hacker.hackerTimer > 0) {
-                    for (int k = 0; k < __instance.vitals.Length; k++) {
+                if (Hacker.Player != null && Hacker.Player == PlayerControl.LocalPlayer && Hacker.hackerTimer > 0)
+                {
+                    for (int k = 0; k < __instance.vitals.Length; k++)
+                    {
                         VitalsPanel vitalsPanel = __instance.vitals[k];
                         NetworkedPlayerInfo player = vitalsPanel.PlayerInfo;
 
@@ -414,14 +488,17 @@ namespace TheSushiRoles.Patches
                         if (vitalsPanel.IsDead) 
                         {
                             DeadPlayer deadPlayer = deadPlayers?.Where(x => x.player?.PlayerId == player?.PlayerId)?.FirstOrDefault();
-                            if (deadPlayer != null && k < hackerTexts.Count && hackerTexts[k] != null) {
-                                float timeSinceDeath = ((float)(DateTime.UtcNow - deadPlayer.DeathTime).TotalMilliseconds);
+                            if (deadPlayer != null && k < hackerTexts.Count && hackerTexts[k] != null)
+                            {
+                                float timeSinceDeath = (float)(DateTime.UtcNow - deadPlayer.DeathTime).TotalMilliseconds;
                                 hackerTexts[k].gameObject.SetActive(true);
                                 hackerTexts[k].text = Math.Round(timeSinceDeath / 1000) + "s";
                             }
                         }
                     }
-                } else {
+                }
+                else
+                {
                     foreach (TMPro.TextMeshPro text in hackerTexts)
                         if (text != null && text.gameObject != null)
                             text.gameObject.SetActive(false);
@@ -553,7 +630,7 @@ namespace TheSushiRoles.Patches
                         if (renderer != null) 
                         {
                             if (defaultMat == null) defaultMat = renderer.material;
-                            if (newMat == null) newMat = UnityEngine.Object.Instantiate<Material>(defaultMat);
+                            if (newMat == null) newMat = UObject.Instantiate<Material>(defaultMat);
                             if (showHackerInfo && colors.Count > i) 
                             {
                                 renderer.material = newMat;
@@ -603,7 +680,7 @@ namespace TheSushiRoles.Patches
                     __instance.textures = __instance.textures.ToList().Concat(new RenderTexture[MapUtilities.CachedShipStatus.AllCameras.Length - 4]).ToArray();
                     for (int i = 4; i < MapUtilities.CachedShipStatus.AllCameras.Length; i++) {
                         SurvCamera surv = MapUtilities.CachedShipStatus.AllCameras[i];
-                        Camera camera = UnityEngine.Object.Instantiate<Camera>(__instance.CameraPrefab);
+                        Camera camera = UObject.Instantiate<Camera>(__instance.CameraPrefab);
                         camera.transform.SetParent(__instance.transform);
                         camera.transform.position = new Vector3(surv.transform.position.x, surv.transform.position.y, 8f);
                         camera.orthographicSize = 2.35f;

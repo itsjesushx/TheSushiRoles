@@ -6,39 +6,12 @@ namespace TheSushiRoles.Patches
     [HarmonyPatch]
     public static class CredentialsPatch 
     {
-        public readonly static string fullCredentials =
-$@"<size=130%><color=#B2FEFE>TheSushiRoles</color></size> v{TheSushiRolesPlugin.Version.ToString()}
-<size=80%>Created by <color=#B2FEFE>Jesushi</color></size>";
     public static string MainScreenText =
     $@"Created by <color=#B2FEFE>Jesushi</color>
 <size=75%>Emotionally Helped by <color=#B2FEFE>döll</color>
 Helped by <color=#B2FEFE>AlchlcDvl</color> & <color=#B2FEFE>50IQ</color>
-Testing help by <color=#B2FEFE>Cake</color>
-Code base by <color=#B2FEFE>Eisbison</color> & <color=#B2FEFE>TheOtherRoles Team</color></size>";
+Testing help by <color=#B2FEFE>Cake</color>";
 
-        [HarmonyPatch(typeof(PingTracker), nameof(PingTracker.Update))]
-        internal static class PingTrackerPatch
-        {
-            static void Postfix(PingTracker __instance)
-            {
-                __instance.text.alignment = TextAlignmentOptions.Top;
-                __instance.transform.localScale = Vector3.one * 0.4f;
-                var position = __instance.GetComponent<AspectPosition>();
-                position.Alignment = AspectPosition.EdgeAlignments.Top;
-
-                if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started)
-                {
-                    __instance.text.text = Camera.main.orthographicSize == 3f
-                        ? $"<size=130%><color=#B2FEFE>TheSushiRoles</color></size> v{TheSushiRolesPlugin.Version.ToString()}\n{__instance.text.text}" : "";
-                    position.DistanceFromEdge = new Vector3(0.25f, 0.11f, 0);
-                }
-                else
-                {
-                    __instance.text.text = $"{fullCredentials}\n{__instance.text.text}";
-                    position.DistanceFromEdge = new Vector3(0f, 0.1f, 0);
-                }
-            }
-        }
 
         [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
         public static class LogoPatch

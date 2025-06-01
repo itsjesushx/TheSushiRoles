@@ -62,10 +62,10 @@ namespace TheSushiRoles.Patches
 					v /= MapUtilities.CachedShipStatus.MapScale;
 					v.x *= Mathf.Sign(MapUtilities.CachedShipStatus.transform.localScale.x);
 					v.z = -2.1f;
-					var herePoint = UnityEngine.Object.Instantiate(__instance.HerePoint, __instance.HerePoint.transform.parent, true);
+					var herePoint = UObject.Instantiate(__instance.HerePoint, __instance.HerePoint.transform.parent, true);
 					herePoint.transform.localPosition = v;
 					herePoint.enabled = true;
-					PlayerControl player = Utils.PlayerById(playerId);
+					PlayerControl player = Utils.GetPlayerById(playerId);
  					if (player == null) continue;
                      int colorId = player.CurrentOutfit.ColorId;
 					if (Trapper.anonymousMap) player.CurrentOutfit.ColorId = 6;
@@ -75,7 +75,7 @@ namespace TheSushiRoles.Patches
 				}
 				foreach (var s in herePoints.Where(x => !Trapper.playersOnMap.Contains(x.Key)).ToList()) 
 				{
-					UnityEngine.Object.Destroy(s.Value.gameObject);
+					UObject.Destroy(s.Value.gameObject);
 					herePoints.Remove(s.Key);
 				}
 			} 
@@ -103,7 +103,7 @@ namespace TheSushiRoles.Patches
 						doublePoint.Destroy();
 					}
 
-					var herePoint = UnityEngine.Object.Instantiate(__instance.HerePoint, __instance.HerePoint.transform.parent, true);
+					var herePoint = UObject.Instantiate(__instance.HerePoint, __instance.HerePoint.transform.parent, true);
 					
 					herePoint.name = pointName;
                     herePoint.transform.localPosition = v;

@@ -57,7 +57,7 @@ namespace TheSushiRoles.Objects
         {
             foreach (BlindTrap t in traps)
             {
-                UnityEngine.Object.Destroy(t.trap);
+                UObject.Destroy(t.trap);
             }
             traps.Clear();
             instanceCounter = 0;
@@ -66,7 +66,7 @@ namespace TheSushiRoles.Objects
         public static void TriggerTrap(byte playerId, byte trapId)
         {
             BlindTrap t = traps.FirstOrDefault(x => x.instanceId == (int)trapId);
-            PlayerControl player = Utils.PlayerById(playerId);
+            PlayerControl player = Utils.GetPlayerById(playerId);
             if (t == null || player == null) return;
             if (player.IsImpostor()) return;
 
@@ -101,7 +101,12 @@ namespace TheSushiRoles.Objects
             var player = PlayerControl.LocalPlayer;
             if (player == null || player.Data == null) return;
 
-            float triggerDistance = MapUtilities.CachedShipStatus.AllVents[0]?.UsableDistance / 2 ?? 0.4f;
+            float triggerDistance = 0.4f;
+            if (MapUtilities.CachedShipStatus?.AllVents != null && MapUtilities.CachedShipStatus.AllVents.Count > 0)
+            {
+                triggerDistance = MapUtilities.CachedShipStatus.AllVents[0]?.UsableDistance / 2f ?? 0.4f;
+            }
+
             BlindTrap target = null;
             float closestDistance = float.MaxValue;
 
@@ -111,6 +116,9 @@ namespace TheSushiRoles.Objects
                 if (player.IsImpostor()) continue;
 
                 float distance = Vector2.Distance(trap.trap.transform.position, player.GetTruePosition());
+
+                if (trap.trap == null)
+                    TheSushiRolesPlugin.Logger.LogWarning($"BlindTrap {trap.instanceId} has null trap GameObject");
 
                 if (distance <= triggerDistance && distance < closestDistance)
                 {

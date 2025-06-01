@@ -25,10 +25,10 @@ namespace TheSushiRoles.Patches
                 float ypos = 0.15f - safeOrthographicSize * 1.7f;
                 bottomLeft = new Vector3(xpos / 2, ypos/2, -61f);
 
-                foreach (PlayerControl p in PlayerControl.AllPlayerControls) 
+                foreach (PlayerControl p in PlayerControl.AllPlayerControls)
                 {
                     NetworkedPlayerInfo data = p.Data;
-                    PoolablePlayer player = UnityEngine.Object.Instantiate<PoolablePlayer>(__instance.PlayerPrefab, FastDestroyableSingleton<HudManager>.Instance.transform);
+                    PoolablePlayer player = UObject.Instantiate<PoolablePlayer>(__instance.PlayerPrefab, FastDestroyableSingleton<HudManager>.Instance.transform);
                     playerPrefab = __instance.PlayerPrefab;
                     p.SetPlayerMaterialColors(player.cosmetics.currentBodySprite.BodySprite);
                     player.SetSkin(data.DefaultOutfit.SkinId, data.DefaultOutfit.ColorId);
@@ -61,7 +61,7 @@ namespace TheSushiRoles.Patches
                 BountyHunter.bountyUpdateTimer = 0f;
                 if (FastDestroyableSingleton<HudManager>.Instance != null) 
                 {
-                    BountyHunter.CooldownText = UnityEngine.Object.Instantiate<TMPro.TextMeshPro>(FastDestroyableSingleton<HudManager>.Instance.KillButton.cooldownTimerText, FastDestroyableSingleton<HudManager>.Instance.transform);
+                    BountyHunter.CooldownText = UObject.Instantiate<TMPro.TextMeshPro>(FastDestroyableSingleton<HudManager>.Instance.KillButton.cooldownTimerText, FastDestroyableSingleton<HudManager>.Instance.transform);
                     BountyHunter.CooldownText.alignment = TMPro.TextAlignmentOptions.Center;
                     BountyHunter.CooldownText.transform.localPosition = bottomLeft + new Vector3(0f, -0.35f, -62f);
                     BountyHunter.CooldownText.transform.localScale = Vector3.one * 0.4f;
@@ -85,7 +85,7 @@ namespace TheSushiRoles.Patches
                 var list = GameObject.FindObjectsOfType<Vent>().ToList();
                 var adminVent = list.FirstOrDefault(x => x.gameObject.name == "AdminVent");
                 var bathroomVent = list.FirstOrDefault(x => x.gameObject.name == "BathroomVent");
-                BetterPolus.SpecimenVent = UnityEngine.Object.Instantiate<Vent>(adminVent);
+                BetterPolus.SpecimenVent = UObject.Instantiate<Vent>(adminVent);
                 BetterPolus.SpecimenVent.gameObject.AddSubmergedComponent(Classes.ElevatorMover);
                 BetterPolus.SpecimenVent.transform.position = new Vector3(36.55068f, -21.5168f, -0.0215168f);
                 BetterPolus.SpecimenVent.Left = adminVent;
@@ -206,7 +206,7 @@ namespace TheSushiRoles.Patches
             }
             public static bool Prefix(IntroCutscene __instance) 
             {
-                seed = rnd.Next(5000);
+                seed = TheSushiRolesPlugin.rnd.Next(5000);
                 FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(1f, new Action<float>((p) => 
                 {
                     SetRoleTexts(__instance);

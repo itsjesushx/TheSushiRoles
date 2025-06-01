@@ -12,7 +12,7 @@ namespace TheSushiRoles.Roles
         public static bool KnowsRole = false;
         public static bool targetWasGuessed = false;
         public static bool IsProsecutorWin = false;
-        public static int BecomeEnum; // 0 = Jester, 1 = Amnesiac, 2 = Survivor
+        public static ProsecutorOnTargetDeath BecomeEnum;
         public static void ClearAndReload(bool clearTarget = true) 
         {
             Player = null;
@@ -22,7 +22,7 @@ namespace TheSushiRoles.Roles
                 targetWasGuessed = false;
             }
             IsProsecutorWin = false;
-            BecomeEnum = CustomOptionHolder.ProsecutorBecomeEnum.GetSelection();
+            BecomeEnum = (ProsecutorOnTargetDeath)CustomOptionHolder.ProsecutorBecomeEnum.GetSelection();
             vision = CustomOptionHolder.ProsecutorVision.GetFloat();
             KnowsRole = CustomOptionHolder.ProsecutorKnowsRole.GetBool();
             canCallEmergency = CustomOptionHolder.ProsecutorCanCallEmergency.GetBool();

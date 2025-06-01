@@ -6,7 +6,7 @@ namespace TheSushiRoles.Roles
     public static class Deputy
     {
         public static PlayerControl Player;
-        public static Color Color = new Color32(199, 163, 52, byte.MaxValue);
+        public static Color Color = Color.yellow;
         public static List<GameObject> ExecuteButtons = new List<GameObject>();
         public static int Charges;
         public static int RechargeTasksNumber;
