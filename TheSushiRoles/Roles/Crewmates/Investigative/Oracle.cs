@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace TheSushiRoles.Roles
 {
@@ -10,19 +9,10 @@ namespace TheSushiRoles.Roles
         public static PlayerControl Player;
         public static PlayerControl Confessor;
         public static PlayerControl CurrentTarget;
+
         public static Faction RevealedFaction;
-        public static float Accuracy;
-        public static bool NeutralBenignShowsEvil;
+
         public static bool Investigated; 
-        public static bool NeutralEvilShowsEvil;
-        public static float Cooldown;
-        private static Sprite ButtonSprite;
-        public static Sprite GetButtonSprite() 
-        {
-            if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.OracleButton.png", 115f);
-            return ButtonSprite;
-        }
         public static int Charges;
         public static int RechargeTasksNumber;
         public static int RechargedTasks;
@@ -35,8 +25,8 @@ namespace TheSushiRoles.Roles
             var neutralBenignRoles = new List<PlayerControl> { Romantic.Player, Lawyer.Player, Amnesiac.Player };
 
             var evilPlayers = PlayerControl.AllPlayerControls.ToArray().Where(x => !x.Data.IsDead && !x.Data.Disconnected && x.IsImpostor() 
-                || x.IsNeutralKiller() || (neutralEvilRoles.Contains(x) && NeutralEvilShowsEvil)
-                || (neutralBenignRoles.Contains(x) && NeutralBenignShowsEvil)).ToList();
+                || x.IsNeutralKiller() || (neutralEvilRoles.Contains(x) && CustomGameOptions.NeutralEvilShowsEvil)
+                || (neutralBenignRoles.Contains(x) && CustomGameOptions.NeutralBenignShowsEvil)).ToList();
 
             var allPlayers = PlayerControl.AllPlayerControls.ToArray().Where(x => !x.Data.IsDead && !x.Data.Disconnected && x != Oracle.Player && x != target).ToList();
 
@@ -86,12 +76,9 @@ namespace TheSushiRoles.Roles
             RevealedFaction = Faction.Other;
             CurrentTarget = null;
             Investigated = false;
-            Accuracy = CustomOptionHolder.RevealAccuracy.GetFloat();
-            NeutralBenignShowsEvil = CustomOptionHolder.NeutralBenignShowsEvil.GetBool();
-            NeutralEvilShowsEvil = CustomOptionHolder.NeutralEvilShowsEvil.GetBool();
-            Charges = Mathf.RoundToInt(CustomOptionHolder.OracleCharges.GetFloat());
-            RechargeTasksNumber = Mathf.RoundToInt(CustomOptionHolder.OracleRechargeTasksNumber.GetFloat());
-            RechargedTasks = Mathf.RoundToInt(CustomOptionHolder.OracleRechargeTasksNumber.GetFloat());
+            Charges = CustomGameOptions.OracleCharges;
+            RechargeTasksNumber = CustomGameOptions.OracleRechargeTasksNumber;
+            RechargedTasks = CustomGameOptions.OracleRechargeTasksNumber;
         }
     }
 }

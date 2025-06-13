@@ -1,55 +1,21 @@
-using System;
 using System.Collections.Generic;
-using Hazel;
-using UnityEngine;
 
 namespace TheSushiRoles.Roles
 {
     public static class Glitch
     {
         public static PlayerControl Player;
-        public static Color Color = Color.green;
-        public static PlayerControl CurrentTarget;
-        public static bool canEnterVents;
-        public static float KillCooldown;
-        public static List<byte> HackedPlayers = new List<byte>();
-        public static float HackDuration;
-        public static float remainingHacks;
-        public static float HackCooldown;
-        private static Sprite SampleSprite;
-        private static Sprite MimicSprite;
-        public static float MimicCooldown = 25f;
-        public static float MimicDuration = 10f;
         public static PlayerControl sampledTarget;
         public static PlayerControl MimicTarget;
+        public static PlayerControl CurrentTarget;
+
+        public static int remainingHacks = 0;
+
+        public static Color Color = Color.green;
+
+        public static List<byte> HackedPlayers = new List<byte>();        
         public static float MimicTimer = 0f;
         public static Dictionary<byte, float> HackedKnows = new Dictionary<byte, float>();
-        private static Sprite ButtonSprite;
-        private static Sprite HackedSprite;
-        public static Sprite GetButtonSprite()
-        {
-            if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.Hack.png", 110f);
-            return ButtonSprite;
-        }
-        public static Sprite GetHackedButtonSprite()
-        {
-            if (HackedSprite) return HackedSprite;
-            HackedSprite = Utils.LoadSprite("TheSushiRoles.Resources.Hack.png", 110f);
-            return HackedSprite;
-        }
-        public static Sprite GetSampleSprite() 
-        {
-            if (SampleSprite) return SampleSprite;
-            SampleSprite = Utils.LoadSprite("TheSushiRoles.Resources.SampleButton.png", 115f);
-            return SampleSprite;
-        }
-        public static Sprite GetMimicSprite() 
-        {
-            if (MimicSprite) return MimicSprite;
-            MimicSprite = Utils.LoadSprite("TheSushiRoles.Resources.MimicButton.png", 115f);
-            return MimicSprite;
-        }
         // Can be used to enable / disable the Hack effect on the target's buttons
         public static void SetHackedKnows(bool active = true, byte playerId = Byte.MaxValue)
         {
@@ -61,12 +27,12 @@ namespace TheSushiRoles.Roles
             }
             if (active)
             {
-                HackedKnows.Add(playerId, HackDuration);
+                HackedKnows.Add(playerId, CustomGameOptions.GlitchHackDuration);
                 HackedPlayers.RemoveAll(x => x == playerId);
            }
             if (playerId == PlayerControl.LocalPlayer.PlayerId) 
             {
-                HudManagerStartPatch.SetAllButtonsHackedStatus(active);
+                CustomButtonLoader.SetAllButtonsHackedStatus(active);
                 SoundEffectsManager.Play("deputyHandcuff");
 		    }
 	    }
@@ -87,14 +53,8 @@ namespace TheSushiRoles.Roles
             CurrentTarget = null;
             HackedPlayers = new List<byte>();
             HackedKnows = new Dictionary<byte, float>();
-            HudManagerStartPatch.SetAllButtonsHackedStatus(false, true);
-            remainingHacks = CustomOptionHolder.GlitchNumberOfHacks.GetFloat();
-            HackCooldown = CustomOptionHolder.GlitchHackCooldown.GetFloat();
-            HackDuration = CustomOptionHolder.GlitchHackDuration.GetFloat();
-            KillCooldown = CustomOptionHolder.GlitchKillCooldowm.GetFloat();
-            canEnterVents = CustomOptionHolder.GlitchCanUseVents.GetBool();
-            MimicCooldown = CustomOptionHolder.GlitchMimicCooldown.GetFloat();
-            MimicDuration = CustomOptionHolder.GlitchMimicDuration.GetFloat();
+            CustomButtonLoader.SetAllButtonsHackedStatus(false, true);
+            remainingHacks = CustomGameOptions.GlitchNumberOfHacks;
         }
     }
 }

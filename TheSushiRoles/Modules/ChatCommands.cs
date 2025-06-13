@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,7 +20,7 @@ namespace TheSushiRoles.Modules
                     if (text.ToLower().StartsWith("/kick ")) 
                     {
                         string playerName = text.Substring(6);
-                        PlayerControl target = PlayerControl.AllPlayerControls.ToArray().FirstOrDefault(x => x.Data.PlayerName.Equals(playerName));
+                        PlayerControl target = AllPlayerControls.FirstOrDefault(x => x.Data.PlayerName.Equals(playerName));
                         if (target != null && AmongUsClient.Instance != null && AmongUsClient.Instance.CanBan()) {
                             var client = AmongUsClient.Instance.GetClient(target.OwnerId);
                             if (client != null) 
@@ -35,7 +34,7 @@ namespace TheSushiRoles.Modules
                     else if (text.ToLower().StartsWith("/ban ")) 
                     {
                         string playerName = text.Substring(5);
-                        PlayerControl target = PlayerControl.AllPlayerControls.ToArray().FirstOrDefault(x => x.Data.PlayerName.Equals(playerName));
+                        PlayerControl target = AllPlayerControls.FirstOrDefault(x => x.Data.PlayerName.Equals(playerName));
                         if (target != null && AmongUsClient.Instance != null && AmongUsClient.Instance.CanBan()) {
                             var client = AmongUsClient.Instance.GetClient(target.OwnerId);
                             if (client != null) 
@@ -52,13 +51,13 @@ namespace TheSushiRoles.Modules
                     handled = true;
                     var roles = new List<RoleInfo>
                     {
-                        RoleInfo.crewmate, RoleInfo.cultist, RoleInfo.deputy, RoleInfo.detective, RoleInfo.hacker, RoleInfo.tracker, RoleInfo.crusader, RoleInfo.spy, RoleInfo.vigilante, RoleInfo.mayor,
-                        RoleInfo.gatekeeper, RoleInfo.veteran, RoleInfo.engineer, RoleInfo.sheriff, RoleInfo.psychic, RoleInfo.trapper, RoleInfo.chronos, RoleInfo.medic, RoleInfo.swapper,
+                        RoleInfo.crewmate, RoleInfo.deputy, RoleInfo.detective, RoleInfo.hacker, RoleInfo.tracker, RoleInfo.crusader, RoleInfo.spy, RoleInfo.vigilante, RoleInfo.mayor,
+                        RoleInfo.gatekeeper, RoleInfo.veteran, RoleInfo.engineer, RoleInfo.sheriff, RoleInfo.psychic, RoleInfo.trapper, RoleInfo.chronos, RoleInfo.medic,
                         RoleInfo.oracle, RoleInfo.mystic,
-                        RoleInfo.impostor, RoleInfo.morphling, RoleInfo.blackmailer, RoleInfo.painter, RoleInfo.viper, RoleInfo.eraser, RoleInfo.trickster, RoleInfo.janitor,
+                        RoleInfo.impostor, RoleInfo.morphling, RoleInfo.blackmailer, RoleInfo.painter, RoleInfo.viper, RoleInfo.trickster, RoleInfo.janitor,
                         RoleInfo.grenadier, RoleInfo.warlock, RoleInfo.bountyHunter, RoleInfo.assassin, RoleInfo.witch, RoleInfo.wraith, RoleInfo.yoyo,
                         RoleInfo.jester, RoleInfo.arsonist, RoleInfo.monarch, RoleInfo.scavenger, RoleInfo.lawyer, RoleInfo.amnesiac, RoleInfo.prosecutor, RoleInfo.survivor, RoleInfo.romantic,
-                        RoleInfo.jackal, RoleInfo.plaguebearer, RoleInfo.pestilence, RoleInfo.juggernaut, RoleInfo.agent, RoleInfo.hitman, RoleInfo.predator,
+                        RoleInfo.plaguebearer, RoleInfo.pestilence, RoleInfo.juggernaut, RoleInfo.agent, RoleInfo.hitman, RoleInfo.predator,
                         RoleInfo.glitch, RoleInfo.vromantic, RoleInfo.werewolf
                     };
 
@@ -96,7 +95,7 @@ namespace TheSushiRoles.Modules
                 if (text.ToLower().StartsWith("/tp ") && PlayerControl.LocalPlayer.Data.IsDead) 
                 {
                     string playerName = text.Substring(4).ToLower();
-                    PlayerControl target = PlayerControl.AllPlayerControls.ToArray().FirstOrDefault(x => x.Data.PlayerName.ToLower().Equals(playerName));
+                    PlayerControl target = AllPlayerControls.FirstOrDefault(x => x.Data.PlayerName.ToLower().Equals(playerName));
                     if (target != null) 
                     {
                         PlayerControl.LocalPlayer.transform.position = target.transform.position;
@@ -127,7 +126,7 @@ namespace TheSushiRoles.Modules
         { 
             public static void Postfix(ChatBubble __instance, [HarmonyArgument(0)] string playerName) 
             {
-                PlayerControl sourcePlayer = PlayerControl.AllPlayerControls.ToArray().ToList().FirstOrDefault(x => x.Data != null && x.Data.PlayerName.Equals(playerName));
+                PlayerControl sourcePlayer = AllPlayerControls.ToList().FirstOrDefault(x => x.Data != null && x.Data.PlayerName.Equals(playerName));
                 if (sourcePlayer != null && PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer.Data?.Role?.IsImpostor == true && (Spy.Player != null && sourcePlayer.PlayerId == Spy.Player.PlayerId) && __instance != null) __instance.NameText.color = Palette.ImpostorRed;
             }
         }

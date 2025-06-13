@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
-
 namespace TheSushiRoles.Patches
 {
     [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.OnDestroy))]
@@ -11,7 +9,7 @@ namespace TheSushiRoles.Patches
 
         public static void Prefix(IntroCutscene __instance)
         {
-            if (CustomOptionHolder.RandomSpawns.GetBool())
+            if (CustomGameOptions.RandomSpawns)
             {
                 List<Vector3> skeldSpawn = new List<Vector3>()
                 {
@@ -281,7 +279,7 @@ namespace TheSushiRoles.Patches
 
         static void WrapUpPostfix(NetworkedPlayerInfo exiled)
         {
-            if (CustomOptionHolder.RandomSpawns.GetBool())
+            if (CustomGameOptions.RandomSpawns)
             {
                 List<Vector3> skeldSpawn = new List<Vector3>()
                 {

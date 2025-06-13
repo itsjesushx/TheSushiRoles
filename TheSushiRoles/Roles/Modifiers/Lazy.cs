@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
-
 namespace TheSushiRoles.Roles.Modifiers
 {
     public static class Lazy

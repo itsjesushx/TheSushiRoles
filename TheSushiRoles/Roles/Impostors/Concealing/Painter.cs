@@ -1,22 +1,12 @@
-using UnityEngine;
-
 namespace TheSushiRoles.Roles
 {
     public static class Painter 
     {
         public static PlayerControl Player;
-        public static Color Color = Palette.ImpostorRed;
-        public static float Cooldown = 25f;
-        public static float Duration = 10f;
-        public static float PaintTimer = 0f;
-        private static Sprite ButtonSprite;
-        public static Sprite GetButtonSprite() 
-        {
-            if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.PaintButton.png", 115f);
-            return ButtonSprite;
-        }
 
+        public static Color Color = Palette.ImpostorRed;
+
+        public static float PaintTimer = 0f;
         public static void ResetPaint() 
         {
             PaintTimer = 0f;
@@ -32,8 +22,6 @@ namespace TheSushiRoles.Roles
             ResetPaint();
             Player = null;
             PaintTimer = 0f;
-            Cooldown = CustomOptionHolder.PainterCooldown.GetFloat();
-            Duration = CustomOptionHolder.PainterDuration.GetFloat();
         }
     }
 }

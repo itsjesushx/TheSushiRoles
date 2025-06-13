@@ -37,7 +37,7 @@ public static class CustomHatManager
 
     static CustomHatManager()
     {
-        Loader = TheSushiRolesPlugin.Instance.AddComponent<HatsLoader>();
+        Loader = TheSushiRoles.Instance.AddComponent<HatsLoader>();
     }
     
     internal static void LoadHats()
@@ -73,7 +73,8 @@ public static class CustomHatManager
         var hat = ScriptableObject.CreateInstance<HatData>();
 
         viewData.MainImage = CreateHatSprite(ch.Resource);
-        if (viewData.MainImage == null) {
+        if (viewData.MainImage == null)
+        {
             throw new FileNotFoundException("File not downloaded yet");
         }
         viewData.FloorImage = viewData.MainImage;

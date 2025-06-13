@@ -1,32 +1,13 @@
 using System.Collections.Generic;
-using UnityEngine;
-
 namespace TheSushiRoles.Roles
 {
     public static class Mystic 
     {
         public static bool Investigated;
-        public enum Mode
-        {
-            DeathAndSouls = 0,
-            DeathFlash = 1,
-            Souls = 2
-        }
         public static PlayerControl Player;
         public static Color Color = new Color32(77, 154, 230, byte.MaxValue);
         public static List<Vector3> deadBodyPositions = new List<Vector3>();
         public static PlayerControl CurrentTarget;
-        public static float Cooldown;
-        public static float soulDuration = 15f;
-        public static bool limitSoulDuration = false;
-        public static Mode mode = 0;
-        private static Sprite ButtonSprite;
-        public static Sprite GetButtonSprite() 
-        {
-            if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.Mystic.png", 115f);
-            return ButtonSprite;
-        }
         public static string GetInfo(PlayerControl target)
         {
             var roles = RoleInfo.GetRoleInfoForPlayer(target);
@@ -46,9 +27,9 @@ namespace TheSushiRoles.Roles
                 }
                 else if (id.In(
                     RoleId.Wraith, RoleId.Assassin, RoleId.Witch, RoleId.Blackmailer,
-                    RoleId.Trickster, RoleId.Swapper, RoleId.Eraser, RoleId.Spy))
+                    RoleId.Trickster, RoleId.Spy))
                 {
-                    message = "I cloak my steps, whisper secrets, and shift the board without a trace. \n\n(Wraith, Assassin, Witch, Blackmailer, Trickster, Swapper, Eraser, Spy)";
+                    message = "I cloak my steps, whisper secrets, and shift the board without a trace. \n\n(Wraith, Assassin, Witch, Blackmailer, Trickster, Spy)";
                 }
                 else if (id.In(
                     RoleId.Detective, RoleId.Hacker, RoleId.Oracle, RoleId.Mystic,
@@ -75,9 +56,9 @@ namespace TheSushiRoles.Roles
                     message = "I guard, love, endure — or avenge. Compassion and fury walk with me. \n\n(Medic, Crusader, Romantic, Vengeful Romantic, Survivor)";
                 }
                 else if (id.In(
-                    RoleId.Plaguebearer, RoleId.Pestilence, RoleId.Glitch, RoleId.Jackal))
+                    RoleId.Plaguebearer, RoleId.Pestilence, RoleId.Glitch))
                 {
-                    message = "I am neither ally nor enemy — I am the anomaly, spreading decay or carving a lone path. \n\n(Plaguebearer, Pestilence, Glitch, Jackal)";
+                    message = "I am neither ally nor enemy — I am the anomaly, spreading decay or carving a lone path. \n\n(Plaguebearer, Pestilence, Glitch)";
                 }
                 else if (id.In(
                     RoleId.Hitman, RoleId.Tracker, RoleId.Crewmate, RoleId.Impostor))
@@ -104,27 +85,15 @@ namespace TheSushiRoles.Roles
         public static int RechargeTasksNumber;
         public static int RechargedTasks;
 
-        private static Sprite soulSprite;
-        public static Sprite GetSoulSprite() 
-        {
-            if (soulSprite) return soulSprite;
-            soulSprite = Utils.LoadSprite("TheSushiRoles.Resources.Soul.png", 500f);
-            return soulSprite;
-        }
-
         public static void ClearAndReload() 
         {
             Player = null;
             CurrentTarget = null;
             Investigated = false;
             deadBodyPositions = new List<Vector3>();
-            Cooldown = CustomOptionHolder.MysticCooldown.GetFloat();
-            limitSoulDuration = CustomOptionHolder.MysticLimitSoulDuration.GetBool();
-            soulDuration = CustomOptionHolder.MysticSoulDuration.GetFloat();
-            mode = (Mode)CustomOptionHolder.MysticMode.GetSelection();
-            Charges = Mathf.RoundToInt(CustomOptionHolder.MysticCharges.GetFloat());
-            RechargeTasksNumber = Mathf.RoundToInt(CustomOptionHolder.MysticRechargeTasksNumber.GetFloat());
-            RechargedTasks = Mathf.RoundToInt(CustomOptionHolder.MysticRechargeTasksNumber.GetFloat());
+            Charges = CustomGameOptions.MysticCharges;
+            RechargeTasksNumber = CustomGameOptions.MysticRechargeTasksNumber;
+            RechargedTasks = CustomGameOptions.MysticRechargeTasksNumber;
         }
     }
 }

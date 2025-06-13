@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace TheSushiRoles.Roles
 {
     public static class Mayor 
@@ -9,17 +7,6 @@ namespace TheSushiRoles.Roles
         public static Minigame emergency = null;
         public static Sprite emergencySprite = null;
         public static int remoteMeetingsLeft = 1;
-        public enum ChooseSingleVote
-        {
-            Off = 1,
-            BeforeVoting = 2,
-            UntilMeetingEnds = 3,            
-        }
-
-        public static bool canSeeVoteColors = false;
-        public static int tasksNeededToSeeVoteColors;
-        public static bool meetingButton = true;
-        public static ChooseSingleVote mayorChooseSingleVote;
 
         public static bool voteTwice = true;
 
@@ -35,11 +22,7 @@ namespace TheSushiRoles.Roles
             Player = null;
             emergency = null;
             emergencySprite = null;
-		    remoteMeetingsLeft = Mathf.RoundToInt(CustomOptionHolder.mayorMaxRemoteMeetings.GetFloat()); 
-            canSeeVoteColors = CustomOptionHolder.mayorCanSeeVoteColors.GetBool();
-            tasksNeededToSeeVoteColors = (int)CustomOptionHolder.mayorTasksNeededToSeeVoteColors.GetFloat();
-            meetingButton = CustomOptionHolder.mayorMeetingButton.GetBool();
-            mayorChooseSingleVote = (ChooseSingleVote)CustomOptionHolder.mayorChooseSingleVote.GetSelection();
+		    remoteMeetingsLeft = CustomGameOptions.MayorMaxRemoteMeetings; 
             voteTwice = true;
         }
     }

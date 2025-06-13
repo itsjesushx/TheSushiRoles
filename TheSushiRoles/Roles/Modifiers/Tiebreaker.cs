@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace TheSushiRoles.Roles.Modifiers
 {
     public static class Tiebreaker 

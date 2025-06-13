@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
-
 namespace TheSushiRoles.Patches 
 {
 	[HarmonyPatch(typeof (MapBehaviour), "FixedUpdate")]  
@@ -47,7 +45,7 @@ namespace TheSushiRoles.Patches
 		[HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.FixedUpdate))]
 		static void Postfix(MapBehaviour __instance) 
 		{
-			if (__instance.infectedOverlay.gameObject.active && PlayerControl.LocalPlayer.Data.IsDead && CustomOptionHolder.deadImpsBlockSabotage.GetBool()) 
+			if (__instance.infectedOverlay.gameObject.active && PlayerControl.LocalPlayer.Data.IsDead && CustomGameOptions.DeadImpsBlockSabotage) 
 			{
 				__instance.Close();
 			}
@@ -68,7 +66,7 @@ namespace TheSushiRoles.Patches
 					PlayerControl player = Utils.GetPlayerById(playerId);
  					if (player == null) continue;
                      int colorId = player.CurrentOutfit.ColorId;
-					if (Trapper.anonymousMap) player.CurrentOutfit.ColorId = 6;
+					if (CustomGameOptions.TrapperAnonymousMap) player.CurrentOutfit.ColorId = 6;
 					player.SetPlayerMaterialColors(herePoint);
 					player.CurrentOutfit.ColorId = colorId;
 					herePoints.Add(playerId, herePoint);
@@ -81,8 +79,7 @@ namespace TheSushiRoles.Patches
 			} 
 
 			// Show location of all players on the map for ghosts!
-			if (PlayerControl.LocalPlayer.Data.IsDead && (!PlayerControl.LocalPlayer.Data.Role.IsImpostor || CustomOptionHolder.deadImpsBlockSabotage.GetBool())) {
-				foreach (PlayerControl player in PlayerControl.AllPlayerControls) 
+			if (PlayerControl.LocalPlayer.Data.IsDead && (!PlayerControl.LocalPlayer.Data.Role.IsImpostor || CustomGameOptions.DeadImpsBlockSabotage)) {			foreach (PlayerControl player in PlayerControl.AllPlayerControls) 
 				{
                     if (player == PlayerControl.LocalPlayer) continue;
                     var alpha = player.Data.IsDead ? 0.25f : 1f;
@@ -120,7 +117,7 @@ namespace TheSushiRoles.Patches
 			{
 				if ((vent.name.StartsWith("JackInThe") && !(PlayerControl.LocalPlayer == Trickster.Player || PlayerControl.LocalPlayer.Data.IsDead))) continue; //for trickster vents
 
-				if (!TheSushiRolesPlugin.ShowVentsOnMap.Value) 
+				if (!TheSushiRoles.ShowVentsOnMap.Value) 
 				{
 					if (mapIcons.Count > 0) {
 						mapIcons.Values.Do((x) => x.Destroy());
@@ -209,7 +206,7 @@ namespace TheSushiRoles.Patches
 		{
 			if (VentNetworks.Count != 0) return;
 			
-			if (Utils.IsMira()) 
+			if (IsMira()) 
 			{
 				var vents = MapUtilities.CachedShipStatus.AllVents.Where(x => !x.name.Contains("JackInTheBoxVent_"));
 				VentNetworks.Add(vents.ToList());

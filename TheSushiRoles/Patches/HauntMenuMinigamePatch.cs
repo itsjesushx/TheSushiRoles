@@ -77,7 +77,7 @@ namespace TheSushiRoles.Patches
         public static void ShowOrHideAbilityButtonPostfix(AbilityButton __instance) 
         {
             bool isGameMode = GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek;
-            if (PlayerControl.LocalPlayer.Data.IsDead && (CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.GetBool() || isGameMode)) 
+            if (PlayerControl.LocalPlayer.Data.IsDead && (CustomGameOptions.FinishTasksBeforeHauntingOrZoomingOut || isGameMode)) 
             {
                 // player has haunt button.
                 var (playerCompleted, playerTotal) = TasksHandler.TaskInfo(PlayerControl.LocalPlayer.Data);

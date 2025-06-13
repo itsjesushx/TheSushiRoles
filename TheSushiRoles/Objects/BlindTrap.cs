@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace TheSushiRoles.Objects
 {
@@ -14,7 +12,6 @@ namespace TheSushiRoles.Objects
         public SpriteRenderer trapRenderer;
         public bool triggerable = false;
         private static Sprite trapSprite;
-
         public static Sprite GetTrapSprite()
         {
             if (trapSprite) return trapSprite;
@@ -85,7 +82,7 @@ namespace TheSushiRoles.Objects
                 t.SetAlpha(0.5f);
             }
 
-            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Viper.BlindDuration, new Action<float>((p) =>
+            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(CustomGameOptions.ViperBlindDuration, new Action<float>((p) =>
             {
                 if (p == 1f)
                 {
@@ -118,7 +115,7 @@ namespace TheSushiRoles.Objects
                 float distance = Vector2.Distance(trap.trap.transform.position, player.GetTruePosition());
 
                 if (trap.trap == null)
-                    TheSushiRolesPlugin.Logger.LogWarning($"BlindTrap {trap.instanceId} has null trap GameObject");
+                    TheSushiRoles.Logger.LogWarning($"BlindTrap {trap.instanceId} has null trap GameObject");
 
                 if (distance <= triggerDistance && distance < closestDistance)
                 {

@@ -24,7 +24,7 @@ public class HatsLoader : MonoBehaviour
         isRunning = true;
         var www = new UnityWebRequest();
         www.SetMethod(UnityWebRequest.UnityWebRequestMethod.Get);
-        TheSushiRolesPlugin.Logger.LogMessage($"Download manifest at: {RepositoryUrl}/{ManifestFileName}");
+        TheSushiRoles.Logger.LogMessage($"Download manifest at: {RepositoryUrl}/{ManifestFileName}");
         www.SetUrl($"{RepositoryUrl}/{ManifestFileName}");
         www.downloadHandler = new DownloadHandlerBuffer();
         var operation = www.SendWebRequest();
@@ -36,7 +36,7 @@ public class HatsLoader : MonoBehaviour
 
         if (www.isNetworkError || www.isHttpError)
         {
-            TheSushiRolesPlugin.Logger.LogError(www.error);
+            TheSushiRoles.Logger.LogError(www.error);
             yield break;
         }
 
@@ -52,7 +52,7 @@ public class HatsLoader : MonoBehaviour
         UnregisteredHats.AddRange(SanitizeHats(response));
         var toDownload = GenerateDownloadList(UnregisteredHats);
 
-        TheSushiRolesPlugin.Logger.LogMessage($"I'll download {toDownload.Count} hat files");
+        TheSushiRoles.Logger.LogMessage($"I'll download {toDownload.Count} hat files");
 
         foreach (var fileName in toDownload)
         {
@@ -67,7 +67,7 @@ public class HatsLoader : MonoBehaviour
         var www = new UnityWebRequest();
         www.SetMethod(UnityWebRequest.UnityWebRequestMethod.Get);
         fileName = fileName.Replace(" ", "%20");
-        TheSushiRolesPlugin.Logger.LogMessage($"downloading hat: {fileName}");
+        TheSushiRoles.Logger.LogMessage($"downloading hat: {fileName}");
         www.SetUrl($"{RepositoryUrl}/hats/{fileName}");
         www.downloadHandler = new DownloadHandlerBuffer();
         var operation = www.SendWebRequest();
@@ -79,7 +79,7 @@ public class HatsLoader : MonoBehaviour
 
         if (www.isNetworkError || www.isHttpError)
         {
-            TheSushiRolesPlugin.Logger.LogError(www.error);
+            TheSushiRoles.Logger.LogError(www.error);
             yield break;
         }
 
@@ -90,7 +90,7 @@ public class HatsLoader : MonoBehaviour
         {
             if (persistTask.Exception != null)
             {
-                TheSushiRolesPlugin.Logger.LogError(persistTask.Exception.Message);
+                TheSushiRoles.Logger.LogError(persistTask.Exception.Message);
                 break;
             }
 

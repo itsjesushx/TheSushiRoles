@@ -1,6 +1,4 @@
-using System;
 using AmongUs.Data;
-using Hazel;
 using InnerNet;
 
 namespace TheSushiRoles.Modules 
@@ -56,7 +54,7 @@ namespace TheSushiRoles.Modules
         [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.HostGame))]
         public static class InnerNetClientHostPatch 
         {
-            public static void Prefix(InnerNet.InnerNetClient __instance, [HarmonyArgument(0)] NormalGameOptionsV07 settings) 
+            public static void Prefix(InnerNetClient __instance, [HarmonyArgument(0)] NormalGameOptionsV07 settings) 
             {
                 int maxPlayers;
                 try 
@@ -67,13 +65,13 @@ namespace TheSushiRoles.Modules
                 {
                     maxPlayers = 15;
                 }
-                DynamicLobbies.LobbyLimit = maxPlayers;
+                LobbyLimit = maxPlayers;
                 settings.MaxPlayers = 15; // Force 15 Player Lobby on Server
                 DataManager.Settings.Multiplayer.ChatMode = InnerNet.QuickChatModes.FreeChatOrQuickChat;
             }
-            public static void Postfix(InnerNet.InnerNetClient __instance, [HarmonyArgument(0)] NormalGameOptionsV07 settings) 
+            public static void Postfix(InnerNetClient __instance, [HarmonyArgument(0)] NormalGameOptionsV07 settings) 
             {
-                settings.MaxPlayers = DynamicLobbies.LobbyLimit;
+                settings.MaxPlayers = LobbyLimit;
             }
         }
         [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.JoinGame))]

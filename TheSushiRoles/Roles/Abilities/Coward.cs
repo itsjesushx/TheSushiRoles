@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace TheSushiRoles.Roles.Abilities
 {
     public static class Coward

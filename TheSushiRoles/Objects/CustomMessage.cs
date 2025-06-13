@@ -1,12 +1,10 @@
-using UnityEngine;
 using System.Collections.Generic;
-using System;
 
 namespace TheSushiRoles.Objects 
 {
     public class CustomMessage 
     {
-        private TMPro.TMP_Text text;
+        private TMP_Text text;
         private static List<CustomMessage> customMessages = new List<CustomMessage>();
         public CustomMessage(string message, float Duration) 
         {
@@ -17,7 +15,7 @@ namespace TheSushiRoles.Objects
                 
                 gameObject.transform.SetParent(FastDestroyableSingleton<HudManager>.Instance.transform);
                 UObject.DestroyImmediate(gameObject.GetComponent<RoomTracker>());
-                text = gameObject.GetComponent<TMPro.TMP_Text>();
+                text = gameObject.GetComponent<TMP_Text>();
                 text.text = message;
 
                 // Use local position to place it in the player's view instead of the world location

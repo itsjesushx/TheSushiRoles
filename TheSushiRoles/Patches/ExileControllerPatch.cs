@@ -22,26 +22,6 @@ namespace TheSushiRoles.Patches
             }
             if (Medic.usedShield) Medic.meetingAfterShielding = true;  // Has to be after the setting of the Shield
 
-            // Eraser erase
-            if (Eraser.Player != null && AmongUsClient.Instance.AmHost && Eraser.futureErased != null) 
-            {  // Need to send the RPC from the host here, to make sure that the order of erasing is correct (for that reason the futureErased are being synced)
-                foreach (PlayerControl target in Eraser.futureErased) 
-                {
-                    Utils.SendRPC(CustomRPC.ErasePlayerRoles, target.PlayerId);
-                    RPCProcedure.ErasePlayerRoles(target.PlayerId);
-                    if (!target.Data.Role.IsImpostor)
-                    {
-                        GameHistory.AddToRoleHistory(target.PlayerId, RoleInfo.crewmate);
-                    }
-                    else
-                    {
-                        GameHistory.AddToRoleHistory(target.PlayerId, RoleInfo.impostor);
-                    }
-                    Eraser.alreadyErased.Add(target.PlayerId);
-                }
-            }
-            Eraser.futureErased = new List<PlayerControl>();
-
             // Trickster boxes
             if (Trickster.Player != null && JackInTheBox.HasJackInTheBoxLimitReached()) 
             {
@@ -52,7 +32,7 @@ namespace TheSushiRoles.Patches
                 && PlayerControl.LocalPlayer == Amnesiac.Player 
                 && !PlayerControl.LocalPlayer.Data.IsDead 
                 && !Amnesiac.Remembered
-                && PlayerControl.AllPlayerControls.ToArray().Any(p => p != null && p.Data.IsDead && !p.Data.Disconnected))
+                && AllPlayerControls.Any(p => p != null && p.Data.IsDead && !p.Data.Disconnected))
             {
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
@@ -80,21 +60,15 @@ namespace TheSushiRoles.Patches
             if (Witch.Player != null && Witch.futureSpelled != null && AmongUsClient.Instance.AmHost) 
             {
                 bool exiledIsWitch = exiled != null && exiled.PlayerId == Witch.Player.PlayerId;
-                bool witchDiesWithExiledLover = exiled != null && Lovers.Existing() && Lovers.bothDie && (Lovers.Lover1.PlayerId == Witch.Player.PlayerId || Lovers.Lover2.PlayerId == Witch.Player.PlayerId) && (exiled.PlayerId == Lovers.Lover1.PlayerId || exiled.PlayerId == Lovers.Lover2.PlayerId);
+                bool witchDiesWithExiledLover = exiled != null && Lovers.Existing() && CustomGameOptions.ModifierLoverBothDie && (Lovers.Lover1.PlayerId == Witch.Player.PlayerId || Lovers.Lover2.PlayerId == Witch.Player.PlayerId) && (exiled.PlayerId == Lovers.Lover1.PlayerId || exiled.PlayerId == Lovers.Lover2.PlayerId);
 
-                if ((witchDiesWithExiledLover || exiledIsWitch) && Witch.witchVoteSavesTargets) Witch.futureSpelled = new List<PlayerControl>();
+                if ((witchDiesWithExiledLover || exiledIsWitch) && CustomGameOptions.WitchVoteSavesTargets) Witch.futureSpelled = new List<PlayerControl>();
                 foreach (PlayerControl target in Witch.futureSpelled) 
                 {
                     if (target != null && !target.Data.IsDead)
                     {
                         if (exiled != null && Prosecutor.Player != null && (target == Prosecutor.Player || target == Lovers.OtherLover(Prosecutor.Player)) 
                         && Prosecutor.target != null && Prosecutor.target.PlayerId == exiled.PlayerId) continue;
-
-                        if (target == Prosecutor.target && Prosecutor.Player != null) 
-                        {
-                            Utils.SendRPC(CustomRPC.ProsecutorChangeRole);
-                            RPCProcedure.ProsecutorChangeRole();
-                        }
 
                         if (target == Lawyer.target && Lawyer.Player != null) 
                         {
@@ -138,18 +112,18 @@ namespace TheSushiRoles.Patches
             {
                 PowerTools.SpriteAnim animator = vent.GetComponent<PowerTools.SpriteAnim>();
                 vent.EnterVentAnim = vent.ExitVentAnim = null;
-                Sprite newSprite = animator == null ? Vigilante.GetStaticVentSealedSprite() : Vigilante.GetAnimatedVentSealedSprite();
+                Sprite newSprite = animator == null ? Utils.GetSprite("StaticVentSealed", 160f) : Vigilante.GetAnimatedVentSealedSprite();
                 SpriteRenderer rend = vent.myRend;
-                if (Utils.IsFungle()) 
+                if (IsFungle()) 
                 {
-                    newSprite = Vigilante.GetFungleVentSealedSprite();
+                    newSprite = Utils.GetSprite("FungleVentSealed", 160f);
                     rend = vent.transform.GetChild(3).GetComponent<SpriteRenderer>();
                     animator = vent.transform.GetChild(3).GetComponent<PowerTools.SpriteAnim>();
                 }
                 animator?.Stop();
                 rend.sprite = newSprite;
-                if (SubmergedCompatibility.IsSubmerged && vent.Id == 0) vent.myRend.sprite = Vigilante.GetSubmergedCentralUpperSealedSprite();
-                if (SubmergedCompatibility.IsSubmerged && vent.Id == 14) vent.myRend.sprite = Vigilante.GetSubmergedCentralLowerSealedSprite();
+                if (SubmergedCompatibility.IsSubmerged && vent.Id == 0) vent.myRend.sprite = Utils.GetSprite("CentralUpperBlocked", 145f);
+                if (SubmergedCompatibility.IsSubmerged && vent.Id == 14) vent.myRend.sprite = Utils.GetSprite("CentralLowerBlocked", 145f);
                 rend.color = Color.white;
                 vent.name = "SealedVent_" + vent.name;
             }
@@ -184,7 +158,7 @@ namespace TheSushiRoles.Patches
         }
 
         // Workaround to add a "postfix" to the destroying of the exile controller (i.e. cutscene) and SpwanInMinigame of submerged
-        [HarmonyPatch(typeof(UnityEngine.Object), nameof(UnityEngine.Object.Destroy), new Type[] { typeof(GameObject) })]
+        [HarmonyPatch(typeof(UObject), nameof(UObject.Destroy), new Type[] { typeof(GameObject) })]
         public static void Prefix(GameObject obj) 
         {
             // Nightvision:
@@ -219,6 +193,11 @@ namespace TheSushiRoles.Patches
                 Jester.IsJesterWin = true;
             }
 
+            if (exiled != null && Monarch.Player != null && Monarch.Player == exiled)
+            {
+                Monarch.KnightedPlayers = new List<PlayerControl>();
+            }
+
             // Reset custom button timers where necessary
             CustomButton.MeetingEndedUpdate();
 
@@ -229,7 +208,6 @@ namespace TheSushiRoles.Patches
                 RPCProcedure.RemoveBlackmail();
             }
 
-
             Mystic.Investigated = false;
 
             if (!Deputy.Player.Data.IsDead) Deputy.CanExecute = true;
@@ -237,15 +215,10 @@ namespace TheSushiRoles.Patches
             Crusader.FortifiedPlayer = null;
             Crusader.Fortified = false;
 
-            Oracle.Investigated = false;
-            
-            // Clear the list again.
-            Snitch.Target = null;
-            Snitch.ShouldSee = false;
-            Snitch.ShouldHaveButton = true;
+            Oracle.Investigated = false;            
 
             // Mystic spawn souls
-            if (Mystic.deadBodyPositions != null && Mystic.Player != null && PlayerControl.LocalPlayer == Mystic.Player && (Mystic.mode == Mystic.Mode.Souls || Mystic.mode == Mystic.Mode.DeathAndSouls))
+            if (Mystic.deadBodyPositions != null && Mystic.Player != null && PlayerControl.LocalPlayer == Mystic.Player && (CustomGameOptions.MysticMode == MysticModes.Souls || CustomGameOptions.MysticMode == MysticModes.DeathAndSouls))
             {
                 foreach (Vector3 pos in Mystic.deadBodyPositions)
                 {
@@ -255,11 +228,11 @@ namespace TheSushiRoles.Patches
                     soul.layer = 5;
                     var rend = soul.AddComponent<SpriteRenderer>();
                     soul.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                    rend.sprite = Mystic.GetSoulSprite();
+                    rend.sprite = Utils.GetSprite("Souls", 500f);
 
-                    if (Mystic.limitSoulDuration)
+                    if (CustomGameOptions.MysticLimitSoulDuration)
                     {
-                        FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Mystic.soulDuration, new Action<float>((p) =>
+                        FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(CustomGameOptions.MysticSoulDuration, new Action<float>((p) =>
                         {
                             if (rend != null)
                             {
@@ -267,7 +240,7 @@ namespace TheSushiRoles.Patches
                                 tmp.a = Mathf.Clamp01(1 - p);
                                 rend.color = tmp;
                             }
-                            if (p == 1f && rend != null && rend.gameObject != null) UnityEngine.Object.Destroy(rend.gameObject);
+                            if (p == 1f && rend != null && rend.gameObject != null) UObject.Destroy(rend.gameObject);
                         })));
                     }
                 }
@@ -305,18 +278,18 @@ namespace TheSushiRoles.Patches
             if (BountyHunter.Player != null && BountyHunter.Player == PlayerControl.LocalPlayer)
                 BountyHunter.bountyUpdateTimer = 0f;
 
-            if (Miner.MineVisibility == 1) MinerVent.ConvertToVents();
+            if (CustomGameOptions.MineVisible == 1) MinerVent.ConvertToVents();
 
             // Psychic spawn souls
             if (Psychic.Player != null && PlayerControl.LocalPlayer == Psychic.Player) 
             {
                 if (Psychic.souls != null) 
                 {
-                    foreach (SpriteRenderer sr in Psychic.souls) UnityEngine.Object.Destroy(sr.gameObject);
+                    foreach (SpriteRenderer sr in Psychic.souls) UObject.Destroy(sr.gameObject);
                     Psychic.souls = new List<SpriteRenderer>();
                 }
 
-                if (Psychic.futureDeadBodies != null) 
+                if (Psychic.futureDeadBodies != null)
                 {
                     foreach ((DeadPlayer db, Vector3 ps) in Psychic.futureDeadBodies) 
                     {
@@ -326,7 +299,7 @@ namespace TheSushiRoles.Patches
                         s.layer = 5;
                         var rend = s.AddComponent<SpriteRenderer>();
                         s.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                        rend.sprite = Psychic.GetSoulSprite();
+                        rend.sprite = Utils.GetSprite("Souls", 500f);
                         Psychic.souls.Add(rend);
                     }
                     Psychic.deadBodies = Psychic.futureDeadBodies;
@@ -354,7 +327,7 @@ namespace TheSushiRoles.Patches
             if (p == 1f) foreach (BlindTrap Btrap in BlindTrap.traps) Btrap.triggerable = true;
             })));
 
-            if (!Yoyo.markStaysOverMeeting)
+            if (!CustomGameOptions.YoyoMarkStaysOverMeeting)
                 Silhouette.ClearSilhouettes();
         }
     }
@@ -369,16 +342,16 @@ namespace TheSushiRoles.Patches
         }
     }
 
-    [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString), new Type[] { typeof(StringNames), typeof(Il2CppReferenceArray<Il2CppSystem.Object>) })]
+    [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString), new Type[] { typeof(StringNames), typeof(Il2CppReferenceArray<IObject>) })]
     class ExileControllerMessagePatch 
     {
         static void Postfix(ref string __result, [HarmonyArgument(0)]StringNames id) 
         {
             try 
             {
-                if (ExileController.Instance != null && ExileController.Instance.initData != null) 
+                if (ExiledInstance() != null && ExiledInstance().initData != null) 
                 {
-                    PlayerControl player = ExileController.Instance.initData.networkedPlayer.Object;
+                    PlayerControl player = ExiledInstance().initData.networkedPlayer.Object;
                     if (player == null) return;
                     // Exile role text
                     if (id == StringNames.ExileTextPN || id == StringNames.ExileTextSN || id == StringNames.ExileTextPP || id == StringNames.ExileTextSP) {

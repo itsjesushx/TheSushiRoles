@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using Reactor.Utilities.Extensions;
-using UnityEngine;
 
 namespace TheSushiRoles.Roles
 {
@@ -9,13 +7,7 @@ namespace TheSushiRoles.Roles
         public static PlayerControl Player;
         public static Color Color = new Color32(100, 58, 220, byte.MaxValue);
         public static List<Arrow> localArrows = new();
-        public static float updateIntervall = 5f;
-        public static bool resetTargetAfterMeeting = false;
-        public static bool canTrackCorpses = false;
-        public static float corpsesTrackingCooldown = 25f;
-        public static float corpsesTrackingDuration = 5f;
         public static float corpsesTrackingTimer = 0f;
-        public static int trackingMode = 0;
         public static List<Vector3> deadBodyPositions = new();
         public static PlayerControl CurrentTarget;
         public static PlayerControl tracked;
@@ -25,23 +17,6 @@ namespace TheSushiRoles.Roles
 
         public static GameObject DangerMeterParent;
         public static DangerMeter Meter;
-
-        private static Sprite trackCorpsesButtonSprite;
-        public static Sprite GetTrackCorpsesButtonSprite()
-        {
-            if (trackCorpsesButtonSprite) return trackCorpsesButtonSprite;
-            trackCorpsesButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.PathfindButton.png", 115f);
-            return trackCorpsesButtonSprite;
-        }
-
-        private static Sprite ButtonSprite;
-        public static Sprite GetButtonSprite() 
-        {
-            if (ButtonSprite) return ButtonSprite;
-            ButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.TrackerButton.png", 115f);
-            return ButtonSprite;
-        }
-
         public static void ResetTracked() 
         {
             CurrentTarget = tracked = null;
@@ -56,20 +31,14 @@ namespace TheSushiRoles.Roles
             Player = null;
             ResetTracked();
             timeUntilUpdate = 0f;
-            updateIntervall = CustomOptionHolder.trackerUpdateIntervall.GetFloat();
-            resetTargetAfterMeeting = CustomOptionHolder.trackerResetTargetAfterMeeting.GetBool();
             if (localArrows != null) 
             {
                 foreach (Arrow arrow in localArrows)
                     if (arrow?.arrow != null)
-                        Object.Destroy(arrow.arrow);
+                        UObject.Destroy(arrow.arrow);
             }
             deadBodyPositions = new List<Vector3>();
             corpsesTrackingTimer = 0f;
-            corpsesTrackingCooldown = CustomOptionHolder.trackerCorpsesTrackingCooldown.GetFloat();
-            corpsesTrackingDuration = CustomOptionHolder.trackerCorpsesTrackingDuration.GetFloat();
-            canTrackCorpses = CustomOptionHolder.trackerCanTrackCorpses.GetBool();
-            trackingMode = CustomOptionHolder.trackerTrackingMethod.GetSelection();
             if (DangerMeterParent) 
             {
                 Meter.gameObject.Destroy();

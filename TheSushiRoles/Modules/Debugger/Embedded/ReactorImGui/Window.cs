@@ -1,6 +1,4 @@
 ﻿using System;
-using UnityEngine;
-
 namespace TheSushiRoles.Modules.Debugger.Embedded.ReactorImGui;
 
 public class Window

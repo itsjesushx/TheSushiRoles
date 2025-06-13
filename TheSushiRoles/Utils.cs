@@ -11,7 +11,6 @@ using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils;
 using Reactor.Networking;
 using Reactor.Networking.Extensions;
-using TMPro;
 
 namespace TheSushiRoles 
 {
@@ -35,6 +34,10 @@ namespace TheSushiRoles
             }
             return null;
         }
+        public static Sprite GetSprite(string SpriteName, float SpriteSize = 115f)
+        {
+            return LoadSprite($"TheSushiRoles.Resources.{SpriteName}.png", SpriteSize);
+        }
         public static void GlobalClearAndReload()
         {
             // Crew Roles
@@ -47,7 +50,6 @@ namespace TheSushiRoles
             Chronos.ClearAndReload();
             Medic.ClearAndReload();
             Gatekeeper.ClearAndReload();
-            Swapper.ClearAndReload();
             Tracker.ClearAndReload();
             Mystic.ClearAndReload();
             Hacker.ClearAndReload();
@@ -74,7 +76,6 @@ namespace TheSushiRoles
             Glitch.ClearAndReload();
             Juggernaut.ClearAndReload();
             VengefulRomantic.ClearAndReload();
-            Jackal.ClearAndReload();
             Werewolf.ClearAndReload();
             Hitman.ClearAndReload();
             Predator.ClearAndReload();
@@ -86,10 +87,8 @@ namespace TheSushiRoles
             Blackmailer.ClearAndReload();
             Janitor.ClearAndReload();
             Morphling.ClearAndReload();
-            Cultist.ClearAndReload();
             Viper.ClearAndReload();
             Painter.ClearAndReload();
-            Eraser.ClearAndReload();
             Grenadier.ClearAndReload();
             Trickster.ClearAndReload();
             Miner.ClearAndReload();
@@ -113,8 +112,6 @@ namespace TheSushiRoles
             Drunk.ClearAndReload();
             Chameleon.ClearAndReload();
             Lucky.ClearAndReload();
-            Recruit.ClearAndReload();
-            Follower.ClearAndReload();
             Lovers.ClearAndReload();
             Sleuth.ClearAndReload();
 
@@ -132,13 +129,13 @@ namespace TheSushiRoles
             Trap.ClearTraps();
             BlindTrap.ClearTraps();
             MinerVent.ClearMinerVents();
-            Utils.ToggleZoom(reset: true);
+            ToggleZoom(reset: true);
             GameStartManagerPatch.GameStartManagerUpdatePatch.startingTimer = 0;
             SurveillanceMinigamePatch.nightVisionOverlays = null;
             MapBehaviourPatch.ClearAndReload();
             //RoleInfo.RoleTexts.Clear();
             Modules.BetterMaps.BetterPolus.ClearAndReload();
-            TheSushiRolesPlugin.startTime = DateTime.UtcNow;
+            TheSushiRoles.startTime = DateTime.UtcNow;
             DevPatches.HostEndedGame = false;
         }
         public static AudioClip LoadAudioClipFromResources(string path, string clipName = "UNNAMED_TSR_AUDIO_CLIP")
@@ -170,7 +167,22 @@ namespace TheSushiRoles
             }
             return null;
         }
+        public static List<PlayerControl> GetCrewmates(List<PlayerControl> impostors)
+        {
+            return AllPlayerControls.Where(
+                player => !impostors.Any(imp => imp.PlayerId == player.PlayerId)
+            ).ToList();
+        }
 
+        public static List<PlayerControl> GetImpostors(
+            List<NetworkedPlayerInfo> infected)
+        {
+            var impostors = new List<PlayerControl>();
+            foreach (var impData in infected)
+                impostors.Add(impData.Object);
+
+            return impostors;
+        }
         public static void BecomeImpostor(PlayerControl player)
         {
             SendRPC(CustomRPC.BecomeImpostor, player);
@@ -216,7 +228,7 @@ namespace TheSushiRoles
             } 
             catch 
             {
-                TheSushiRolesPlugin.Logger.LogError("Error loading texture from disk: " + path);
+                TheSushiRoles.Logger.LogError("Error loading texture from disk: " + path);
             }
             return null;
         }
@@ -231,6 +243,7 @@ namespace TheSushiRoles
         public static void EndGame(GameOverReason reason = GameOverReason.ImpostorsByVote, bool showAds = false)
         {
             GameManager.Instance.RpcEndGame(reason, showAds);
+            TheSushiRoles.Logger.LogInfo($"GAME OVER WITH REASON: {reason.ToString()}");
         }
         public static PlayerControl GetPlayerById(byte id)
         {
@@ -248,12 +261,10 @@ namespace TheSushiRoles
             return res;
         }
 
-        public static bool TwoPlayersAlive() => PlayerControl.AllPlayerControls.ToArray().Count(x => !x.Data.IsDead) == 2;
+        public static bool TwoPlayersAlive() => AllPlayerControls.Count(x => !x.Data.IsDead) == 2;
 
         public static void HandlePoisonedOnBodyReport() 
-        {
-            if (Viper.Player == null) return;
-            
+        {            
             // Murder the poisoned player and reset poisoned (regardless whether the kill was successful or not)
             CheckMurderAttemptAndKill(Viper.Player, Viper.poisoned, true, false);
             SendRPC(CustomRPC.ViperSetPoisoned, byte.MaxValue, byte.MaxValue);
@@ -331,11 +342,6 @@ namespace TheSushiRoles
 
         internal static string GetRoleString(RoleInfo roleInfo)
         {
-            if (roleInfo.Name == "Jackal") 
-            {
-                var getRecruitText = Jackal.canCreateRecruit ? " and create a Recruit" : "";
-                return ColorString(roleInfo.Color, $"Role: <b>{roleInfo.Name}</b>\nKill everyone{getRecruitText}\nAlignment: <b>{roleInfo.AlignmentText()}</b>");  
-            }
             return ColorString(roleInfo.Color, $"Role: <b>{roleInfo.Name}</b>\n{roleInfo.ShortDescription} \nAlignment: <b>{roleInfo.AlignmentText()}</b>");
         }
         internal static string GetModifierString(ModifierInfo modInfo)
@@ -386,25 +392,15 @@ namespace TheSushiRoles
 
             return playerControlList;
         }
-
-        public static bool IsCustomServer() 
+        public static bool HasFakeTasks(this PlayerControl player)
         {
-            if (FastDestroyableSingleton<ServerManager>.Instance == null) return false;
-            StringNames n = FastDestroyableSingleton<ServerManager>.Instance.CurrentRegion.TranslateName;
-            return n != StringNames.ServerNA && n != StringNames.ServerEU && n != StringNames.ServerAS;
+            return player.IsPassiveNeutral() || player.IsNeutralKiller() && player != Agent.Player;
         }
-
-        public static bool HasFakeTasks(this PlayerControl player) 
-        {
-            return player.IsPassiveNeutral()|| player.IsNeutralKiller() && player != Agent.Player;
-        }
-        
-
-        public static bool ShouldShowGhostInfo() 
+        public static System.Random rnd = new System.Random((int)DateTime.Now.Ticks);
+        public static bool ShouldShowGhostInfo()
         {
             return PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer.Data.IsDead && MapOptions.ghostsSeeInformation || AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Ended;
         }
-
         public static void ClearAllTasks(this PlayerControl player) 
         {
             if (player == null) return;
@@ -428,7 +424,7 @@ namespace TheSushiRoles
 
                 if (Snitch.Player != null && Snitch.Player == target) Snitch.ResetArrows();
 
-                if (Monarch.Player != null && Monarch.Player == target && Monarch.KnightLoseOnDeath) Monarch.KnightedPlayers.Clear();
+                if (Monarch.Player != null && Monarch.Player == target && CustomGameOptions.KnightLoseOnDeath) Monarch.KnightedPlayers.Clear();
 
                 if (PlayerControl.LocalPlayer.AmOwner)
                 {
@@ -443,33 +439,28 @@ namespace TheSushiRoles
 
                 if (Deputy.Player == target) Deputy.CanExecute = false;
 
-                // Cultist show kill flash
-                if (Cultist.Player != null && Follower.Player != null)
-                {
-                    PlayerControl player = null;
-                    if (PlayerControl.LocalPlayer == Cultist.Player) player = Follower.Player;
-                    else if (PlayerControl.LocalPlayer == Follower.Player) player = Cultist.Player;
-
-                    if (player != null && !player.Data.IsDead && player == PlayerControl.LocalPlayer)
-                        ShowFlash(Palette.ImpostorRed, 1.5f);
-                }
-
-                // Survivor promotion trigger on murder (the host sends the call such that everyone recieves the update before a possible game End)
-                if (target == Lawyer.target && AmongUsClient.Instance.AmHost && Lawyer.Player != null)
+                if (target == Lawyer.target && Lawyer.Player != null)
                 {
                     SendRPC(CustomRPC.LawyerChangeRole);
                     RPCProcedure.LawyerChangeRole();
                 }
 
-                // Romantic promotion trigger on murder (the host sends the call such that everyone recieves the update before a possible game End)
-                if (target == Romantic.beloved && AmongUsClient.Instance.AmHost && Romantic.Player != null)
+                if (target == Romantic.beloved && Romantic.Player != null)
                 {
-                    Utils.SendRPC(CustomRPC.RomanticChangeRole);
+                    SendRPC(CustomRPC.RomanticChangeRole);
                     RPCProcedure.RomanticChangeRole();
+                }
+
+                if (target == Prosecutor.target && Prosecutor.Player != null)
+                {
+                    SendRPC(CustomRPC.ProsecutorChangeRole);
+                    RPCProcedure.ProsecutorChangeRole();
                 }
 
                 DeadPlayer deadPlayer = new DeadPlayer(target, DateTime.UtcNow, DeadPlayer.CustomDeathReason.Kill, killer);
                 GameHistory.deadPlayers.Add(deadPlayer);
+
+                SetBodySize();
 
                 // Psychic add body
                 if (Psychic.deadBodies != null)
@@ -503,13 +494,13 @@ namespace TheSushiRoles
                     killer.CurrentOutfitType = PlayerOutfitType.Default;
                 }
 
-                if (killer == PlayerControl.LocalPlayer) SoundManager.Instance.PlaySound(PlayerControl.LocalPlayer.KillSfx, false, 0.8f);
+                if (killer == PlayerControl.LocalPlayer) SoundManagerInstance().PlaySound(PlayerControl.LocalPlayer.KillSfx, false, 0.8f);
 
                 target.gameObject.layer = LayerMask.NameToLayer("Ghost");
                 target.Visible = false;
 
                 // Mystic show flash and add dead player position
-                if (Mystic.Player != null && (PlayerControl.LocalPlayer == Mystic.Player || ShouldShowGhostInfo()) && !Mystic.Player.Data.IsDead && Mystic.Player != target && Mystic.mode != Mystic.Mode.Souls)
+                if (Mystic.Player != null && (PlayerControl.LocalPlayer == Mystic.Player || ShouldShowGhostInfo()) && !Mystic.Player.Data.IsDead && Mystic.Player != target && CustomGameOptions.MysticMode != MysticModes.Souls)
                 {
                     Utils.ShowFlash(new Color(42f / 255f, 187f / 255f, 245f / 255f));
                     SoundEffectsManager.Play("DeadSound");
@@ -527,10 +518,10 @@ namespace TheSushiRoles
                 {
                     try
                     {
-                        if (Minigame.Instance)
+                        if (TaskPanelInstance)
                         {
-                            Minigame.Instance.Close();
-                            Minigame.Instance.Close();
+                            TaskPanelInstance.Close();
+                            TaskPanelInstance.Close();
                         }
 
                         if (MapBehaviour.Instance)
@@ -542,8 +533,8 @@ namespace TheSushiRoles
                     catch
                     { }
 
-                    HudManager.Instance.KillOverlay.ShowKillAnimation(killer.Data, data);
-                    HudManager.Instance.ShadowQuad.gameObject.SetActive(false);
+                    FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(killer.Data, data);
+                    FastDestroyableSingleton<HudManager>.Instance.ShadowQuad.gameObject.SetActive(false);
                     target.cosmetics.nameText.GetComponent<MeshRenderer>().material.SetInt("_Mask", 0);
                     target.RpcSetScanner(false);
                     var importantTextTask = new GameObject("_Player").AddComponent<ImportantTextTask>();
@@ -560,13 +551,13 @@ namespace TheSushiRoles
                         target.myTasks.Clear();
                         importantTextTask.Text = TranslationController.Instance.GetString(
                             StringNames.GhostIgnoreTasks,
-                            new Il2CppReferenceArray<Il2CppSystem.Object>(0));
+                            new Il2CppReferenceArray<IObject>(0));
                     }
                     else
                     {
                         importantTextTask.Text = TranslationController.Instance.GetString(
                             StringNames.GhostDoTasks,
-                            new Il2CppReferenceArray<Il2CppSystem.Object>(0));
+                            new Il2CppReferenceArray<IObject>(0));
                     }
 
                     target.myTasks.Insert(0, importantTextTask);
@@ -595,12 +586,12 @@ namespace TheSushiRoles
                 // Bait
                 if (Bait.Players.FindAll(x => x.PlayerId == target.PlayerId).Count > 0)
                 {
-                    float reportDelay = (float)TheSushiRolesPlugin.rnd.Next((int)Bait.reportDelayMin, (int)Bait.reportDelayMax + 1);
+                    float reportDelay = (float)rnd.Next((int)CustomGameOptions.ModifierBaitReportDelayMin, (int)CustomGameOptions.ModifierBaitReportDelayMax + 1);
                     Bait.active.Add(deadPlayer, reportDelay);
 
-                    if (Bait.showKillFlash && target == PlayerControl.LocalPlayer)
+                    if (CustomGameOptions.ModifierBaitShowKillFlash && target == PlayerControl.LocalPlayer)
                     {
-                        Utils.ShowFlash(new Color(204f / 255f, 102f / 255f, 0f / 255f));
+                        ShowFlash(new Color(204f / 255f, 102f / 255f, 0f / 255f));
                         SendMessage(ColorString(Bait.Color, "You will be forced to self report a Bait kill!"));
                     }
                 }
@@ -609,7 +600,7 @@ namespace TheSushiRoles
                 if (Vip.Players.FindAll(x => x.PlayerId == target.PlayerId).Count > 0)
                 {
                     Color Color = Color.yellow;
-                    if (Vip.showColor)
+                    if (CustomGameOptions.ModifierVipShowColor)
                     {
                         Color = Color.white;
                         if (target.Data.Role.IsImpostor) Color = Color.red;
@@ -626,6 +617,23 @@ namespace TheSushiRoles
                 }
             }
         }
+        public static bool IsInfected(this PlayerControl player)
+        {
+            return Plaguebearer.Player.IsAlive() && (Plaguebearer.InfectedPlayers.Contains(player)
+            || player.PlayerId == Plaguebearer.Player.PlayerId);
+        }
+        public static void RpcSpreadInfection(PlayerControl source, PlayerControl target)
+        {
+            new WaitForSeconds(1f);
+            SpreadInfection(source, target);
+            SendRPC(CustomRPC.PlaguebearerInfect, Plaguebearer.Player.PlayerId, source.PlayerId, target.PlayerId);
+        }
+
+        public static void SpreadInfection(PlayerControl source, PlayerControl target)
+        {
+            if (Plaguebearer.InfectedPlayers.Contains(source) && !Plaguebearer.InfectedPlayers.Contains(target)) Plaguebearer.InfectedPlayers.Add(target);
+            else if (Plaguebearer.InfectedPlayers.Contains(target) && !Plaguebearer.InfectedPlayers.Contains(source)) Plaguebearer.InfectedPlayers.Add(source);
+        }
         public static void RpcMurderPlayer(PlayerControl killer, PlayerControl target, bool lounge)
         {
             MurderPlayer(killer, target, lounge: lounge? true : false);
@@ -639,27 +647,6 @@ namespace TheSushiRoles
         public static void RpcRepairSystem(this ShipStatus shipStatus, SystemTypes systemType, byte amount)
         {
             shipStatus.RpcUpdateSystem(systemType, amount);
-        }
-
-        public static bool IsMira() 
-        {
-            return GameOptionsManager.Instance.CurrentGameOptions.MapId == 1;
-        }
-        public static bool IsAirship() 
-        {
-            return GameOptionsManager.Instance.CurrentGameOptions.MapId == 4;
-        }
-        public static bool IsSkeld() 
-        {
-            return GameOptionsManager.Instance.CurrentGameOptions.MapId == 0;
-        }
-        public static bool IsPolus() 
-        {
-            return GameOptionsManager.Instance.CurrentGameOptions.MapId == 2;
-        }
-        public static bool IsFungle() 
-        {
-            return GameOptionsManager.Instance.CurrentGameOptions.MapId == 5;
         }
 
         public static bool MushroomSabotageActive() 
@@ -687,10 +674,6 @@ namespace TheSushiRoles
                     }
                 })));
             }
-        }
-        public static void ShowTextToast(string text, float delay = 1.25f)
-        {
-            HudManager.Instance.StartCoroutine(CoTextToast(text, delay));
         }
         public static void SendRPC(params object[] data)
         {
@@ -749,7 +732,7 @@ namespace TheSushiRoles
                 }
                 else
                 {
-                    TheSushiRolesPlugin.Logger.LogMessage($"unknown data type entered for rpc write: item - {nameof(item)}, {item.GetType().FullName}, rpc - {data[0]}");
+                    TheSushiRoles.Logger.LogMessage($"unknown data type entered for rpc write: item - {nameof(item)}, {item.GetType().FullName}, rpc - {data[0]}");
                 }
             }
             AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -787,7 +770,7 @@ namespace TheSushiRoles
             GameObject taskOverlay = UObject.Instantiate(HudManager.Instance.TaskCompleteOverlay.gameObject, HudManager.Instance.transform);
             taskOverlay.SetActive(true);
             taskOverlay.GetComponentInChildren<TextTranslatorTMP>().DestroyImmediate();
-            taskOverlay.GetComponentInChildren<TMPro.TextMeshPro>().text = text;
+            taskOverlay.GetComponentInChildren<TextMeshPro>().text = text;
             
             yield return Effects.Slide2D(taskOverlay.transform, new Vector2(0f, -8f), Vector2.zero, 0.25f);
             
@@ -801,8 +784,16 @@ namespace TheSushiRoles
             taskOverlay.SetActive(true);
             taskOverlay.Destroy();
         }
+        public static void ShowTextToast(string text, float delay = 1.25f)
+        {
+            HudManager.Instance.StartCoroutine(CoTextToast(text, delay));
+        }
+        public static bool IsAlive(this PlayerControl player)
+        {
+            return player != null && !player.Data.Disconnected && !player.Data.IsDead;
+        }
 
-        public static void SetSemiTransparent(this PoolablePlayer player, bool value, float alpha=0.25f) 
+        public static void SetSemiTransparent(this PoolablePlayer player, bool value, float alpha = 0.25f)
         {
             alpha = value ? alpha : 1f;
             foreach (SpriteRenderer r in player.gameObject.GetComponentsInChildren<SpriteRenderer>())
@@ -810,7 +801,7 @@ namespace TheSushiRoles
             player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, alpha);
         }
 
-        public static string GetString(this TranslationController t, StringNames key, params Il2CppSystem.Object[] parts)
+        public static string GetString(this TranslationController t, StringNames key, params IObject[] parts)
         {
             return t.GetString(key, parts);
         }
@@ -869,12 +860,11 @@ namespace TheSushiRoles
             if (Patches.SurveillanceMinigamePatch.nightVisionIsActive) return true;
             else if (Assassin.isInvisble && Assassin.Player == target) return true;
             else if (Wraith.IsVanished && Wraith.Player == target) return true;
-            else if (!MapOptions.hidePlayerNames) return false; // All names are visible
+            else if (!CustomGameOptions.HidePlayerNames) return false; // All names are visible
             else if (source == null || target == null) return true;
             else if (source == target) return false; // Player sees his own name
             else if (source.Data.Role.IsImpostor && (target.Data.Role.IsImpostor || target == Spy.Player)) return false; // Members of team Impostors see the names of Impostors/Spies
             else if ((source == Lovers.Lover1 || source == Lovers.Lover2) && (target == Lovers.Lover1 || target == Lovers.Lover2)) return false; // Members of team Lovers see the names of each other
-            else if ((source == Jackal.Player || source == Recruit.Player) && (target == Jackal.Player || target == Recruit.Player)) return false; // Members of team Jackal see the names of each other
             return true;
         }
 
@@ -969,7 +959,7 @@ namespace TheSushiRoles
             FastDestroyableSingleton<HudManager>.Instance.FullScreen.gameObject.SetActive(true);
             FastDestroyableSingleton<HudManager>.Instance.FullScreen.enabled = true;
             // Message Text
-            TMPro.TextMeshPro messageText = GameObject.Instantiate(FastDestroyableSingleton<HudManager>.Instance.KillButton.cooldownTimerText, FastDestroyableSingleton<HudManager>.Instance.transform);
+            TextMeshPro messageText = GameObject.Instantiate(FastDestroyableSingleton<HudManager>.Instance.KillButton.cooldownTimerText, FastDestroyableSingleton<HudManager>.Instance.transform);
             messageText.text = message;
             messageText.enableWordWrapping = false;
             messageText.transform.localScale = Vector3.one * 0.5f;
@@ -977,7 +967,7 @@ namespace TheSushiRoles
             messageText.gameObject.SetActive(true);
             FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Duration, new Action<float>((p) => {
             var renderer = FastDestroyableSingleton<HudManager>.Instance.FullScreen;
-             if (PlaySound) SoundManager.Instance.PlaySound(ShipStatus.Instance.SabotageSound, false, 1f);
+             if (PlaySound) SoundManagerInstance().PlaySound(ShipStatus.Instance.SabotageSound, false, 1f);
 
                 if (p < 0.5)
                 {
@@ -1000,29 +990,27 @@ namespace TheSushiRoles
                 isVenter = true;
             else if (Wraith.Player != null && Wraith.Player == player)
                 isVenter = false;
-            else if (Jackal.canUseVents && Jackal.Player != null && Jackal.Player == player)
+            else if (CustomGameOptions.VengefulRomanticCanUseVents && VengefulRomantic.Player != null && VengefulRomantic.Player == player)
                 isVenter = true;
-            else if (VengefulRomantic.CanUseVents && VengefulRomantic.Player != null && VengefulRomantic.Player == player)
+            else if (CustomGameOptions.PestilenceCanUseVents && Pestilence.Player != null && Pestilence.Player == player)
                 isVenter = true;
-            else if (Pestilence.CanUseVents && Pestilence.Player != null && Pestilence.Player == player)
+            else if (CustomGameOptions.WerewolfCanUseVents && Werewolf.Player != null && Werewolf.Player == player)
                 isVenter = true;
-            else if (Werewolf.CanUseVents && Werewolf.Player != null && Werewolf.Player == player)
+            else if (CustomGameOptions.HitmanCanUseVents && Hitman.Player != null && Hitman.Player == player)
                 isVenter = true;
-            else if (Hitman.CanUseVents && Hitman.Player != null && Hitman.Player == player)
+            else if (CustomGameOptions.AgentCanUseVents && Agent.Player != null && Agent.Player == player)
                 isVenter = true;
-            else if (Agent.CanUseVents && Agent.Player != null && Agent.Player == player)
+            else if (CustomGameOptions.JesterCanHideInVents && Jester.Player != null && Jester.Player == player)
                 isVenter = true;
-            else if (Jester.CanUseVents && Jester.Player != null && Jester.Player == player)
+            else if (CustomGameOptions.JuggernautCanUseVents && Juggernaut.Player != null && Juggernaut.Player == player)
                 isVenter = true;
-            else if (Juggernaut.CanUseVents && Juggernaut.Player != null && Juggernaut.Player == player)
+            else if (CustomGameOptions.SpyCanEnterVents && Spy.Player != null && Spy.Player == player)
                 isVenter = true;
-            else if (Spy.canEnterVents && Spy.Player != null && Spy.Player == player)
+            else if (CustomGameOptions.PredatorCanUseVents && Predator.Player != null && Predator.Player == player)
                 isVenter = true;
-            else if (Predator.CanUseVents && Predator.Player != null && Predator.Player == player)
+            else if (CustomGameOptions.GlitchCanUseVents && Glitch.Player != null && Glitch.Player == player)
                 isVenter = true;
-            else if (Glitch.canEnterVents && Glitch.Player != null && Glitch.Player == player)
-                isVenter = true;
-            else if (Scavenger.canUseVents && Scavenger.Player != null && Scavenger.Player == player)
+            else if (CustomGameOptions.ScavengerCanUseVents && Scavenger.Player != null && Scavenger.Player == player)
                 isVenter = true;
             else if (player.Data?.Role != null && player.Data.Role.CanVent)
             {
@@ -1046,60 +1034,6 @@ namespace TheSushiRoles
                 return true;
             }
             return false;
-        }
-        public static void HostSuicide(PlayerControl player)
-        {
-            if (player == null) return;
-
-            if (Deputy.ExecuteButtons != null && player == Deputy.Player)
-            {
-                foreach (var button in Deputy.ExecuteButtons)
-                {
-                    UObject.Destroy(button);
-                }
-                Deputy.ExecuteButtons.Clear();
-            }
-            if (Guesser.IsGuesser(player.PlayerId)) RemoveGuessButtonForPlayer(player);
-            player.Exiled();
-
-            GameHistory.CreateDeathReason(player, DeadPlayer.CustomDeathReason.HostSuicide, player);
-
-            SoundEffectsManager.Play("DeadSound");
-
-            if (FastDestroyableSingleton<HudManager>.Instance != null && PlayerControl.LocalPlayer == player)
-            {
-                FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(player.Data, player.Data);
-                if (MeetingHudPatch.GuesserUI != null) MeetingHudPatch.GuesserUIExitButton.OnClick.Invoke();
-            }
-
-            if (MeetingHud.Instance)
-            {
-                var voteArea = MeetingHud.Instance.playerStates.FirstOrDefault(x => x.TargetPlayerId == player.PlayerId);
-                if (voteArea != null)
-                {
-                    voteArea.SetDead(voteArea.DidReport, true);
-                    voteArea.Overlay.gameObject.SetActive(true);
-                    MeetingHudPatch.SwapperCheckAndReturnSwap(MeetingHud.Instance, voteArea.TargetPlayerId);
-                }
-                foreach (PlayerVoteArea pva in MeetingHud.Instance.playerStates)
-                {
-                    if (pva.VotedFor == player.PlayerId)
-                    {
-                        pva.UnsetVote();
-                        var voteAreaPlayer = GetPlayerById(pva.TargetPlayerId);
-                        if (voteAreaPlayer != null && voteAreaPlayer.AmOwner)
-                            MeetingHud.Instance.ClearVote();
-                    }
-                }
-                if (AmongUsClient.Instance.AmHost) MeetingHud.Instance.CheckForEndVoting();
-            }
-
-            if (player != null)
-            {
-                string msg = $"{player.Data.PlayerName}, (Lobby Host) has committed suicide!";
-                if (AmongUsClient.Instance.AmClient && FastDestroyableSingleton<HudManager>.Instance)
-                    FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(player, msg);
-            }
         }
         public static bool IsHideNSeek => GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek;
 
@@ -1187,7 +1121,7 @@ namespace TheSushiRoles
             }
 
             // Block Lucky with armor kill
-            else if (CheckLucky(target, true, killer == PlayerControl.LocalPlayer, Sheriff.Player == null || killer.PlayerId != Sheriff.Player.PlayerId || !target.IsCrew() && Sheriff.canKillNeutrals || IsKiller(target)))
+            else if (CheckLucky(target, true, killer == PlayerControl.LocalPlayer, Sheriff.Player == null || killer.PlayerId != Sheriff.Player.PlayerId || !target.IsCrew() && CustomGameOptions.SheriffCanKillNeutrals || IsKiller(target)))
             {
                 return MurderAttemptResult.BlankKill;
             }
@@ -1232,22 +1166,22 @@ namespace TheSushiRoles
         public static void ShareGameVersion() 
         {
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VersionHandshake, Hazel.SendOption.Reliable, -1);
-            writer.Write((byte)TheSushiRolesPlugin.Version.Major);
-            writer.Write((byte)TheSushiRolesPlugin.Version.Minor);
-            writer.Write((byte)TheSushiRolesPlugin.Version.Build);
+            writer.Write((byte)TheSushiRoles.Version.Major);
+            writer.Write((byte)TheSushiRoles.Version.Minor);
+            writer.Write((byte)TheSushiRoles.Version.Build);
             writer.Write(AmongUsClient.Instance.AmHost ? Patches.GameStartManagerPatch.timer : -1f);
             writer.WritePacked(AmongUsClient.Instance.ClientId);
-            writer.Write((byte)(TheSushiRolesPlugin.Version.Revision < 0 ? 0xFF : TheSushiRolesPlugin.Version.Revision));
+            writer.Write((byte)(TheSushiRoles.Version.Revision < 0 ? 0xFF : TheSushiRoles.Version.Revision));
             writer.Write(Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId.ToByteArray());
             AmongUsClient.Instance.FinishRpcImmediately(writer);
-            RPCProcedure.VersionHandshake(TheSushiRolesPlugin.Version.Major, TheSushiRolesPlugin.Version.Minor, TheSushiRolesPlugin.Version.Build, TheSushiRolesPlugin.Version.Revision, Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId, AmongUsClient.Instance.ClientId);
+            RPCProcedure.VersionHandshake(TheSushiRoles.Version.Major, TheSushiRoles.Version.Minor, TheSushiRoles.Version.Build, TheSushiRoles.Version.Revision, Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId, AmongUsClient.Instance.ClientId);
         }
 
         public static void Shuffle<T>(this List<T> list)
         {
             for (var i = list.Count - 1; i > 0; --i)
             {
-                var j = UnityEngine.Random.Range(0, i + 1);
+                var j = URandom.Range(0, i + 1);
                 (list[i], list[j]) = (list[j], list[i]);
             }
         }
@@ -1267,11 +1201,6 @@ namespace TheSushiRoles
             }
 
             return flag;
-        }
-        public static bool IsJackal(PlayerControl player)
-        {
-            return player != null && Recruit.Player != null && player.PlayerId == Recruit.Player.PlayerId ||
-            player != null && Jackal.Player != null && player.PlayerId == Jackal.Player.PlayerId;
         }
 
         public static bool IsNeutral(this PlayerControl player)
@@ -1301,6 +1230,21 @@ namespace TheSushiRoles
             if (roleInfo != null)
                 return roleInfo.Alignment == RoleAlignment.NeutralEvil;
             return false;
+        }
+        public static void SetBodySize()
+        {
+            Il2CppArrayBase<DeadBody> bodies = UObject.FindObjectsOfType<DeadBody>();
+            foreach (DeadBody body in bodies)
+            if (body.ParentId == Mini.Player?.PlayerId)
+            {
+                if (body.transform.localScale != new Vector3(1f, 1f, 1f))
+                    body.transform.localScale = new Vector3(1f, 1f, 1f);
+            }
+            else if (body.ParentId == Giant.Player?.PlayerId)
+            {
+                if (body.transform.localScale != new Vector3(0.5f, 0.5f, 1f))
+                    body.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
+            }
         }
 
         public static void RemoveGuessButtons()
@@ -1471,8 +1415,6 @@ namespace TheSushiRoles
         public static bool HasImpVision(NetworkedPlayerInfo player) 
         {
             return player.Role.IsImpostor
-                || Jackal.Player != null && Jackal.Player.PlayerId == player.PlayerId
-                || (Recruit.Player != null && Recruit.Player.PlayerId == player.PlayerId)
                 || (Glitch.Player != null && Glitch.Player.PlayerId == player.PlayerId)
                 || (Werewolf.Player != null && Werewolf.Player.PlayerId == player.PlayerId)
                 || (Juggernaut.Player != null && Juggernaut.Player.PlayerId == player.PlayerId)
@@ -1480,8 +1422,8 @@ namespace TheSushiRoles
                 || (Pestilence.Player != null && Pestilence.Player.PlayerId == player.PlayerId)
                 || (VengefulRomantic.Player != null && VengefulRomantic.Player.PlayerId == player.PlayerId)
                 || (Predator.Player != null && Predator.HasImpostorVision && Predator.Player.PlayerId == player.PlayerId)
-                || (Spy.Player != null && Spy.Player.PlayerId == player.PlayerId && Spy.hasImpostorVision)
-                || (Jester.Player != null && Jester.Player.PlayerId == player.PlayerId && Jester.hasImpostorVision);
+                || (Spy.Player != null && Spy.Player.PlayerId == player.PlayerId && CustomGameOptions.SpyHasImpostorVision)
+                || (Jester.Player != null && Jester.Player.PlayerId == player.PlayerId && CustomGameOptions.JesterHasImpostorVision);
         }
     }
 }

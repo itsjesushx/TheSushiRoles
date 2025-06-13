@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace TheSushiRoles.Modules.CustomHats;
+﻿namespace TheSushiRoles.Modules.CustomHats;
 
 public class HatExtension
 {

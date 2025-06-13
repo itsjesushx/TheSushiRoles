@@ -8,6 +8,7 @@ This mod is not affiliated with Among Us or Innersloth LLC, and the content cont
 # The Sushi Roles
 **The Sushi Roles** is an [Among Us](https://store.steampowered.com/app/945360/Among_Us) mod, which adds many new roles, modifiers, abilities, new [Settings](#settings) and new [Custom Hats](#custom-hats) to the game.
 Even more roles are coming soon.
+**Join the discord server to find support or people to play with! [Click here!](https://discord.gg/pRMRJKR2Tc).**
 
 **Roles & Modifiers List:**
 
@@ -15,25 +16,25 @@ Even more roles are coming soon.
 |----------|-------------|-----------------|----------------|----------------|
 | [Grenadier](#grenadier) | [Mayor](#mayor) | [Jester](#jester) | [Sleuth](#sleuth) | [Paranoid](#paranoid) |
 | [Undertaker](#undertaker) | [Engineer](#engineer) | [Arsonist](#arsonist) | [Lazy](#lazy) | [Coward](#coward) |
-| [Yo-Yo](#yoyo) | [Sheriff](#sheriff) | [Jackal](#jackal) | [Tie Breaker](#tie-breaker) |  |
+| [Yo-Yo](#yoyo) | [Sheriff](#sheriff) | [Plaguebearer](#plaguebearer) | [Tie Breaker](#tie-breaker) |  |
 | [Morphling](#morphling) | [Trapper](#trapper)| [Pestilence](#plaguebearer) | [Bait](#bait) | |
 | [Painter](#painter) | [Landlord](#landlord) | [Scavenger](#scavenger) | [Lovers](#lovers) | |
 | [Viper](#viper) | [Detective](#detective) | [Lawyer](#lawyer) | [Blind](#blind) | |
-| [Eraser](#eraser) | [Chronos](#chronos) | [Prosecutor](#prosecutor) | [Mini](#mini) | |
+| [Assassin](#assassin) | [Chronos](#chronos) | [Prosecutor](#prosecutor) | [Mini](#mini) | |
 | [Trickster](#trickster) | [Medic](#medic) | [Survivor](#survivor) | [VIP](#vip) |  |
-| [Janitor](#janitor) | [Swapper](#swapper) | [Agent](#agent) | [Drunk](#drunk) | |
+| [Janitor](#janitor) | [Deputy](#deputy) | [Agent](#agent) | [Drunk](#drunk) | |
 | [Warlock](#warlock) | [Mystic](#mystic) | [Glitch](#glitch)    | [Chameleon](#chameleon) | |
 | [Bounty Hunter](#bounty-hunter) | [Hacker](#hacker) | [Juggernaut](#juggernaut)   | [Lucky](#lucky) |
-| [Witch](#witch) | [Tracker](#tracker) | [Predator](#predator)  |  [Recruit](#recruit)  |
-| [Assassin](#assassin) | [Crusader](#crusader) | [Romantic](#romantic)   | [Lighter](#lighter) |
-| [Cultist](#cultist) | [Spy](#spy) | [Werewolf](#werewolf) |  | |
+| [Witch](#witch) | [Tracker](#tracker) | [Predator](#predator)  | [Lighter](#lighter) |
+|  | [Crusader](#crusader) | [Romantic](#romantic)   |  |
+| | [Spy](#spy) | [Werewolf](#werewolf) |  | |
 | | [Gatekeeper](#gatekeeper) | [Amnesiac](#amnesiac) |  |  |
-| | [Vigilante](#vigilante) |  [Plaguebearer](#plaguebearer) |  |  |
+| | [Vigilante](#vigilante) |   |  |  |
 |  | [Psychic](#psychic) |  |  |  |
 |  |[Veteran](#veteran)    |  |  |  |
 |  |[Oracle](#oracle) |  |  |  |
 |  | [Monarch](#monarch) |  |  |
-|  | [Deputy](#deputy) |  |  |
+|  |  |  |  |
 
 The [Role Assignment](#role-assignment) section explains how the roles are being distributed among the players.
 If you want to learn how the new killers work, go to [Neutral Killers guide](#neutral-killers) to see it.
@@ -69,18 +70,17 @@ Not working? You might want to install the dependency [vc_redist](https://aka.ms
 4. Launch the game via Steam
 
 # Credits & Resources
-**Thanks to [TheOtherRoles](https://github.com/TheOtherRolesAU/TheOtherRoles) for providing the mod's orginal codebase!**
+**Thanks to [TheOtherRoles](https://github.com/TheOtherRolesAU/TheOtherRoles) for providing the orginal codebase!**
 [MyDragonBreath's AmongUs MultiClientInstancing](https://github.com/myDragonBreath/AmongUs.MultiClientInstancing) - for TheSushiRoles Debugger.
 [Reactor](https://github.com/NuclearPowered/Reactor) - The framework used.\
 [BepInEx](https://github.com/BepInEx) - Used to hook to game functions.\
-[StellarRoles](https://github.com/mr-fluuff/StellarRolesAU) - Idea for the Cultist/Follower roles, some functions for Cultist to work (TargetPlayer helper, how Cultist is assigned) and some code snippets for the MinerVent class.\
-[Jackal and Recruit](https://github.com/TheOtherRolesAU/TheOtherRoles) - Original Codebase, and idea for the Jackal and Recruit came from **TheOtherRoles**\
+[StellarRoles](https://github.com/mr-fluuff/StellarRolesAU) - code snippets for the MinerVent class.\
 [Among-Us-Love-Couple-Mod](https://github.com/Woodi-dev/Among-Us-Love-Couple-Mod) - Idea for the Lovers modifier came from **Woodi-dev**\
 [Jester](https://github.com/Maartii/Jester) - Idea for the Jester role came from **Maartii**\
 [ExtraRolesAmongUs](https://github.com/NotHunter101/ExtraRolesAmongUs) - Idea for the Engineer and Medic role came from **NotHunter101**. Also some code snippets from their implementation were used.\
 [Among-Us-Sheriff-Mod](https://github.com/Woodi-dev/Among-Us-Sheriff-Mod) - Idea for the Sheriff role came from **Woodi-dev**\
 [TooManyRolesMods](https://github.com/Hardel-DW/TooManyRolesMods) - Idea for the Detective and Chronos roles came from **Hardel-DW**.\
-[TownOfUs](https://github.com/slushiegoose/Town-Of-Us) - Idea for the Swapper, Arsonist and a similar Mayor role came from **Slushiegoose**\
+[TownOfUs](https://github.com/slushiegoose/Town-Of-Us) - Idea for the Arsonist and a similar Mayor role came from **Slushiegoose**\
 [Ottomated](https://twitter.com/ottomated_) - Idea for the Morphling and Painter role came from **Ottomated**\
 [Crowded-Mod](https://github.com/CrowdedMods/CrowdedMod) - Our implementation for 10+ player lobbies were inspired by the one from the **Crowded Mod Team**\
 [Goose-Goose-Duck](https://store.steampowered.com/app/1568590/Goose_Goose_Duck) - Idea for the Scavenger role came from **Slushiegoose**\
@@ -99,9 +99,9 @@ The mod adds a few new settings to Among Us (in addition to the role settings) m
 - **Number of Modifiers:** The number of Modifiers can be set inside a lobby.
 - **Number of Abilities:** The number of Abilities can be set inside a lobby.
 - **Map:** The map can be changed inside a lobby.
-- **Maximum Number Of Meetings:** You can set the maximum number of meetings that can be called in total (Every player still has personal maximum of buttons, but if the maximum number of meetings is reached you can't use your meetings even if you have some left. Impostor and Jackal meetings also count).
+- **Maximum Number Of Meetings:** You can set the maximum number of meetings that can be called in total (Every player still has personal maximum of buttons, but if the maximum number of meetings is reached you can't use your meetings even if you have some left. Impostor meetings also count).
 - **Allow Skips On Emergency Meetings:** If set to false, there will not be a skip button in emergency meetings. If a player does not vote, they'll vote themself.
-- **Hide Player Names:** Hides the names of all players that have role which is unknown to you. Team Lovers/Impostors/Jackal still see the names of their teammates. Impostors can also see the name of the Spy.
+- **Hide Player Names:** Hides the names of all players that have role which is unknown to you. Team Lovers/Impostors still see the names of their teammates. Impostors can also see the name of the Spy.
 - **Allow Parallel MedBay Scans:** Allows players to perform their MedBay scans at the same time.
 - **Shield Last Game First Kill** The first killed player of the previous round will be shielded for all players visible until the first meeting.
 - **Finish Tasks Before Haunting Or Zooming Out ** The zoom out function as well as haunting will be hidden for the player until all their tasks are finished
@@ -148,7 +148,6 @@ The game will **remain** in the preset for that random map after the match.
 The random map presets can still be used like normal presets, if you **turn of** `Play On A Random Map` (make sure you do this in all presets you are using).
 
 
-
 # Custom Hats
 ## Create and submit new hat designs
 We're awaiting your creative hat designs and we'll integrate all the good ones in our mod.
@@ -187,8 +186,6 @@ The count you set will only be reached, if there are enough Crewmates/Impostors 
 - First all roles that are set to 100% are being assigned to arbitrary players.
 - After that each role that has 10%-90% selected adds 1-9 tickets to a ticket pool (there exists a ticket pool for Crewmates, Neutrals and Impostors). Then the roles will be selected randomly from the pools as long it's possible (until the selected number is reached, until there are no more Crewmates/Impostors or until there are no more tickets). If a role is selected from the pool, obviously all the tickets of that role are being removed.
 - The Lovers are being selected independently (without using the ticket system) according to the spawn chance you selected. After that the Crewmate, Neutral and Impostor roles are selected and assigned in a random order.
-- If you have Cultist role on, the game will automatically add a Crewmate role slot, as when Cultist spawns, it removes the second impostor, giving them basic crewmate if the lobby has the roles set for the amount of players it has.
-
 **Example:**\
 Settings: 2 special Crewmate roles, Crusader: 100%, Hacker: 10%, Tracker: 30%\
 Result: Crusader is assigned, then one role out of the pool [Hacker, Tracker, Tracker, Tracker] is being selected\
@@ -257,27 +254,6 @@ The Viper can also place blind traps in the map, if a player steps on them, they
 | Viper Cooldown | Sets the kill/bite Cooldown
 | Blind Cooldown | -
 | Blind Duration | -
------------------------
-
-## Eraser
-### **Faction: Impostors**
-The Eraser is an Impostor that can erase the role of every player.\
-The targeted players will lose their role after the meeting right before a player is exiled.\
-After every erase, the Cooldown increases by 10 seconds.\
-The erase will be performed, even if the Eraser or their target die before the next meeting.\
-By default the Eraser can erase everyone but the Spy and other Impostors.\
-Depending on the options they can also erase them (Impostors will lose their special Impostor ability).\
-\
-**NOTE:**
-- As the erase is being triggered before the ejection of a player, a Jester win would not happen, as the erase will be triggered before.
-- Modifier will not be erased.
-
-### Game Options
-| Name | Description |
-|----------|:-------------:|
-| Eraser Spawn Chance | -
-| Eraser Cooldown | The Eraser's Cooldown will increase by 10 seconds after every erase.
-| Eraser Can Erase Anyone | If set to false, they can't erase the Spy and other Impostors
 -----------------------
 
 ## Trickster
@@ -423,26 +399,6 @@ When performing a Assassin ability kill, the Assassin can be invisible for some 
 | Time The Assassin Is Invisible | -
 -----------------------
 
-## Cultist
-### **Faction: Impostors**
-The Cultist is an Impostor role that is focused around working with an impostor partner of the Cultist's choice.
-The Cultist starts the game with the ability 'Convert'. Convert will function properly regardless of the target's role/alignment.\
-Converting a player changes their role into a random Impostor role.\
-
-**NOTE:**
-- The Cultist and Follower have arrows pointing to each other.
-- The Cultist and Follower get a flash on their screen when the other kills.
-- They Cultist can't kill until they have gotten a Follower.
-- The Cultist won't be in the same game as a Spy, Romantic and a Prosecutor.
-
-### Game Options
-| Name | Description |
-|----------|:-------------:|
-| Cultist Spawn Chance | -
-| Cultist Create Follower Cooldown | -
-| Follower Gets Guesser Ability | -
------------------------
-
 ## YoYo
 ### **Faction: Impostors**
 The Yo-Yo is an Impostor who has the ability mark a position and later blink (teleport) to this position.\
@@ -554,57 +510,13 @@ The priority of each Neutral Killer win condition is the following:
 7. Team Crew wins by outnumbering (When there is no player that is a Neutral Killer and the team Impostors left)
 
 **NOTE:**
-- The game will NOT end if one of these crewmate roles are alive with the last killers: Sheriff, Mayor, Veteran (with charges), Swapper or if a Crewmate Tiebreaker is alive.
+- The game will NOT end if one of these crewmate roles are alive with the last killers: Sheriff, Mayor, Veteran (with charges) or if a Crewmate Tiebreaker is alive.
 - The Neutral Killers may be killed by a Sheriff.
 - The Crew can still win, even if all of their members are dead, if they finish their tasks fast enough (That's why converting the last Crewmate with tasks left into a Recruit results in a task win for the crew.)
 
 If Impostors and multiple Neutral Killers are in the game, the game continues even if all Crewmates are dead. Crewmates may still win in this case by completing their tasks. Each Neutral Killer and Impostor have to kill each other.
 
 -----------------------
-
-## Jackal
-### **Team: Jackal**
-### **Faction: Neutral**
-### **Alignment: Neutral Killing**
-The Jackal is part of an extra team, that tries to eliminate all the other players.\
-The Jackal has no tasks and can kill Impostors, Crewmates and Neutrals.\
-The Jackal (if allowed by the options) can select another player to be their Recruit.
-Creating a Recruit adds them to the team Jackal. The Recruit keeps their current role if they are a lover, they got 3 teams where they could possibly win.
-The "Create Recruit Action" may only be used once per game.
-If An Amnesiac remembers a Jackal, the current Jackal's Recruit will be removed. And Amnesiac will be a Recruit instead.
-The jackal cannot kill until they create a Recruit.
-
-### Game Options
-| Name | Description
-|----------|:-------------:|
-| Jackal Spawn Chance | -
-| Team Jackal Kill Cooldown | Kill Cooldown |
-| Jackal Create Recruit Cooldown | Cooldown before a Recruit can be created |
-| Jackal Can Use Vents | Yes/No |
-| Jackal Can Create A Recruit | Yes/No |
-| Recruit Can Vent | Yes/No |
-| Team Jackal Have Impostor Vision | -
------------------------
-
-## Recruit
-### **Team: Jackal**
-### **Faction: Neutral**
-### **Alignment: Neutral Killing**
-Gets assigned to a player during the game by the "Create Recruit Action" of the Jackal and joins the Jackal in their quest to eliminate all other players.\
-\
-**NOTE:**
-- The original faction of the player will be changed to Neutral, so they count as a Jackal.
-- The original alignment of the player will be changed to Neutral Killing, so they count as a Jackal.
-- The Recruit may be killed by a Sheriff.
-- The Recruit cannot target the Mini, while it's growing up.
-
-### Game Options
-| Name | Description
-|----------|:-------------:|
-| Team Jackal Kill Cooldown | Uses the same kill Cooldown setting as the Jackal |
-| Recruit Can Use Vents | Yes/No |
------------------------
-
 ## Juggernaut
 ### **Faction: Neutral**
 ### **Alignment: Neutral Killing**
@@ -778,7 +690,7 @@ They can remember a role by picking a player after the meeting ends. By clicking
 ### **Faction: Neutral**
 ### **Alignment: Neutral Benign**
 The Lawyer is a neutral role that has a client.\
-The client might be an Impostor or Jackal which is no Lover.\
+The client might be an Impostor or Neutral Killer which is no Lover.\
 Depending on the options, the client can also be a Jester.\
 The Lawyer needs their client to win in order to win the game.\
 Their client doesn't know that it is their client.\
@@ -966,7 +878,7 @@ Additionally, the Landlord makes the players switch bodies, meaning any interact
 ### **Alignment: Crew Support**
 The Engineer (if alive) can fix a certain amount of sabotages per game from anywhere on the map.\
 The Engineer can use vents.\
-If the Engineer is inside a vent, depending on the options the members of the team Jackal/Impostors will see a blue outline around all vents on the map (in order to warn them).\
+If the Engineer is inside a vent, depending on the options the members of the team Impostor or any Neutral Killer will see a blue outline around all vents on the map (in order to warn them).\
 
 **NOTE:**
 - The kill button of Impostors activates if they stand next to a vent where the Engineer is. They can also kill them there. No other action (e.g. Morphling sample ...) can affect players inside vents.
@@ -977,7 +889,7 @@ If the Engineer is inside a vent, depending on the options the members of the te
 | Engineer Spawn Chance | -
 | Number Of Sabotage Fixes| -
 | Impostors See Vents Highlighted | -
-| Jackal And Recruit See Vents Highlighted | -
+| Neutral Killers See Vents Highlighted | -
 -----------------------
 
 ## Sheriff
@@ -1057,28 +969,6 @@ The Medic's other feature shows when they report a corpse: they will see how lon
 | Shielded Player Sees Murder Attempt| Whether a shielded player sees if someone tries to kill them | True/false |
 | Shield Will Be Activated | Sets when the shield will be active | "Instantly", "Instantly, Visible After Meeting", "After Meeting"
 | Medic Sees Murder Attempt On Shielded Player | - | If anyone tries to harm the shielded player (Impostor, Sheriff, Guesser, ...), the Medic will see a red flash
------------------------
-
-## Swapper
-### **Faction: Crewmates**
-### **Alignment: Crew Power**
-During meetings the Swapper can exchange votes that two people get (i.e. all votes
-that player A got will be given to player B and vice versa).\
-Because of the Swapper's strength in meetings, they might not start emergency meetings and can't fix lights and comms.\
-The Swapper has initial swap charges and can recharge those charges after completing a configurable amount of tasks.\
-\
-**NOTE:**
-- The remaining charges will be displayed in brackets next to the players role while not in a meeting
-- In a meeting the charges will appear next to the Confirm Swap button
-
-### Game Options
-| Name | Description
-|----------|:-------------:|
-| Swapper Spawn Chance | -
-| Swapper Can Call Emergency Meeting | Option to disable the emergency button for the Swapper
-| Swapper Can Only Swap Others | Sets whether the Swapper can swap themself or not
-| Initial Swap Charges | -
-| Number Of Tasks Needed For Recharging | -
 -----------------------
 
 ## Snitch
@@ -1259,7 +1149,6 @@ The souls will always prefer to answer with the role specific information first!
 - Active Lover dies: "I wanted to get out of this toxic relationship anyways."
 - Passiv Lover suicide: "The love of my life died, thus with a kiss I die."
 - Lawyer client kills Lawyer: "My client killed me. Do I still get paid?"
-- Teamkill Team Jackal: "First they recruited me, then they killed me... BUT WHY?"
 - Teamkill Impostor: "I guess they confused me for the Spy, is there even one?"
 - Submerged o2-Kill: "Do I really need that mask for breathing?"
 - Warlock self kill: "MAYBE I cursed the person next to me and killed myself. Oops."
@@ -1430,14 +1319,15 @@ If one Lover dies (and the option is activated), the other Lover suicides.\
 You can specify the chance of one Lover being an Impostor.\
 The Lovers never know the role of their partner, they only see who their partner is.\
 The Lovers win, if they are both alive when the game ends. They can also win with their original team (e.g. a dead Impostor Lover can win with the Impostors, an Arsonist Lover can still achieve an Arsonist win).\
-If one of the Lovers is a killer (i.e. Team Jackal/Impostor), they can achieve a "Lovers solo win" where only the Lovers win.\
+If one of the Lovers is a killer (i.e. Neutral Killer/Impostor), they can achieve a "Lovers solo win" where only the Lovers win.\
 If there is no killer among the Lovers (e.g. an Arsonist Lover + Crewmate Lover) and they are both alive when the game ends, they win together with the Crewmates.\
-If there's an Impostor/Jackal + Crewmate Lover in the game, the tasks of a Crewmate Lover won't be counted (for a task win) as long as they're alive.\
+If there's an Impostor/Neutral Killer + Crewmate Lover in the game, the tasks of a Crewmate Lover won't be counted (for a task win) as long as they're alive.\
 If the Lover dies, their tasks will also be counted.\
-You can enable an exclusive chat only for Lovers.
+You can enable an exclusive chat only for Lovers.\
+If one wins, so the other lover does.
 
 **NOTE:**
-In a 2 Crewmates vs 2 Impostors (or 2 members of team Jackal) and the Lovers are not in the same team, the game is not automatically over since the Lovers can still achieve a solo win. E.g. if there are the following roles Impostor + ImpLover + Lover + Crewmate left, the game will not end and the next kill will decide if the Impostors or Lovers win.
+In a 2 Crewmates vs 2 Impostors and the Lovers are not in the same team, the game is not automatically over since the Lovers can still achieve a solo win. E.g. if there are the following roles Impostor + ImpLover + Lover + Crewmate left, the game will not end and the next kill will decide if the Impostors or Lovers win.
 
 ### Game Options
 | Name | Description |
@@ -1495,7 +1385,7 @@ The Mini's character is smaller and hence visible to everyone in the game.\
 
 ## VIP
 
-An Impostor, Jackal or Crewmate can be affected by the VIP (Very Important Player) Modifier.\
+An Impostor, Neutral Killer or Crewmate can be affected by the VIP (Very Important Player) Modifier.\
 The VIP will show everyone when he dies with a flash similar to the Mystic Flash.\
 If the option Show Team Color is On, then everyone will get a flash in the color of the team the player was part of.
 

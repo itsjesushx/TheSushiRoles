@@ -1,9 +1,8 @@
 ﻿using InnerNet;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using RCoroutines = Reactor.Utilities.Coroutines;
 using System.Collections;
-using TheSushiRoles.Modules.Debugger.Embedded.ReactorCoroutines;
 
 namespace TheSushiRoles.Modules.Debugger;
 
@@ -55,33 +54,33 @@ public static class InstanceControlPatches
         FastDestroyableSingleton<HudManager>.Instance.KillButton.transform.parent.GetComponentsInChildren<Transform>().ToList().ForEach(x =>
         {
             if (x.gameObject.name == "KillButton(Clone)")
-            Object.Destroy(x.gameObject);
+            UObject.Destroy(x.gameObject);
         });
 
         FastDestroyableSingleton<HudManager>.Instance.KillButton.transform.GetComponentsInChildren<Transform>().ToList().ForEach(x =>
         {
             if (x.gameObject.name == "KillTimer_TMP(Clone)")
-            Object.Destroy(x.gameObject);
+            UObject.Destroy(x.gameObject);
         });
 
         FastDestroyableSingleton<HudManager>.Instance.transform.GetComponentsInChildren<Transform>().ToList().ForEach(x =>
         {
             if (x.gameObject.name == "KillButton(Clone)")
-            Object.Destroy(x.gameObject);
+            UObject.Destroy(x.gameObject);
         });
 
         // Clean up old buttons so they don't break new buttons when changing players
         foreach (var buttons in CustomButton.buttons)
         {           
             if (buttons.actionButtonGameObject != null)
-                Object.Destroy(buttons.actionButtonGameObject);
+                UObject.Destroy(buttons.actionButtonGameObject);
         }
         
         CustomButton.buttons.Clear();
 
         try
         {
-            HudManagerStartPatch.CreateButtonsPostfix(FastDestroyableSingleton<HudManager>.Instance);
+            CustomButtonLoader.CreateButtonsPostfix(FastDestroyableSingleton<HudManager>.Instance);
         }
         catch { }
 
@@ -122,7 +121,7 @@ public static class InstanceControlPatches
 
     public static void CreatePlayerInstance()
     {
-        Coroutines.Start(_CreatePlayerInstanceEnumerator());
+        RCoroutines.Start(_CreatePlayerInstanceEnumerator());
     }
 
     internal static IEnumerator _CreatePlayerInstanceEnumerator()
@@ -138,12 +137,12 @@ public static class InstanceControlPatches
         yield return AmongUsClient.Instance.CreatePlayer(sampleC);
 
         sampleC.Character.SetName($"Bot #{sampleC.Character.PlayerId}");
-        sampleC.Character.SetSkin(HatManager.Instance.allSkins[Random.Range(0, HatManager.Instance.allSkins.Count)].ProdId, 0);
-        sampleC.Character.SetNamePlate(HatManager.Instance.allNamePlates[Random.RandomRangeInt(0, HatManager.Instance.allNamePlates.Count)].ProdId);
-        sampleC.Character.SetPet(HatManager.Instance.allPets[Random.RandomRangeInt(0, HatManager.Instance.allPets.Count)].ProdId);
-        sampleC.Character.SetColor(Random.Range(0, Palette.PlayerColors.Length));
-        sampleC.Character.SetHat(HatManager.Instance.allHats[Random.Range(0, HatManager.Instance.allHats.Count)].ProdId, 0);
-        sampleC.Character.SetVisor(HatManager.Instance.allVisors[Random.Range(0, HatManager.Instance.allVisors.Count)].ProdId, 0);
+        sampleC.Character.SetSkin(HatManager.Instance.allSkins[URandom.Range(0, HatManager.Instance.allSkins.Count)].ProdId, 0);
+        sampleC.Character.SetNamePlate(HatManager.Instance.allNamePlates[URandom.RandomRangeInt(0, HatManager.Instance.allNamePlates.Count)].ProdId);
+        sampleC.Character.SetPet(HatManager.Instance.allPets[URandom.RandomRangeInt(0, HatManager.Instance.allPets.Count)].ProdId);
+        sampleC.Character.SetColor(URandom.Range(0, Palette.PlayerColors.Length));
+        sampleC.Character.SetHat(HatManager.Instance.allHats[URandom.Range(0, HatManager.Instance.allHats.Count)].ProdId, 0);
+        sampleC.Character.SetVisor(HatManager.Instance.allVisors[URandom.Range(0, HatManager.Instance.allVisors.Count)].ProdId, 0);
 
         Clients.Add(sampleId, sampleC);
         PlayerClientIDs.Add(sampleC.Character.PlayerId, sampleId);
@@ -154,14 +153,6 @@ public static class InstanceControlPatches
 
         yield return sampleC.Character.MyPhysics.CoSpawnPlayer(LobbyBehaviour.Instance);
         yield break;
-    }
-
-    public static void UpdateNames(string name)
-    {
-        foreach (var playerId in PlayerClientIDs.Keys)
-        {
-            Utils.GetPlayerById(playerId).SetName(name + $" {playerId}");
-        }
     }
     public static void RemovePlayer(byte id)
     {
@@ -202,7 +193,7 @@ public static class InstanceControlPatches
     {
         public static void Postfix(MeetingHud __instance, ref byte suspectStateIdx)
         {
-            if (!TheSushiRolesPlugin.DebuggerLoaded) return;
+            if (!TheSushiRoles.DebuggerLoaded) return;
 
             foreach (var player in PlayerControl.AllPlayerControls)
                 __instance.CmdCastVote(player.PlayerId, suspectStateIdx);
@@ -214,7 +205,7 @@ public static class InstanceControlPatches
     {
         public static void Postfix()
         {
-            if (TheSushiRolesPlugin.DebuggerLoaded && TheSushiRolesPlugin.Persistence && Clients.Count != 0)
+            if (TheSushiRoles.DebuggerLoaded && TheSushiRoles.Persistence && Clients.Count != 0)
             {
                 var count = Clients.Count;
                 Clients.Clear();
@@ -231,7 +222,7 @@ public static class InstanceControlPatches
     {
         public static void Prefix(AmongUsClient __instance)
         {
-            if (!TheSushiRolesPlugin.DebuggerLoaded) return;
+            if (!TheSushiRoles.DebuggerLoaded) return;
 
             foreach (var p in __instance.allClients)
             {
@@ -246,13 +237,13 @@ public static class InstanceControlPatches
     {
         public static void Postfix(SpawnInMinigame __instance)
         {
-            if (!TheSushiRolesPlugin.DebuggerLoaded) return;
+            if (!TheSushiRoles.DebuggerLoaded) return;
 
             foreach (var player in PlayerControl.AllPlayerControls)
             {
-                if (!player.Data.PlayerName.Contains(TheSushiRolesPlugin.RobotName)) continue;
+                if (!player.Data.PlayerName.Contains(TheSushiRoles.RobotName)) continue;
 
-                var rand = Random.Range(0, __instance.Locations.Count);
+                var rand = URandom.Range(0, __instance.Locations.Count);
                 player.gameObject.SetActive(true);
                 player.NetTransform.RpcSnapTo(__instance.Locations[rand].Location);
             }
@@ -267,7 +258,7 @@ public static class InstanceControlPatches
             if (!Input.GetKeyDown(KeyCode.LeftShift)) return;
         
             __instance.countDownTimer = 0;
-            if (Coroutines._ourCoroutineStore.Any(x => x.Value != null)) __instance.countDownTimer = 1;
+            if (Embedded.ReactorCoroutines.Coroutines._ourCoroutineStore.Any(x => x.Value != null)) __instance.countDownTimer = 1;
         }
     }
 }

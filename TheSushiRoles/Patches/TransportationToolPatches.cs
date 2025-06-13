@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TheSushiRoles.Patches 
+﻿namespace TheSushiRoles.Patches 
 {
     [HarmonyPatch]
     public static class TransportationToolPatches 
@@ -8,7 +6,7 @@ namespace TheSushiRoles.Patches
         /* 
          * Moving Plattform / Zipline / Ladders move the player out of bounds, thus we want to disable functions of the mod if the player is currently using one of these.
          * Save the players Lazy position before using it.
-         */
+        */
        
         public static bool IsUsingTransportation(PlayerControl pc) => pc.inMovingPlat || pc.onLadder;
 

@@ -4,8 +4,6 @@ using System.Linq;
 using AmongUs.Data;
 using TheSushiRoles.Modules.CustomHats.Extensions;
 using TMPro;
-using UnityEngine;
-
 namespace TheSushiRoles.Modules.CustomHats.Patches;
 
 [HarmonyPatch]

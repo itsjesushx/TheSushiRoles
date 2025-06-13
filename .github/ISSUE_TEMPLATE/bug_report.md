@@ -26,7 +26,7 @@ If applicable, add screenshots to help explain your problem.
 **System (please complete the following information):**
  - OS: [e.g. Windows 11]
  - Among Us Version [e.g. v2021.11.15s]
- - TheSushiRoles Version [e.g. v3.3.3]
+ - TheSushiRoles Version [e.g. v1.0.0]
 
 **Additional context**
 Add any other context about the problem here.

@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace TheSushiRoles.Objects 
 {
@@ -19,8 +17,8 @@ namespace TheSushiRoles.Objects
         private static Sprite _footprintSprite;
         private static Sprite FootprintSprite => _footprintSprite ??= Utils.LoadSprite("TheSushiRoles.Resources.Footprint.png", 600f);
 
-        private static bool AnonymousFootprints => Detective.anonymousFootprints;
-        private static float FootprintDuration => Detective.footprintDuration;
+        private static bool AnonymousFootprints => CustomGameOptions.DetectiveAnonymousFootprints;
+        private static float FootprintDuration => CustomGameOptions.DetectiveFootprintDuration;
         private class Footprint 
         {
             public GameObject GameObject;

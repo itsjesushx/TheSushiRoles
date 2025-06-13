@@ -1,18 +1,14 @@
-using UnityEngine;
-
 namespace TheSushiRoles.Roles
 {
     public static class Vigilante 
     {
         public static PlayerControl Player;
         public static Color Color = new Color32(195, 178, 95, byte.MaxValue);
-        public static float Cooldown = 25f;
         public static int remainingScrews = 7;
         public static int totalScrews = 7;
         public static int ventPrice = 1;
         public static int camPrice = 2;
         public static int placedCameras = 0;
-        public static float Duration = 10f;
         public static int maxCharges = 5;
         public static int RechargeTasksNumber = 3;
         public static int RechargedTasks = 3;
@@ -52,39 +48,6 @@ namespace TheSushiRoles.Roles
             return animatedVentSealedSprite;
         }
 
-        private static Sprite staticVentSealedSprite;
-        public static Sprite GetStaticVentSealedSprite() 
-        {
-            if (staticVentSealedSprite) return staticVentSealedSprite;
-            staticVentSealedSprite = Utils.LoadSprite("TheSushiRoles.Resources.StaticVentSealed.png", 160f);
-            return staticVentSealedSprite;
-        }
-
-        private static Sprite fungleVentSealedSprite;
-        public static Sprite GetFungleVentSealedSprite() 
-        {
-            if (fungleVentSealedSprite) return fungleVentSealedSprite;
-            fungleVentSealedSprite = Utils.LoadSprite("TheSushiRoles.Resources.FungleVentSealed.png", 160f);
-            return fungleVentSealedSprite;
-        }
-
-
-        private static Sprite submergedCentralUpperVentSealedSprite;
-        public static Sprite GetSubmergedCentralUpperSealedSprite() 
-        {
-            if (submergedCentralUpperVentSealedSprite) return submergedCentralUpperVentSealedSprite;
-            submergedCentralUpperVentSealedSprite = Utils.LoadSprite("TheSushiRoles.Resources.CentralUpperBlocked.png", 145f);
-            return submergedCentralUpperVentSealedSprite;
-        }
-
-        private static Sprite submergedCentralLowerVentSealedSprite;
-        public static Sprite GetSubmergedCentralLowerSealedSprite() 
-        {
-            if (submergedCentralLowerVentSealedSprite) return submergedCentralLowerVentSealedSprite;
-            submergedCentralLowerVentSealedSprite = Utils.LoadSprite("TheSushiRoles.Resources.CentralLowerBlocked.png", 145f);
-            return submergedCentralLowerVentSealedSprite;
-        }
-
         private static Sprite camSprite;
         public static Sprite GetCamSprite() 
         {
@@ -106,16 +69,14 @@ namespace TheSushiRoles.Roles
             Player = null;
             ventTarget = null;
             minigame = null;
-            Duration = CustomOptionHolder.VigilanteCamDuration.GetFloat();
-            maxCharges = Mathf.RoundToInt(CustomOptionHolder.VigilanteCamMaxCharges.GetFloat());
-            RechargeTasksNumber = Mathf.RoundToInt(CustomOptionHolder.VigilanteCamRechargeTasksNumber.GetFloat());
-            RechargedTasks = Mathf.RoundToInt(CustomOptionHolder.VigilanteCamRechargeTasksNumber.GetFloat());
-            Charges = Mathf.RoundToInt(CustomOptionHolder.VigilanteCamMaxCharges.GetFloat()) /2;
+            maxCharges = CustomGameOptions.VigilanteCamMaxCharges;
+            RechargeTasksNumber = CustomGameOptions.VigilanteCamRechargeTasksNumber;
+            RechargedTasks = CustomGameOptions.VigilanteCamRechargeTasksNumber;
+            Charges = CustomGameOptions.VigilanteCamMaxCharges /2;
             placedCameras = 0;
-            Cooldown = CustomOptionHolder.VigilanteCooldown.GetFloat();
-            totalScrews = remainingScrews = Mathf.RoundToInt(CustomOptionHolder.VigilanteTotalScrews.GetFloat());
-            camPrice = Mathf.RoundToInt(CustomOptionHolder.VigilanteCamPrice.GetFloat());
-            ventPrice = Mathf.RoundToInt(CustomOptionHolder.VigilanteVentPrice.GetFloat());
+            totalScrews = remainingScrews = CustomGameOptions.VigilanteTotalScrews;
+            camPrice = CustomGameOptions.VigilanteCamPrice;
+            ventPrice = CustomGameOptions.VigilanteVentPrice;
         }
     }
 }

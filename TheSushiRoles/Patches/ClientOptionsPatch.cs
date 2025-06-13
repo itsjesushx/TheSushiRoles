@@ -1,7 +1,4 @@
-using UnityEngine;
-using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine.Events;
 using static UnityEngine.UI.Button;
 
@@ -12,14 +9,14 @@ namespace TheSushiRoles.Patches
     {
         private static readonly SelectionBehaviour[] AllOptions = 
         {
-            new("Ghosts See Tasks & Other Info", () => MapOptions.ghostsSeeInformation = TheSushiRolesPlugin.GhostsSeeInformation.Value = !TheSushiRolesPlugin.GhostsSeeInformation.Value, TheSushiRolesPlugin.GhostsSeeInformation.Value),
-            new("Ghosts Can See Votes", () => MapOptions.ghostsSeeVotes = TheSushiRolesPlugin.GhostsSeeVotes.Value = !TheSushiRolesPlugin.GhostsSeeVotes.Value, TheSushiRolesPlugin.GhostsSeeVotes.Value),
-            new("Ghosts Can See Roles/Modifiers/Abilities", () => MapOptions.GhostsSeeEverything = TheSushiRolesPlugin.GhostsSeeEverything.Value = !TheSushiRolesPlugin.GhostsSeeEverything.Value, TheSushiRolesPlugin.GhostsSeeEverything.Value),
-            new("Show Lighter / Darker", () => MapOptions.showLighterDarker = TheSushiRolesPlugin.ShowLighterDarker.Value = !TheSushiRolesPlugin.ShowLighterDarker.Value, TheSushiRolesPlugin.ShowLighterDarker.Value),
-            new("Enable Sound Effects", () => MapOptions.enableSoundEffects = TheSushiRolesPlugin.EnableSoundEffects.Value = !TheSushiRolesPlugin.EnableSoundEffects.Value, TheSushiRolesPlugin.EnableSoundEffects.Value),
-            new("Show Vents On Map", () => MapOptions.ShowVentsOnMap = TheSushiRolesPlugin.ShowVentsOnMap.Value = !TheSushiRolesPlugin.ShowVentsOnMap.Value, TheSushiRolesPlugin.ShowVentsOnMap.Value),
-            new("Show Chat Notifications", () => MapOptions.ShowChatNotifications = TheSushiRolesPlugin.ShowChatNotifications.Value = !TheSushiRolesPlugin.ShowChatNotifications.Value, TheSushiRolesPlugin.ShowChatNotifications.Value),
-            new("Disable Lobby Music", () => MapOptions.DisableLobbyMusic = TheSushiRolesPlugin.DisableLobbyMusic.Value = !TheSushiRolesPlugin.DisableLobbyMusic.Value, TheSushiRolesPlugin.DisableLobbyMusic.Value),
+            new("Ghosts See Tasks & Other Info", () => MapOptions.ghostsSeeInformation = TheSushiRoles.GhostsSeeInformation.Value = !TheSushiRoles.GhostsSeeInformation.Value, TheSushiRoles.GhostsSeeInformation.Value),
+            new("Ghosts Can See Votes", () => MapOptions.ghostsSeeVotes = TheSushiRoles.GhostsSeeVotes.Value = !TheSushiRoles.GhostsSeeVotes.Value, TheSushiRoles.GhostsSeeVotes.Value),
+            new("Ghosts Can See Roles/Modifiers/Abilities", () => MapOptions.GhostsSeeEverything = TheSushiRoles.GhostsSeeEverything.Value = !TheSushiRoles.GhostsSeeEverything.Value, TheSushiRoles.GhostsSeeEverything.Value),
+            new("Show Lighter / Darker", () => MapOptions.showLighterDarker = TheSushiRoles.ShowLighterDarker.Value = !TheSushiRoles.ShowLighterDarker.Value, TheSushiRoles.ShowLighterDarker.Value),
+            new("Enable Sound Effects", () => MapOptions.enableSoundEffects = TheSushiRoles.EnableSoundEffects.Value = !TheSushiRoles.EnableSoundEffects.Value, TheSushiRoles.EnableSoundEffects.Value),
+            new("Show Vents On Map", () => MapOptions.ShowVentsOnMap = TheSushiRoles.ShowVentsOnMap.Value = !TheSushiRoles.ShowVentsOnMap.Value, TheSushiRoles.ShowVentsOnMap.Value),
+            new("Show Chat Notifications", () => MapOptions.ShowChatNotifications = TheSushiRoles.ShowChatNotifications.Value = !TheSushiRoles.ShowChatNotifications.Value, TheSushiRoles.ShowChatNotifications.Value),
+            new("Disable Lobby Music", () => MapOptions.DisableLobbyMusic = TheSushiRoles.DisableLobbyMusic.Value = !TheSushiRoles.DisableLobbyMusic.Value, TheSushiRoles.DisableLobbyMusic.Value),
         };
         
         private static GameObject popUp;

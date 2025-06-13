@@ -1,7 +1,5 @@
 using System.Linq;
 
-using UnityEngine;
-
 namespace TheSushiRoles.Modules.BetterMaps
 {
     [HarmonyPatch(typeof(ShipStatus))]
@@ -93,24 +91,24 @@ namespace TheSushiRoles.Modules.BetterMaps
 
         public static void AdjustPolus()
         {
-            if (!MapOptions.EnableBetterPolus) return;
+            if (!CustomGameOptions.EnableBetterPolus) return;
 
             if (IsObjectsFetched && IsRoomsFetched)
             {
-                if (MapOptions.BPVitalsLab) MoveVitals();
-                if (!MapOptions.BPColdTempDeathValley && MapOptions.BPVitalsLab) MoveTempCold();
-                if (MapOptions.BPColdTempDeathValley) MoveTempColdDV();
-                if (MapOptions.BPWifiChartCourseSwap) SwitchNavWifi();
+                if (CustomGameOptions.BPVitalsLab) MoveVitals();
+                if (!CustomGameOptions.BPColdTempDeathValley && CustomGameOptions.BPVitalsLab) MoveTempCold();
+                if (CustomGameOptions.BPColdTempDeathValley) MoveTempColdDV();
+                if (CustomGameOptions.BPWifiChartCourseSwap) SwitchNavWifi();
             }
 
-            if (MapOptions.BPVentImprovements) AdjustVents();
+            if (CustomGameOptions.BPVentImprovements) AdjustVents();
 
             IsAdjustmentsDone = true;
         }
 
         public static void FindVents()
         {
-            var ventsList = Object.FindObjectsOfType<Vent>().ToList();
+            var ventsList = UObject.FindObjectsOfType<Vent>().ToList();
 
             if (ElectricBuildingVent == null)
             {
@@ -145,22 +143,22 @@ namespace TheSushiRoles.Modules.BetterMaps
         {
             if (Comms == null)
             {
-                Comms = Object.FindObjectsOfType<GameObject>().ToList().Find(o => o.name == "Comms");
+                Comms = UObject.FindObjectsOfType<GameObject>().ToList().Find(o => o.name == "Comms");
             }
 
             if (DropShip == null)
             {
-                DropShip = Object.FindObjectsOfType<GameObject>().ToList().Find(o => o.name == "Dropship");
+                DropShip = UObject.FindObjectsOfType<GameObject>().ToList().Find(o => o.name == "Dropship");
             }
 
             if (Outside == null)
             {
-                Outside = Object.FindObjectsOfType<GameObject>().ToList().Find(o => o.name == "Outside");
+                Outside = UObject.FindObjectsOfType<GameObject>().ToList().Find(o => o.name == "Outside");
             }
 
             if (Science == null)
             {
-                Science = Object.FindObjectsOfType<GameObject>().ToList().Find(o => o.name == "Science");
+                Science = UObject.FindObjectsOfType<GameObject>().ToList().Find(o => o.name == "Science");
             }
 
             IsRoomsFetched = Comms != null && DropShip != null && Outside != null && Science != null;
@@ -170,36 +168,36 @@ namespace TheSushiRoles.Modules.BetterMaps
         {
             if (WifiConsole == null)
             {
-                WifiConsole = Object.FindObjectsOfType<Console>().ToList()
+                WifiConsole = UObject.FindObjectsOfType<Console>().ToList()
                     .Find(console => console.name == "panel_wifi");
             }
 
             if (NavConsole == null)
             {
-                NavConsole = Object.FindObjectsOfType<Console>().ToList()
+                NavConsole = UObject.FindObjectsOfType<Console>().ToList()
                     .Find(console => console.name == "panel_nav");
             }
 
             if (Vitals == null)
             {
-                Vitals = Object.FindObjectsOfType<SystemConsole>().ToList()
+                Vitals = UObject.FindObjectsOfType<SystemConsole>().ToList()
                     .Find(console => console.name == "panel_vitals");
             }
 
             if (DvdScreenOffice == null)
             {
-                GameObject DvdScreenAdmin = Object.FindObjectsOfType<GameObject>().ToList()
+                GameObject DvdScreenAdmin = UObject.FindObjectsOfType<GameObject>().ToList()
                     .Find(o => o.name == "dvdscreen");
 
                 if (DvdScreenAdmin != null)
                 {
-                    DvdScreenOffice = Object.Instantiate(DvdScreenAdmin);
+                    DvdScreenOffice = UObject.Instantiate(DvdScreenAdmin);
                 }
             }
 
             if (TempCold == null)
             {
-                TempCold = Object.FindObjectsOfType<Console>().ToList()
+                TempCold = UObject.FindObjectsOfType<Console>().ToList()
                     .Find(console => console.name == "panel_tempcold");
             }
 
@@ -291,7 +289,7 @@ namespace TheSushiRoles.Modules.BetterMaps
         }
         public static void ClearAndReload()
         {
-            if (SpecimenVent != null) Object.Destroy(SpecimenVent);
+            if (SpecimenVent != null) UObject.Destroy(SpecimenVent);
             SpecimenVent = null;
         }
     }
@@ -307,7 +305,7 @@ namespace TheSushiRoles.Modules.BetterMaps
             {
                 foreach (var task in PlayerControl.LocalPlayer.myTasks)
                 {
-                    if (MapOptions.BPColdTempDeathValley)
+                    if (CustomGameOptions.BPColdTempDeathValley)
                     {
                         if (task.TaskType == TaskTypes.RecordTemperature && task.StartAt != SystemTypes.Outside)
                         {
@@ -315,7 +313,7 @@ namespace TheSushiRoles.Modules.BetterMaps
                             ColdTemp = task;
                         }
                     }
-                    if (MapOptions.BPWifiChartCourseSwap)
+                    if (CustomGameOptions.BPWifiChartCourseSwap)
                     {
                         if (task.TaskType == TaskTypes.RebootWifi && task.StartAt != SystemTypes.Dropship) task.StartAt = SystemTypes.Dropship;
                         else if (task.TaskType == TaskTypes.ChartCourse && task.StartAt != SystemTypes.Comms) task.StartAt = SystemTypes.Comms;
@@ -331,7 +329,7 @@ namespace TheSushiRoles.Modules.BetterMaps
             {
                 foreach (var task in PlayerControl.LocalPlayer.myTasks)
                 {
-                    if (MapOptions.BPColdTempDeathValley)
+                    if (CustomGameOptions.BPColdTempDeathValley)
                     {
                         if (task == ColdTemp) task.StartAt = SystemTypes.Laboratory;
                     }

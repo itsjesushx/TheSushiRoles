@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace TheSushiRoles.Objects 
 {
@@ -20,7 +18,6 @@ namespace TheSushiRoles.Objects
         {
             trace = new GameObject("AssassinTrace");
             trace.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-            //Vector3 position = new Vector3(p.x, p.y, PlayerControl.LocalPlayer.transform.localPosition.z + 0.001f); // just behind player
             Vector3 position = new Vector3(p.x, p.y, p.y / 1000f + 0.01f);
             trace.transform.position = position;
             trace.transform.localPosition = position;
@@ -31,7 +28,7 @@ namespace TheSushiRoles.Objects
             timeRemaining = Duration;
 
             // display the Assassins color in the trace
-            float colorDuration = CustomOptionHolder.AssassinTraceColorTime.GetFloat();
+            float colorDuration = CustomGameOptions.AssassinTraceColorTime;
             FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(colorDuration, new Action<float>((p) => {
                 Color c = Palette.PlayerColors[(int)Assassin.Player.Data.DefaultOutfit.ColorId];
                 if (Utils.IsLighterColor(Assassin.Player)) c = Color.white;

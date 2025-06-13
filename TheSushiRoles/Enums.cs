@@ -15,7 +15,44 @@ namespace TheSushiRoles
         Neutral,
         Crewmate,
         Modifier,
-        Ability
+        Ability,
+        Map
+    }
+    public enum MysticModes
+    {
+        DeathAndSouls = 0,
+        DeathFlash = 1,
+        Souls = 2
+    }
+    public enum ShieldOptions
+    {
+        ShieldedAndMedic = 0,
+        Medic = 1,
+        Shielded = 2
+    }
+    public enum NotificationOptions
+    {
+        Medic = 0,
+        Shielded = 1,
+        Nobody = 2
+    }
+    public enum SpecialPsychicInfo
+    {
+        SheriffSuicide,
+        ActiveLoverDies,
+        PassiveLoverSuicide,
+        LawyerKilledByClient,
+        RomanticKilledByBeloved,
+        ImpostorTeamkill,
+        SubmergedO2,
+        WarlockSuicide,
+        BodyCleaned,
+    }
+    public enum SingleVotesOptions
+    {
+        Off = 1,
+        BeforeVoting = 2,
+        UntilMeetingEnds = 3,
     }
     public enum AbilityId
     {
@@ -29,17 +66,21 @@ namespace TheSushiRoles
         Disperser,
         Bait,
         Lazy,
-        Follower,
         Sleuth,
         Tiebreaker,
         Giant,
-        Recruit,
         Blind,
         Mini,
         Vip,
         Drunk,
         Chameleon,
         Lucky
+    }
+    public enum ShieldTimingOptions
+    {
+        Instantly = 0,
+        InstantlyVisibleAfterMeeting = 1,
+        AfterMeeting = 2
     }
     public enum RoleAlignment
     {
@@ -78,10 +119,8 @@ namespace TheSushiRoles
         Detective,
         Predator,
         Chronos,
-        Cultist,
         Medic,
         Romantic,
-        Swapper,
         Mystic,
         Morphling,
         Painter,
@@ -89,8 +128,6 @@ namespace TheSushiRoles
         Crusader,
         Tracker,
         Viper,
-        Jackal,
-        Eraser,
         Spy,
         VengefulRomantic,
         Trickster,
@@ -142,7 +179,7 @@ namespace TheSushiRoles
         SetUnteleportable,
         RemoveAllBodies,
         UncheckedExilePlayer,
-        DynamicMapOption,
+        RandomMapOption,
         SetGameStarting,
         StopStart,
 
@@ -153,8 +190,7 @@ namespace TheSushiRoles
         DisableVanillaRoles,
         EngineerUsedRepair,
         CleanBody,
-        SnitchFindKiller,
-        FollowerPicksRole,
+        HostSuicide,
         MedicSetShielded,
         WerewolfMaul,
         StopFortifiedInteraction,
@@ -172,6 +208,7 @@ namespace TheSushiRoles
         BypassMultiKill,
         BypassKill,
         DropBody,
+        PlaguebearerInfect,
         DragBody,
         Disperse,
         VeteranAlert,
@@ -181,17 +218,12 @@ namespace TheSushiRoles
         VeteranAlertKill,
         ChronosRewindTime,
         FortifiedMurderAttempt,
-        SwapperSwap,
         MorphlingMorph,
         PainterPaint,
         GrenadierFlash,
         TrackerUsedTracker,
         ViperSetPoisoned,
         GlitchUsedHacks,
-        JackalCreatesRecruit,
-        CultistCreatesFollower,
-        ErasePlayerRoles,
-        SetFutureErased,
         SetFutureShielded,
         SetFutureSpelled,
         PlaceAssassinTrace,
@@ -271,7 +303,6 @@ namespace TheSushiRoles
     enum CustomGameOverReason
     {
         LoversWin = 10,
-        TeamJackalWin = 11,
         MiniLose = 12,
         JesterWin = 13,
         ArsonistWin = 14,
@@ -294,9 +325,7 @@ namespace TheSushiRoles
         Default,
         LoversTeamWin,
         LoversSoloWin,
-        JesterWin,
-        JackalWin,
-        MiniLose,
+        JesterWin,        MiniLose,
         ArsonistWin,
         ScavengerWin,
         AdditionalLawyerBonusWin,

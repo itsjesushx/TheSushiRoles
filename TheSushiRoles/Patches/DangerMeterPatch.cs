@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace TheSushiRoles.Patches 
 {
     [HarmonyPatch]

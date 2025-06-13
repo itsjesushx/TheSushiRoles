@@ -1,18 +1,13 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
 namespace TheSushiRoles.Roles.Abilities
 {
     public static class Guesser 
     {
         private static Sprite targetSprite;
-        public static bool hasMultipleShotsPerMeeting = false;
+
         public static List<GameObject> GuessButtons = new List<GameObject>();
-        public static bool killsThroughShield = true;
-        public static bool evilGuesserCanGuessSpy = true;
-        public static int tasksToUnlock = Mathf.RoundToInt(CustomOptionHolder.CrewGuesserNumberOfTasks.GetFloat());
         private static List<Guessers> guessers = new List<Guessers>();
-        private static Color color = new Color32(255, 255, 0, byte.MaxValue);
         public static Sprite GetTargetSprite() 
         {
             if (targetSprite) return targetSprite;
@@ -30,8 +25,8 @@ namespace TheSushiRoles.Roles.Abilities
             var g = guessers.FindLast(x => x.guesser.PlayerId == playerId);
             if (g == null) return;
             g.guesser = null;
-            g.shots = Mathf.RoundToInt(CustomOptionHolder.GuesserNumberOfShots.GetFloat());
-            g.tasksToUnlock = Mathf.RoundToInt(CustomOptionHolder.CrewGuesserNumberOfTasks.GetFloat());
+            g.shots = CustomGameOptions.GuesserNumberOfShots;
+            g.tasksToUnlock = CustomGameOptions.CrewGuesserNumberOfTasks;
 
             guessers.Remove(g);
         }
@@ -47,17 +42,13 @@ namespace TheSushiRoles.Roles.Abilities
         public static void ClearAndReload() 
         {
             guessers = new List<Guessers>();
-            hasMultipleShotsPerMeeting = CustomOptionHolder.GuesserHasMultipleShotsPerMeeting.GetBool();
-            killsThroughShield = CustomOptionHolder.GuesserKillsThroughShield.GetBool();
-            evilGuesserCanGuessSpy = CustomOptionHolder.GuesserEvilCanKillSpy.GetBool();
-            tasksToUnlock = Mathf.RoundToInt(CustomOptionHolder.CrewGuesserNumberOfTasks.GetFloat());
         }
 
         public class Guessers
         {
             public PlayerControl guesser;
-            public int shots = Mathf.RoundToInt(CustomOptionHolder.GuesserNumberOfShots.GetFloat());
-            public int tasksToUnlock = Mathf.RoundToInt(CustomOptionHolder.CrewGuesserNumberOfTasks.GetFloat());
+            public int shots = CustomGameOptions.GuesserNumberOfShots;
+            public int tasksToUnlock = CustomGameOptions.CrewGuesserNumberOfTasks;
 
             public Guessers(PlayerControl player) 
             {

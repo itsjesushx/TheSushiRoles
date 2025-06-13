@@ -1,7 +1,5 @@
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
 namespace TheSushiRoles.Patches 
 {
@@ -124,9 +122,9 @@ namespace TheSushiRoles.Patches
                     if (player.PlayerId != state.TargetPlayerId) continue;
                     if (player == Oracle.Confessor)
                     {
-                        if (Oracle.RevealedFaction == Faction.Crewmates) state.NameText.text = state.NameText.text + $" <size=60%>(<color=#00FFFFFF>{Oracle.Accuracy}% Crew</color>) </size>";
-                        else if (Oracle.RevealedFaction == Faction.Impostors) state.NameText.text = state.NameText.text + $" <size=60%>(<color=#FF0000FF>{Oracle.Accuracy}% Imp</color>) </size>";
-                        else state.NameText.text = state.NameText.text + $" <size=60%>(<color=#808080FF>{Oracle.Accuracy}% Neut</color>) </size>";
+                        if (Oracle.RevealedFaction == Faction.Crewmates) state.NameText.text = state.NameText.text + $" <size=60%>(<color=#00FFFFFF>{CustomGameOptions.OracleAccuracy}% Crew</color>) </size>";
+                        else if (Oracle.RevealedFaction == Faction.Impostors) state.NameText.text = state.NameText.text + $" <size=60%>(<color=#FF0000FF>{CustomGameOptions.OracleAccuracy}% Imp</color>) </size>";
+                        else state.NameText.text = state.NameText.text + $" <size=60%>(<color=#808080FF>{CustomGameOptions.OracleAccuracy}% Neut</color>) </size>";
                     }
                 }
             }
@@ -135,12 +133,12 @@ namespace TheSushiRoles.Patches
         {
             if (__instance)
             {
-                if (Snitch.Player != null && Snitch.Player == PlayerControl.LocalPlayer && Snitch.SeesInMeetings)
+                if (Snitch.Player != null && Snitch.Player == PlayerControl.LocalPlayer && CustomGameOptions.SnitchSeesInMeetings)
                 {
                     SetPlayerNameColor(Snitch.Target, Palette.ImpostorRed);
                         
                 }
-                else if (Snitch.Player != null && Snitch.Target == PlayerControl.LocalPlayer && Snitch.SeesInMeetings && Snitch.KnowsRealKiller)
+                else if (Snitch.Player != null && Snitch.Target == PlayerControl.LocalPlayer && CustomGameOptions.SnitchSeesInMeetings && Snitch.KnowsRealKiller)
                 {
                     // If local player is a killer, color the Snitch's name for them
                     if (Snitch.Player != null)
@@ -156,16 +154,6 @@ namespace TheSushiRoles.Patches
             var localPlayer = PlayerControl.LocalPlayer;
             var localRole = RoleInfo.GetRoleInfoForPlayer(localPlayer).FirstOrDefault();
             SetPlayerNameColor(localPlayer, localRole.Color);
-            if (Jackal.Player != null && Jackal.Player == localPlayer)
-            {
-                // Jackal can see his Recruit
-                SetPlayerNameColor(Jackal.Player, Jackal.Color);
-                if (Recruit.Player != null)
-                {
-                    SetPlayerNameColor(Recruit.Player, Jackal.Color);
-                }
-            }
-
             // Show flashed players
             if (Grenadier.Player != null && (Grenadier.Player == PlayerControl.LocalPlayer || Utils.ShouldShowGhostInfo()))
             {
@@ -174,23 +162,11 @@ namespace TheSushiRoles.Patches
                         SetPlayerNameColor(player, Color.black);
             }
 
-            // a Lover of team Jackal needs the colors
-            if (Recruit.Player != null && Recruit.Player == localPlayer)
-            {
-                // Recruit can see the jackal
-                if (Jackal.Player != null)
-                {
-                    SetPlayerNameColor(Jackal.Player, Jackal.Color);
-                }
-            }
-
             // No else if here, as the Impostors need the Spy name to be colored
             if (Spy.Player != null && localPlayer.Data.Role.IsImpostor)
             {
                 SetPlayerNameColor(Spy.Player, Spy.Color);
             }
-
-            // Impostor roles with no changes: Morphling, Painter, Viper, Eraser, Janitor, Warlock, BountyHunter,  Witch
         }
 
         static void SetNameTags()
@@ -224,28 +200,28 @@ namespace TheSushiRoles.Patches
             }
 
             // Plaguebearer infected players
-                if (Plaguebearer.Player != null && Plaguebearer.Player == PlayerControl.LocalPlayer)
+            if (Plaguebearer.Player != null && Plaguebearer.Player == PlayerControl.LocalPlayer)
+            {
+                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                 {
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    if (Plaguebearer.InfectedPlayers.Contains(player))
                     {
-                        if (Plaguebearer.InfectedPlayers.Contains(player))
-                        {
-                            string suffix = Utils.ColorString(Plaguebearer.Color, " [⦿]");
-                            player.cosmetics.nameText.text += suffix;
+                        string suffix = Utils.ColorString(Plaguebearer.Color, " [⦿]");
+                        player.cosmetics.nameText.text += suffix;
 
-                            if (MeetingHud.Instance != null)
+                        if (MeetingHud.Instance != null)
+                        {
+                            foreach (PlayerVoteArea voteArea in MeetingHud.Instance.playerStates)
                             {
-                                foreach (PlayerVoteArea voteArea in MeetingHud.Instance.playerStates)
+                                if (voteArea.TargetPlayerId == player.PlayerId)
                                 {
-                                    if (voteArea.TargetPlayerId == player.PlayerId)
-                                    {
-                                        voteArea.NameText.text += suffix;
-                                    }
+                                    voteArea.NameText.text += suffix;
                                 }
                             }
                         }
                     }
                 }
+            }
 
             // Lawyer
             if (Lawyer.Player != null && Lawyer.target != null && Lawyer.Player == PlayerControl.LocalPlayer) 
@@ -327,8 +303,6 @@ namespace TheSushiRoles.Patches
                 return;
             }
             bool enabled = true;
-            // Cultist can't kill if they don't have a Follower yet
-            if (Cultist.Player != null && Cultist.Player == PlayerControl.LocalPlayer && !Cultist.HasFollower) enabled = false;
             if (Viper.Player != null && Viper.Player == PlayerControl.LocalPlayer) enabled = false;
             
             if (enabled) __instance.KillButton.Show();
@@ -341,14 +315,14 @@ namespace TheSushiRoles.Patches
         {
             if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
             if (Viper.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId)) __instance.ReportButton.Hide();
-            if (Glitch.HackedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Glitch.HackedKnows[PlayerControl.LocalPlayer.PlayerId] > 0 || MeetingHud.Instance || Utils.TwoPlayersAlive() && MapOptions.LimitAbilities) __instance.ReportButton.Hide();
+            if (Glitch.HackedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Glitch.HackedKnows[PlayerControl.LocalPlayer.PlayerId] > 0 || MeetingHud.Instance || Utils.TwoPlayersAlive() && CustomGameOptions.LimitAbilities) __instance.ReportButton.Hide();
             else if (!__instance.ReportButton.isActiveAndEnabled) __instance.ReportButton.Show();
         }
          
         static void UpdateVentButton(HudManager __instance)
         {
             if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
-            if (Utils.TwoPlayersAlive() && MapOptions.LimitAbilities) return;
+            if (Utils.TwoPlayersAlive() && CustomGameOptions.LimitAbilities) return;
             if (PlayerControl.LocalPlayer == Viper.Player) 
             {
                 __instance.ImpostorVentButton.Show();
@@ -374,8 +348,8 @@ namespace TheSushiRoles.Patches
 
         static void UpdateSabotageButton(HudManager __instance) 
         {
-            if (MeetingHud.Instance || Utils.TwoPlayersAlive() && MapOptions.LimitAbilities) __instance.SabotageButton.Hide();
-            if (PlayerControl.LocalPlayer.Data.IsDead && CustomOptionHolder.deadImpsBlockSabotage.GetBool()) __instance.SabotageButton.Hide();
+            if (MeetingHud.Instance || Utils.TwoPlayersAlive() && CustomGameOptions.LimitAbilities) __instance.SabotageButton.Hide();
+            if (PlayerControl.LocalPlayer.Data.IsDead && CustomGameOptions.DeadImpsBlockSabotage) __instance.SabotageButton.Hide();
         }
 
         static void UpdateMapButton(HudManager __instance) 
@@ -432,7 +406,7 @@ namespace TheSushiRoles.Patches
         public static bool Prefix(DeadBody __instance) 
         {
             if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.HideNSeek) return false;
-            if (Viper.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId) || Utils.TwoPlayersAlive() && MapOptions.LimitAbilities  || Glitch.HackedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Glitch.HackedKnows[PlayerControl.LocalPlayer.PlayerId] > 0f)  return false;
+            if (Viper.BlindedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId) || Utils.TwoPlayersAlive() && CustomGameOptions.LimitAbilities  || Glitch.HackedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Glitch.HackedKnows[PlayerControl.LocalPlayer.PlayerId] > 0f)  return false;
             return true;
         }
     }

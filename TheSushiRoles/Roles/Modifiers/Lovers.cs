@@ -1,4 +1,4 @@
-using UnityEngine;
+using System.Collections.Generic;
 
 namespace TheSushiRoles.Roles.Modifiers
 {
@@ -7,9 +7,7 @@ namespace TheSushiRoles.Roles.Modifiers
         public static PlayerControl Lover1;
         public static PlayerControl Lover2;
         public static Color Color = new Color32(232, 57, 185, byte.MaxValue);
-        public static bool bothDie = true;
-        public static bool IsLoverWin = false;
-        public static bool IsAdditionalLoversPartnerWin = false;
+        public static readonly List<Arrow> LocalArrows = new();
         public static bool Existing()
         {
             return Lover1 != null && Lover2 != null && !Lover1.Data.Disconnected && !Lover2.Data.Disconnected;
@@ -44,16 +42,28 @@ namespace TheSushiRoles.Roles.Modifiers
             return (player != null && (player == Lover1 || player == Lover2));
         }
 
-        public static void ClearAndReload() 
+        public static void ClearAndReload()
         {
             Lover1 = null;
             Lover2 = null;
-            IsLoverWin = false;
-            IsAdditionalLoversPartnerWin = false;
-            bothDie = CustomOptionHolder.modifierLoverBothDie.GetBool();
+            ResetArrows();
+        }
+        public static void ResetArrows()
+        {
+            foreach (Arrow arrow in LocalArrows)
+                UObject.Destroy(arrow.arrow);
+
+            LocalArrows.Clear();
+            Arrow arrow1 = new(Palette.ImpostorRed);
+            arrow1.arrow.SetActive(false);
+            Arrow arrow2 = new(Palette.ImpostorRed);
+            arrow2.arrow.SetActive(false);
+
+            LocalArrows.Add(arrow1);
+            LocalArrows.Add(arrow2);
         }
 
-        public static PlayerControl GetPartner(this PlayerControl player) 
+        public static PlayerControl GetPartner(this PlayerControl player)
         {
             if (player == null)
                 return null;

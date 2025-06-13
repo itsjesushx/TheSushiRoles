@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace TheSushiRoles.Objects
 {
@@ -39,7 +37,7 @@ namespace TheSushiRoles.Objects
             vent.myAnim?.Stop();
             vent.Id = ShipStatus.Instance.AllVents.Select(x => x.Id).Max() + 1; // Make sure we have a unique id
             vent.myRend.sprite = vents.myRend.sprite;
-            if (Utils.IsFungle())
+            if (IsFungle())
             {
                 vent.myRend.transform.localPosition = new Vector3(0, -.01f);
             }
@@ -60,10 +58,10 @@ namespace TheSushiRoles.Objects
             AllMinerVents.Add(this);
 
             // Miner Vent
-            if (Miner.MineVisibility == 0)
+            if (CustomGameOptions.MineVisible == 0)
                 ConvertToVents();
-            else if (Miner.MineVisibility == 2)
-                FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Miner.Delay, new Action<float>((p) =>
+            else if (CustomGameOptions.MineVisible == 2)
+                FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(CustomGameOptions.MineDelay, new Action<float>((p) =>
                 {
                     if (p == 1)
                     {

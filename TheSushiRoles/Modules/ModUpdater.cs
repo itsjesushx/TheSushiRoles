@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,7 +6,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BepInEx;
 using BepInEx.Unity.IL2CPP.Utils;
-using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -38,7 +36,8 @@ namespace TheSushiRoles.Modules
             }
         }
 
-        private void Start() {
+        private void Start()
+        {
             if (_busy) return;
             this.StartCoroutine(CoCheckForUpdate());
             SceneManager.add_sceneLoaded((System.Action<Scene, LoadSceneMode>)(OnSceneLoaded));
@@ -146,7 +145,7 @@ namespace TheSushiRoles.Modules
         [HideFromIl2Cpp]
         private static bool FilterLatestRelease(GithubRelease release) 
         {
-            return release.IsNewer(TheSushiRolesPlugin.Version) && release.Assets.Any(FilterPluginAsset);
+            return release.IsNewer(TheSushiRoles.Version) && release.Assets.Any(FilterPluginAsset);
         }
 
         [HideFromIl2Cpp]
@@ -167,7 +166,7 @@ namespace TheSushiRoles.Modules
         {
             if (_busy || scene.name != "MainMenu") return;
             var latestRelease = Releases.FirstOrDefault();
-            if (latestRelease == null || latestRelease.Version <= TheSushiRolesPlugin.Version)
+            if (latestRelease == null || latestRelease.Version <= TheSushiRoles.Version)
                 return;
 
             var template = GameObject.Find("ExitGameButton");
@@ -186,7 +185,7 @@ namespace TheSushiRoles.Modules
                 button.SetActive(false);
             }));
 
-            var text = button.transform.GetComponentInChildren<TMPro.TMP_Text>();
+            var text = button.transform.GetComponentInChildren<TMP_Text>();
             string t = "Update TSR";
             StartCoroutine(Effects.Lerp(0.1f, (Action<float>)(p => text.SetText(t))));
             passiveButton.OnMouseOut.AddListener((Action)(() => text.color = Color.red));
@@ -203,7 +202,7 @@ namespace TheSushiRoles.Modules
             var mgr = FindObjectOfType<MainMenuManager>(true);
             var popUpTemplate = UObject.FindObjectOfType<AnnouncementPopUp>(true);
             if (popUpTemplate == null) {
-                TheSushiRolesPlugin.Logger.LogError("couldnt show credits, popUp is null");
+                TheSushiRoles.Logger.LogError("couldnt show credits, popUp is null");
                 yield return null;
             }
             var popUp = UObject.Instantiate(popUpTemplate);

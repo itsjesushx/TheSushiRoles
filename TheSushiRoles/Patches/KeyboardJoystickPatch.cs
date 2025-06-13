@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using InnerNet;
-using UnityEngine;
-
 namespace TheSushiRoles.Patches
 {
     [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.Update))]
@@ -13,7 +11,7 @@ namespace TheSushiRoles.Patches
         {
             if (keys.Any(Input.GetKeyDown) && keys.All(Input.GetKey))
             {
-                TheSushiRolesPlugin.Logger.LogInfo($"Shortcut Key：{keys.First(Input.GetKeyDown)} in [{string.Join(",", keys)}]");
+                TheSushiRoles.Logger.LogInfo($"Shortcut Key：{keys.First(Input.GetKeyDown)} in [{string.Join(",", keys)}]");
                 return true;
             }
             return false;
@@ -25,6 +23,7 @@ namespace TheSushiRoles.Patches
             if (GetKeysDown(KeyCode.LeftControl, KeyCode.LeftShift, KeyCode.L))
             {
                 DevPatches.HostEndedGame = true;
+                Utils.EndGame((GameOverReason)CustomGameOverReason.HostEndedGame);
             }
 
             if (GetKeysDown(KeyCode.LeftControl, KeyCode.LeftShift, KeyCode.M))
@@ -54,11 +53,12 @@ namespace TheSushiRoles.Patches
             }
             if (GetKeysDown(KeyCode.LeftControl, KeyCode.LeftShift, KeyCode.E))
             {
-                Utils.HostSuicide(PlayerControl.LocalPlayer);
+                Utils.SendRPC(CustomRPC.HostSuicide, PlayerControl.LocalPlayer);
+                RPCProcedure.HostSuicide(PlayerControl.LocalPlayer);
             }
         }
     }
-    // will use this class later but rn i doubt bc im busy
+    // will use this class later on
     [HarmonyPatch]
     public static class DevPatches
     {

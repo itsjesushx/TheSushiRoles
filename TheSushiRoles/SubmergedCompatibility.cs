@@ -5,8 +5,6 @@ using System.Linq;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
-using UnityEngine;
-
 namespace TheSushiRoles
 {
     public static class SubmergedCompatibility
@@ -82,7 +80,7 @@ namespace TheSushiRoles
         {
             try
             {
-                TheSushiRolesPlugin.Logger.LogMessage("Trying to load Submerged...");
+                TheSushiRoles.Logger.LogMessage("Trying to load Submerged...");
                 var thisAsm = Assembly.GetCallingAssembly();
                 var resourceName = thisAsm.GetManifestResourceNames().FirstOrDefault(s => s.EndsWith("Submerged.dll"));
                 if (resourceName == default) return false;
@@ -103,7 +101,7 @@ namespace TheSushiRoles
             }
             catch (Exception e)
             {
-                TheSushiRolesPlugin.Logger.LogError(e);
+                TheSushiRoles.Logger.LogError(e);
             }
             return false;
         }
@@ -170,14 +168,14 @@ namespace TheSushiRoles
             var GetReadyPlayerAmount = AccessTools.Method(subSpawnSystem, "GetReadyPlayerAmount");
             currentState = AccessTools.Field(subSpawnSystem, "currentState");
 
-            TheSushiRolesPlugin.Singleton.Harmony.Patch(GetReadyPlayerAmount, new(AccessTools.Method(typeof(SubmergedCompatibility), nameof(ReadyPlayerAmount))));
+            TheSushiRoles.Singleton.Harmony.Patch(GetReadyPlayerAmount, new(AccessTools.Method(typeof(SubmergedCompatibility), nameof(ReadyPlayerAmount))));
         }
 
         public static bool ReadyPlayerAmount(dynamic __instance, ref int __result)
         {
             if (!Loaded) return true;
 
-            if (TheSushiRolesPlugin.DebuggerLoaded)
+            if (TheSushiRoles.DebuggerLoaded)
             {
                 __result = __instance.GetTotalPlayerAmount();
                 Enum.TryParse(SpawnInState, "Done", true, out var e);
@@ -259,7 +257,7 @@ namespace TheSushiRoles
             }
             catch (System.NullReferenceException)
             {
-                TheSushiRolesPlugin.Logger.LogMessage("null reference in engineer oxygen fix");
+                TheSushiRoles.Logger.LogMessage("null reference in engineer oxygen fix");
             }
         }
     }

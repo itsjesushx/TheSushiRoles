@@ -2,8 +2,6 @@
 using AmongUs.Data;
 using InnerNet;
 using TheSushiRoles.Modules.Debugger.Embedded.ReactorImGui;
-using UnityEngine;
-
 namespace TheSushiRoles.Modules.Debugger.Components;
 public class Debugger : MonoBehaviour
 {
@@ -25,13 +23,13 @@ public class Debugger : MonoBehaviour
                 var position = PlayerControl.LocalPlayer.gameObject.transform.position;
                 GUILayout.Label($"Your Position\nx: {position.x:00.00} y: {position.y:00.00} z: {position.z:00.00}");
 
-                if (!PlayerControl.LocalPlayer.Data.IsDead && TheSushiRolesPlugin.DebuggerLoaded)
+                if (!PlayerControl.LocalPlayer.Data.IsDead && TheSushiRoles.DebuggerLoaded)
                 {
                     PlayerControl.LocalPlayer.Collider.enabled = GUILayout.Toggle(PlayerControl.LocalPlayer.Collider.enabled, "Enable Player Collider");
                 }
             }
 
-            if (!TheSushiRolesPlugin.DebuggerLoaded || !PlayerControl.LocalPlayer)
+            if (!TheSushiRoles.DebuggerLoaded || !PlayerControl.LocalPlayer)
             {
                 GUILayout.Label("DEBUGGER ONLY WORKS ON LOCAL-HOSTED GAMES");
                 return;

@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace TheSushiRoles.Patches 
 {
     [HarmonyPatch(typeof(ShipStatus))]
@@ -9,7 +7,7 @@ namespace TheSushiRoles.Patches
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.CalculateLightRadius))]
         public static bool Prefix(ref float __result, ShipStatus __instance, [HarmonyArgument(0)] NetworkedPlayerInfo player) 
         {
-            if ((!__instance.Systems.ContainsKey(SystemTypes.Electrical) && !Utils.IsFungle()) || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return true;
+            if ((!__instance.Systems.ContainsKey(SystemTypes.Electrical) && !IsFungle()) || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return true;
 
             // Blinded players by Viper
             if (Viper.BlindedPlayers.Contains(player.PlayerId))
@@ -30,15 +28,15 @@ namespace TheSushiRoles.Patches
             if (FlashLight.Player != null && FlashLight.Player.PlayerId == player.PlayerId) 
             {
                 float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
-                __result = Mathf.Lerp(__instance.MaxLightRadius * FlashLight.AbilityFlashlightModeLightsOffVision, __instance.MaxLightRadius * FlashLight.AbilityFlashlightModeLightsOnVision, unlerped);
+                __result = Mathf.Lerp(__instance.MaxLightRadius * CustomGameOptions.AbilityFlashlightModeLightsOffVision, __instance.MaxLightRadius * CustomGameOptions.AbilityFlashlightModeLightsOnVision, unlerped);
             }
 
             // If there is a Trickster with their ability active
             else if (Trickster.Player != null && Trickster.lightsOutTimer > 0f) 
             {
-                if (Trickster.lightsOutDuration - Trickster.lightsOutTimer < 0.5f) 
+                if (CustomGameOptions.TricksterLightsOutDuration - Trickster.lightsOutTimer < 0.5f) 
                 {
-                    lerpValue = Mathf.Clamp01((Trickster.lightsOutDuration - Trickster.lightsOutTimer) * 2);
+                    lerpValue = Mathf.Clamp01((CustomGameOptions.TricksterLightsOutDuration - Trickster.lightsOutTimer) * 2);
                 } 
                 else if (Trickster.lightsOutTimer < 0.5) 
                 {
@@ -52,7 +50,7 @@ namespace TheSushiRoles.Patches
             else if (Lawyer.Player != null && Lawyer.Player.PlayerId == player.PlayerId) 
             {
                 float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
-                __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius * Lawyer.vision, unlerped);
+                __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius * CustomGameOptions.LawyerVision, unlerped);
                 return false;
             }
 
@@ -60,7 +58,7 @@ namespace TheSushiRoles.Patches
             else if (Prosecutor.Player != null && Prosecutor.Player.PlayerId == player.PlayerId) 
             {
                 float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
-                __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius * Prosecutor.vision, unlerped);
+                __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius * CustomGameOptions.ProsecutorVision, unlerped);
                 return false;
             }
 
@@ -70,7 +68,7 @@ namespace TheSushiRoles.Patches
                 __result = GetNeutralLightRadius(__instance, false);
             }
             if (Blind.Players.FindAll(x => x.PlayerId == player.PlayerId).Count > 0) // Blind
-                __result *= 1f - Blind.vision * 0.1f;
+                __result *= 1f - CustomGameOptions.ModifierBlindVision * 0.1f;
 
             return false;
         }

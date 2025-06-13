@@ -1,5 +1,3 @@
-using System;
-using UnityEngine;
 using System.Collections.Generic;
 
 namespace TheSushiRoles.Objects 
@@ -20,7 +18,8 @@ namespace TheSushiRoles.Objects
             public byte playerId;
             public string name;
             public DateTime time;
-            public TpLogEntry(byte playerId, string name, DateTime time) {
+            public TpLogEntry(byte playerId, string name, DateTime time)
+            {
                 this.playerId = playerId;
                 this.time = time;
                 this.name = name;
@@ -51,7 +50,7 @@ namespace TheSushiRoles.Objects
             if (Morphling.Player != null && Morphling.morphTimer > 0) playerControl = Morphling.morphTarget;  // Will output info of morph-target instead
             if (Glitch.Player != null && Glitch.MimicTimer > 0) playerControl = Glitch.MimicTarget;  // Will output info of Mimic-target instead
             if (Hitman.Player != null && Hitman.MorphTimer > 0) playerControl = Hitman.MorphTarget;  // Will output info of Morph-target instead
-            string playerNameDisplay = Gatekeeper.logOnlyHasColors ? "A player (" + (Utils.IsLighterColor(playerControl) ? "L" : "D") + ")" : playerControl.Data.PlayerName;
+            string playerNameDisplay = CustomGameOptions.GatekeeperLogOnlyColorType ? "A player (" + (Utils.IsLighterColor(playerControl) ? "L" : "D") + ")" : playerControl.Data.PlayerName;
 
             int colorId = playerControl.Data.DefaultOutfit.ColorId;
 
@@ -87,7 +86,6 @@ namespace TheSushiRoles.Objects
         public Portal(Vector2 p) 
         {
             portalGameObject = new GameObject("Portal"){ layer = 11 };
-            //Vector3 position = new Vector3(p.x, p.y, PlayerControl.LocalPlayer.transform.position.z + 1f);
             Vector3 position = new Vector3(p.x, p.y, p.y / 1000f + 0.01f);
 
             // Create the portal            
@@ -143,7 +141,7 @@ namespace TheSushiRoles.Objects
             return dist1 > dist2 ? secondPortal.portalGameObject.transform.position : firstPortal.portalGameObject.transform.position;
         }
 
-        public static void MeetingEndsUpdate() 
+        public static void MeetingEndsUpdate()
         {
             // checkAndEnable
             if (secondPortal != null) 
@@ -151,7 +149,7 @@ namespace TheSushiRoles.Objects
                 firstPortal.portalGameObject.SetActive(true);
                 secondPortal.portalGameObject.SetActive(true);
                 bothPlacedAndEnabled = true;
-                HudManagerStartPatch.GatekeeperButtonText2.text = "2. " + secondPortal.room;
+                CustomButtonLoader.GatekeeperButtonText2.text = "2. " + secondPortal.room;
             }
 
             // reset teleported players

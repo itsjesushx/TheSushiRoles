@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace TheSushiRoles.Roles.Abilities
 {
     public static class Paranoid
@@ -11,7 +9,7 @@ namespace TheSushiRoles.Roles.Abilities
         public static void ResetArrows()
         {
             ClosestPlayer = null;
-            if (Arrow?.arrow != null) Object.Destroy(Arrow.arrow);
+            if (Arrow?.arrow != null) UObject.Destroy(Arrow.arrow);
             Arrow = new Arrow(Color);
             if (Arrow.arrow != null) Arrow.arrow.SetActive(false);
         }

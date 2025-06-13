@@ -1,6 +1,4 @@
-﻿using Reactor.Utilities.Extensions;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 namespace TheSushiRoles.Objects 
 {
@@ -11,9 +9,7 @@ namespace TheSushiRoles.Objects
         public bool permanent = false;
         private bool visibleForEveryOne = false;
         private SpriteRenderer renderer;
-
         public static List<Silhouette> silhouettes = new List<Silhouette>();
-
 
         private static Sprite SilhouetteSprite;
         public static Sprite GetSilhouetteSprite() 

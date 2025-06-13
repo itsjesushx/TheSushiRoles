@@ -99,10 +99,9 @@ namespace TheSushiRoles.Patches
                 IsAlive = !playerControl.Data.IsDead });
             }
 
-            // Remove Jester, Arsonist, Scavenger, Jackal, former Jackals from winners (if they win, they'll be readded)
+            // Remove Jester, Arsonist, Scavenger from winners (if they win, they'll be readded)
             List<PlayerControl> notWinners = new List<PlayerControl>();
             if (Jester.Player != null) notWinners.Add(Jester.Player);
-            if (Jackal.Player != null) notWinners.Add(Jackal.Player);
             if (Glitch.Player != null) notWinners.Add(Glitch.Player);
             if (Werewolf.Player != null) notWinners.Add(Werewolf.Player);
             if (Amnesiac.Player != null) notWinners.Add(Amnesiac.Player);
@@ -133,8 +132,7 @@ namespace TheSushiRoles.Patches
             bool SKWin = Predator.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.PredatorWin;
             bool RomanticWin = VengefulRomantic.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.VRomanticWin;
             bool JuggernautWin = Juggernaut.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.JuggernautWin;
-            bool loversWin = Lovers.ExistingAndAlive() && (gameOverReason == (GameOverReason)CustomGameOverReason.LoversWin || (GameManager.Instance.DidHumansWin(gameOverReason) && !Lovers.ExistingWithKiller())); // Either they win if they are among the last 3 players, or they win if they are both Crewmates and both alive and the Crew wins (Team Imp/Jackal Lovers can only win solo wins)
-            bool teamJackalWin = gameOverReason == (GameOverReason)CustomGameOverReason.TeamJackalWin && ((Jackal.Player != null && !Jackal.Player.Data.IsDead) || (Recruit.Player != null && !Recruit.Player.Data.IsDead));
+            bool loversWin = Lovers.ExistingAndAlive() && (gameOverReason == (GameOverReason)CustomGameOverReason.LoversWin || (GameManager.Instance.DidHumansWin(gameOverReason) && !Lovers.ExistingWithKiller())); // Either they win if they are among the last 3 players, or they win if they are both Crewmates and both alive and the Crew wins (Team Imp/NK Lovers can only win solo wins)
             bool ScavengerWin = Scavenger.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.ScavengerWin;
             bool prosecutorWin = Prosecutor.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.ProsecutorWin;
             bool PlaguebearerWin = Plaguebearer.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.PlaguebearerWin;
@@ -294,24 +292,6 @@ namespace TheSushiRoles.Patches
                 }
             }
 
-            // Jackal win condition (should be implemented using a proper GameOverReason in the future)
-            else if (teamJackalWin)
-            {
-                // Jackal wins if nobody except jackal is alive
-                AdditionalTempData.WinCondition = WinCondition.JackalWin;
-                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Jackal.Player.Data);
-                wpd.IsImpostor = false;
-                EndGameResult.CachedWinners.Add(wpd);
-                // If there is a Recruit. The Recruit also wins
-                if (Recruit.Player != null)
-                {
-                    CachedPlayerData wpdRecruit = new CachedPlayerData(Recruit.Player.Data);
-                    wpdRecruit.IsImpostor = false;
-                    EndGameResult.CachedWinners.Add(wpdRecruit);
-                }
-            }
-
             // Possible Additional winner: Lawyer
             if (Lawyer.Player != null && Lawyer.target != null && (!Lawyer.target.Data.IsDead || Lawyer.target == Jester.Player)) {
                 CachedPlayerData winningClient = null;
@@ -386,7 +366,7 @@ namespace TheSushiRoles.Patches
                     AdditionalTempData.additionalWinConditions.Add(WinCondition.AdditionalLoversPartnerWin);
                 }
             }
-            AdditionalTempData.timer = ((float)(DateTime.UtcNow - TheSushiRolesPlugin.startTime).TotalMilliseconds) / 1000;
+            AdditionalTempData.timer = ((float)(DateTime.UtcNow - TheSushiRoles.startTime).TotalMilliseconds) / 1000;
             RPCProcedure.ResetVariables();
         }
     }
@@ -399,7 +379,7 @@ namespace TheSushiRoles.Patches
             // Delete and readd PoolablePlayers always showing the name and role of the player
             foreach (PoolablePlayer pb in __instance.transform.GetComponentsInChildren<PoolablePlayer>())
             {
-                UnityEngine.Object.Destroy(pb.gameObject);
+                UObject.Destroy(pb.gameObject);
             }
             int num = Mathf.CeilToInt(7.5f);
             List<CachedPlayerData> list = EndGameResult.CachedWinners.ToArray().ToList().OrderBy(delegate (CachedPlayerData b)
@@ -418,7 +398,7 @@ namespace TheSushiRoles.Patches
                 float num4 = (float)num3 / (float)num;
                 float num5 = Mathf.Lerp(1f, 0.75f, num4);
                 float num6 = (float)((i == 0) ? -8 : -1);
-                PoolablePlayer poolablePlayer = UnityEngine.Object.Instantiate<PoolablePlayer>(__instance.PlayerPrefab, __instance.transform);
+                PoolablePlayer poolablePlayer = UObject.Instantiate<PoolablePlayer>(__instance.PlayerPrefab, __instance.transform);
                 poolablePlayer.transform.localPosition = new Vector3(1f * (float)num2 * (float)num3 * num5, FloatRange.SpreadToEdges(-1.125f, 0f, num3, num), num6 + (float)num3 * 0.01f) * 0.9f;
                 float num7 = Mathf.Lerp(1f, 0.65f, num4) * 0.9f;
                 Vector3 vector = new Vector3(num7, num7, 1f);
@@ -448,10 +428,10 @@ namespace TheSushiRoles.Patches
             }
 
             // Additional code
-            GameObject bonusText = UnityEngine.Object.Instantiate(__instance.WinText.gameObject);
+            GameObject bonusText = UObject.Instantiate(__instance.WinText.gameObject);
             bonusText.transform.position = new Vector3(__instance.WinText.transform.position.x, __instance.WinText.transform.position.y - 0.5f, __instance.WinText.transform.position.z);
             bonusText.transform.localScale = new Vector3(0.7f, 0.7f, 1f);
-            TMPro.TMP_Text textRenderer = bonusText.GetComponent<TMPro.TMP_Text>();
+            TMP_Text textRenderer = bonusText.GetComponent<TMP_Text>();
             textRenderer.text = "";
 
             switch (AdditionalTempData.WinCondition)
@@ -515,6 +495,7 @@ namespace TheSushiRoles.Patches
                     textRenderer.color = Juggernaut.Color;
                     __instance.BackgroundBar.material.SetColor("_Color", Juggernaut.Color);
                     break;
+
                 case WinCondition.HostEndedGame:
                     textRenderer.text = "Host Aborted The Game!";
                     textRenderer.color = Color.white;
@@ -532,12 +513,6 @@ namespace TheSushiRoles.Patches
                     textRenderer.text = "Vengeful Romantic Wins!";
                     textRenderer.color = Romantic.Color;
                     __instance.BackgroundBar.material.SetColor("_Color", Romantic.Color);
-                    break;
-
-                case WinCondition.JackalWin:
-                    textRenderer.text = "Team Jackal Wins!";
-                    textRenderer.color = Jackal.Color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Jackal.Color);
                     break;
 
                 case WinCondition.GlitchWin:
@@ -631,7 +606,7 @@ namespace TheSushiRoles.Patches
             }
 
             var position = Camera.main.ViewportToWorldPoint(new Vector3(0f, 1f, Camera.main.nearClipPlane));
-            GameObject roleSummary = UnityEngine.Object.Instantiate(__instance.WinText.gameObject);
+            GameObject roleSummary = UObject.Instantiate(__instance.WinText.gameObject);
             roleSummary.transform.position = new Vector3(__instance.Navigation.ExitButton.transform.position.x + 0.1f, position.y - 0.1f, -214f);
             roleSummary.transform.localScale = new Vector3(1f, 1f, 1f);
 
@@ -712,8 +687,8 @@ namespace TheSushiRoles.Patches
             roleSummaryText.AppendLine();
             roleSummaryText.Append(losersText);
 
-            var roleSummaryTextMesh = roleSummary.GetComponent<TMPro.TMP_Text>();
-            roleSummaryTextMesh.alignment = TMPro.TextAlignmentOptions.TopLeft;
+            var roleSummaryTextMesh = roleSummary.GetComponent<TMP_Text>();
+            roleSummaryTextMesh.alignment = TextAlignmentOptions.TopLeft;
             roleSummaryTextMesh.color = Color.white;
             roleSummaryTextMesh.fontSizeMin = 1f;
             roleSummaryTextMesh.fontSizeMax = 1f;
@@ -731,7 +706,7 @@ namespace TheSushiRoles.Patches
     {
         public static void Postfix()
         {
-            if (TheSushiRolesPlugin.NoEndGame || !AmongUsClient.Instance.AmHost || Utils.IsHideNSeek || AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
+            if (TheSushiRoles.NoEndGame || !AmongUsClient.Instance.AmHost || Utils.IsHideNSeek || AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
 
             Coroutines.Start(CheckForEndGame());
         }
@@ -746,7 +721,6 @@ namespace TheSushiRoles.Patches
             if (CheckAndEndGameForTaskWin()) yield break;
             if (CheckAndEndGameForProsecutorWin()) yield break;
             if (CheckAndEndGameForLoverWin(statistics)) yield break;
-            if (CheckAndEndGameForJackalWin(statistics)) yield break;
             if (CheckAndEndGameForGlitchWin(statistics)) yield break;
             if (CheckAndEndGameForPestilenceWin(statistics)) yield break;
             if (CheckAndEndGameForPlaguebearerWin(statistics)) yield break;
@@ -819,37 +793,12 @@ namespace TheSushiRoles.Patches
             }
             return false;
         }
-
-        private static bool CheckAndEndGameForJackalWin(PlayerStatistics statistics)
-        {
-            if (statistics.TeamJackalAlive >= statistics.TotalAlive - statistics.TeamJackalAlive
-            && statistics.TeamImpostorsAlive == 0
-            && statistics.GlitchAlive == 0
-            && statistics.WerewolfAlive == 0
-            && statistics.PredatorAlive == 0
-            && statistics.VengefulRomanticAlive == 0
-            && statistics.HitmanAlive == 0
-            && statistics.AgentAlive == 0
-            && statistics.PestilenceAlive == 0
-            && statistics.PlaguebearerAlive == 0
-            && statistics.CrewPowerAlive == 0
-            && statistics.JuggernautAlive == 0
-            && !(statistics.TeamJackalHasAliveLover
-            && statistics.TeamLoversAlive == 2))
-            {
-                Utils.EndGame((GameOverReason)CustomGameOverReason.TeamJackalWin);
-                return true;
-            }
-            return false;
-        }
-
         private static bool CheckAndEndGameForPestilenceWin(PlayerStatistics statistics)
         {
             if (statistics.PestilenceAlive >= statistics.TotalAlive - statistics.PestilenceAlive
             && statistics.TeamImpostorsAlive == 0
             && statistics.GlitchAlive == 0
             && statistics.WerewolfAlive == 0
-            && statistics.TeamJackalAlive == 0
             && statistics.PredatorAlive == 0
             && statistics.HitmanAlive == 0
             && statistics.AgentAlive == 0
@@ -871,7 +820,6 @@ namespace TheSushiRoles.Patches
             && statistics.TeamImpostorsAlive == 0
             && statistics.GlitchAlive == 0
             && statistics.WerewolfAlive == 0
-            && statistics.TeamJackalAlive == 0
             && statistics.PredatorAlive == 0
             && statistics.HitmanAlive == 0
             && statistics.AgentAlive == 0
@@ -900,7 +848,6 @@ namespace TheSushiRoles.Patches
             && statistics.PestilenceAlive == 0
             && statistics.PlaguebearerAlive == 0
             && statistics.CrewPowerAlive == 0
-            && statistics.TeamJackalAlive == 0
             && !(statistics.JuggernautHasAliveLover
             && statistics.TeamLoversAlive == 2))
             {
@@ -921,8 +868,7 @@ namespace TheSushiRoles.Patches
             && statistics.PlaguebearerAlive == 0
             && statistics.PredatorAlive == 0
             && statistics.HitmanAlive == 0
-            && statistics.AgentAlive == 0
-            && statistics.TeamJackalAlive == 0
+            && statistics.AgentAlive == 0 
             && statistics.JuggernautAlive == 0
             && statistics.CrewPowerAlive == 0
             && !(statistics.VengefulRomanticHasAliveLover
@@ -939,8 +885,7 @@ namespace TheSushiRoles.Patches
         {
             if (statistics.WerewolfAlive >= statistics.TotalAlive - statistics.WerewolfAlive
             && statistics.TeamImpostorsAlive == 0
-            && statistics.GlitchAlive == 0
-            && statistics.TeamJackalAlive == 0
+            && statistics.GlitchAlive == 0         
             && statistics.PredatorAlive == 0
             && statistics.CrewPowerAlive == 0
             && statistics.PestilenceAlive == 0
@@ -962,8 +907,7 @@ namespace TheSushiRoles.Patches
         {
             if (statistics.PredatorAlive >= statistics.TotalAlive - statistics.PredatorAlive
             && statistics.TeamImpostorsAlive == 0
-            && statistics.CrewPowerAlive == 0
-            && statistics.TeamJackalAlive == 0
+            && statistics.CrewPowerAlive == 0         
             && statistics.WerewolfAlive == 0
             && statistics.GlitchAlive == 0
             && statistics.PestilenceAlive == 0
@@ -986,8 +930,7 @@ namespace TheSushiRoles.Patches
         {
             if (statistics.HitmanAlive >= statistics.TotalAlive - statistics.HitmanAlive
             && statistics.TeamImpostorsAlive == 0
-            && statistics.CrewPowerAlive == 0
-            && statistics.TeamJackalAlive == 0
+            && statistics.CrewPowerAlive == 0           
             && statistics.WerewolfAlive == 0
             && statistics.GlitchAlive == 0
             && statistics.PestilenceAlive == 0
@@ -1007,8 +950,7 @@ namespace TheSushiRoles.Patches
         {
             if (statistics.AgentAlive >= statistics.TotalAlive - statistics.AgentAlive
             && statistics.TeamImpostorsAlive == 0
-            && statistics.CrewPowerAlive == 0
-            && statistics.TeamJackalAlive == 0
+            && statistics.CrewPowerAlive == 0           
             && statistics.WerewolfAlive == 0
             && statistics.GlitchAlive == 0
             && statistics.PestilenceAlive == 0
@@ -1029,8 +971,7 @@ namespace TheSushiRoles.Patches
         {
             if (statistics.GlitchAlive >= statistics.TotalAlive - statistics.GlitchAlive
             && statistics.TeamImpostorsAlive == 0
-            && statistics.CrewPowerAlive == 0
-            && statistics.TeamJackalAlive == 0
+            && statistics.CrewPowerAlive == 0   
             && statistics.WerewolfAlive == 0
             && statistics.PredatorAlive == 0
             && statistics.HitmanAlive == 0
@@ -1052,7 +993,6 @@ namespace TheSushiRoles.Patches
         private static bool CheckAndEndGameForImpostorWin(PlayerStatistics statistics)
         {
             if (statistics.TeamImpostorsAlive >= statistics.TotalAlive - statistics.TeamImpostorsAlive
-            && statistics.TeamJackalAlive == 0
             && statistics.GlitchAlive == 0
             && statistics.WerewolfAlive == 0
             && statistics.PredatorAlive == 0
@@ -1088,7 +1028,6 @@ namespace TheSushiRoles.Patches
         private static bool CheckAndEndGameForCrewmateWin(PlayerStatistics statistics)
         {
             if (statistics.TeamImpostorsAlive == 0
-            && statistics.TeamJackalAlive == 0
             && statistics.PredatorAlive == 0
             && statistics.VengefulRomanticAlive == 0
             && statistics.PestilenceAlive == 0
@@ -1109,7 +1048,6 @@ namespace TheSushiRoles.Patches
     internal class PlayerStatistics 
     {
         public int TeamImpostorsAlive {get;set;}
-        public int TeamJackalAlive {get;set;}
         public int GlitchAlive {get;set;}
         public int HitmanAlive {get;set;}
         public int AgentAlive {get;set;}
@@ -1123,7 +1061,6 @@ namespace TheSushiRoles.Patches
         public int TeamLoversAlive {get;set;}
         public int TotalAlive {get;set;}
         public bool TeamImpostorHasAliveLover {get;set;}
-        public bool TeamJackalHasAliveLover {get;set;}
         public bool VengefulRomanticHasAliveLover {get;set;}
         public bool HitmanHasAliveLover {get;set;}
         public bool AgentHasAliveLover {get;set;}
@@ -1146,7 +1083,6 @@ namespace TheSushiRoles.Patches
 
         private void GetPlayerCounts() 
         {
-            int numJackalAlive = 0;
             int numGlitchAlive = 0;
             int numImpostorsAlive = 0;
             int numberPestiAlive = 0;
@@ -1166,7 +1102,6 @@ namespace TheSushiRoles.Patches
             bool PbLover = false;
             bool PestilenceLover = false;
             bool SKLover = false;
-            bool jackalLover = false;
             bool JuggLover = false;
             bool WerewolfLover = false;
             bool hitmanLover = false;
@@ -1183,77 +1118,68 @@ namespace TheSushiRoles.Patches
                         bool lover = IsLover(playerInfo);
                         if (lover) numLoversAlive++;
 
-                        if (playerInfo.Role.IsImpostor && !Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
+                        if (playerInfo.Role.IsImpostor)
                         {
                             numImpostorsAlive++;
                             if (lover) impLover = true;
                         }
-                        if (Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
-                        {
-                            numJackalAlive++;
-                            if (lover) jackalLover = true;
-                        }
-                        if (Hitman.Player != null && Hitman.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
+                        if (Hitman.Player != null && Hitman.Player.PlayerId == playerInfo.PlayerId)
                         {
                             numHitmanAlive++;
                             if (lover) hitmanLover = true;
                         }
-                        if (Agent.Player != null && Agent.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
+                        if (Agent.Player != null && Agent.Player.PlayerId == playerInfo.PlayerId)
                         {
                             numAgentAlive++;
                             if (lover) agentLover = true;
                         }
-                        if (VengefulRomantic.Player != null && VengefulRomantic.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
+                        if (VengefulRomantic.Player != null && VengefulRomantic.Player.PlayerId == playerInfo.PlayerId)
                         {
                             numVRomanticsAlive++;
                             if (lover) RomanticLover = true;
                         }
-                        if (Juggernaut.Player != null && Juggernaut.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
+                        if (Juggernaut.Player != null && Juggernaut.Player.PlayerId == playerInfo.PlayerId)
                         {
                             numJuggAlive++;
                             if (lover) JuggLover = true;
                         }
-                        if (Pestilence.Player != null && Pestilence.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
+                        if (Pestilence.Player != null && Pestilence.Player.PlayerId == playerInfo.PlayerId)
                         {
                             numberPestiAlive++;
                             if (lover) PestilenceLover = true;
                         }
-                        if (Plaguebearer.Player != null && Plaguebearer.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
+                        if (Plaguebearer.Player != null && Plaguebearer.Player.PlayerId == playerInfo.PlayerId)
                         {
                             numberPlagueAlive++;
                             if (lover) PbLover = true;
                         }
-                        if (Sheriff.Player != null && Sheriff.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
+                        if (Sheriff.Player != null && Sheriff.Player.PlayerId == playerInfo.PlayerId)
                         {
                             numCrewPowerAlive++;
                         }
-                        if (Mayor.Player != null && Mayor.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
+                        if (Mayor.Player != null && Mayor.Player.PlayerId == playerInfo.PlayerId)
                         {
                             numCrewPowerAlive++;
                         }
-                        if (Veteran.Player != null && Veteran.Charges > 0 && Veteran.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
+                        if (Veteran.Player != null && Veteran.Charges > 0 && Veteran.Player.PlayerId == playerInfo.PlayerId)
                         {
                             numCrewPowerAlive++;
                         }
-                        if (Swapper.Player != null && Swapper.Charges > 0 && Swapper.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
+                        if (Tiebreaker.Player != null && Tiebreaker.Player.PlayerId == playerInfo.PlayerId && Tiebreaker.Player.IsCrew())
                         {
                             numCrewPowerAlive++;
                         }
-                        if (Tiebreaker.Player != null && Tiebreaker.Player.PlayerId == playerInfo.PlayerId && Tiebreaker.Player.IsCrew() && !Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
-                        {
-                            numCrewPowerAlive++;
-                        }
-                        if (Predator.Player != null && Predator.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
+                        if (Predator.Player != null && Predator.Player.PlayerId == playerInfo.PlayerId)
                         {
                             numPredatorAlive++;
                             if (lover) SKLover = true;
                         }
-                        if (Glitch.Player != null && Glitch.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
+                        if (Glitch.Player != null && Glitch.Player.PlayerId == playerInfo.PlayerId)
                         {
                             numGlitchAlive++;
                             if (lover) glitchLover = true;
                         }
-                        if (Werewolf.Player != null && Werewolf.Player.PlayerId == playerInfo.PlayerId && !Utils.IsJackal(Utils.GetPlayerById(playerInfo.PlayerId)))
+                        if (Werewolf.Player != null && Werewolf.Player.PlayerId == playerInfo.PlayerId)
                         {
                             numWerewolfAlive++;
                             if (lover) WerewolfLover = true;
@@ -1262,7 +1188,6 @@ namespace TheSushiRoles.Patches
                 }
             }
 
-            TeamJackalAlive = numJackalAlive;
             JuggernautAlive = numJuggAlive;
             HitmanAlive = numHitmanAlive;
             AgentAlive = numAgentAlive;
@@ -1277,7 +1202,6 @@ namespace TheSushiRoles.Patches
             TeamLoversAlive = numLoversAlive;
             TotalAlive = numTotalAlive;
             TeamImpostorHasAliveLover = impLover;
-            TeamJackalHasAliveLover = jackalLover;
             GlitchHasLoverAlive = glitchLover;
             PlaguebearerAliveHasLover = PbLover;
             PestilenceAliveHasLover = PestilenceLover;

@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace TheSushiRoles.Objects 
 {
     public class Arrow 

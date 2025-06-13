@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
-
 namespace TheSushiRoles.Roles
 {
     public static class Psychic 
@@ -15,39 +13,6 @@ namespace TheSushiRoles.Roles
         public static List<Tuple<DeadPlayer, Vector3>> futureDeadBodies = new List<Tuple<DeadPlayer, Vector3>>();
         public static List<SpriteRenderer> souls = new List<SpriteRenderer>();
         public static DateTime meetingStartTime = DateTime.UtcNow;
-        public static float Cooldown = 25f;
-        public static float Duration = 3f;
-        public static bool oneTimeUse = false;
-        public static float chanceAdditionalInfo = 0f;
-        private static Sprite soulSprite;
-        enum SpecialPsychicInfo 
-        {
-            SheriffSuicide,
-            ActiveLoverDies,
-            PassiveLoverSuicide,
-            LawyerKilledByClient,
-            RomanticKilledByBeloved,
-            JackalKillsRecruit,
-            ImpostorTeamkill,
-            SubmergedO2,
-            WarlockSuicide,
-            BodyCleaned,
-        }
-
-        public static Sprite GetSoulSprite() 
-        {
-            if (soulSprite) return soulSprite;
-            soulSprite = Utils.LoadSprite("TheSushiRoles.Resources.Soul.png", 500f);
-            return soulSprite;
-        }
-
-        private static Sprite question;
-        public static Sprite GetQuestionSprite() 
-        {
-            if (question) return question;
-            question = Utils.LoadSprite("TheSushiRoles.Resources.PsychicButton.png", 115f);
-            return question;
-        }
 
         public static void ClearAndReload() 
         {
@@ -58,10 +23,6 @@ namespace TheSushiRoles.Roles
             futureDeadBodies = new List<Tuple<DeadPlayer, Vector3>>();
             souls = new List<SpriteRenderer>();
             meetingStartTime = DateTime.UtcNow;
-            Cooldown = CustomOptionHolder.PsychicCooldown.GetFloat();
-            Duration = CustomOptionHolder.PsychicDuration.GetFloat();
-            oneTimeUse = CustomOptionHolder.PsychicOneTimeUse.GetBool();
-            chanceAdditionalInfo = CustomOptionHolder.PsychicChanceAdditionalInfo.GetSelection() / 10f;
         }
 
         public static string GetInfo(PlayerControl target, PlayerControl killer, DeadPlayer.CustomDeathReason DeathReason) 
@@ -82,14 +43,13 @@ namespace TheSushiRoles.Roles
                 if (target == Lovers.Lover1 || target == Lovers.Lover2) infos.Add(SpecialPsychicInfo.ActiveLoverDies);
                 if (target.Data.Role.IsImpostor && killer.Data.Role.IsImpostor) infos.Add(SpecialPsychicInfo.ImpostorTeamkill);
             }
-            if (target == Recruit.Player && (killer == Jackal.Player)) infos.Add(SpecialPsychicInfo.JackalKillsRecruit);
             if (target == Lawyer.Player && killer == Lawyer.target) infos.Add(SpecialPsychicInfo.LawyerKilledByClient);
             if (target == Romantic.Player && killer == Romantic.beloved) infos.Add(SpecialPsychicInfo.RomanticKilledByBeloved);
             if (Psychic.target.WasCleanedOrEaten) infos.Add(SpecialPsychicInfo.BodyCleaned);
             
             if (infos.Count > 0) 
             {
-                var selectedInfo = infos[TheSushiRolesPlugin.rnd.Next(infos.Count)];
+                var selectedInfo = infos[TheSushiRoles.rnd.Next(infos.Count)];
                 switch (selectedInfo) 
                 {
                     case SpecialPsychicInfo.SheriffSuicide:
@@ -110,9 +70,6 @@ namespace TheSushiRoles.Roles
                     case SpecialPsychicInfo.LawyerKilledByClient:
                         msg = "My client killed me. Do I still get paid?";
                         break;
-                    case SpecialPsychicInfo.JackalKillsRecruit:
-                        msg = "First they Recruited me, then they killed me. At least I don't need to do tasks anymore.";
-                        break;
                     case SpecialPsychicInfo.ImpostorTeamkill:
                         msg = "I guess they confused me for the Spy, is there even one?";
                         break;
@@ -123,7 +80,7 @@ namespace TheSushiRoles.Roles
             }
             else
             {
-                int randomNumber = TheSushiRolesPlugin.rnd.Next(4);
+                int randomNumber = TheSushiRoles.rnd.Next(4);
                 string typeOfColor = Utils.IsLighterColor(Psychic.target.GetKiller) ? "lighter" : "darker";
                 float timeSinceDeath = (float)(Psychic.meetingStartTime - Psychic.target.DeathTime).TotalMilliseconds;
                 var roleString = RoleInfo.GetRolesString(Psychic.target.player, false);
@@ -139,12 +96,12 @@ namespace TheSushiRoles.Roles
                 else msg = "It seems like my killer is the " + RoleInfo.GetRolesString(Psychic.target.GetKiller, false) + ".";
             }
 
-            if (TheSushiRolesPlugin.rnd.NextDouble() < chanceAdditionalInfo) 
+            if (TheSushiRoles.rnd.NextDouble() < CustomGameOptions.PsychicChanceAdditionalInfo) 
             {
                 int count = 0;
                 string condition = "";
                 var alivePlayersList = PlayerControl.AllPlayerControls.ToArray().Where(pc => !pc.Data.IsDead);
-                switch (TheSushiRolesPlugin.rnd.Next(3)) 
+                switch (TheSushiRoles.rnd.Next(3)) 
                 {
                     case 0:
                         count = alivePlayersList.Where(pc => pc.Data.Role.IsImpostor || pc.IsNeutralKiller() || new List<RoleInfo>() { RoleInfo.sheriff, RoleInfo.veteran}.Contains(RoleInfo.GetRoleInfoForPlayer(pc).FirstOrDefault())).Count();

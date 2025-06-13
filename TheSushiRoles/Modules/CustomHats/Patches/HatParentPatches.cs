@@ -237,7 +237,7 @@ internal static class HatParentPatches
             __instance.FrontLayer.sprite = null;
             __instance.BackLayer.sprite = asset.MainImage;
         }
-        if (/*!__instance.options.Initialized ||*/ !__instance.HideHat()) return false;
+        if (!__instance.options.Initialized || !__instance.HideHat()) return false;
         __instance.FrontLayer.enabled = false;
         __instance.BackLayer.enabled = false;
         return false;
@@ -258,7 +258,7 @@ internal static class HatParentPatches
         }
         catch (Exception err)
         {
-            TheSushiRolesPlugin.Logger.LogWarning($"Unable to create test hat \n{err}");
+            TheSushiRoles.Logger.LogWarning($"Unable to create test hat \n{err}");
             return true;
         }
 

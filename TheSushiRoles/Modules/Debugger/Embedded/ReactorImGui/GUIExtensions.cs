@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace TheSushiRoles.Modules.Debugger.Embedded.ReactorImGui;
+﻿namespace TheSushiRoles.Modules.Debugger.Embedded.ReactorImGui;
 
 public static class GUIExtensions
 {

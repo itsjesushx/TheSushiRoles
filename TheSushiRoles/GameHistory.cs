@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System;
-using UnityEngine;
 using System.Linq;
 
 namespace TheSushiRoles 
@@ -36,8 +34,7 @@ namespace TheSushiRoles
                 }
             } 
             else if (player != null) 
-            {  
-                // Create dead player if needed:
+            {
                 var dp = new DeadPlayer(player, DateTime.UtcNow, DeathReason, killer);
                 deadPlayers.Add(dp);
             }

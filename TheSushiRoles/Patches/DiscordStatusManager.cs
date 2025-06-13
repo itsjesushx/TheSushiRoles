@@ -9,6 +9,6 @@ internal class DiscordStatusManager
     [HarmonyPrefix]
     public static void Prefix([HarmonyArgument(0)] Activity activity)
     {
-        activity.Details += $" TheSushiRoles v" + TheSushiRolesPlugin.VersionString;
+        activity.Details += $" TheSushiRoles v" + TheSushiRoles.VersionString + TheSushiRoles.DevString;
     }
 }

@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace TheSushiRoles.Objects 
 {
@@ -15,7 +13,7 @@ namespace TheSushiRoles.Objects
         public bool revealed = false;
         public bool triggerable = false;
         private int usedCount = 0;
-        private int neededCount = Trapper.trapCountToReveal;
+        private int neededCount = CustomGameOptions.TrapperTrapNeededTriggerToReveal;
         public List<byte> trappedPlayer = new List<byte>();
         private Arrow arrow = new Arrow(Color.blue);
         private static Sprite trapSprite;
@@ -31,7 +29,7 @@ namespace TheSushiRoles.Objects
             trap.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
             Vector3 position = new Vector3(p.x, p.y, p.y / 1000 + 0.001f); // just behind player
             trap.transform.position = position;
-            neededCount = Trapper.trapCountToReveal;
+            neededCount = CustomGameOptions.TrapperTrapNeededTriggerToReveal;
 
             var trapRenderer = trap.AddComponent<SpriteRenderer>();
             trapRenderer.sprite = GetTrapSprite();
@@ -93,7 +91,7 @@ namespace TheSushiRoles.Objects
             Trapper.playersOnMap.Add(player.PlayerId); 
             if (localIsTrapper) t.arrow.arrow.SetActive(true);
 
-            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Trapper.trapDuration, new Action<float>((p) => { 
+            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(CustomGameOptions.TrapperTrapDuration, new Action<float>((p) => { 
                 if (p == 1f) 
                 {
                     player.moveable = true;
@@ -110,7 +108,6 @@ namespace TheSushiRoles.Objects
 
             t.trappedPlayer.Add(player.PlayerId);
             t.triggerable = true;
-
         }
 
         public static void Update() 

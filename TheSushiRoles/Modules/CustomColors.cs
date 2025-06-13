@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using AmongUs.Data.Legacy;
 
 namespace TheSushiRoles.Modules 
@@ -25,7 +24,7 @@ namespace TheSushiRoles.Modules
 
             List<CustomColor> colors = new List<CustomColor>();
 
-            /* Custom Colors, starting with id (for ORDER) 18 */
+            // Custom Colors, starting with id (for ORDER) 18 
             colors.Add(new CustomColor {
                 longname = "Tamarind", //18
                 color = new Color32(48, 28, 34, byte.MaxValue),
@@ -148,9 +147,9 @@ namespace TheSushiRoles.Modules
                                         isLighterColor = false
             });
             pickableColors += (uint)colors.Count; // Colors to show in Tab
-            /** Hidden Colors **/     
+            // Hidden Colors
                     
-            /** Add Colors **/
+            // Add Colors
             int id = 50000;
             foreach (CustomColor cc in colors) 
             {

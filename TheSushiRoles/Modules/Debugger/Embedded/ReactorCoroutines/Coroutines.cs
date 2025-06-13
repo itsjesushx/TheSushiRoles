@@ -1,10 +1,8 @@
 ﻿#nullable enable
 using BepInEx.Unity.IL2CPP.Utils;
-using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using UnityEngine;
 
 namespace TheSushiRoles.Modules.Debugger.Embedded.ReactorCoroutines;
 
@@ -36,16 +34,6 @@ public static class Coroutines
         yield return coroutine;
         _ourCoroutineStore.Remove(coroutine);
     }
-
-    /*public static void EnsureExists()
-    {
-        if (Component.Instance == null)
-        {
-            var coroutine = new GameObject("CoroutineHost");
-            coroutine.AddComponent<Component>();
-            UObject.DontDestroyOnLoad(coroutine);
-        }
-    }*/
 
     [return: NotNullIfNotNull("coroutine")]
     public static IEnumerator? Start(IEnumerator? coroutine)

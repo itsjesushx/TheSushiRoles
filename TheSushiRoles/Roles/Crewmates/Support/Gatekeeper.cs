@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace TheSushiRoles.Roles
 {
     public static class Gatekeeper 
@@ -7,24 +5,10 @@ namespace TheSushiRoles.Roles
         public static PlayerControl Player;
         public static Color Color = new Color32(69, 69, 169, byte.MaxValue);
 
-        public static float Cooldown;
-        public static float usePortalCooldown;
-        public static bool logOnlyHasColors;
-        public static bool logShowsTime;
-        public static bool canPortalFromAnywhere;
-
-        private static Sprite placePortalButtonSprite;
         private static Sprite usePortalButtonSprite;
         private static Sprite usePortalSpecialButtonSprite1;
         private static Sprite usePortalSpecialButtonSprite2;
         private static Sprite logSprite;
-
-        public static Sprite GetPlacePortalButtonSprite() 
-        {
-            if (placePortalButtonSprite) return placePortalButtonSprite;
-            placePortalButtonSprite = Utils.LoadSprite("TheSushiRoles.Resources.PlacePortalButton.png", 115f);
-            return placePortalButtonSprite;
-        }
 
         public static Sprite getUsePortalButtonSprite() 
         {
@@ -59,11 +43,6 @@ namespace TheSushiRoles.Roles
         public static void ClearAndReload() 
         {
             Player = null;
-            Cooldown = CustomOptionHolder.GatekeeperCooldown.GetFloat();
-            usePortalCooldown = CustomOptionHolder.GatekeeperUsePortalCooldown.GetFloat();
-            logOnlyHasColors = CustomOptionHolder.GatekeeperLogOnlyColorType.GetBool();
-            logShowsTime = CustomOptionHolder.GatekeeperLogHasTime.GetBool();
-            canPortalFromAnywhere = CustomOptionHolder.GatekeeperCanPortalFromAnywhere.GetBool();
         }
     }
 }

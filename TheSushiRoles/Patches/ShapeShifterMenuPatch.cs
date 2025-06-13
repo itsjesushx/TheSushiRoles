@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Reactor.Utilities.Extensions;
-using UnityEngine;
 
 namespace TheSushiRoles.Patches;
 
@@ -39,9 +36,9 @@ public class ShapeShifterMenu
     {
         yield return new WaitForSecondsRealtime(delay);
 
-        while (ExileController.Instance != null) { yield return 0; }
+        while (ExiledInstance() != null) { yield return 0; }
 
-        Targets = PlayerControl.AllPlayerControls.ToArray()
+        Targets = AllPlayerControls
             .Where(x => Inclusion(x) && (!x.Data.IsDead || includeDead) && !x.Data.Disconnected)
             .ToList();
 

@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace TheSushiRoles.Modules.Debugger;
+﻿namespace TheSushiRoles.Modules.Debugger;
 
 [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.Update))]
 public static class Keyboard_Joystick
@@ -8,7 +6,7 @@ public static class Keyboard_Joystick
     public static int ControllingFigure;
     public static void Postfix()
     {
-        if (!TheSushiRolesPlugin.DebuggerLoaded) return;
+        if (!TheSushiRoles.DebuggerLoaded) return;
 
         if (Input.GetKeyDown(KeyCode.F5))
         {
@@ -25,7 +23,7 @@ public static class Keyboard_Joystick
             Switch(false);
         }
         else if (Input.GetKeyDown(KeyCode.F6))
-            TheSushiRolesPlugin.Persistence = !TheSushiRolesPlugin.Persistence;
+            TheSushiRoles.Persistence = !TheSushiRoles.Persistence;
 
         if (Input.GetKeyDown(KeyCode.F11))
             InstanceControlPatches.RemoveAllPlayers();

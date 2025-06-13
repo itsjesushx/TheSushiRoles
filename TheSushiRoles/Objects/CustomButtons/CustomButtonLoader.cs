@@ -1,15 +1,10 @@
-using Hazel;
-using System;
-using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
-using Reactor.Utilities.Extensions;
-using Reactor.Utilities;
 
-namespace TheSushiRoles
+namespace TheSushiRoles.Objects.CustomButtons
 {
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Start))]
-    static class HudManagerStartPatch
+    static class CustomButtonLoader
     {
         private static bool initialized = false;
         private static CustomButton engineerRepairButton;
@@ -44,18 +39,13 @@ namespace TheSushiRoles
         public static CustomButton ViperKillButton;
         public static CustomButton HitmanKillButton;
         public static CustomButton JuggernautKillButton;
-        public static CustomButton jackalKillButton;
         public static CustomButton PredatorTerminateButton;
         public static CustomButton PredatorKillButton;
         public static CustomButton GlitchKillButton;
         public static CustomButton RomanticKillButton;
         public static CustomButton WerewolfMaulButton;
-        public static CustomButton RecruitKillButton;
         public static CustomButton PlaguebearerButton;
         public static CustomButton PestilenceButton;
-        public static CustomButton jackalRecruitButton;
-        public static CustomButton CultistButton;
-        private static CustomButton eraserButton;
         private static CustomButton placeJackInTheBoxButton;
         private static CustomButton DisperserButton;
         private static CustomButton lightsOutButton;
@@ -83,23 +73,23 @@ namespace TheSushiRoles
         public static Dictionary<byte, List<CustomButton>> PlayerHackedButtons = null;
         public static PoolablePlayer targetDisplay;
 
-        public static TMPro.TMP_Text VigilanteButtonScrewsText;
-        public static TMPro.TMP_Text VigilanteChargesText;
-        public static TMPro.TMP_Text VeteranChargesText;
-        public static TMPro.TMP_Text MysticChargesText;
-        public static TMPro.TMP_Text OracleChargesText;
-        public static TMPro.TMP_Text CrusaderChargesText;
-        public static TMPro.TMP_Text MonarchChargesText;
-        public static TMPro.TMP_Text GlitchButtonHacksText;
-        public static TMPro.TMP_Text LandlordButtonChargesText;
-        public static TMPro.TMP_Text ChronosChargesText;
-        public static TMPro.TMP_Text SurvivorButtonBlanksText;
-        public static TMPro.TMP_Text hackerAdminTableChargesText;
-        public static TMPro.TMP_Text hackerVitalsChargesText;
-        public static TMPro.TMP_Text DisperserChargesText;
-        public static TMPro.TMP_Text trapperChargesText;
-        public static TMPro.TMP_Text GatekeeperButtonText1;
-        public static TMPro.TMP_Text GatekeeperButtonText2;
+        public static TMP_Text VigilanteButtonScrewsText;
+        public static TMP_Text VigilanteChargesText;
+        public static TMP_Text VeteranChargesText;
+        public static TMP_Text MysticChargesText;
+        public static TMP_Text OracleChargesText;
+        public static TMP_Text CrusaderChargesText;
+        public static TMP_Text MonarchChargesText;
+        public static TMP_Text GlitchButtonHacksText;
+        public static TMP_Text LandlordButtonChargesText;
+        public static TMP_Text ChronosChargesText;
+        public static TMP_Text SurvivorButtonBlanksText;
+        public static TMP_Text hackerAdminTableChargesText;
+        public static TMP_Text hackerVitalsChargesText;
+        public static TMP_Text DisperserChargesText;
+        public static TMP_Text trapperChargesText;
+        public static TMP_Text GatekeeperButtonText1;
+        public static TMP_Text GatekeeperButtonText2;
 
         public static void SetCustomButtonCooldowns() 
         {
@@ -108,102 +98,97 @@ namespace TheSushiRoles
                 try 
                 {
                     CreateButtonsPostfix(HudManager.Instance);
-                } 
+                }
                 catch 
                 {
-                    TheSushiRolesPlugin.Logger.LogWarning("Button Cooldowns not set, there's something wrong.");
+                    TheSushiRoles.Logger.LogWarning("Button Cooldowns not set, there's something wrong!");
                     return;
                 }
             }
             engineerRepairButton.MaxTimer = 0f;
-            sheriffKillButton.MaxTimer = Sheriff.Cooldown;
-            HitmanKillButton.MaxTimer = Hitman.Cooldown;
-            GlitchHackButton.MaxTimer = Glitch.HackCooldown;
-            ChronosRewindButton.MaxTimer = Chronos.Cooldown;
-            WraithButton.MaxTimer = Wraith.Cooldown;
-            SnitchButton.MaxTimer = Snitch.Cooldown;
-            PlaguebearerButton.MaxTimer = Plaguebearer.Cooldown;
+            sheriffKillButton.MaxTimer = CustomGameOptions.SheriffCooldown;
+            HitmanKillButton.MaxTimer = CustomGameOptions.HitmanCooldown;
+            GlitchHackButton.MaxTimer = CustomGameOptions.GlitchHackCooldown;
+            ChronosRewindButton.MaxTimer = CustomGameOptions.ChronosCooldown;
+            WraithButton.MaxTimer = CustomGameOptions.WraithCooldown;
+            SnitchButton.MaxTimer = CustomGameOptions.SnitchCooldown;
+            PlaguebearerButton.MaxTimer = CustomGameOptions.PlaguebearerCooldown;
             medicShieldButton.MaxTimer = 0f;
-            OracleButton.MaxTimer = Oracle.Cooldown;
+            OracleButton.MaxTimer = CustomGameOptions.ConfessCooldown;
             RomanticSetTargetButton.MaxTimer = 0f;
-            ViperBlindButton.MaxTimer = Viper.BlindCooldown;
-            VeteranAlertButton.MaxTimer = Veteran.Cooldown;
-            BlackmailButton.MaxTimer = Blackmailer.Cooldown;
-            LandlordButton.MaxTimer = Landlord.Cooldown;
-            PredatorTerminateButton.MaxTimer = Predator.TerminateCooldown;
-            PredatorKillButton.MaxTimer = Predator.TerminateKillCooldown;
-            GrenadierButton.MaxTimer = Grenadier.Cooldown;
-            UndertakerButton.MaxTimer = Undertaker.Cooldown;
-            HitmanDragButton.MaxTimer = Hitman.DragCooldown;
-            DisperserButton.MaxTimer = Disperser.Cooldown;
-            morphlingButton.MaxTimer = Morphling.Cooldown;
-            MimicButton.MaxTimer = Glitch.MimicCooldown;
-            HitmanMorphButton.MaxTimer = Hitman.MorphCooldown;
-            PainterButton.MaxTimer = Painter.Cooldown;
-            GatekeeperPlacePortalButton.MaxTimer = Gatekeeper.Cooldown;
-            MinerMineButton.MaxTimer = Miner.Cooldown;
-            usePortalButton.MaxTimer = Gatekeeper.usePortalCooldown;
-            CrusaderButton.MaxTimer = Crusader.Cooldown;
-            MonarchKnightButton.MaxTimer = Monarch.Cooldown;
-            MysticButton.MaxTimer = Mystic.Cooldown;
-            GatekeeperMoveToPortalButton.MaxTimer = Gatekeeper.usePortalCooldown;
-            hackerButton.MaxTimer = Hacker.Cooldown;
-            hackerVitalsButton.MaxTimer = Hacker.Cooldown;
-            hackerAdminTableButton.MaxTimer = Hacker.Cooldown;
-            ViperKillButton.MaxTimer = Viper.Cooldown;
+            ViperBlindButton.MaxTimer = CustomGameOptions.ViperBlindCooldown;
+            VeteranAlertButton.MaxTimer = CustomGameOptions.VeteranCooldown;
+            BlackmailButton.MaxTimer = CustomGameOptions.BlackmailCooldown;
+            LandlordButton.MaxTimer = CustomGameOptions.LandlordCooldown;
+            PredatorTerminateButton.MaxTimer = CustomGameOptions.PredatorTerminateCooldown;
+            PredatorKillButton.MaxTimer = CustomGameOptions.PredatorTerminateKillCooldown;
+            GrenadierButton.MaxTimer = CustomGameOptions.GrenadierCooldown;
+            UndertakerButton.MaxTimer = CustomGameOptions.UndertakerCooldown;
+            HitmanDragButton.MaxTimer = CustomGameOptions.HitmanDragCooldown;
+            DisperserButton.MaxTimer = CustomGameOptions.ModifierDisperserCooldown;
+            morphlingButton.MaxTimer = CustomGameOptions.MorphlingCooldown;
+            MimicButton.MaxTimer = CustomGameOptions.GlitchMimicCooldown;
+            HitmanMorphButton.MaxTimer = CustomGameOptions.HitmanMorphCooldown;
+            PainterButton.MaxTimer = CustomGameOptions.PainterCooldown;
+            GatekeeperPlacePortalButton.MaxTimer = CustomGameOptions.GatekeeperCooldown;
+            MinerMineButton.MaxTimer = CustomGameOptions.MinerCooldown;
+            usePortalButton.MaxTimer = CustomGameOptions.GatekeeperUsePortalCooldown;
+            CrusaderButton.MaxTimer = CustomGameOptions.CrusaderCooldown;
+            MonarchKnightButton.MaxTimer = CustomGameOptions.MonarchKnightCooldown;
+            MysticButton.MaxTimer = CustomGameOptions.MysticCooldown;
+            GatekeeperMoveToPortalButton.MaxTimer = CustomGameOptions.GatekeeperUsePortalCooldown;
+            hackerButton.MaxTimer = CustomGameOptions.HackerCooldown;
+            hackerVitalsButton.MaxTimer = CustomGameOptions.HackerCooldown;
+            hackerAdminTableButton.MaxTimer = CustomGameOptions.HackerCooldown;
+            ViperKillButton.MaxTimer = CustomGameOptions.ViperCooldown;
             trackerTrackPlayerButton.MaxTimer = 0f;
-            PestilenceButton.MaxTimer = Pestilence.Cooldown;
-            jackalKillButton.MaxTimer = Jackal.Cooldown;
-            GlitchKillButton.MaxTimer = Glitch.KillCooldown;
-            RomanticKillButton.MaxTimer = VengefulRomantic.Cooldown;
-            WerewolfMaulButton.MaxTimer = Werewolf.Cooldown;
-            JuggernautKillButton.MaxTimer = Juggernaut.Cooldown;
-            RecruitKillButton.MaxTimer = Recruit.Cooldown;
-            jackalRecruitButton.MaxTimer = Jackal.createRecruitCooldown;
-            CultistButton.MaxTimer = Cultist.Cooldown;
-            eraserButton.MaxTimer = Eraser.Cooldown;
-            placeJackInTheBoxButton.MaxTimer = Trickster.placeBoxCooldown;
-            lightsOutButton.MaxTimer = Trickster.lightsOutCooldown;
-            JanitorCleanButton.MaxTimer = Janitor.Cooldown;
-            warlockCurseButton.MaxTimer = Warlock.Cooldown;
-            VigilanteButton.MaxTimer = Vigilante.Cooldown;
-            VigilanteCamButton.MaxTimer = Vigilante.Cooldown;
-            arsonistButton.MaxTimer = Arsonist.Cooldown;
-            ScavengerEatButton.MaxTimer = Scavenger.Cooldown;
-            PsychicButton.MaxTimer = Psychic.Cooldown;
-            SurvivorButton.MaxTimer = Survivor.Cooldown;
-            trackerTrackCorpsesButton.MaxTimer = Tracker.corpsesTrackingCooldown;
-            ScavengerScavengeButton.MaxTimer = Scavenger.ScavengeCooldown;
-            witchSpellButton.MaxTimer = Witch.Cooldown;
-            AssassinButton.MaxTimer = Assassin.Cooldown;
+            PestilenceButton.MaxTimer = CustomGameOptions.PestilenceCooldown;
+            GlitchKillButton.MaxTimer = CustomGameOptions.GlitchKillCooldown;
+            RomanticKillButton.MaxTimer = CustomGameOptions.VengefulRomanticCooldown;
+            WerewolfMaulButton.MaxTimer = CustomGameOptions.WerewolfCooldown;
+            JuggernautKillButton.MaxTimer = CustomGameOptions.JuggernautCooldown;
+            placeJackInTheBoxButton.MaxTimer = CustomGameOptions.TricksterPlaceBoxCooldown;
+            lightsOutButton.MaxTimer = CustomGameOptions.TricksterLightsOutCooldown;
+            JanitorCleanButton.MaxTimer = CustomGameOptions.JanitorCooldown;
+            warlockCurseButton.MaxTimer = CustomGameOptions.WarlockCooldown;
+            VigilanteButton.MaxTimer = CustomGameOptions.VigilanteCooldown;
+            VigilanteCamButton.MaxTimer = CustomGameOptions.VigilanteCooldown;
+            arsonistButton.MaxTimer = CustomGameOptions.ArsonistCooldown;
+            ScavengerEatButton.MaxTimer = CustomGameOptions.ScavengerCooldown;
+            PsychicButton.MaxTimer = CustomGameOptions.PsychicCooldown;
+            SurvivorButton.MaxTimer = CustomGameOptions.SurvivorCooldown;
+            trackerTrackCorpsesButton.MaxTimer = CustomGameOptions.TrackerCorpsesTrackingCooldown;
+            ScavengerScavengeButton.MaxTimer = CustomGameOptions.ScavengerScavengeCooldown;
+            witchSpellButton.MaxTimer = CustomGameOptions.WitchCooldown;
+            AssassinButton.MaxTimer = CustomGameOptions.AssassinCooldown;
             mayorMeetingButton.MaxTimer = GameManager.Instance.LogicOptions.GetEmergencyCooldown();
             CowardButton.MaxTimer = GameManager.Instance.LogicOptions.GetEmergencyCooldown();
-            trapperButton.MaxTimer = Trapper.Cooldown;
-            yoyoButton.MaxTimer = Yoyo.markCooldown;
-            yoyoAdminTableButton.MaxTimer = Yoyo.adminCooldown;
+            trapperButton.MaxTimer = CustomGameOptions.TrapperCooldown;
+            yoyoButton.MaxTimer = CustomGameOptions.YoyoMarkCooldown;
+            yoyoAdminTableButton.MaxTimer = CustomGameOptions.YoyoAdminTableCooldown;
             yoyoAdminTableButton.EffectDuration = 10f;
 
-            ChronosRewindButton.EffectDuration = Chronos.RewindTimeDuration;
-            hackerButton.EffectDuration = Hacker.Duration;
-            hackerVitalsButton.EffectDuration = Hacker.Duration;
-            hackerAdminTableButton.EffectDuration = Hacker.Duration;
-            ViperKillButton.EffectDuration = Viper.delay;
-            PainterButton.EffectDuration = Painter.Duration;
-            GrenadierButton.EffectDuration = Grenadier.GrenadeDuration;
-            morphlingButton.EffectDuration = Morphling.Duration;
-            MimicButton.EffectDuration = Glitch.MimicDuration;
-            HitmanMorphButton.EffectDuration = Hitman.MorphDuration;
-            SnitchButton.EffectDuration = Snitch.Duration;
-            lightsOutButton.EffectDuration = Trickster.lightsOutDuration;
-            arsonistButton.EffectDuration = Arsonist.Duration;
-            PsychicButton.EffectDuration = Psychic.Duration;
-            VeteranAlertButton.EffectDuration = Veteran.Duration;
-            WraithButton.EffectDuration = Wraith.Duration;
-            PredatorTerminateButton.EffectDuration = Predator.TerminateDuration;
-            trackerTrackCorpsesButton.EffectDuration = Tracker.corpsesTrackingDuration;
-            ScavengerScavengeButton.EffectDuration = Scavenger.ScavengeDuration;
-            witchSpellButton.EffectDuration = Witch.spellCastingDuration;
-            VigilanteCamButton.EffectDuration = Vigilante.Duration;
+            ChronosRewindButton.EffectDuration = CustomGameOptions.ChronosRewindTime;
+            hackerButton.EffectDuration = CustomGameOptions.HackerDuration;
+            hackerVitalsButton.EffectDuration = CustomGameOptions.HackerDuration;
+            hackerAdminTableButton.EffectDuration = CustomGameOptions.HackerDuration;
+            ViperKillButton.EffectDuration = CustomGameOptions.ViperKillDelay;
+            PainterButton.EffectDuration = CustomGameOptions.PainterDuration;
+            GrenadierButton.EffectDuration = CustomGameOptions.GrenadeDuration;
+            morphlingButton.EffectDuration = CustomGameOptions.MorphlingDuration;
+            MimicButton.EffectDuration = CustomGameOptions.GlitchMimicDuration;
+            HitmanMorphButton.EffectDuration = CustomGameOptions.HitmanMorphDuration;
+            SnitchButton.EffectDuration = CustomGameOptions.SnitchDuration;
+            lightsOutButton.EffectDuration = CustomGameOptions.TricksterLightsOutDuration;
+            arsonistButton.EffectDuration = CustomGameOptions.ArsonistDuration;
+            PsychicButton.EffectDuration = CustomGameOptions.PsychicDuration;
+            VeteranAlertButton.EffectDuration = CustomGameOptions.VeteranDuration;
+            WraithButton.EffectDuration = CustomGameOptions.WraithDuration;
+            PredatorTerminateButton.EffectDuration = CustomGameOptions.PredatorTerminateDuration;
+            trackerTrackCorpsesButton.EffectDuration = CustomGameOptions.TrackerCorpsesTrackingDuration;
+            ScavengerScavengeButton.EffectDuration = CustomGameOptions.ScavengerScavengeDuration;
+            witchSpellButton.EffectDuration = CustomGameOptions.WitchSpellCastingDuration;
+            VigilanteCamButton.EffectDuration = CustomGameOptions.VigilanteCamDuration;
             // Already set the timer to the max, as the button is enabled during the game and not available at the start
             lightsOutButton.Timer = lightsOutButton.MaxTimer;
             zoomOutButton.MaxTimer = 0f;
@@ -214,8 +199,8 @@ namespace TheSushiRoles
             Vector3 positionOffsetValue = positionOffset ?? button.PositionOffset;  // For non custom buttons, we can set these manually.
             positionOffsetValue.z = -0.1f;
             couldUse = couldUse ?? button.CouldUse;
-            CustomButton replacementHackedButton = new CustomButton(() => { }, () => { return true; }, couldUse, () => { }, Glitch.GetHackedButtonSprite(), positionOffsetValue, button.hudManager, button.hotkey,
-                true, Glitch.HackDuration, () => { }, button.mirror);
+            CustomButton replacementHackedButton = new CustomButton(() => { }, () => { return true; }, couldUse, () => { }, Utils.GetSprite("HackButton", 110f), positionOffsetValue, button.hudManager, button.hotkey,
+                true, CustomGameOptions.GlitchHackDuration, () => { }, button.mirror);
             replacementHackedButton.Timer = replacementHackedButton.EffectDuration;
             replacementHackedButton.actionButton.cooldownTimerText.color = new Color(0F, 0.8F, 0F);
             replacementHackedButton.isEffectActive = true;
@@ -365,7 +350,8 @@ namespace TheSushiRoles
                     }
                 },
                 () => { return Engineer.Player != null && Engineer.Player == PlayerControl.LocalPlayer && Engineer.remainingFixes > 0 && !PlayerControl.LocalPlayer.Data.IsDead; },
-                () => {
+                () =>
+                {
                     bool sabotageActive = false;
                     foreach (PlayerTask task in PlayerControl.LocalPlayer.myTasks.GetFastEnumerator())
                         if (task.TaskType == TaskTypes.FixLights || task.TaskType == TaskTypes.RestoreOxy || task.TaskType == TaskTypes.ResetReactor || task.TaskType == TaskTypes.ResetSeismic || task.TaskType == TaskTypes.FixComms || task.TaskType == TaskTypes.StopCharles
@@ -374,7 +360,7 @@ namespace TheSushiRoles
                     return sabotageActive && Engineer.remainingFixes > 0 && PlayerControl.LocalPlayer.CanMove;
                 },
                 () => {},
-                Engineer.GetButtonSprite(),
+                Utils.GetSprite("RepairButton"),
                 CustomButton.ButtonPositions.lowerRowCenter,
                 __instance,
                 KeyCode.F,
@@ -393,15 +379,9 @@ namespace TheSushiRoles
                     if (murderAttemptResult == MurderAttemptResult.PerformKill) 
                     {
                         byte targetId = 0;
-                        if (Sheriff.Player == Recruit.Player)
-                        {
-                            // Recruit Sheriff can kill anyone
-                            targetId = Sheriff.CurrentTarget.PlayerId;
-                        }
-                        // then the normal sheriff
-                        else if (Sheriff.CurrentTarget.IsKiller()
-                            || (Sheriff.spyCanDieToSheriff && Spy.Player == Sheriff.CurrentTarget)
-                            || (Sheriff.canKillNeutrals && Sheriff.CurrentTarget.IsPassiveNeutral()))
+                        if (Sheriff.CurrentTarget.IsKiller()
+                            || (CustomGameOptions.SpyCanDieToSheriff && Spy.Player == Sheriff.CurrentTarget)
+                            || (CustomGameOptions.SheriffCanKillNeutrals && Sheriff.CurrentTarget.IsPassiveNeutral()))
                         {
                             targetId = Sheriff.CurrentTarget.PlayerId;
                         }
@@ -480,7 +460,7 @@ namespace TheSushiRoles
             {
                 if (Undertaker.CurrentTarget != null)
                 {
-                    UndertakerButton.actionButton.graphic.sprite = Undertaker.GetSecondButtonSprite();
+                    UndertakerButton.actionButton.graphic.sprite = Utils.GetSprite("DropButton");
                     UndertakerButton.buttonText = "DROP";
                 }
                 if (Undertaker.CurrentTarget != null) return true;
@@ -502,7 +482,7 @@ namespace TheSushiRoles
 
             },
             OnMeetingEnds: () => { UndertakerButton.Timer = UndertakerButton.MaxTimer;  },
-            Sprite: Undertaker.GetFirstButtonSprite(),
+            Sprite: Utils.GetSprite("DragButton"),
             PositionOffset: CustomButton.ButtonPositions.upperRowLeft,
             hudManager: __instance,
             hotkey: KeyCode.F,
@@ -562,7 +542,11 @@ namespace TheSushiRoles
                 },
             CouldUse: () =>
             {
-                if (Hitman.BodyTarget != null) HitmanDragButton.actionButton.graphic.sprite = Hitman.GetDropButtonSprite();
+                if (Hitman.BodyTarget != null)
+                {
+                    HitmanDragButton.actionButton.graphic.sprite = Utils.GetSprite("DropButton");
+                    HitmanDragButton.buttonText = "DROP";
+                }
                 if (Hitman.BodyTarget != null) return true;
                 else
                 {
@@ -582,10 +566,11 @@ namespace TheSushiRoles
 
             },
             OnMeetingEnds: () => { HitmanDragButton.Timer = HitmanDragButton.MaxTimer;  },
-            Sprite: Hitman.GetDragButtonSprite(),
+            Sprite: Utils.GetSprite("DragButton"),
             PositionOffset: CustomButton.ButtonPositions.upperRowCenter,
             hudManager: __instance,
-            hotkey: KeyCode.G
+            hotkey: KeyCode.G,
+            buttonText: "DRAG"
         );
         
             // Blackmailer blackmail
@@ -608,7 +593,7 @@ namespace TheSushiRoles
                     return Blackmailer.Player != null && Blackmailer.Player == PlayerControl.LocalPlayer && Blackmailer.CurrentTarget && PlayerControl.LocalPlayer.CanMove;
                 },
                 () => { BlackmailButton.Timer = BlackmailButton.MaxTimer; },
-                Blackmailer.GetButtonSprite(),
+                Utils.GetSprite("BlackmailButton"),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
@@ -636,7 +621,7 @@ namespace TheSushiRoles
                     return Glitch.Player != null && Glitch.Player == PlayerControl.LocalPlayer && Glitch.CurrentTarget && Glitch.remainingHacks > 0 && PlayerControl.LocalPlayer.CanMove;
                 },
                 () => { GlitchHackButton.Timer = GlitchHackButton.MaxTimer; },
-                Glitch.GetButtonSprite(),
+                Utils.GetSprite("HackButton", 110f),
                 CustomButton.ButtonPositions.upperRowCenter,
                 __instance,
                 KeyCode.F
@@ -696,7 +681,7 @@ namespace TheSushiRoles
                     return Landlord.Player != null && Landlord.Player == PlayerControl.LocalPlayer && Landlord.Charges > 0 && PlayerControl.LocalPlayer.CanMove;
                 },
                 () => { LandlordButton.Timer = LandlordButton.MaxTimer; },
-                Landlord.GetButtonSprite(),
+                Utils.GetSprite("LandlordButton"),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
@@ -729,12 +714,12 @@ namespace TheSushiRoles
                     ChronosRewindButton.isEffectActive = false;
                     ChronosRewindButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
-                Sprite: Chronos.GetButtonSprite(),
+                Sprite: Utils.GetSprite("ChronosButton"),
                 PositionOffset: CustomButton.ButtonPositions.lowerRowRight,
                 hudManager: __instance,
                 hotkey: KeyCode.F, 
                 HasEffect: true,
-                EffectDuration: Chronos.RewindTimeDuration,
+                EffectDuration: CustomGameOptions.ChronosRewindTime,
                 OnEffectEnds: () => 
                 {
                     ChronosRewindButton.Timer = ChronosRewindButton.MaxTimer;
@@ -772,12 +757,12 @@ namespace TheSushiRoles
                     Predator.HasImpostorVision = false;
 
                 },
-                Predator.GetButtonSprite(),
+                Utils.GetSprite("TerminateButton"),
                 CustomButton.ButtonPositions.upperRowCenter,
                 __instance,
                 KeyCode.F,
                true,
-                Predator.TerminateDuration,
+                CustomGameOptions.PredatorTerminateDuration,
                 () => 
                 { 
                     PredatorTerminateButton.Timer = PredatorTerminateButton.MaxTimer; 
@@ -826,12 +811,12 @@ namespace TheSushiRoles
                     WraithButton.isEffectActive = false;
                     WraithButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
-                Wraith.GetButtonSprite(),
+                Utils.GetSprite("VanishButton"),
                 CustomButton.ButtonPositions.upperRowCenter,
                 __instance,
                 KeyCode.F, 
                 true,
-                Wraith.Duration,
+                CustomGameOptions.WraithDuration,
                 () => 
                 {
                     WraithButton.Timer = WraithButton.MaxTimer;
@@ -859,12 +844,12 @@ namespace TheSushiRoles
                     VeteranAlertButton.isEffectActive = false;
                     VeteranAlertButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
-                Veteran.GetButtonSprite(),
+                Utils.GetSprite("VeteranButton"),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F, 
                 true,
-                Veteran.Duration,
+                CustomGameOptions.VeteranDuration,
                 () => 
                 {
                     VeteranAlertButton.Timer = VeteranAlertButton.MaxTimer;
@@ -966,7 +951,7 @@ namespace TheSushiRoles
                 () => { return Werewolf.Player != null && Werewolf.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return Werewolf.CurrentTarget && PlayerControl.LocalPlayer.CanMove; },
                 () => { WerewolfMaulButton.Timer = WerewolfMaulButton.MaxTimer;},
-                Werewolf.GetButtonSprite(),
+                Utils.GetSprite("MaulButton"),
                 CustomButton.ButtonPositions.upperRowRight,
                 __instance,
                 KeyCode.Q,
@@ -982,14 +967,14 @@ namespace TheSushiRoles
                         Utils.SendRPC(CustomRPC.HitmanMorph, Hitman.SampledTarget.PlayerId);
                         RPCProcedure.HitmanMorph(Hitman.SampledTarget.PlayerId);
                         Hitman.SampledTarget = null;
-                        HitmanMorphButton.EffectDuration = Hitman.MorphDuration;
+                        HitmanMorphButton.EffectDuration = CustomGameOptions.HitmanMorphDuration;
                         HitmanMorphButton.buttonText = "SAMPLE";
                         SoundEffectsManager.Play("morphlingMorph");
                     }
                     else if (Hitman.CurrentTarget != null) 
                     {
                         Hitman.SampledTarget = Hitman.CurrentTarget;
-                        HitmanMorphButton.Sprite = Hitman.GetMorphSprite();
+                        HitmanMorphButton.Sprite = Utils.GetSprite("MorphButton");
                         HitmanMorphButton.EffectDuration = 1f;
                         HitmanMorphButton.buttonText = "MORPH";
                         SoundEffectsManager.Play("morphlingSample");
@@ -1002,25 +987,25 @@ namespace TheSushiRoles
                 () => { return (Hitman.CurrentTarget || Hitman.SampledTarget) && PlayerControl.LocalPlayer.CanMove && !Utils.MushroomSabotageActive(); },
                 () => { 
                     HitmanMorphButton.Timer = MimicButton.MaxTimer;
-                    HitmanMorphButton.Sprite = Hitman.GetSampleSprite();
+                    HitmanMorphButton.Sprite = Utils.GetSprite("SampleButton");
                     HitmanMorphButton.isEffectActive = false;
                     HitmanMorphButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                     Hitman.SampledTarget = null;
                     HitmanMorphButton.buttonText = "SAMPLE";
                     SetButtonTargetDisplay(null);
                 },
-                Hitman.GetSampleSprite(),
+                Utils.GetSprite("SampleButton"),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
                 true,
-                Hitman.MorphDuration,
+                CustomGameOptions.HitmanMorphDuration,
                 () => 
                 {
                     if (Hitman.SampledTarget == null) 
                     {
                         HitmanMorphButton.Timer = HitmanMorphButton.MaxTimer;
-                        HitmanMorphButton.Sprite = Hitman.GetSampleSprite();
+                        HitmanMorphButton.Sprite = Utils.GetSprite("SampleButton");
                         SoundEffectsManager.Play("morphlingMorph");
 
                         // Reset the poolable player
@@ -1039,14 +1024,14 @@ namespace TheSushiRoles
                         Utils.SendRPC(CustomRPC.GlitchMimic, Glitch.sampledTarget.PlayerId);
                         RPCProcedure.GlitchMimic(Glitch.sampledTarget.PlayerId);
                         Glitch.sampledTarget = null;
-                        MimicButton.EffectDuration = Glitch.MimicDuration;
+                        MimicButton.EffectDuration = CustomGameOptions.GlitchMimicDuration;
                         MimicButton.buttonText = "SAMPLE";
                         SoundEffectsManager.Play("morphlingMorph");
                     }
                     else if (Glitch.CurrentTarget != null)
                     {
                         Glitch.sampledTarget = Glitch.CurrentTarget;
-                        MimicButton.Sprite = Glitch.GetMimicSprite();
+                        MimicButton.Sprite = Utils.GetSprite("MimicButton");
                         MimicButton.EffectDuration = 1f;
                         SoundEffectsManager.Play("morphlingSample");
                         MimicButton.buttonText = "MORPH";
@@ -1057,24 +1042,24 @@ namespace TheSushiRoles
                 () => 
                 { 
                     MimicButton.Timer = MimicButton.MaxTimer;
-                    MimicButton.Sprite = Glitch.GetSampleSprite();
+                    MimicButton.Sprite = Utils.GetSprite("SampleButton");
                     MimicButton.isEffectActive = false;
                     MimicButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                     Glitch.sampledTarget = null;
                     MimicButton.buttonText = "SAMPLE";
                 },
-                Glitch.GetSampleSprite(),
+                Utils.GetSprite("SampleButton"),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.G,
                 true,
-                Glitch.MimicDuration,
+                CustomGameOptions.GlitchMimicDuration,
                 () => 
                 {
                     if (Glitch.sampledTarget == null) 
                     {
                         MimicButton.Timer = MimicButton.MaxTimer;
-                        MimicButton.Sprite = Glitch.GetSampleSprite();
+                        MimicButton.Sprite = Utils.GetSprite("SampleButton");
                         SoundEffectsManager.Play("morphlingMorph");
                     }
                 },
@@ -1099,7 +1084,7 @@ namespace TheSushiRoles
                 () => { return Medic.Player != null && Medic.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return !Medic.usedShield && Medic.CurrentTarget && PlayerControl.LocalPlayer.CanMove; },
                 () => {},
-                Medic.GetButtonSprite(),
+                Utils.GetSprite("ShieldButton"),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
@@ -1122,7 +1107,7 @@ namespace TheSushiRoles
                 () => { return Romantic.Player != null && !Romantic.HasLover && Romantic.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return !Romantic.HasLover && Romantic.CurrentTarget && PlayerControl.LocalPlayer.CanMove; },
                 () => {},
-                Romantic.GetButtonSprite(),
+                Utils.GetSprite("RomanticButton"),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
@@ -1139,14 +1124,14 @@ namespace TheSushiRoles
                         Utils.SendRPC(CustomRPC.MorphlingMorph, Morphling.sampledTarget.PlayerId);
                         RPCProcedure.MorphlingMorph(Morphling.sampledTarget.PlayerId);
                         Morphling.sampledTarget = null;
-                        morphlingButton.EffectDuration = Morphling.Duration;
+                        morphlingButton.EffectDuration = CustomGameOptions.MorphlingDuration;
                         morphlingButton.buttonText = "SAMPLE";
                         SoundEffectsManager.Play("morphlingMorph");
                     } 
                     else if (Morphling.CurrentTarget != null) 
                     {
                         Morphling.sampledTarget = Morphling.CurrentTarget;
-                        morphlingButton.Sprite = Morphling.GetMorphSprite();
+                        morphlingButton.Sprite = Utils.GetSprite("MorphButton");
                         morphlingButton.EffectDuration = 1f;
                         morphlingButton.buttonText = "MORPH";
                         SoundEffectsManager.Play("morphlingSample");
@@ -1161,25 +1146,25 @@ namespace TheSushiRoles
                 () => 
                 {
                     morphlingButton.Timer = morphlingButton.MaxTimer;
-                    morphlingButton.Sprite = Morphling.GetSampleSprite();
+                    morphlingButton.Sprite = Utils.GetSprite("SampleButton");
                     morphlingButton.isEffectActive = false;
                     morphlingButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                     Morphling.sampledTarget = null;
                     morphlingButton.buttonText = "SAMPLE";
                     SetButtonTargetDisplay(null);
                 },
-                Morphling.GetSampleSprite(),
+                Utils.GetSprite("SampleButton"),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
                 true,
-                Morphling.Duration,
+                CustomGameOptions.MorphlingDuration,
                 () => 
                 {
                     if (Morphling.sampledTarget == null) 
                     {
                         morphlingButton.Timer = morphlingButton.MaxTimer;
-                        morphlingButton.Sprite = Morphling.GetSampleSprite();
+                        morphlingButton.Sprite = Utils.GetSprite("SampleButton");
                         morphlingButton.buttonText = "SAMPLE";
                         SoundEffectsManager.Play("morphlingMorph");
                         // Reset the poolable player
@@ -1225,7 +1210,7 @@ namespace TheSushiRoles
                     SoundEffectsManager.Play("knockKnock");
 
                     // Now check if everyone is infected
-                    if (Plaguebearer.CanTransform()) 
+                    if (Plaguebearer.CanTransform())
                     {
                         Utils.SendRPC(CustomRPC.TurnPestilence);
                         RPCProcedure.PlaguebearerTurnPestilence();
@@ -1243,7 +1228,7 @@ namespace TheSushiRoles
                 PlaguebearerButton.isEffectActive = false;
                 Plaguebearer.InfectTarget = null;
             },
-            Sprite: Plaguebearer.GetButtonSprite(),
+            Sprite: Utils.GetSprite("InfectButton"),
             PositionOffset: CustomButton.ButtonPositions.lowerRowRight,
             hudManager:  __instance,
             hotkey: KeyCode.F,
@@ -1257,7 +1242,8 @@ namespace TheSushiRoles
                 Utils.SendRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.PlaguebearerInfect, Plaguebearer.InfectTarget.PlayerId);
 
                 Plaguebearer.InfectTarget = null;
-            }
+            },
+            buttonText: "INFECT"
         );
 
             MonarchKnightButton = new CustomButton(
@@ -1283,7 +1269,7 @@ namespace TheSushiRoles
                         return Monarch.Player != null && Monarch.Player == PlayerControl.LocalPlayer && Monarch.Charges > 0 && Monarch.CurrentTarget != null && PlayerControl.LocalPlayer.CanMove;
                     },
                 OnMeetingEnds: () => { MonarchKnightButton.Timer = MonarchKnightButton.MaxTimer; },
-                Sprite: Monarch.GetButtonSprite(),
+                Sprite: Utils.GetSprite("KnightButton"),
                 PositionOffset: CustomButton.ButtonPositions.lowerRowRight,
                 hudManager: __instance,
                 hotkey: KeyCode.F,
@@ -1326,7 +1312,7 @@ namespace TheSushiRoles
                     return Crusader.Player != null && Crusader.Player == PlayerControl.LocalPlayer && Crusader.Charges > 0 && !Crusader.Fortified && Crusader.CurrentTarget != null && PlayerControl.LocalPlayer.CanMove;
                 },
             OnMeetingEnds: () => { CrusaderButton.Timer = CrusaderButton.MaxTimer; },
-            Sprite: Crusader.GetButtonSprite(),
+            Sprite: Utils.GetSprite("CrusaderButton"),
             PositionOffset: CustomButton.ButtonPositions.lowerRowRight,
             hudManager: __instance,
             hotkey: KeyCode.F,
@@ -1371,7 +1357,7 @@ namespace TheSushiRoles
                     return Oracle.Player != null && Oracle.Player == PlayerControl.LocalPlayer && Oracle.Charges > 0 && !Oracle.Investigated && Oracle.CurrentTarget != null && PlayerControl.LocalPlayer.CanMove;
                 },
             () => { OracleButton.Timer = OracleButton.MaxTimer; },
-            Oracle.GetButtonSprite(),
+            Utils.GetSprite("OracleButton"),
             CustomButton.ButtonPositions.lowerRowRight,
             __instance,
             KeyCode.F,
@@ -1408,7 +1394,7 @@ namespace TheSushiRoles
                     return Mystic.Player != null && Mystic.Player == PlayerControl.LocalPlayer && Mystic.Charges > 0 && !Mystic.Investigated && Mystic.CurrentTarget != null && PlayerControl.LocalPlayer.CanMove;
                 },
             () => { MysticButton.Timer = MysticButton.MaxTimer; },
-            Mystic.GetButtonSprite(),
+            Utils.GetSprite("MysticButton"),
             CustomButton.ButtonPositions.lowerRowRight,
             __instance,
             KeyCode.F,
@@ -1453,12 +1439,12 @@ namespace TheSushiRoles
                     PainterButton.isEffectActive = false;
                     PainterButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
-                Painter.GetButtonSprite(),
+                Utils.GetSprite("PaintButton"),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
                 true,
-                Painter.Duration,
+                CustomGameOptions.PainterDuration,
                 () => {
                     PainterButton.Timer = PainterButton.MaxTimer;
                     SoundEffectsManager.Play("morphlingMorph");
@@ -1468,7 +1454,7 @@ namespace TheSushiRoles
 
             // Grenadier Grenade
             GrenadierButton = new CustomButton(
-                () => 
+                () =>
                 {
                     Utils.SendRPC(CustomRPC.GrenadierFlash);
                     RPCProcedure.GrenadierFlash();
@@ -1482,12 +1468,12 @@ namespace TheSushiRoles
                     GrenadierButton.isEffectActive = false;
                     GrenadierButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
-                Grenadier.GetButtonSprite(),
+                Utils.GetSprite("GrenadierButton"),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
                 true,
-                Grenadier.GrenadeDuration,
+                CustomGameOptions.GrenadeDuration,
                 () => 
                 {
                     GrenadierButton.Timer = GrenadierButton.MaxTimer;
@@ -1501,18 +1487,17 @@ namespace TheSushiRoles
                 () =>
                 {
                     Snitch.ShouldSee = true;
-                    Snitch.ShouldHaveButton = false;
                     SoundEffectsManager.Play("hackerHack");
                 },
-                () => { return Snitch.Player != null && Snitch.Player == PlayerControl.LocalPlayer && Snitch.ShouldHaveButton && Snitch.Active && !PlayerControl.LocalPlayer.Data.IsDead; },
-                () => { return Snitch.Active && Snitch.ShouldHaveButton; },
+                () => { return Snitch.Player != null && Snitch.Player == PlayerControl.LocalPlayer && Snitch.Active && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => { return Snitch.Active; },
                 () =>
                 {
                     SnitchButton.Timer = SnitchButton.MaxTimer;
                     SnitchButton.isEffectActive = false;
                     SnitchButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
-                Snitch.GetButtonSprite(),
+                Utils.GetSprite("SnitchButton"),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
@@ -1520,7 +1505,9 @@ namespace TheSushiRoles
                 0f,
                 () =>
                 {
+                    Snitch.Target = null;
                     SnitchButton.Timer = SnitchButton.MaxTimer;
+                    Snitch.ShouldSee = false;
                 },
                 buttonText: "FIND KILLER"
             );
@@ -1529,7 +1516,7 @@ namespace TheSushiRoles
             hackerButton = new CustomButton(
                 () =>
                 {
-                    Hacker.hackerTimer = Hacker.Duration;
+                    Hacker.hackerTimer = CustomGameOptions.HackerDuration;
                     SoundEffectsManager.Play("hackerHack");
                 },
                 () => { return Hacker.Player != null && Hacker.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
@@ -1539,8 +1526,8 @@ namespace TheSushiRoles
                     hackerButton.isEffectActive = false;
                     hackerButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
-                Hacker.GetButtonSprite(),
-                CustomButton.ButtonPositions.lowerRowLeft,
+                Utils.GetSprite("HackerButton"),
+                PositionOffset: CustomButton.ButtonPositions.upperRowRight,
                 __instance,
                 KeyCode.F,
                 true,
@@ -1561,7 +1548,7 @@ namespace TheSushiRoles
                },
                () => { return Hacker.Player != null && Hacker.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead;},
                () => {
-                   if (hackerAdminTableChargesText != null) hackerAdminTableChargesText.text = $"{Hacker.chargesAdminTable} / {Hacker.toolsNumber}";
+                   if (hackerAdminTableChargesText != null) hackerAdminTableChargesText.text = $"{Hacker.chargesAdminTable} / {CustomGameOptions.HackerToolsNumber}";
                    return Hacker.chargesAdminTable > 0; 
                },
                () => {
@@ -1604,8 +1591,11 @@ namespace TheSushiRoles
                        Hacker.vitals.transform.SetParent(Camera.main.transform, false);
                        Hacker.vitals.transform.localPosition = new Vector3(0.0f, 0.0f, -50f);
                        Hacker.vitals.Begin(null);
-                   } else {
-                       if (Hacker.doorLog == null) {
+                   }
+                   else
+                   {
+                       if (Hacker.doorLog == null)
+                       {
                            var e = UObject.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("SurvLogConsole"));
                            if (e == null || Camera.main == null) return;
                            Hacker.doorLog = UObject.Instantiate(e.MinigamePrefab, Camera.main.transform, false);
@@ -1618,12 +1608,13 @@ namespace TheSushiRoles
                },
                () => { return Hacker.Player != null && Hacker.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && GameOptionsManager.Instance.currentGameOptions.MapId != 0 && GameOptionsManager.Instance.currentNormalGameOptions.MapId != 3; },
                () => {
-                   if (hackerVitalsChargesText != null) hackerVitalsChargesText.text = $"{Hacker.chargesVitals} / {Hacker.toolsNumber}";
-                   hackerVitalsButton.actionButton.graphic.sprite = Utils.IsMira() ? Hacker.GetLogSprite() : Hacker.GetVitalsSprite();
-                   hackerVitalsButton.actionButton.OverrideText(Utils.IsMira() ? "DOORLOG" : "VITALS");
+                   if (hackerVitalsChargesText != null) hackerVitalsChargesText.text = $"{Hacker.chargesVitals} / {CustomGameOptions.HackerToolsNumber}";
+                   hackerVitalsButton.actionButton.graphic.sprite = IsMira() ? Hacker.GetLogSprite() : Hacker.GetVitalsSprite();
+                   hackerVitalsButton.actionButton.OverrideText(IsMira() ? "DOORLOG" : "VITALS");
                    return Hacker.chargesVitals > 0;
                },
-               () => {
+               () =>
+               {
                    hackerVitalsButton.Timer = hackerVitalsButton.MaxTimer;
                    hackerVitalsButton.isEffectActive = false;
                    hackerVitalsButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
@@ -1638,14 +1629,14 @@ namespace TheSushiRoles
                {
                    hackerVitalsButton.Timer = hackerVitalsButton.MaxTimer;
                    if (!hackerAdminTableButton.isEffectActive) PlayerControl.LocalPlayer.moveable = true;
-                   if (Minigame.Instance)
+                   if (TaskPanelInstance)
                    {
-                       if (Utils.IsMira()) Hacker.doorLog.ForceClose();
+                       if (IsMira()) Hacker.doorLog.ForceClose();
                        else Hacker.vitals.ForceClose();
                    }
                },
                false,
-              Utils.IsMira() ? "DOORLOG" : "VITALS"
+              IsMira() ? "DOORLOG" : "VITALS"
            );
 
             // Hacker Vitals Charges
@@ -1669,10 +1660,10 @@ namespace TheSushiRoles
                 () => { return PlayerControl.LocalPlayer.CanMove && Tracker.CurrentTarget != null && !Tracker.usedTracker; },
                 () => 
                 { 
-                    if (Tracker.resetTargetAfterMeeting) Tracker.ResetTracked();
+                    if (CustomGameOptions.TrackerResetTargetAfterMeeting) Tracker.ResetTracked();
                     else if (Tracker.CurrentTarget != null && Tracker.CurrentTarget.Data.IsDead) Tracker.CurrentTarget = null; 
                 },
-                Tracker.GetButtonSprite(),
+                Utils.GetSprite("TrackerButton"),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F
@@ -1681,12 +1672,12 @@ namespace TheSushiRoles
             trackerTrackCorpsesButton = new CustomButton(
                 () =>
                 {
-                    Tracker.corpsesTrackingTimer = Tracker.corpsesTrackingDuration;
+                    Tracker.corpsesTrackingTimer = CustomGameOptions.TrackerCorpsesTrackingDuration;
                     SoundEffectsManager.Play("trackerTrackCorpses");
                 },
                 () =>
                 {
-                    return Tracker.Player != null && Tracker.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Tracker.canTrackCorpses;
+                    return Tracker.Player != null && Tracker.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && CustomGameOptions.TrackerCanTrackCorpses;
                 },
                 () =>
                 {
@@ -1698,12 +1689,12 @@ namespace TheSushiRoles
                     trackerTrackCorpsesButton.isEffectActive = false;
                     trackerTrackCorpsesButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
-                Tracker.GetTrackCorpsesButtonSprite(),
+                Utils.GetSprite("PathfindButton"),
                 CustomButton.ButtonPositions.lowerRowCenter,
                 __instance,
                 KeyCode.G,
                 true,
-                Tracker.corpsesTrackingDuration,
+                CustomGameOptions.TrackerCorpsesTrackingDuration,
                 () =>
                 {
                     trackerTrackCorpsesButton.Timer = trackerTrackCorpsesButton.MaxTimer;
@@ -1713,7 +1704,7 @@ namespace TheSushiRoles
             ScavengerScavengeButton = new CustomButton(
                 () => 
                 {
-                    Scavenger.ScavengeTimer = Scavenger.ScavengeDuration;
+                    Scavenger.ScavengeTimer = CustomGameOptions.ScavengerScavengeDuration;
                     SoundEffectsManager.Play("trackerTrackCorpses");
                 },
                 () => { return Scavenger.Player != null && Scavenger.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
@@ -1724,12 +1715,12 @@ namespace TheSushiRoles
                     ScavengerScavengeButton.isEffectActive = false;
                     ScavengerScavengeButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
-                Scavenger.GetScavengeSprite(),
+                Utils.GetSprite("ScavengeButton"),
                 CustomButton.ButtonPositions.lowerRowCenter,
                 __instance,
                 KeyCode.G,
                 true,
-                Scavenger.ScavengeDuration,
+                CustomGameOptions.ScavengerScavengeDuration,
                 () => 
                 {
                     ScavengerScavengeButton.Timer = ScavengerScavengeButton.MaxTimer;
@@ -1784,8 +1775,8 @@ namespace TheSushiRoles
                         Utils.SendRPC(CustomRPC.ViperSetPoisoned, Viper.poisoned.PlayerId, (byte)0);
                         RPCProcedure.ViperSetPoisoned(Viper.poisoned.PlayerId, 0);
 
-                        byte lastTimer = (byte)Viper.delay;
-                        FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Viper.delay, new Action<float>((p) => { // Delayed action
+                        byte lastTimer = (byte)CustomGameOptions.ViperKillDelay;
+                        FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(CustomGameOptions.ViperKillDelay, new Action<float>((p) => { // Delayed action
                             if (p <= 1f) 
                             {
                                 byte timer = (byte)ViperKillButton.Timer;
@@ -1830,7 +1821,7 @@ namespace TheSushiRoles
                     ViperKillButton.isEffectActive = false;
                     ViperKillButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
-                Viper.GetButtonSprite(),
+                Utils.GetSprite("PoisonButton"),
                 CustomButton.ButtonPositions.upperRowRight,
                 __instance,
                 KeyCode.Q,
@@ -1866,7 +1857,7 @@ namespace TheSushiRoles
                     return PlayerControl.LocalPlayer.CanMove;
                 },
                 () => { ViperBlindButton.Timer = ViperBlindButton.MaxTimer; },
-                Viper.GetBlindSprite(),
+                Utils.GetSprite("BlindTrapButton"),
                 CustomButton.ButtonPositions.upperRowCenter,
                 __instance,
                 KeyCode.G,
@@ -1890,7 +1881,7 @@ namespace TheSushiRoles
                 () => { return Gatekeeper.Player != null && Gatekeeper.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Portal.secondPortal == null; },
                 () => { return PlayerControl.LocalPlayer.CanMove && Portal.secondPortal == null; },
                 () => { GatekeeperPlacePortalButton.Timer = GatekeeperPlacePortalButton.MaxTimer; },
-                Gatekeeper.GetPlacePortalButtonSprite(),
+                Utils.GetSprite("PlacePortalButton"),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
@@ -1914,7 +1905,7 @@ namespace TheSushiRoles
                 () => { return Miner.Player != null && Miner.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Portal.secondPortal == null; },
                 () => { return PlayerControl.LocalPlayer.CanMove && Portal.secondPortal == null; },
                 () => { MinerMineButton.Timer = MinerMineButton.MaxTimer; },
-                Miner.GetMineSprite(),
+                Utils.GetSprite("MineButton"),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
@@ -1961,11 +1952,11 @@ namespace TheSushiRoles
                     },
                 () => {
                     if (PlayerControl.LocalPlayer == Gatekeeper.Player && Portal.bothPlacedAndEnabled)
-                        GatekeeperButtonText1.text = Portal.LocationNearEntry(PlayerControl.LocalPlayer.transform.position) || !Gatekeeper.canPortalFromAnywhere ? "" : "1. " + Portal.firstPortal.room;
+                        GatekeeperButtonText1.text = Portal.LocationNearEntry(PlayerControl.LocalPlayer.transform.position) || !CustomGameOptions.GatekeeperCanPortalFromAnywhere ? "" : "1. " + Portal.firstPortal.room;
                     return Portal.bothPlacedAndEnabled; },
-                () => { return PlayerControl.LocalPlayer.CanMove && (Portal.LocationNearEntry(PlayerControl.LocalPlayer.transform.position) || Gatekeeper.canPortalFromAnywhere && PlayerControl.LocalPlayer == Gatekeeper.Player) && !Portal.isTeleporting; },
+                () => { return PlayerControl.LocalPlayer.CanMove && (Portal.LocationNearEntry(PlayerControl.LocalPlayer.transform.position) || CustomGameOptions.GatekeeperCanPortalFromAnywhere && PlayerControl.LocalPlayer == Gatekeeper.Player) && !Portal.isTeleporting; },
                 () => { usePortalButton.Timer = usePortalButton.MaxTimer; },
-                Gatekeeper.getUsePortalButtonSprite(),
+                Utils.GetSprite("UsePortalButton"),
                 new Vector3(0.9f, -0.06f, 0),
                 __instance,
                 KeyCode.J,
@@ -2005,10 +1996,10 @@ namespace TheSushiRoles
                         }
                     })));
                 },
-                () => { return Gatekeeper.canPortalFromAnywhere && Portal.bothPlacedAndEnabled && PlayerControl.LocalPlayer == Gatekeeper.Player; },
+                () => { return CustomGameOptions.GatekeeperCanPortalFromAnywhere && Portal.bothPlacedAndEnabled && PlayerControl.LocalPlayer == Gatekeeper.Player; },
                 () => { return PlayerControl.LocalPlayer.CanMove && !Portal.LocationNearEntry(PlayerControl.LocalPlayer.transform.position) && !Portal.isTeleporting; },
                 () => { GatekeeperMoveToPortalButton.Timer = usePortalButton.MaxTimer; },
-                Gatekeeper.getUsePortalButtonSprite(),
+                Utils.GetSprite("UsePortalButton"),
                 new Vector3(0.9f, 1f, 0),
                 __instance,
                 KeyCode.G,
@@ -2029,47 +2020,6 @@ namespace TheSushiRoles
             GatekeeperButtonText2.transform.localScale = Vector3.one * 0.5f;
             GatekeeperButtonText2.transform.localPosition += new Vector3(-0.05f, 0.55f, -1f);
 
-
-            // Jackal Recruit Button
-            jackalRecruitButton = new CustomButton(
-                () => 
-                {
-                    if (Jackal.CurrentTarget.CheckVeteranPestilenceKill() || Jackal.CurrentTarget.CheckFortifiedPlayer()) return;
-
-                    Utils.SendRPC(CustomRPC.JackalCreatesRecruit, Jackal.CurrentTarget.PlayerId);
-                    RPCProcedure.JackalCreatesRecruit(Jackal.CurrentTarget.PlayerId);
-                    SoundEffectsManager.Play("Convert");
-                },
-                () => { return Jackal.canCreateRecruit && Jackal.Player != null && Jackal.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
-                () => { return Jackal.canCreateRecruit && Jackal.CurrentTarget != null && PlayerControl.LocalPlayer.CanMove; },
-                () => { jackalRecruitButton.Timer = jackalRecruitButton.MaxTimer;},
-                Jackal.getRecruitButtonSprite(),
-                CustomButton.ButtonPositions.lowerRowCenter,
-                __instance,
-                KeyCode.F,
-                buttonText: "RECRUIT"
-            );
-
-            // Cultist Recruit Button
-            CultistButton = new CustomButton(
-                () => 
-                {
-                    if (Cultist.CurrentTarget.CheckVeteranPestilenceKill() || Cultist.CurrentTarget.CheckFortifiedPlayer()) return;
-
-                    Utils.SendRPC(CustomRPC.CultistCreatesFollower, Cultist.CurrentTarget.PlayerId);
-                    RPCProcedure.CultistCreatesFollower(Cultist.CurrentTarget.PlayerId);
-                    SoundEffectsManager.Play("Convert");
-                },
-                () => { return !Cultist.HasFollower && Cultist.Player != null && Cultist.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
-                () => { return !Cultist.HasFollower && Cultist.CurrentTarget != null && PlayerControl.LocalPlayer.CanMove; },
-                () => { CultistButton.Timer = CultistButton.MaxTimer;},
-                Cultist.GetButtonSprite(),
-                CustomButton.ButtonPositions.lowerRowCenter,
-                __instance,
-                KeyCode.F,
-                buttonText: "CREATE FOLLOWER"
-            );
-
             // Hitman Kill
             HitmanKillButton = new CustomButton(
                 () => 
@@ -2088,74 +2038,7 @@ namespace TheSushiRoles
                 __instance,
                 KeyCode.Q
             );
-
-            // Jackal Kill
-            jackalKillButton = new CustomButton(
-                () => 
-                {
-                    if (Utils.CheckMurderAttemptAndKill(Jackal.Player, Jackal.CurrentTarget) == MurderAttemptResult.SuppressKill) return;
-                    if (Jackal.CurrentTarget.CheckVeteranPestilenceKill() || Jackal.CurrentTarget.CheckFortifiedPlayer()) return;
-
-                    jackalKillButton.Timer = jackalKillButton.MaxTimer; 
-                    Jackal.CurrentTarget = null;
-                },
-                () =>
-                {
-                    bool canKill = !Jackal.canCreateRecruit || (Jackal.canCreateRecruit && Jackal.HasRecruit);
-                    return Jackal.Player != null && Jackal.Player == PlayerControl.LocalPlayer && canKill && !PlayerControl.LocalPlayer.Data.IsDead;
-                },
-                () => { return Jackal.CurrentTarget && PlayerControl.LocalPlayer.CanMove; },
-                () => { jackalKillButton.Timer = jackalKillButton.MaxTimer;},
-                __instance.KillButton.graphic.sprite,
-                CustomButton.ButtonPositions.upperRowRight,
-                __instance,
-                KeyCode.Q
-            );
             
-            // Recruit Kill
-            RecruitKillButton = new CustomButton(
-                () => 
-                {
-                    if (Recruit.CurrentTarget.CheckVeteranPestilenceKill()  || Recruit.CurrentTarget.CheckFortifiedPlayer()) return;
-
-                    if (Utils.CheckMurderAttemptAndKill(Recruit.Player, Recruit.CurrentTarget) == MurderAttemptResult.SuppressKill) return;
-                    RecruitKillButton.Timer = RecruitKillButton.MaxTimer; 
-                    Recruit.CurrentTarget = null;
-                },
-                () => { return Recruit.Player != null && Recruit.Player == PlayerControl.LocalPlayer
-                && !PlayerControl.LocalPlayer.Data.IsDead && !PlayerControl.LocalPlayer.IsNeutralKiller()
-                && !PlayerControl.LocalPlayer.IsImpostor() && PlayerControl.LocalPlayer != Sheriff.Player; },
-                () => { return Recruit.CurrentTarget && PlayerControl.LocalPlayer.CanMove; },
-                () => { RecruitKillButton.Timer = RecruitKillButton.MaxTimer;},
-                __instance.KillButton.graphic.sprite,
-                CustomButton.ButtonPositions.upperRowRight,
-                __instance,
-                KeyCode.Q
-            );
-
-            // Eraser erase button
-            eraserButton = new CustomButton(
-                () => 
-                {
-                    if (Eraser.CurrentTarget.CheckVeteranPestilenceKill() || Eraser.CurrentTarget.CheckFortifiedPlayer()) return;
-
-                    eraserButton.MaxTimer += 10;
-                    eraserButton.Timer = eraserButton.MaxTimer;
-
-                    Utils.SendRPC(CustomRPC.SetFutureErased, Eraser.CurrentTarget.PlayerId);
-                    RPCProcedure.SetFutureErased(Eraser.CurrentTarget.PlayerId);
-                    SoundEffectsManager.Play("eraserErase");
-                },
-                () => { return Eraser.Player != null && Eraser.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
-                () => { return PlayerControl.LocalPlayer.CanMove && Eraser.CurrentTarget != null; },
-                () => { eraserButton.Timer = eraserButton.MaxTimer;},
-                Eraser.GetButtonSprite(),
-                CustomButton.ButtonPositions.upperRowLeft,
-                __instance,
-                KeyCode.F,
-                buttonText: "ERASE"
-            );
-
             placeJackInTheBoxButton = new CustomButton(
                 () =>
                 {
@@ -2173,7 +2056,7 @@ namespace TheSushiRoles
                 () => { return Trickster.Player != null && Trickster.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !JackInTheBox.HasJackInTheBoxLimitReached(); },
                 () => { return PlayerControl.LocalPlayer.CanMove && !JackInTheBox.HasJackInTheBoxLimitReached(); },
                 () => { placeJackInTheBoxButton.Timer = placeJackInTheBoxButton.MaxTimer;},
-                Trickster.GetPlaceBoxButtonSprite(),
+                Utils.GetSprite("PlaceJackInTheBoxButton"),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
@@ -2196,12 +2079,12 @@ namespace TheSushiRoles
                     lightsOutButton.isEffectActive = false;
                     lightsOutButton.actionButton.graphic.color = Palette.EnabledColor;
                 },
-                Trickster.GetLightsOutButtonSprite(),
+                Utils.GetSprite("LightsOutButton"),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
                 true,
-                Trickster.lightsOutDuration,
+                CustomGameOptions.TricksterLightsOutDuration,
                 () => {
                     lightsOutButton.Timer = lightsOutButton.MaxTimer;
                     SoundEffectsManager.Play("lighterLight");
@@ -2239,7 +2122,7 @@ namespace TheSushiRoles
                 () => { return Janitor.Player != null && Janitor.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return __instance.ReportButton.graphic.color == Palette.EnabledColor && PlayerControl.LocalPlayer.CanMove; },
                 () => { JanitorCleanButton.Timer = JanitorCleanButton.MaxTimer; },
-                Janitor.GetButtonSprite(),
+                Utils.GetSprite("CleanButton"),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
@@ -2256,10 +2139,10 @@ namespace TheSushiRoles
 
                         // Apply Curse
                         Warlock.curseVictim = Warlock.CurrentTarget;
-                        warlockCurseButton.Sprite = Warlock.GetCurseKillButtonSprite();
-                        warlockCurseButton.buttonText = "KILL";
+                        warlockCurseButton.Sprite = Utils.GetSprite("CurseKillButton");
                         warlockCurseButton.Timer = 1f;
                         SoundEffectsManager.Play("warlockCurse");
+                        warlockCurseButton.buttonText = "KILL";
 
                         // Ghost Info
                         Utils.SendRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.WarlockTarget, Warlock.curseVictim.PlayerId);
@@ -2271,13 +2154,14 @@ namespace TheSushiRoles
                         if (murder == MurderAttemptResult.SuppressKill) return; 
 
                         // If blanked or killed
-                        if(Warlock.rootTime > 0) 
+                        if(CustomGameOptions.WarlockRootTime > 0) 
                         {
                             Lazy.position = PlayerControl.LocalPlayer.transform.position;
                             PlayerControl.LocalPlayer.moveable = false;
                             PlayerControl.LocalPlayer.NetTransform.Halt(); // Stop current movement so the warlock is not just running straight into the next object
-                            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Warlock.rootTime, new Action<float>((p) => { // Delayed action
-                                if (p == 1f) {
+                            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(CustomGameOptions.WarlockRootTime, new Action<float>((p) => { // Delayed action
+                                if (p == 1f)
+                                {
                                     PlayerControl.LocalPlayer.moveable = true;
                                 }
                             })));
@@ -2286,22 +2170,22 @@ namespace TheSushiRoles
                         Warlock.curseVictim = null;
                         Warlock.curseVictimTarget = null;
                         warlockCurseButton.buttonText = "CURSE";
-                        warlockCurseButton.Sprite = Warlock.GetCurseButtonSprite();
+                        warlockCurseButton.Sprite = Utils.GetSprite("CurseButton");
                         Warlock.Player.killTimer = warlockCurseButton.Timer = warlockCurseButton.MaxTimer;
                         Utils.SendRPC(CustomRPC.ShareGhostInfo, PlayerControl.LocalPlayer.PlayerId, (byte)GhostInfoTypes.WarlockTarget, Byte.MaxValue);
-
                     }
                 },
                 () => { return Warlock.Player != null && Warlock.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return ((Warlock.curseVictim == null && Warlock.CurrentTarget != null) || (Warlock.curseVictim != null && Warlock.curseVictimTarget != null)) && PlayerControl.LocalPlayer.CanMove; },
-                () => { 
+                () =>
+                {
                     warlockCurseButton.Timer = warlockCurseButton.MaxTimer;
-                    warlockCurseButton.Sprite = Warlock.GetCurseButtonSprite();
+                    warlockCurseButton.Sprite = Utils.GetSprite("CurseButton");
                     warlockCurseButton.buttonText = "CURSE";
                     Warlock.curseVictim = null;
                     Warlock.curseVictimTarget = null;
                 },
-                Warlock.GetCurseButtonSprite(),
+                Utils.GetSprite("CurseButton"),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
@@ -2317,7 +2201,7 @@ namespace TheSushiRoles
                         RPCProcedure.SealVent(Vigilante.ventTarget.Id);
                         Vigilante.ventTarget = null;
                         
-                    } else if (!Utils.IsMira() && !Utils.IsFungle() && !SubmergedCompatibility.IsSubmerged) { // Place camera if there's no vent and it's not MiraHQ or Submerged
+                    } else if (!IsMira() && !IsFungle() && !SubmergedCompatibility.IsSubmerged) { // Place camera if there's no vent and it's not MiraHQ or Submerged
                         var pos = PlayerControl.LocalPlayer.transform.position;
                         byte[] buff = new byte[sizeof(float) * 2];
                         Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0*sizeof(float), sizeof(float));
@@ -2331,12 +2215,12 @@ namespace TheSushiRoles
                 },
                 () => { return Vigilante.Player != null && Vigilante.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Vigilante.remainingScrews >= Mathf.Min(Vigilante.ventPrice, Vigilante.camPrice); },
                 () => {
-                    VigilanteButton.actionButton.graphic.sprite = (Vigilante.ventTarget == null && !Utils.IsMira() && !Utils.IsFungle() && !SubmergedCompatibility.IsSubmerged) ? Vigilante.GetPlaceCameraButtonSprite() : Vigilante.GetCloseVentButtonSprite(); 
+                    VigilanteButton.actionButton.graphic.sprite = (Vigilante.ventTarget == null && !IsMira() && !IsFungle() && !SubmergedCompatibility.IsSubmerged) ? Vigilante.GetPlaceCameraButtonSprite() : Vigilante.GetCloseVentButtonSprite(); 
                     if (VigilanteButtonScrewsText != null) VigilanteButtonScrewsText.text = $"{Vigilante.remainingScrews}/{Vigilante.totalScrews}";
 
                     if (Vigilante.ventTarget != null)
                         return Vigilante.remainingScrews >= Vigilante.ventPrice && PlayerControl.LocalPlayer.CanMove;
-                    return !Utils.IsMira() && !Utils.IsFungle() && !SubmergedCompatibility.IsSubmerged && Vigilante.remainingScrews >= Vigilante.camPrice && PlayerControl.LocalPlayer.CanMove;
+                    return !IsMira() && !IsFungle() && !SubmergedCompatibility.IsSubmerged && Vigilante.remainingScrews >= Vigilante.camPrice && PlayerControl.LocalPlayer.CanMove;
                 },
                 () => { VigilanteButton.Timer = VigilanteButton.MaxTimer; },
                 Vigilante.GetPlaceCameraButtonSprite(),
@@ -2354,12 +2238,12 @@ namespace TheSushiRoles
 
             VigilanteCamButton = new CustomButton(
                 () => {
-                    if (!Utils.IsMira()) {
+                    if (!IsMira()) {
                         if (Vigilante.minigame == null) {
                             byte mapId = GameOptionsManager.Instance.currentNormalGameOptions.MapId;
                             var e = UObject.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("Surv_Panel") || x.name.Contains("Cam") || x.name.Contains("BinocularsSecurityConsole"));
-                            if (Utils.IsSkeld() || mapId == 3) e = UObject.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("SurvConsole"));
-                            else if (Utils.IsAirship()) e = UObject.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("task_cams"));
+                            if (IsSkeld() || mapId == 3) e = UObject.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("SurvConsole"));
+                            else if (IsAirship()) e = UObject.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("task_cams"));
                             if (e == null || Camera.main == null) return;
                             Vigilante.minigame = UObject.Instantiate(e.MinigamePrefab, Camera.main.transform, false);
                         }
@@ -2384,8 +2268,8 @@ namespace TheSushiRoles
                 },
                 () => {
                     if (VigilanteChargesText != null) VigilanteChargesText.text = $"{Vigilante.Charges} / {Vigilante.maxCharges}";
-                    VigilanteCamButton.actionButton.graphic.sprite = Utils.IsMira() ? Vigilante.GetLogSprite() : Vigilante.GetCamSprite();
-                    VigilanteCamButton.actionButton.OverrideText(Utils.IsMira() ? "DOORLOG" : "SECURITY");
+                    VigilanteCamButton.actionButton.graphic.sprite = IsMira() ? Vigilante.GetLogSprite() : Vigilante.GetCamSprite();
+                    VigilanteCamButton.actionButton.OverrideText(IsMira() ? "DOORLOG" : "SECURITY");
                     return PlayerControl.LocalPlayer.CanMove && Vigilante.Charges > 0;
                 },
                 () => {
@@ -2401,13 +2285,13 @@ namespace TheSushiRoles
                 0f,
                 () => {
                     VigilanteCamButton.Timer = VigilanteCamButton.MaxTimer;
-                    if (Minigame.Instance) {
+                    if (TaskPanelInstance) {
                         Vigilante.minigame.ForceClose();
                     }
                     PlayerControl.LocalPlayer.moveable = true;
                 },
                 false,
-                Utils.IsMira() ? "DOORLOG" : "SECURITY"
+                IsMira() ? "DOORLOG" : "SECURITY"
             );
 
             // Vigilante cam button Charges
@@ -2441,7 +2325,7 @@ namespace TheSushiRoles
                 () => 
                 {
                     bool dousedEveryoneAlive = Arsonist.DousedEveryoneAlive();
-                    if (dousedEveryoneAlive) arsonistButton.actionButton.graphic.sprite = Arsonist.GetIgniteSprite();
+                    if (dousedEveryoneAlive) arsonistButton.actionButton.graphic.sprite = Utils.GetSprite("IgniteButton");
                     
                     if (arsonistButton.isEffectActive && Arsonist.douseTarget != Arsonist.CurrentTarget) {
                         Arsonist.douseTarget = null;
@@ -2456,12 +2340,12 @@ namespace TheSushiRoles
                     arsonistButton.isEffectActive = false;
                     Arsonist.douseTarget = null;
                 },
-                Arsonist.GetDouseSprite(),
+                Utils.GetSprite("DouseButton"),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
                 true,
-                Arsonist.Duration,
+                CustomGameOptions.ArsonistDuration,
                 () => {
                     if (Arsonist.douseTarget != null) Arsonist.dousedPlayers.Add(Arsonist.douseTarget);
                     
@@ -2498,7 +2382,7 @@ namespace TheSushiRoles
                                     Utils.SendRPC(CustomRPC.CleanBody, playerInfo.PlayerId, Scavenger.Player.PlayerId);
                                     RPCProcedure.CleanBody(playerInfo.PlayerId, Scavenger.Player.PlayerId);
 
-                                    Scavenger.Cooldown = ScavengerEatButton.Timer = ScavengerEatButton.MaxTimer;
+                                    ScavengerEatButton.Timer = ScavengerEatButton.MaxTimer;
                                     SoundEffectsManager.Play("ScavengerEat");
                                     break;
                                 }
@@ -2509,7 +2393,7 @@ namespace TheSushiRoles
                 () => { return Scavenger.Player != null && Scavenger.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return __instance.ReportButton.graphic.color == Palette.EnabledColor && PlayerControl.LocalPlayer.CanMove; },
                 () => { ScavengerEatButton.Timer = ScavengerEatButton.MaxTimer; },
-                Scavenger.GetButtonSprite(),
+                Utils.GetSprite("ScavengerButton"),
                 CustomButton.ButtonPositions.upperRowRight,
                 __instance,
                 KeyCode.F,
@@ -2547,12 +2431,12 @@ namespace TheSushiRoles
                     PsychicButton.isEffectActive = false;
                     Psychic.soulTarget = null;
                 },
-                Psychic.GetQuestionSprite(),
+                Utils.GetSprite("PsychicButton"),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
                 true,
-                Psychic.Duration,
+                CustomGameOptions.PsychicDuration,
                 () => 
                 {
                     PsychicButton.Timer = PsychicButton.MaxTimer;
@@ -2563,7 +2447,7 @@ namespace TheSushiRoles
                     Utils.SendRPC(CustomRPC.ShareGhostInfo, Psychic.target.player.PlayerId, (byte)GhostInfoTypes.PsychicInfo, msg);
 
                     // Remove soul
-                    if (Psychic.oneTimeUse)
+                    if (CustomGameOptions.PsychicOneTimeUse)
                     {
                         float closestDistance = float.MaxValue;
                         SpriteRenderer target = null;
@@ -2623,14 +2507,14 @@ namespace TheSushiRoles
                     }
 
                 },
-                () => { return Survivor.Player != null && Survivor.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Survivor.blanks < Survivor.blanksNumber; },
+                () => { return Survivor.Player != null && Survivor.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Survivor.blanks < CustomGameOptions.SurvivorBlanksNumber; },
                 () => {
-                    if (SurvivorButtonBlanksText != null) SurvivorButtonBlanksText.text = $"{Survivor.blanksNumber - Survivor.blanks}";
+                    if (SurvivorButtonBlanksText != null) SurvivorButtonBlanksText.text = $"{CustomGameOptions.SurvivorBlanksNumber - Survivor.blanks}";
 
-                    return Survivor.blanksNumber > Survivor.blanks && PlayerControl.LocalPlayer.CanMove && Survivor.target != null;
+                    return CustomGameOptions.SurvivorBlanksNumber > Survivor.blanks && PlayerControl.LocalPlayer.CanMove && Survivor.target != null;
                 },
                 () => { SurvivorButton.Timer = SurvivorButton.MaxTimer; },
-                Survivor.GetTargetSprite(),
+                Utils.GetSprite("SurvivorButton"),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
@@ -2670,12 +2554,12 @@ namespace TheSushiRoles
                     witchSpellButton.isEffectActive = false;
                     Witch.spellCastingTarget = null;
                 },
-                Witch.GetButtonSprite(),
+                Utils.GetSprite("SpellButton"),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
                 true,
-                Witch.spellCastingDuration,
+                CustomGameOptions.WitchSpellCastingDuration,
                 () => {
                     if (Witch.spellCastingTarget == null) return;
                     MurderAttemptResult attempt = Utils.CheckMurderAttempt(Witch.Player, Witch.spellCastingTarget);
@@ -2686,10 +2570,10 @@ namespace TheSushiRoles
                     }
                     if (attempt == MurderAttemptResult.BlankKill || attempt == MurderAttemptResult.PerformKill) 
                     {
-                        Witch.currentCooldownAddition += Witch.CooldownAddition;
-                        witchSpellButton.MaxTimer = Witch.Cooldown + Witch.currentCooldownAddition;
+                        Witch.currentCooldownAddition += CustomGameOptions.WitchAdditionalCooldown;
+                        witchSpellButton.MaxTimer = CustomGameOptions.WitchCooldown + Witch.currentCooldownAddition;
                         witchSpellButton.Timer = witchSpellButton.MaxTimer;
-                        if (Witch.triggerBothCooldowns)
+                        if (CustomGameOptions.WitchTriggerBothCooldowns)
                         {
                             float multiplier = 1f;
                             Witch.Player.killTimer = GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown * multiplier;
@@ -2766,14 +2650,14 @@ namespace TheSushiRoles
                 },
                 () => { return Assassin.Player != null && Assassin.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {  // CouldUse
-                    AssassinButton.Sprite = Assassin.AssassinMarked != null ? Assassin.GetKillButtonSprite() : Assassin.GetMarkButtonSprite(); 
+                    AssassinButton.Sprite = Assassin.AssassinMarked != null ? Utils.GetSprite("AssassinAssassinateButton") : Utils.GetSprite("AssassinMarkButton"); 
                     return (Assassin.CurrentTarget != null || Assassin.AssassinMarked != null && !TransportationToolPatches.IsUsingTransportation(Assassin.AssassinMarked)) && PlayerControl.LocalPlayer.CanMove;
                 },
                 () => {  // on meeting ends
                     AssassinButton.Timer = AssassinButton.MaxTimer;
                     Assassin.AssassinMarked = null;
                 },
-                Assassin.GetMarkButtonSprite(),
+                Utils.GetSprite("AssassinMarkButton"),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F                   
@@ -2789,7 +2673,7 @@ namespace TheSushiRoles
                    Utils.SendRPC(CustomRPC.UncheckedCmdReportDeadBody, PlayerControl.LocalPlayer.PlayerId, Byte.MaxValue);
                    mayorMeetingButton.Timer = 1f;
                },
-               () => { return Mayor.Player != null && Mayor.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Mayor.meetingButton; },
+               () => { return Mayor.Player != null && Mayor.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && CustomGameOptions.MayorMeetingButton; },
                () => {
                    mayorMeetingButton.actionButton.OverrideText("Emergency ("+ Mayor.remoteMeetingsLeft + ")");
                    bool sabotageActive = false;
@@ -2857,11 +2741,11 @@ namespace TheSushiRoles
                 },
                 () => 
                 {
-                    if (trapperChargesText != null) trapperChargesText.text = $"{Trapper.Charges} / {Trapper.maxCharges}";
+                    if (trapperChargesText != null) trapperChargesText.text = $"{Trapper.Charges} / {CustomGameOptions.TrapperMaxCharges}";
                     return PlayerControl.LocalPlayer.CanMove && Trapper.Charges > 0;
                 },
                 () => { trapperButton.Timer = trapperButton.MaxTimer; },
-                Trapper.GetButtonSprite(),
+                Utils.GetSprite("Trapper_Place_Button"),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
@@ -2889,7 +2773,7 @@ namespace TheSushiRoles
                         Utils.SendRPC(CustomRPC.YoyoMarkLocation, buff);
                         RPCProcedure.YoyoMarkLocation(buff);
                         SoundEffectsManager.Play("tricksterPlaceBox");
-                        yoyoButton.Sprite = Yoyo.GetBlinkButtonSprite();
+                        yoyoButton.Sprite = Utils.GetSprite("YoyoBlinkButtonSprite");
                         yoyoButton.Timer = 10f;
                         yoyoButton.HasEffect = false;
                         yoyoButton.buttonText = "Blink";
@@ -2901,7 +2785,7 @@ namespace TheSushiRoles
                         }
                         Utils.SendRPC(CustomRPC.YoyoBlink, Byte.MaxValue, buff);
                         RPCProcedure.YoyoBlink(true, buff);
-                        yoyoButton.EffectDuration = Yoyo.blinkDuration;
+                        yoyoButton.EffectDuration = CustomGameOptions.YoyoBlinkDuration;
                         yoyoButton.Timer = 10f;
                         yoyoButton.HasEffect = true;
                         yoyoButton.buttonText = "Returning...";
@@ -2911,21 +2795,21 @@ namespace TheSushiRoles
                 () => { return Yoyo.Player != null && Yoyo.Player == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return PlayerControl.LocalPlayer.CanMove; },
                 () => {
-                    if (Yoyo.markStaysOverMeeting) {
+                    if (CustomGameOptions.YoyoMarkStaysOverMeeting) {
                         yoyoButton.Timer = 10f;
                     } else {
                         Yoyo.markedLocation = null;
                         yoyoButton.Timer = yoyoButton.MaxTimer;
-                        yoyoButton.Sprite = Yoyo.GetMarkButtonSprite();
+                        yoyoButton.Sprite = Utils.GetSprite("YoyoMarkButtonSprite");
                         yoyoButton.buttonText = "Mark Location";
                     }
                 },
-                Yoyo.GetMarkButtonSprite(),
+                Utils.GetSprite("YoyoMarkButtonSprite"),
                 CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
                 false,
-                Yoyo.blinkDuration,
+                CustomGameOptions.YoyoBlinkDuration,
                 () => {
                     if (TransportationToolPatches.IsUsingTransportation(Yoyo.Player)) 
                     {
@@ -2954,11 +2838,11 @@ namespace TheSushiRoles
                     yoyoButton.isEffectActive = false;
                     yoyoButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                     yoyoButton.HasEffect = false;
-                    yoyoButton.Sprite = Yoyo.GetMarkButtonSprite();
+                    yoyoButton.Sprite = Utils.GetSprite("YoyoMarkButtonSprite");
                     yoyoButton.buttonText = "Mark Location";
                     SoundEffectsManager.Play("morphlingMorph");
-                    if (Minigame.Instance) {
-                        Minigame.Instance.Close();
+                    if (TaskPanelInstance) {
+                        TaskPanelInstance.Close();
                     }
                 },
                 buttonText: "Mark Location"
@@ -2976,7 +2860,7 @@ namespace TheSushiRoles
                },
                () => 
                {
-                 return Yoyo.Player != null && Yoyo.Player == PlayerControl.LocalPlayer && Yoyo.hasAdminTable && !PlayerControl.LocalPlayer.Data.IsDead; },
+                 return Yoyo.Player != null && Yoyo.Player == PlayerControl.LocalPlayer && CustomGameOptions.YoyoHasAdminTable && !PlayerControl.LocalPlayer.Data.IsDead; },
                () => 
                {
                    return true;
@@ -3010,7 +2894,7 @@ namespace TheSushiRoles
                     if (PlayerControl.LocalPlayer == null || !PlayerControl.LocalPlayer.Data.IsDead) return false;
                     var (playerCompleted, playerTotal) = TasksHandler.TaskInfo(PlayerControl.LocalPlayer.Data);
                     int numberOfLeftTasks = playerTotal - playerCompleted;
-                    return numberOfLeftTasks <= 0 || !CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.GetBool();
+                    return numberOfLeftTasks <= 0 || !CustomGameOptions.FinishTasksBeforeHauntingOrZoomingOut;
                 },
                 () => { return true; },
                 () => { return; },

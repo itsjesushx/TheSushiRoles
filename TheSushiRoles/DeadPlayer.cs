@@ -1,5 +1,3 @@
-using System;
-
 namespace TheSushiRoles
 {
     public class DeadPlayer

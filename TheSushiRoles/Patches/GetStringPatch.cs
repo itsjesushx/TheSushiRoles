@@ -8,7 +8,7 @@ namespace TheSushiRoles.Patches
         [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString), new[] 
         {
                 typeof(StringNames),
-                typeof(Il2CppReferenceArray<Il2CppSystem.Object>)
+                typeof(Il2CppReferenceArray<IObject>)
             })]
         public static bool Prefix(TranslationController __instance, StringNames id, ref string __result) 
         {

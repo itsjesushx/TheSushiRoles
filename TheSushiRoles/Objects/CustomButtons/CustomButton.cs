@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
 using Rewired;
-using TMPro;
-using UnityEngine;
 using UnityEngine.UI;
 
-namespace TheSushiRoles.Objects 
+namespace TheSushiRoles.Objects.CustomButtons
 {
     public class CustomButton 
     {
@@ -160,36 +157,36 @@ namespace TheSushiRoles.Objects
         }
 
         // Reload the rebound hotkeys from the among us settings.
-        public static void ReloadHotkeys() 
+        public static void ReloadHotkeys()
         {
-            foreach (var button in buttons) 
+            foreach (var button in buttons)
             {
-             // Q button is used only for killing! This rebinds every button that would use Q to use the currently set killing button in among us.
-                if (button.originalHotkey == KeyCode.Q) 
+                // Q button is used only for killing! This rebinds every button that would use Q to use the currently set killing button in among us.
+                if (button.originalHotkey == KeyCode.Q)
                 {
-                    Player player = Rewired.ReInput.players.GetPlayer(0);
+                    Player player = ReInput.players.GetPlayer(0);
                     string keycode = player.controllers.maps.GetFirstButtonMapWithAction(8, true).elementIdentifierName;
                     button.hotkey = (KeyCode)Enum.Parse(typeof(KeyCode), keycode);
                 }
-                
+
                 // F is the default ability button. All buttons that would use F now use the ability button.
-                if (button.originalHotkey == KeyCode.F) 
+                if (button.originalHotkey == KeyCode.F)
                 {
                     Player player = Rewired.ReInput.players.GetPlayer(0);
                     string keycode = player.controllers.maps.GetFirstButtonMapWithAction(49, true).elementIdentifierName;
                     button.hotkey = (KeyCode)Enum.Parse(typeof(KeyCode), keycode);
                 }
- 
-                if (button.originalHotkey == KeyCode.G) 
+
+                if (button.originalHotkey == KeyCode.G)
                 {
                     button.hotkey = Action2Keycode;
                 }
-                if (button.originalHotkey == KeyCode.H) 
+                if (button.originalHotkey == KeyCode.H)
                 {
                     button.hotkey = Action3Keycode;
                 }
-             }
-         }
+            }
+        }
 
         public void SetActive(bool isActive) 
         {
@@ -210,7 +207,7 @@ namespace TheSushiRoles.Objects
             var localPlayer = PlayerControl.LocalPlayer;
             var moveable = localPlayer.moveable;
             
-            if (localPlayer.Data == null || MeetingHud.Instance || ExileController.Instance || !HasButton()) 
+            if (localPlayer.Data == null || MeetingHud.Instance || ExiledInstance() || !HasButton()) 
             {
                 SetActive(false);
                 return;
@@ -313,7 +310,7 @@ namespace TheSushiRoles.Objects
         {
             foreach (var buttons in CustomButton.buttons)
             {
-                buttons.Timer = MapOptions.GameStartCooldowns;
+                buttons.Timer = CustomGameOptions.GameStartCooldowns;
             }
         }
     }

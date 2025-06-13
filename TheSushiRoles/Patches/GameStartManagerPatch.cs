@@ -62,7 +62,7 @@ namespace TheSushiRoles.Patches
 
             public static void Postfix(GameStartManager __instance) 
             {
-                if (TheSushiRolesPlugin.DebuggerLoaded) return;
+                if (TheSushiRoles.DebuggerLoaded) return;
 
                 // Send version as soon as PlayerControl.LocalPlayer exists
                 if (PlayerControl.LocalPlayer != null && !versionSent) 
@@ -86,7 +86,7 @@ namespace TheSushiRoles.Patches
                     else 
                     {
                         PlayerVersion PV = playerVersions[client.Id];
-                        int diff = TheSushiRolesPlugin.Version.CompareTo(PV.version);
+                        int diff = TheSushiRoles.Version.CompareTo(PV.version);
                         if (diff > 0) 
                         {
                             message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} has an older version of The Sushi Roles (v{playerVersions[client.Id].version.ToString()})\n</color>";
@@ -136,7 +136,7 @@ namespace TheSushiRoles.Patches
                         copiedStartButton = GameObject.Instantiate(__instance.StartButton.gameObject, __instance.StartButton.gameObject.transform.parent);
                         copiedStartButton.transform.localPosition = __instance.StartButton.transform.localPosition;
                         copiedStartButton.SetActive(true);
-                        var startButtonText = copiedStartButton.GetComponentInChildren<TMPro.TextMeshPro>();
+                        var startButtonText = copiedStartButton.GetComponentInChildren<TextMeshPro>();
                         startButtonText.text = "";
                         startButtonText.fontSize *= 0.8f;
                         startButtonText.fontSizeMax = startButtonText.fontSize;
@@ -148,21 +148,19 @@ namespace TheSushiRoles.Patches
                             Utils.SendRPC(CustomRPC.StopStart, PlayerControl.LocalPlayer.PlayerId);
                             copiedStartButton.Destroy();
                             startingTimer = 0;
-                            SoundManager.Instance.StopSound(GameStartManager.Instance.gameStartSound);
+                            SoundManagerInstance().StopSound(GameStartManager.Instance.gameStartSound);
                         }
                         startButtonPassiveButton.OnClick.AddListener((Action)(() => StopStartFunc()));
                         __instance.StartCoroutine(Effects.Lerp(.1f, new System.Action<float>((p) => 
                         {
                             startButtonText.text = "";
                         })));
-                        
-
                     }
                 }
                 
                 // Client update with handshake infos
                 else {
-                    if (!playerVersions.ContainsKey(AmongUsClient.Instance.HostId) || TheSushiRolesPlugin.Version.CompareTo(playerVersions[AmongUsClient.Instance.HostId].version) != 0) {
+                    if (!playerVersions.ContainsKey(AmongUsClient.Instance.HostId) || TheSushiRoles.Version.CompareTo(playerVersions[AmongUsClient.Instance.HostId].version) != 0) {
                         kickingTimer += Time.deltaTime;
                         if (kickingTimer > 10) {
                             kickingTimer = 0;
@@ -189,16 +187,15 @@ namespace TheSushiRoles.Patches
                         }
                     }
 
-                    if (!__instance.GameStartText.text.StartsWith("Starting") || !CustomOptionHolder.EveryoneCanStopStart.GetBool())
+                    if (!__instance.GameStartText.text.StartsWith("Starting") || !CustomGameOptions.EveryoneCanStopStart)
                         copiedStartButton?.Destroy();
-                    if (CustomOptionHolder.EveryoneCanStopStart.GetBool() && copiedStartButton == null && __instance.GameStartText.text.StartsWith("Starting") && !TheSushiRolesPlugin.DebuggerLoaded) 
+                    if (CustomGameOptions.EveryoneCanStopStart && copiedStartButton == null && __instance.GameStartText.text.StartsWith("Starting") && !TheSushiRoles.DebuggerLoaded) 
                     {
-
                         // Activate Stop-Button
                         copiedStartButton = GameObject.Instantiate(__instance.StartButton.gameObject, __instance.StartButton.gameObject.transform.parent);
                         copiedStartButton.transform.localPosition = __instance.StartButton.transform.localPosition;
                         copiedStartButton.SetActive(true);
-                        var startButtonText = copiedStartButton.GetComponentInChildren<TMPro.TextMeshPro>();
+                        var startButtonText = copiedStartButton.GetComponentInChildren<TextMeshPro>();
                         startButtonText.text = "";
                         startButtonText.fontSize *= 0.8f;
                         startButtonText.fontSizeMax = startButtonText.fontSize;
@@ -211,7 +208,7 @@ namespace TheSushiRoles.Patches
                             copiedStartButton.Destroy();
                             __instance.GameStartText.text = String.Empty;
                             startingTimer = 0;
-                            SoundManager.Instance.StopSound(GameStartManager.Instance.gameStartSound);
+                            SoundManagerInstance().StopSound(GameStartManager.Instance.gameStartSound);
                         }
                         startButtonPassiveButton.OnClick.AddListener((Action)(() => StopStartFunc()));
                         __instance.StartCoroutine(Effects.Lerp(.1f, new System.Action<float>((p) => {
@@ -246,7 +243,7 @@ namespace TheSushiRoles.Patches
                 // Block game start if not everyone has the same mod version
                 bool continueStart = true;
 
-                if (AmongUsClient.Instance.AmHost && !TheSushiRolesPlugin.DebuggerLoaded) 
+                if (AmongUsClient.Instance.AmHost && !TheSushiRoles.DebuggerLoaded) 
                 {
                     foreach (InnerNet.ClientData client in AmongUsClient.Instance.allClients.GetFastEnumerator()) {
                         if (client.Character == null) continue;
@@ -260,7 +257,7 @@ namespace TheSushiRoles.Patches
                         }
                         
                         PlayerVersion PV = playerVersions[client.Id];
-                        int diff = TheSushiRolesPlugin.Version.CompareTo(PV.version);
+                        int diff = TheSushiRoles.Version.CompareTo(PV.version);
                         if (diff != 0 || !PV.GuidMatches()) {
                             continueStart = false;
                             break;
@@ -270,10 +267,10 @@ namespace TheSushiRoles.Patches
                     {
                         byte mapId = 0;
                         if (mapId >= 3) mapId++;
-                        Utils.SendRPC(CustomRPC.DynamicMapOption, mapId);
-                        RPCProcedure.DynamicMapOption(mapId);
+                        Utils.SendRPC(CustomRPC.RandomMapOption, mapId);
+                        RPCProcedure.RandomMapOption(mapId);
                     }            
-                    else if (CustomOptionHolder.dynamicMap.GetBool() && continueStart) 
+                    else if (CustomGameOptions.EnableRandomMaps && continueStart) 
                     {
                         // 0 = Skeld
                         // 1 = Mira HQ
@@ -284,12 +281,12 @@ namespace TheSushiRoles.Patches
                         byte chosenMapId = 0;
                         List<float> probabilities = new List<float>
                         {
-                            CustomOptionHolder.dynamicMapEnableSkeld.GetSelection() / 10f,
-                            CustomOptionHolder.dynamicMapEnableMira.GetSelection() / 10f,
-                            CustomOptionHolder.dynamicMapEnablePolus.GetSelection() / 10f,
-                            CustomOptionHolder.dynamicMapEnableAirShip.GetSelection() / 10f,
-                            CustomOptionHolder.dynamicMapEnableFungle.GetSelection() / 10f,
-                            CustomOptionHolder.dynamicMapEnableSubmerged.GetSelection() / 10f,
+                            CustomGameOptions.RandomMapEnableSkeld / 10f,
+                            CustomGameOptions.RandomMapEnableMira / 10f,
+                            CustomGameOptions.RandomMapEnablePolus / 10f,
+                            CustomGameOptions.RandomMapEnableAirShip / 10f,
+                            CustomGameOptions.RandomMapEnableFungle / 10f,
+                            CustomGameOptions.RandomMapEnableSubmerged / 10f,
                         };
 
                         // if any map is at 100%, remove all maps that are not!
@@ -307,7 +304,7 @@ namespace TheSushiRoles.Patches
                         {  // Normalize to [0,1]
                             probabilities[i] /= sum;
                         }
-                        float selection = (float)TheSushiRolesPlugin.rnd.NextDouble();
+                        float selection = (float)Utils.rnd.NextDouble();
                         float cumsum = 0;
                         for (byte i = 0; i < probabilities.Count; i++)
                         {
@@ -320,14 +317,14 @@ namespace TheSushiRoles.Patches
                         }
 
                         // Translate chosen map to presets page and use that maps random map preset page
-                        if (CustomOptionHolder.dynamicMapSeparateSettings.GetBool())
+                        if (CustomGameOptions.RandomMapSeparateSettings)
                         {
                             CustomOptionHolder.presetSelection.UpdateSelection(chosenMapId + 2);
                         }
                         if (chosenMapId >= 3) chosenMapId++;  // Skip dlekS
                                                               
-                        Utils.SendRPC(CustomRPC.DynamicMapOption, chosenMapId);
-                        RPCProcedure.DynamicMapOption(chosenMapId);
+                        Utils.SendRPC(CustomRPC.RandomMapOption, chosenMapId);
+                        RPCProcedure.RandomMapOption(chosenMapId);
                     }
                 }
                 return continueStart;

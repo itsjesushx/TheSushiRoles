@@ -1,25 +1,17 @@
 using System.Collections.Generic;
 using AmongUs.Data;
-using UnityEngine;
-
 namespace TheSushiRoles.Roles.Modifiers
 {
     public static class Chameleon 
     {
         public static List<PlayerControl> Players = new List<PlayerControl>();
         public static Color Color = new Color32(237, 221, 142, byte.MaxValue);
-        public static float minVisibility = 0.2f;
-        public static float holdDuration = 1f;
-        public static float fadeDuration = 0.5f;
         public static Dictionary<byte, float> lastMoved;
 
         public static void ClearAndReload() 
         {
             Players = new List<PlayerControl>();
             lastMoved = new Dictionary<byte, float>();
-            holdDuration = CustomOptionHolder.modifierChameleonHoldDuration.GetFloat();
-            fadeDuration = CustomOptionHolder.modifierChameleonFadeDuration.GetFloat();
-            minVisibility = CustomOptionHolder.modifierChameleonMinVisibility.GetSelection() / 10f;
         }
 
         public static float Visibility(byte playerId) 
@@ -28,13 +20,14 @@ namespace TheSushiRoles.Roles.Modifiers
             if (lastMoved != null && lastMoved.ContainsKey(playerId)) 
             {
                 var tStill = Time.time - lastMoved[playerId];
-                if (tStill > holdDuration) 
+                if (tStill > CustomGameOptions.ModifierChameleonHoldDuration) 
                 {
-                    if (tStill - holdDuration > fadeDuration) visibility = minVisibility;
-                    else visibility = (1 - (tStill - holdDuration) / fadeDuration) * (1 - minVisibility) + minVisibility;
+                    if (tStill - CustomGameOptions.ModifierChameleonHoldDuration > CustomGameOptions.ModifierChameleonFadeDuration) visibility = CustomGameOptions.ModifierChameleonMinVisibility;
+                    else visibility = (1 - (tStill - CustomGameOptions.ModifierChameleonHoldDuration) / CustomGameOptions.ModifierChameleonFadeDuration) * (1 - CustomGameOptions.ModifierChameleonMinVisibility) + CustomGameOptions.ModifierChameleonMinVisibility;
                 }
             }
-            if (PlayerControl.LocalPlayer.Data.IsDead && visibility < 0.1f) {  // Ghosts can always see!
+            if (PlayerControl.LocalPlayer.Data.IsDead && visibility < 0.1f)
+            {  // Ghosts can always see!
                 visibility = 0.1f;
             }
             return visibility;

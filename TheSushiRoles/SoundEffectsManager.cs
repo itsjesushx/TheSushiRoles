@@ -1,7 +1,5 @@
 ﻿using System.Reflection;
 using System.Collections.Generic;
-using UnityEngine;
-
 namespace TheSushiRoles
 {
     // Class to preload all audio/sound effects that are contained in the embedded resources.
@@ -39,8 +37,9 @@ namespace TheSushiRoles
             if (!MapOptions.enableSoundEffects) return;
             AudioClip clipToPlay = Get(path);
             Stop(path);
-            if (Constants.ShouldPlaySfx() && clipToPlay != null) {
-                AudioSource source = SoundManager.Instance.PlaySound(clipToPlay, false, volume);
+            if (Constants.ShouldPlaySfx() && clipToPlay != null)
+            {
+                AudioSource source = SoundManagerInstance().PlaySound(clipToPlay, false, volume);
                 source.loop = loop;
             }
         }
@@ -49,7 +48,7 @@ namespace TheSushiRoles
         {
             var soundToStop = Get(path);
             if (soundToStop != null)
-                if (Constants.ShouldPlaySfx()) SoundManager.Instance.StopSound(soundToStop);
+                if (Constants.ShouldPlaySfx()) SoundManagerInstance().StopSound(soundToStop);
         }
 
         public static void StopAll() 

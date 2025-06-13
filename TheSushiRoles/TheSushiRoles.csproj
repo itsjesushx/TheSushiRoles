@@ -15,29 +15,19 @@
     <ItemGroup>
         <EmbeddedResource Include="Resources\**" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Compile Remove="Players\**" />
-      <EmbeddedResource Remove="Players\**" />
-      <None Remove="Players\**" />
-    </ItemGroup>
    
 	<ItemGroup>
-		<PackageReference Include="AmongUs.GameLibs.Steam" Version="2025.3.25" />
+		<PackageReference Include="AmongUs.GameLibs.Steam" Version="2025.4.15" />
 		<PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1" />
-		<PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.697" />
+		<PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.733" />
         <PackageReference Include="Reactor" Version="2.3.1" />
     </ItemGroup>
-   
-    <Target Name="Date" BeforeTargets="BeforeBuild">  <!--Will make the compile time available s.t. we can let betas expire-->
-    <WriteLinesToFile File="$(IntermediateOutputPath)gen.cs" Lines="static partial class Builtin { public static long CompileTime = $([System.DateTime]::UtcNow.Ticks) %3B }" Overwrite="true" />
-    <ItemGroup>
-        <Compile Include="$(IntermediateOutputPath)gen.cs" />
-    </ItemGroup>
-    </Target>
 
-    <Target Name="CopyCustomContent" AfterTargets="AfterBuild" Condition="Exists('$(AmongUsLatest)/BepInEx/plugins/')">
-        <Message Text="Second occurrence" />
-        <Copy SourceFiles="$(ProjectDir)\bin\$(Configuration)\net6.0\TheSushiRoles.dll" DestinationFolder="$(AmongUsLatest)/BepInEx/plugins/" />
-	</Target>
+    <Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != ''">
+        <CreateItem Include="$(TargetDir)\*.dll" Exclude="$(TargetPath)">
+            <Output TaskParameter="Include" ItemName="DEPSD" />
+        </CreateItem>
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(AmongUs)/BepInEx/plugins/" UseSymboliclinksIfPossible="true"></Copy>
+        <Move SourceFiles="@(DEPSD)" DestinationFolder="$(TargetDir)\depends\" OverwriteReadOnlyFiles="true" />
+    </Target>
 </Project>

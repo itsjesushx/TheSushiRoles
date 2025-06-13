@@ -6,23 +6,22 @@ using System.IO;
 using System.Linq;
 using Hazel;
 using System.Text;
-using static TheSushiRoles.CustomOption;
+using static TheSushiRoles.Modules.CustomOptions.CustomOption;
 using Reactor.Utilities.Extensions;
 using BepInEx.Unity.IL2CPP;
 using BepInEx;
 using TMPro;
 
-namespace TheSushiRoles 
+namespace TheSushiRoles.Modules.CustomOptions
 {
-    public class CustomOption 
+    public class CustomOption
     {
         public static List<CustomOption> options = new List<CustomOption>();
         public static int preset = 0;
         public static ConfigEntry<string> vanillaSettings;
         public int id;
         public string name;
-        public System.Object[] selections;
-
+        public SObject[] selections;
         public int defaultSelection;
         public ConfigEntry<int> entry;
         public int selection;
@@ -37,7 +36,7 @@ namespace TheSushiRoles
 
         // Option creation
 
-        public CustomOption(int id, CustomOptionType type, string name,  System.Object[] selections, System.Object defaultValue, CustomOption parent, bool isHeader, Action onChange = null, string Heading = "", string Format = "", bool invertedParent = false) 
+        public CustomOption(int id, CustomOptionType type, string name,  SObject[] selections, System.Object defaultValue, CustomOption parent, bool isHeader, Action onChange = null, string Heading = "", string Format = "", bool invertedParent = false) 
         {
             this.id = id;
             this.name = parent == null ? name : "- " + name;
@@ -54,7 +53,7 @@ namespace TheSushiRoles
             selection = 0;
             if (id != 0) 
             {
-                entry = TheSushiRolesPlugin.Instance.Config.Bind($"Preset{preset}", id.ToString(), defaultSelection);
+                entry = TheSushiRoles.Instance.Config.Bind($"Preset{preset}", id.ToString(), defaultSelection);
                 selection = Mathf.Clamp(entry.Value, 0, selections.Length - 1);
             }
             options.Add(this);
@@ -78,34 +77,39 @@ namespace TheSushiRoles
             return new CustomOption(id, type, name, new string[]{"Off", "On"}, defaultValue ? "On" : "Off", parent, isHeader, onChange, Heading, "", invertedParent);
         }
 
+        public static CustomOption CreateHeader(int id, CustomOptionType type, string header)
+        {
+            return new CustomOption(id, type, "", new string[] { "HeaderOnly" }, "HeaderOnly", null, true, null, header);
+        }
+
         // Static behaviour
 
-        public static void SwitchPreset(int newPreset) 
+        public static void SwitchPreset(int newPreset)
         {
             SaveVanillaOptions();
             CustomOption.preset = newPreset;
-            vanillaSettings = TheSushiRolesPlugin.Instance.Config.Bind($"Preset{preset}", "GameOptions", "");
+            vanillaSettings = TheSushiRoles.Instance.Config.Bind($"Preset{preset}", "GameOptions", "");
             LoadVanillaOptions();
-            foreach (CustomOption option in options) 
+            foreach (CustomOption option in options)
             {
                 if (option.id == 0) continue;
 
-                option.entry = TheSushiRolesPlugin.Instance.Config.Bind($"Preset{preset}", option.id.ToString(), option.defaultSelection);
+                option.entry = TheSushiRoles.Instance.Config.Bind($"Preset{preset}", option.id.ToString(), option.defaultSelection);
                 option.selection = Mathf.Clamp(option.entry.Value, 0, option.selections.Length - 1);
-                if (option.optionBehaviour != null && option.optionBehaviour is StringOption stringOption) 
+                if (option.optionBehaviour != null && option.optionBehaviour is StringOption stringOption)
                 {
                     stringOption.oldValue = stringOption.Value = option.selection;
                     stringOption.ValueText.text = $"{option.selections[option.selection].ToString()}{option.Format}";
                 }
             }
             // make sure to reload all tabs, even the ones in the background, because they might have changed when the preset was switched!
-            if (AmongUsClient.Instance?.AmHost == true) 
+            if (AmongUsClient.Instance?.AmHost == true)
             {
-                foreach (var entry in GameOptionsMenuStartPatch.currentGOMs) 
+                foreach (var entry in GameOptionsMenuStartPatch.currentGOMs)
                 {
                     CustomOptionType optionType = (CustomOptionType)entry.Key;
                     GameOptionsMenu gom = entry.Value;
-                    if (gom != null) 
+                    if (gom != null)
                     {
                         GameOptionsMenuStartPatch.UpdateGameOptionsMenu(optionType, gom);
                     }
@@ -124,7 +128,7 @@ namespace TheSushiRoles
             if (optionsString == "") return false;
             IGameOptions gameOptions = GameOptionsManager.Instance.gameOptionsFactory.FromBytes(Convert.FromBase64String(optionsString));
             if (gameOptions.Version < 8) {
-                TheSushiRolesPlugin.Logger.LogMessage("tried to paste old settings, not doing this!");
+                TheSushiRoles.Logger.LogMessage("tried to paste old settings, not doing this!");
                 return false;
             } 
             GameOptionsManager.Instance.GameHostOptions = gameOptions;
@@ -293,7 +297,7 @@ namespace TheSushiRoles
                     if (id == 0) continue;
                     lastId = id;
                     CustomOption option = options.First(option => option.id == id);
-                    option.entry = TheSushiRolesPlugin.Instance.Config.Bind($"Preset{preset}", option.id.ToString(), option.defaultSelection);
+                    option.entry = TheSushiRoles.Instance.Config.Bind($"Preset{preset}", option.id.ToString(), option.defaultSelection);
                     option.selection = selection;
                     if (option.optionBehaviour != null && option.optionBehaviour is StringOption stringOption) {
                         stringOption.oldValue = stringOption.Value = option.selection;
@@ -303,7 +307,7 @@ namespace TheSushiRoles
                 } 
                 catch (Exception e) 
                 {
-                    TheSushiRolesPlugin.Logger.LogWarning($"id:{lastId}:{e}: while deserializing - tried to paste invalid settings!");
+                    TheSushiRoles.Logger.LogWarning($"id:{lastId}:{e}: while deserializing - tried to paste invalid settings!");
                     errors++;
                 }
             }
@@ -313,7 +317,7 @@ namespace TheSushiRoles
         // Copy to or paste from clipboard (as string)
         public static void CopyToClipboard() 
         {
-            GUIUtility.systemCopyBuffer = $"{TheSushiRolesPlugin.VersionString}!{Convert.ToBase64String(SerializeOptions())}!{vanillaSettings.Value}";
+            GUIUtility.systemCopyBuffer = $"{TheSushiRoles.VersionString}!{Convert.ToBase64String(SerializeOptions())}!{vanillaSettings.Value}";
         }
 
         public static int pasteFromClipboard() 
@@ -329,7 +333,7 @@ namespace TheSushiRoles
                 string vanillaSettingsSub = settingsSplit[2];
                 torOptionsFine = DeserializeOptions(Convert.FromBase64String(torSettings));
                 ShareOptionSelections();
-                if (TheSushiRolesPlugin.Version > versionInfo && versionInfo < Version.Parse("4.6.0")) {
+                if (TheSushiRoles.Version > versionInfo && versionInfo < Version.Parse("4.6.0")) {
                     vanillaOptionsFine = false;
                     FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "Host Info: Pasting vanilla settings failed, TSR Options applied!");
                 } else {
@@ -338,7 +342,7 @@ namespace TheSushiRoles
                 }
             } catch (Exception e) 
             {
-                TheSushiRolesPlugin.Logger.LogWarning($"{e}: tried to paste invalid settings!\n{allSettings}");
+                TheSushiRoles.Logger.LogWarning($"{e}: tried to paste invalid settings!\n{allSettings}");
                 string errorStr = allSettings.Length > 2 ? allSettings.Substring(0, 3) : "(empty clipboard) ";
                 FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"Host Info: You tried to paste invalid settings: \"{errorStr}...\"");
                 SoundEffectsManager.Load();
@@ -380,7 +384,8 @@ namespace TheSushiRoles
     {
         public static bool Prefix(LobbyViewSettingsPane __instance) 
         {
-            if ((int)__instance.currentTab < 15) {
+            if ((int)__instance.currentTab < 15)
+            {
                 LobbyViewSettingsPaneChangeTabPatch.Postfix(__instance, __instance.currentTab);
                 return false;
             }
@@ -497,8 +502,7 @@ namespace TheSushiRoles
 
             float num = 1.44f;
             int i = 0;
-            int singles = 1;
-            int numBonus = 0;
+            int singles = 0;
             int headers = 0;
             int lines = 0;
             var curType = CustomOptionType.Modifier;
@@ -508,11 +512,7 @@ namespace TheSushiRoles
                 if (option.isHeader) 
                 {
                     curType = option.type;
-                    if (i != 0) 
-                    {
-                        num -= 0.85f;
-                        numBonus++;
-                    }
+                    if (i != 0) num -= 0.59f;
                     if (i % 2 != 0) singles++;
                     headers++; // for header
                     CategoryHeaderMasked categoryHeaderMasked = UObject.Instantiate<CategoryHeaderMasked>(__instance.categoryHeaderOrigin);
@@ -524,7 +524,7 @@ namespace TheSushiRoles
                     categoryHeaderMasked.transform.localScale = Vector3.one;
                     categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
                     __instance.settingsInfo.Add(categoryHeaderMasked.gameObject);
-                    num -= 1.05f;
+                    num -= 0.85f;
                     i = 0;
                 } 
                 else if (option.parent != null && (option.parent.selection == 0 || option.parent.parent != null && option.parent.parent.selection == 0)) continue;  // Hides options, for which the parent is disabled!
@@ -541,7 +541,7 @@ namespace TheSushiRoles
                     num2 = -8.95f;
                     if (i > 0) 
                     {
-                        num -= 0.85f;
+                        num -= 0.59f;
                     }
                 } 
                 else 
@@ -561,9 +561,8 @@ namespace TheSushiRoles
 
                 i++;
             }
-            float actual_spacing = (headers * 1.05f + lines * 0.85f) / (headers + lines) * 1.01f;
-            __instance.scrollBar.CalculateAndSetYBounds((float)(__instance.settingsInfo.Count + singles * 2 + headers), 2f, 5f, actual_spacing);
-
+            float actual_spacing = (headers * 0.85f + lines * 0.59f) / (headers + lines);
+           __instance.scrollBar.CalculateAndSetYBounds((float)(__instance.settingsInfo.Count + singles * 2 + headers), 2f, 6f, actual_spacing);
         }
 
         private static Tuple<string, string> HandleSpecialOptionsView(CustomOption option, string defaultString, string defaultVal) 
@@ -633,10 +632,13 @@ namespace TheSushiRoles
         public static void CreateSettingTabs(LobbyViewSettingsPane __instance)
         {
             // Handle different gamemodes and tabs needed therein.
+
             int next = 3;
+
             // create TSR settings
-            createCustomButton(__instance, next++, "TSRSettings", "TSR Settings", CustomOptionType.General);
-            // Imp
+            createCustomButton(__instance, next++, "TheSushiSettings", "TSR Settings", CustomOptionType.General);
+
+            // Impostor
             createCustomButton(__instance, next++, "ImpostorSettings", "Impostor Roles", CustomOptionType.Impostor);
 
             // Neutral
@@ -771,6 +773,13 @@ namespace TheSushiRoles
                 } 
                 else if (option.parent != null && (option.parent.selection == 0 && !option.invertedParent || option.parent.parent != null && option.parent.parent.selection == 0 && !option.parent.invertedParent)) continue;  // Hides options, for which the parent is disabled!
                 else if (option.parent != null && option.parent.selection != 0 && option.invertedParent) continue;
+
+                if (option.selections[0].ToString() == "HeaderOnly")
+                {
+                    menu.scrollBar.SetYBoundsMax(-num - 1.65f);
+                    continue;
+                }
+
                 OptionBehaviour optionBehaviour = UObject.Instantiate<StringOption>(menu.stringOptionOrigin, Vector3.zero, Quaternion.identity, menu.settingsContainer);
                 optionBehaviour.transform.localPosition = new Vector3(0.952f, num, -2f);
                 optionBehaviour.SetClickMask(menu.ButtonClickMask);
@@ -887,28 +896,28 @@ namespace TheSushiRoles
             // Handle different gamemodes and tabs needed therein.
             int next = 3;
             
-            // create TSR settings
-            CreateCustomButton(__instance, next++, "TSRSettings", "TSR Settings");
-            CreateGameOptionsMenu(__instance, CustomOptionType.General, "TSRSettings");
-            
-            // IMp
+            // Mod Settings
+            CreateCustomButton(__instance, next++, "TheSushiSettings", "TSR Settings");
+            CreateGameOptionsMenu(__instance, CustomOptionType.General, "TheSushiSettings");
+
+            // Impostor Settings
             CreateCustomButton(__instance, next++, "ImpostorSettings", "Impostor Roles");
             CreateGameOptionsMenu(__instance, CustomOptionType.Impostor, "ImpostorSettings");
 
-            // Neutral
+            // Neutral Settings
             CreateCustomButton(__instance, next++, "NeutralSettings", "Neutral Roles");
             CreateGameOptionsMenu(__instance, CustomOptionType.Neutral, "NeutralSettings");
 
-            // Crew
+            // Crewmate Settings
             CreateCustomButton(__instance, next++, "CrewmateSettings", "Crewmate Roles");
             CreateGameOptionsMenu(__instance, CustomOptionType.Crewmate, "CrewmateSettings");
 
-            // Modifier
+            // Modifier Settings
             CreateCustomButton(__instance, next++, "ModifierSettings", "Modifiers");
             CreateGameOptionsMenu(__instance, CustomOptionType.Modifier, "ModifierSettings");
 
-            // Ability
-            CreateCustomButton(__instance, next++, "AbilitySettings", "Ability Settings");
+            // Ability Settings
+            CreateCustomButton(__instance, next++, "AbilitySettings", "Abilities");
             CreateGameOptionsMenu(__instance, CustomOptionType.Ability, "AbilitySettings");
         }
     }
@@ -1036,17 +1045,13 @@ namespace TheSushiRoles
                     if (type == CustomOptionType.Modifier) line += BuildModifierExtras(option);
                     sb.AppendLine(line);
                 }
-                else if (option.parent.GetSelection() > 0 || option.invertedParent && option.parent.GetSelection() == 0) {
-                    if (option.id == 224) //Recruit
-                        sb.AppendLine($"- {Utils.ColorString(Recruit.Color, "Recruit")}: {option.selections[option.selection].ToString()}");
-                }
             }
             if (headerOnly) return sb.ToString();
             else sb = new StringBuilder();
 
             foreach (CustomOption option in options) 
             {
-                if (option.parent != null) 
+                if (option.parent != null)
                 {
                     bool isIrrelevant = (option.parent.GetSelection() == 0 && !option.invertedParent) || (option.parent.parent != null && option.parent.parent.GetSelection() == 0 && !option.parent.invertedParent);
 
@@ -1138,7 +1143,7 @@ namespace TheSushiRoles
         public static string buildAllOptions(string vanillaSettings = "", bool hideExtras = false) {
             if (vanillaSettings == "")
                 vanillaSettings = GameOptionsManager.Instance.CurrentGameOptions.ToHudString(PlayerControl.AllPlayerControls.Count);
-            int counter = TheSushiRolesPlugin.optionsPage;
+            int counter = TheSushiRoles.optionsPage;
             string hudString = counter != 0 && !hideExtras ? Utils.ColorString(DateTime.Now.Second % 2 == 0 ? Color.white : Color.red, "(Use scroll wheel if necessary)\n\n") : "";
                 maxPage = 8;
                 switch (counter) 
@@ -1150,16 +1155,16 @@ namespace TheSushiRoles
                         hudString += "Page 2: The Sushi Roles Settings \n" + BuildOptionsOfType(CustomOptionType.General, false);
                         break;
                     case 2:
-                        hudString += "Page 3: Role and Modifier Rates \n" + BuildRoleOptions();
+                        hudString += "Page 3: Role, Modifiers & Ability Rates \n" + BuildRoleOptions();
                         break;
                     case 3:
-                        hudString += "Page 4: Impostor Role Settings \n" + BuildOptionsOfType(CustomOptionType.Impostor, false);
+                        hudString += "Page 4: Impostor Roles Settings \n" + BuildOptionsOfType(CustomOptionType.Impostor, false);
                         break;
                     case 4:
-                        hudString += "Page 5: Neutral Role Settings \n" + BuildOptionsOfType(CustomOptionType.Neutral, false);
+                        hudString += "Page 5: Neutral Roles Settings \n" + BuildOptionsOfType(CustomOptionType.Neutral, false);
                         break;
                     case 5:
-                        hudString += "Page 6: Crewmate Role Settings \n" + BuildOptionsOfType(CustomOptionType.Crewmate, false);
+                        hudString += "Page 6: Crewmate Roles Settings \n" + BuildOptionsOfType(CustomOptionType.Crewmate, false);
                         break;
                     case 6:
                         hudString += "Page 7: Modifier Settings \n" + BuildOptionsOfType(CustomOptionType.Modifier, false);
@@ -1182,152 +1187,53 @@ namespace TheSushiRoles
         }
     }
 
-    [HarmonyPatch]
-    public class AddToKillDistanceSetting
-    {
-        [HarmonyPatch(typeof(NormalGameOptionsV07), nameof(NormalGameOptionsV07.AreInvalid))]
-        [HarmonyPrefix]
-        
-        public static bool Prefix(NormalGameOptionsV08 __instance, ref int maxExpectedPlayers)
-        {
-            //making the killdistances bound check higher since extra short is added
-            return __instance.MaxPlayers > maxExpectedPlayers || __instance.NumImpostors < 1
-                    || __instance.NumImpostors > 3 || __instance.KillDistance < 0
-                    || __instance.KillDistance >= NormalGameOptionsV07.KillDistances.Count
-                    || __instance.PlayerSpeedMod <= 0f || __instance.PlayerSpeedMod > 3f;
-        }
-
-        [HarmonyPatch(typeof(NormalGameOptionsV07), nameof(NormalGameOptionsV07.AreInvalid))]
-        [HarmonyPrefix]
-        public static bool Prefix(NormalGameOptionsV07 __instance, ref int maxExpectedPlayers)
-        {
-            return __instance.MaxPlayers > maxExpectedPlayers || __instance.NumImpostors < 1
-                    || __instance.NumImpostors > 3 || __instance.KillDistance < 0
-                    || __instance.KillDistance >= NormalGameOptionsV07.KillDistances.Count
-                    || __instance.PlayerSpeedMod <= 0f || __instance.PlayerSpeedMod > 3f;
-        }
-
-        [HarmonyPatch(typeof(StringOption), nameof(StringOption.Initialize))]
-        [HarmonyPrefix]
-        
-        public static void Prefix(StringOption __instance)
-        {
-            //prevents indexoutofrange exception breaking the setting if long happens to be selected
-            //when host opens the laptop
-            if (__instance.Title == StringNames.GameKillDistance && __instance.Value == 3)
-            {
-                __instance.Value = 1;
-                GameOptionsManager.Instance.currentNormalGameOptions.KillDistance = 1;
-                GameManager.Instance.LogicOptions.SyncOptions();
-            }
-        }
-
-        [HarmonyPatch(typeof(StringOption), nameof(StringOption.Initialize))]
-        [HarmonyPostfix]
-        
-        public static void Postfix(StringOption __instance)
-        {
-            if (__instance.Title == StringNames.GameKillDistance && __instance.Values.Count == 3)
-            {
-                __instance.Values = new(
-                        new StringNames[] { (StringNames)49999, StringNames.SettingShort, StringNames.SettingMedium, StringNames.SettingLong });
-            }
-        }
-
-        [HarmonyPatch(typeof(IGameOptionsExtensions), nameof(IGameOptionsExtensions.AppendItem),
-            new Type[] { typeof(Il2CppSystem.Text.StringBuilder), typeof(StringNames), typeof(string) })]
-        [HarmonyPrefix]
-        
-        public static void Prefix(ref StringNames stringName, ref string value)
-        {
-            if (stringName == StringNames.GameKillDistance) {
-                int index;
-                if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
-                    index = GameOptionsManager.Instance.currentNormalGameOptions.KillDistance;
-                }
-                else {
-                    index = GameOptionsManager.Instance.currentHideNSeekGameOptions.KillDistance;
-                }
-                value = NormalGameOptionsV07.KillDistanceStrings[index];
-            }
-        }
-
-        [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString),
-            new[] { typeof(StringNames), typeof(Il2CppReferenceArray<Il2CppSystem.Object>) })]
-        [HarmonyPriority(Priority.Last)]
-        
-        public static bool Prefix(ref string __result, ref StringNames id)
-        {
-            if ((int)id == 49999) {
-                __result = "Very Short";
-                return false;
-            }
-            return true;
-        }
-
-        public static void AddKillDistance()
-        {
-            NormalGameOptionsV07.KillDistances = new(new float[] { 0.5f, 1f, 1.8f, 2.5f });
-            NormalGameOptionsV07.KillDistanceStrings = new(new string[] { "Very Short", "Short", "Psychic", "Long" });
-        }
-
-        [HarmonyPatch(typeof(StringGameSetting), nameof(StringGameSetting.GetValueString))]
-        [HarmonyPrefix]
-        public static bool AjdustStringForViewPanel(StringGameSetting __instance, float value, ref string __result) 
-        {
-            if (__instance.OptionName != Int32OptionNames.KillDistance) return true;
-            __result = NormalGameOptionsV07.KillDistanceStrings[(int)value];
-            return false;
-        }
-    }
-
     [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.Update))]
     public static class GameOptionsNextPagePatch
     {
         public static void Postfix(KeyboardJoystick __instance)
         {
-            int page = TheSushiRolesPlugin.optionsPage;
+            int page = TheSushiRoles.optionsPage;
             if (Input.GetKeyDown(KeyCode.Tab)) 
             {
-                TheSushiRolesPlugin.optionsPage = (TheSushiRolesPlugin.optionsPage + 1) % 8;
+                TheSushiRoles.optionsPage = (TheSushiRoles.optionsPage + 1) % 8;
             }
             if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)) 
             {
-                TheSushiRolesPlugin.optionsPage = 0;
+                TheSushiRoles.optionsPage = 0;
             }
             if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)) 
             {
-                TheSushiRolesPlugin.optionsPage = 1;
+                TheSushiRoles.optionsPage = 1;
             }
             if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3)) 
             {
-                TheSushiRolesPlugin.optionsPage = 2;
+                TheSushiRoles.optionsPage = 2;
             }
             if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Keypad4)) 
             {
-                TheSushiRolesPlugin.optionsPage = 3;
+                TheSushiRoles.optionsPage = 3;
             }
             if (Input.GetKeyDown(KeyCode.Alpha5) || Input.GetKeyDown(KeyCode.Keypad5)) 
             {
-                TheSushiRolesPlugin.optionsPage = 4;
+                TheSushiRoles.optionsPage = 4;
             }
             if (Input.GetKeyDown(KeyCode.Alpha6) || Input.GetKeyDown(KeyCode.Keypad6)) 
             {
-                TheSushiRolesPlugin.optionsPage = 5;
+                TheSushiRoles.optionsPage = 5;
             }
             if (Input.GetKeyDown(KeyCode.Alpha7) || Input.GetKeyDown(KeyCode.Keypad7)) 
             {
-                TheSushiRolesPlugin.optionsPage = 6;
+                TheSushiRoles.optionsPage = 6;
             }
             if (Input.GetKeyDown(KeyCode.Alpha8) || Input.GetKeyDown(KeyCode.Keypad8)) 
             {
-                TheSushiRolesPlugin.optionsPage = 7;
+                TheSushiRoles.optionsPage = 7;
             }
             if (Input.GetKeyDown(KeyCode.F1) && !LobbyBehaviour.Instance)
                 HudManagerUpdate.ToggleSettings(HudManager.Instance);
             if (Input.GetKeyDown(KeyCode.F2) && LobbyBehaviour.Instance)
                 HudManagerUpdate.ToggleSummary(HudManager.Instance);
-            if (TheSushiRolesPlugin.optionsPage >= GameOptionsDataPatch.maxPage) TheSushiRolesPlugin.optionsPage = 0;
+            if (TheSushiRoles.optionsPage >= GameOptionsDataPatch.maxPage) TheSushiRoles.optionsPage = 0;
         }
     }
 
@@ -1448,7 +1354,7 @@ namespace TheSushiRoles
             }
         }
 
-        private static TMPro.TextMeshPro[] settingsTMPs = new TMPro.TextMeshPro[4];
+        private static TextMeshPro[] settingsTMPs = new TextMeshPro[4];
         private static GameObject settingsBackground;
         public static void OpenSettings(HudManager __instance) 
         {
@@ -1466,7 +1372,7 @@ namespace TheSushiRoles
 
             for (int i = 0; i < settingsTMPs.Length; i++) {
                 settingsTMPs[i] = GameObject.Instantiate(__instance.KillButton.cooldownTimerText, __instance.transform);
-                settingsTMPs[i].alignment = TMPro.TextAlignmentOptions.TopLeft;
+                settingsTMPs[i].alignment = TextAlignmentOptions.TopLeft;
                 settingsTMPs[i].enableWordWrapping = false;
                 settingsTMPs[i].transform.localScale = Vector3.one * 0.25f; 
                 settingsTMPs[i].gameObject.SetActive(true);
@@ -1496,7 +1402,7 @@ namespace TheSushiRoles
 
         }
 
-        private static TMPro.TextMeshPro summaryTMP = null;
+        private static TextMeshPro summaryTMP = null;
         private static GameObject summaryBackground;
         public static void OpenSummary(HudManager __instance) 
         {
@@ -1512,7 +1418,7 @@ namespace TheSushiRoles
 
 
             summaryTMP = GameObject.Instantiate(__instance.KillButton.cooldownTimerText, __instance.transform);
-            summaryTMP.alignment = TMPro.TextAlignmentOptions.TopLeft;
+            summaryTMP.alignment = TextAlignmentOptions.TopLeft;
             summaryTMP.enableWordWrapping = false;
             summaryTMP.transform.localScale = Vector3.one * 0.3f; 
             summaryTMP.gameObject.SetActive(true);
@@ -1602,7 +1508,7 @@ namespace TheSushiRoles
             }
             var (playerCompleted, playerTotal) = TasksHandler.TaskInfo(PlayerControl.LocalPlayer.Data);
             int numberOfLeftTasks = playerTotal - playerCompleted;
-            bool zoomButtonActive = !(PlayerControl.LocalPlayer == null || !PlayerControl.LocalPlayer.Data.IsDead || (PlayerControl.LocalPlayer.Data.Role.IsImpostor && !CustomOptionHolder.deadImpsBlockSabotage.GetBool()) || MeetingHud.Instance || ExileController.Instance);
+            bool zoomButtonActive = !(PlayerControl.LocalPlayer == null || !PlayerControl.LocalPlayer.Data.IsDead || (PlayerControl.LocalPlayer.Data.Role.IsImpostor && !CustomOptionHolder.deadImpsBlockSabotage.GetBool()) || MeetingHud.Instance || ExiledInstance());
             zoomButtonActive &= numberOfLeftTasks <= 0 || !CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.GetBool();
             toggleZoomButtonObject.SetActive(zoomButtonActive);
             var posOffset = Utils.zoomOutStatus ? new Vector3(-1.27f, -7.92f, -52f) : new Vector3(0, -1.6f, -52f);

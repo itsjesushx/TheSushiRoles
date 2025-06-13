@@ -1,7 +1,4 @@
-﻿using TMPro;
-using UnityEngine;
-
-namespace TheSushiRoles.Patches
+﻿namespace TheSushiRoles.Patches
 {
     [HarmonyPatch]
     public static class CredentialsPatch 
@@ -19,7 +16,6 @@ Testing help by <color=#B2FEFE>Cake</color>";
             public static SpriteRenderer renderer;
             public static Sprite bannerSprite;
             private static PingTracker instance;
-
             static void Postfix(PingTracker __instance) 
             {
                 var Logo = new GameObject("bannerLogo_TSR");
@@ -33,7 +29,7 @@ Testing help by <color=#B2FEFE>Cake</color>";
                 renderer.sprite = bannerSprite;
                 var CredentialObject = new GameObject("CredentialsTSR");
                 var Credentials = CredentialObject.AddComponent<TextMeshPro>();
-                Credentials.SetText($"v{TheSushiRolesPlugin.Version.ToString()}\n<size=30f%>\n</size>{MainScreenText}\n<size=30%>\n</size>");
+                Credentials.SetText($"v{TheSushiRoles.Version.ToString()}\n<size=30f%>\n</size>{MainScreenText}\n<size=30%>\n</size>");
                 Credentials.alignment = TextAlignmentOptions.Center;
                 Credentials.fontSize *= 0.05f;
 
